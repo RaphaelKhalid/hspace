@@ -35,7 +35,7 @@ OPTS = ["-i", KEY, "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=10", 
 D = "/workspace/mats/interpcontrol/hlens"
 REMOTE = (f'cd {D}; echo "@@R"; grep -E "\\] \\[(hspace|ctrl)\\]|^\\[pod " runlog.md | tail -300; echo "@@G"; '
           'nvidia-smi --query-gpu=utilization.gpu,memory.used,power.draw --format=csv,noheader,nounits; '
-          'echo "@@D"; du -sb /workspace/hf 2>/dev/null | cut -f1; echo "@@J"; stat -c %Y out/hspace_full.json 2>/dev/null; echo "@@K"; stat -c %Y out/hspace2_full.json 2>/dev/null; echo "@@L"; stat -c %Y out/c6prime_full.json 2>/dev/null; '
+          'echo "@@D"; du -sb /workspace/hf 2>/dev/null | cut -f1; echo "@@J"; stat -c %Y out/hspace_full.json 2>/dev/null; echo "@@K"; stat -c %Y out/hspace2_full.json 2>/dev/null; echo "@@L"; stat -c %Y out/c6prime_full.json 2>/dev/null; echo "@@M"; stat -c %Y out/relcurv2_full.json 2>/dev/null; echo "@@N"; stat -c %Y out/c6defl_full.json 2>/dev/null; '
           'echo "@@E"; grep -E "Error|Traceback|OutOfMemory" out/hspace_full.log out/ctrl_full.log 2>/dev/null | tail -3')
 STATE: dict = {"updated": 0, "ok": False}
 ACC = {"wh": 0.0, "pflop": 0.0, "t": None}          # integrated GPU energy and estimated compute (peak ~110 TFLOP/s x util)
@@ -46,7 +46,7 @@ try:
 except Exception:  # noqa: BLE001
     ACC["pflop"] = 105.7          # carried over from the previous dashboard process (measured 05:04 UTC)
 CTR = []                                              # (t, phase, i) history for a live rate
-JSON_MTIME = {"v": None, "v2": None, "c6": None}
+JSON_MTIME = {"v": None, "v2": None, "c6": None, "rc": None, "c6d": None}
 
 
 def sh(args, timeout=40):
@@ -108,6 +108,8 @@ def parse(out: str) -> dict:
     st["json_mtime"] = sec.get("J", "").strip()
     st["json2_mtime"] = sec.get("K", "").strip()
     st["c6_mtime"] = sec.get("L", "").strip()
+    st["rc_mtime"] = sec.get("M", "").strip()
+    st["c6d_mtime"] = sec.get("N", "").strip()
     return st
 
 
@@ -136,6 +138,25 @@ def results() -> dict:
             "pc": (L.get("pos_control") or {}).get("recovery_top25_of_planted"),
         }
     return {"rows": rows, "labels": r.get("labels")}
+
+
+def results3() -> dict:
+    out = {}
+    try:
+        rc = json.loads((LOCAL / "relcurv2_full.json").read_text()) if (LOCAL / "relcurv2_full.json").exists() else {}
+        cd = json.loads((LOCAL / "c6defl_full.json").read_text()) if (LOCAL / "c6defl_full.json").exists() else {"layers": {}}
+    except ValueError:
+        return out
+    for l in sorted(set(rc) | set(cd.get("layers", {})), key=int):
+        a, n = rc.get(l, {}).get("norm_eps0.1", {}), rc.get(l, {}).get("null_eps0.1", {})
+        C = (cd.get("layers", {}).get(l) or {}).get("conds", {})
+        g = lambda k: (C.get(k) or {}).get("S")
+        out[l] = {"s1": (a.get("split") or {}).get("k1"), "s5": (a.get("split") or {}).get("k5"), "s25": (a.get("split") or {}).get("k25"),
+                  "n25": (n.get("split") or {}).get("k25"), "pca": a.get("vs_pca25"), "C16": a.get("mass_in_C16_top25"),
+                  "S_rel": g("rel25_norm"), "S_vm": g("vm_rand_rel"), "S_norm": g("loc_norm"), "S_pca": g("pca25"),
+                  "ci_rel": (cd.get("layers", {}).get(l) or {}).get("S_rel25_minus_vm_rand_ci95"),
+                  "ci_pca": (cd.get("layers", {}).get(l) or {}).get("S_loc_norm_minus_pca25_ci95")}
+    return out
 
 
 def results2() -> dict:
@@ -172,13 +193,15 @@ def loop():
                 r = sh([SCP, *OPTS, "-P", PORT, f"root@{HOST}:{D}/out/hspace_full.json", str(LOCAL / "hspace_full.json")])
                 if r.returncode == 0:
                     JSON_MTIME["v"] = st["json_mtime"]
-            for key_, fn, mt in (("v2", "hspace2_full.json", st.get("json2_mtime")), ("c6", "c6prime_full.json", st.get("c6_mtime"))):
+            for key_, fn, mt in (("v2", "hspace2_full.json", st.get("json2_mtime")), ("c6", "c6prime_full.json", st.get("c6_mtime")),
+                                 ("rc", "relcurv2_full.json", st.get("rc_mtime")), ("c6d", "c6defl_full.json", st.get("c6d_mtime"))):
                 if mt and mt != JSON_MTIME[key_]:
                     r = sh([SCP, *OPTS, "-P", PORT, f"root@{HOST}:{D}/out/{fn}", str(LOCAL / fn)])
                     if r.returncode == 0:
                         JSON_MTIME[key_] = mt
             st["res"] = results()
             st["res2"] = results2()
+            st["res3"] = results3()
             now = time.time()
             g = st.get("gpu") or {}
             if ACC["t"] is not None and g:
