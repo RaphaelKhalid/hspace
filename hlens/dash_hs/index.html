@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>H-space live</title>
+<style>
+:root{--bg:#000;--fg:#e8e8e8;--dim:#7a7a7a;--acc:#5ef1ff;--ok:#5cff8a;--bad:#ff5c7a;--warn:#ffd25c}
+*{box-sizing:border-box}html,body{background:#000;color:var(--fg);margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--dim);font-size:13px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{border:1px solid #1a1a1a;border-radius:10px;padding:12px 14px}
+.k{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.v{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+.v.small{font-size:18px}
+.bar{height:8px;background:#111;border-radius:6px;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;background:var(--acc)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}th,td{padding:6px 8px;border-bottom:1px solid #141414;text-align:right}
+th:first-child,td:first-child{text-align:left}th{color:var(--dim);font-weight:500}
+.pass{color:var(--ok)}.fail{color:var(--bad)}.na{color:#444}
+pre{white-space:pre-wrap;color:#9a9a9a;font-size:12px;margin:0;max-height:260px;overflow:auto}
+.phase{font-size:20px;color:var(--acc)}
+</style></head><body><div class="wrap">
+<h1>🔭 H-space hunt · Qwen3.6-27B · one shot</h1>
+<div class="sub" id="sub">connecting to pod…</div>
+<div class="grid">
+  <div class="card"><div class="k">phase</div><div class="v phase" id="phase">—</div><div class="sub" id="emoji"></div></div>
+  <div class="card"><div class="k">current counter</div><div class="v" id="ctr">—</div><div class="bar"><i id="ctrbar" style="width:0%"></i></div></div>
+  <div class="card"><div class="k">spend 💸</div><div class="v" id="usd">$0.000</div><div class="sub" id="cap"></div></div>
+  <div class="card"><div class="k">GPU 🔥</div><div class="v small" id="gpu">—</div><div class="sub" id="dl"></div></div>
+</div>
+<div class="grid" style="margin-top:12px">
+  <div class="card"><div class="k">compute burned ⚡ (est., PFLOP)</div><div class="v" id="pflop">0</div><div class="sub">~110 TFLOP/s peak × live GPU util</div></div>
+  <div class="card"><div class="k">GPU energy 🔋 (Wh)</div><div class="v" id="wh">0</div><div class="sub" id="wnow"></div></div>
+  <div class="card"><div class="k">current-stage rate 🚀</div><div class="v small" id="rate">—</div><div class="sub" id="eta"></div></div>
+</div>
+<div class="card" style="margin-top:12px"><div class="k">preregistered criteria (27B, per layer) · PASS needs C0 + all of C1–C6 at ≥2 of 4 layers</div>
+<table><thead><tr><th>layer</th><th>C1 split ≥0.7</th><th>C2 energy ≥0.5</th><th>C3 J-overlap &lt;0.5</th><th>C4 1σ ratio ≥10</th><th>C5 KL ×rand ≥3</th><th>C6 dissoc ≥2</th><th>PR</th></tr></thead><tbody id="rows"><tr><td colspan="8" class="na">waiting for the first layer…</td></tr></tbody></table>
+<div class="sub" id="c0" style="margin-top:8px"></div></div>
+<div class="card" style="margin-top:12px"><div class="k">pod log (live)</div><pre id="log"></pre></div>
+</div>
+<script>
+let S={},shown={usd:0,ctr:0},target={usd:0,ctr:0},rate={usd:0},lastT=performance.now();
+const f=(x,d=2)=>x==null?'—':Number(x).toFixed(d);
+function cell(v,ok,d=2){if(v==null)return '<td class="na">—</td>';return `<td class="${ok(v)?'pass':'fail'}">${f(v,d)}</td>`}
+async function poll(){try{const r=await fetch('/state',{cache:'no-store'});S=await r.json();render()}catch(e){}}
+function render(){
+  document.getElementById('sub').textContent=`pod ${S.pod||'?'} · $${S.price||'?'}/h · elapsed ${fmt(S.elapsed)} · watchdog in ${fmt(S.watchdog_left)} · ${S.ok?'🟢 connected':'🟡 reconnecting'} · updated ${S.updated?new Date(S.updated*1000).toLocaleTimeString():'—'}`;
+  document.getElementById('phase').textContent=S.phase||'—';
+  const em={'booting':'🥾 booting','loading model':'📦 loading 27B','control read':'🕵️ reading 1,500 agent trajectories','ALL DONE':'🎉 done — pulling results','S7 labels':'🧪 labelling interaction tokens'};
+  document.getElementById('emoji').textContent=em[S.phase]||(String(S.phase||'').startsWith('H-space')?'🌀 probing second-order curvature':String(S.phase||'').startsWith('positive')?'🎯 planted-gate positive control':'⚙️ working');
+  let i=0,n=1;
+  if(S.ctrl&&S.phase==='control read'){i=S.ctrl.i;n=S.ctrl.n}else if(S.probe){i=S.probe.i;n=S.probe.n}
+  target.ctr=i;document.getElementById('ctrbar').style.width=(100*i/Math.max(n,1)).toFixed(1)+'%';
+  document.getElementById('ctr').dataset.n=n;
+  target.usd=S.usd||0;
+  const g=S.gpu||{};document.getElementById('gpu').textContent=g.util==null?'—':`${f(g.util,0)}% · ${f(g.mem,1)} GB · ${f(g.watts,0)} W`;
+  document.getElementById('dl').textContent=S.hf_gb?`📥 ${f(S.hf_gb,1)} GB on disk (model ≈ 54 GB)`:'';
+  document.getElementById('cap').textContent=`hard cap ≈ $${f((S.price||1.69)*((S.elapsed||0)+(S.watchdog_left||0))/3600,2)} (watchdog)`;
+  const R=(S.res||{}).rows||{};const ks=Object.keys(R).sort((a,b)=>a-b);
+  if(ks.length){document.getElementById('rows').innerHTML=ks.map(l=>{const x=R[l];
+    const c6=x.C6_ratio==null?'<td class="na">—</td>':`<td class="${(x.C6_ratio>=2&&x.C6_perp>=2&&x.C6_lo>x.C6_bar)?'pass':'fail'}">${f(x.C6_ratio)} / ⊥J ${f(x.C6_perp)}</td>`;
+    return `<tr><td>L${l}</td>${cell(x.C1_split,v=>v>=0.7)}${cell(x.C2_energy,v=>v>=0.5)}${cell(x.C3_Jover,v=>v<0.5)}${cell(x.C4_nat,v=>v>=10,1)}${cell(x.C5_KL,v=>v>=3,1)}${c6}<td>${f(x.PR,1)}</td></tr>`}).join('')}
+  const pc=Object.values(R).map(x=>x.pc).find(v=>v!=null);
+  document.getElementById('c0').innerHTML=pc==null?'C0 positive control: pending (layer 40)':`C0 positive control (planted gate recovery ≥0.8): <span class="${pc>=0.8?'pass':'fail'}">${f(pc)}</span> ${pc>=0.8?'✅ instrument valid':'⛔ VOID'}`;
+  document.getElementById('log').textContent=(S.lines||[]).join('\n')+(S.errors?'\n\n⚠️ '+S.errors:'');
+}
+function fmt(s){if(s==null)return '—';s=Math.max(0,s|0);const h=s/3600|0,m=(s%3600)/60|0,x=s%60;return `${h}h${String(m).padStart(2,'0')}m${String(x).padStart(2,'0')}s`}
+function tick(){const now=performance.now(),dt=(now-lastT)/1000;lastT=now;
+  const since=(Date.now()/1000)-(S.updated||Date.now()/1000);
+  document.getElementById('pflop').textContent=((S.pflop||0)+(S.pflops_now||0)*since).toFixed(4);
+  document.getElementById('wh').textContent=((S.gpu_wh||0)+(S.w_now||0)*since/3600).toFixed(3);
+  document.getElementById('wnow').textContent=`${f(S.w_now,0)} W right now`;
+  const rr=S.ctr_rate||0, nn=Number(document.getElementById('ctr').dataset.n||1);
+  document.getElementById('rate').textContent=rr>0?`${rr.toFixed(3)} / s · ${(rr*60).toFixed(1)} / min`:'measuring…';
+  document.getElementById('eta').textContent=rr>0?`stage ETA ${fmt((nn-target.ctr)/rr)}`:'';
+  const cur=(S.phase==='control read'?S.ctrl:(S.probe||S.ctrl))||{i:0}; if(rr>0){target.ctr=Math.min(nn,cur.i+rr*since)}
+  shown.usd=(S.usd||0)+((S.price||1.69)/3600)*((Date.now()/1000)-(S.updated||Date.now()/1000));
+  document.getElementById('usd').textContent='$'+shown.usd.toFixed(3);
+  shown.ctr+= (target.ctr-shown.ctr)*Math.min(1,dt*3);
+  const n=document.getElementById('ctr').dataset.n||1;document.getElementById('ctr').textContent=`${shown.ctr.toFixed(2)} / ${n}`;
+}
+setInterval(poll,2000);setInterval(tick,50);poll();
+</script></body></html>
