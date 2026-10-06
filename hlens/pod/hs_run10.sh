@@ -42,7 +42,7 @@ PY
 }
 ( while sleep 600; do sync_once >> out/hf_sync.log 2>&1; done ) &
 SYNC_PID=$!
-python hs_v10.py full --minutes ${HS_RUN_MIN:-170} > out/hs_v10.log 2>&1; echo "[pod $(date +%T)] v10 exit $?" | tee -a runlog.md
+python hs_v10.py full --minutes ${HS_RUN_MIN:-170} > out/hs_v10.log 2>&1; RC=$?; echo "[pod $(date +%T)] v10 exit $RC" | tee -a runlog.md
 kill $SYNC_PID 2>/dev/null
 python - <<'PY'
 from huggingface_hub import HfApi
@@ -66,7 +66,9 @@ print("UPLOAD-VERIFY problems:", bad, flush=True)
 open("out/verify_ok", "w").write(str(bad))
 PY
 echo "[pod $(date +%T)] V10 ALL DONE" | tee -a runlog.md
-if [ "$(cat out/verify_ok 2>/dev/null)" = "0" ]; then
-  echo "[pod $(date +%T)] results verified on HF; self-terminating" | tee -a runlog.md
+if [ "$(cat out/verify_ok 2>/dev/null)" = "0" ] && [ "$RC" = "0" ] && grep -q '"FINAL"' out/hs_v10_full.json 2>/dev/null; then
+  echo "[pod $(date +%T)] verdict written and results verified on HF; self-terminating" | tee -a runlog.md
   sync_once > /dev/null 2>&1; terminate
+else
+  echo "[pod $(date +%T)] NOT self-terminating (rc=$RC or no verdict): left up for inspection; watchdog stays armed" | tee -a runlog.md
 fi
