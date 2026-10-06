@@ -1,0 +1,24 @@
+L40: data loc_norm PR 91.4; simulated PR by a: +1.00:2.6, +0.50:3.6, +0.25:4.9, +0.00:8.7, -0.25:29.0, -0.50:76.5, -1.00:59.6
+[L40 matched a=-1.00] d    norm     : lam1 13.315 (null max 7.303, p 0.010) | split k1/3/5/10 0.03/0.06/0.10/0.14 (null max k3 0.01, p 0.010) (86s)
+[L40 matched a=-1.00] d    xnorm    : lam1 13.098 (null max 7.208, p 0.010) | split k1/3/5/10 0.03/0.06/0.11/0.14 (null max k3 0.01, p 0.010) (86s)
+[L40 matched a=-1.00] d    raw_trim5: lam1 13.645 (null max 8.770, p 0.010) | split k1/3/5/10 0.05/0.07/0.07/0.12 (null max k3 0.01, p 0.010) (86s)
+[L40 matched a=-1.00] PLANTED norm: lam1 13.226 vs null max 7.195 -> DETECTED; recovered 0.00
+[L40 matched a=-1.00] PLANTED xnorm: lam1 13.012 vs null max 7.107 -> DETECTED; recovered 0.00
+[L40 matched a=-0.50] d    norm     : lam1 8.755 (null max 7.193, p 0.010) | split k1/3/5/10 0.03/0.02/0.03/0.06 (null max k3 0.02, p 0.010) (92s)
+[L40 matched a=-0.50] d    xnorm    : lam1 8.629 (null max 7.062, p 0.010) | split k1/3/5/10 0.03/0.02/0.03/0.06 (null max k3 0.02, p 0.010) (92s)
+[L40 matched a=-0.50] d    raw_trim5: lam1 9.549 (null max 8.694, p 0.010) | split k1/3/5/10 0.01/0.02/0.02/0.06 (null max k3 0.01, p 0.010) (92s)
+[L40 matched a=-0.50] PLANTED norm: lam1 8.692 vs null max 7.068 -> DETECTED; recovered 0.01
+[L40 matched a=-0.50] PLANTED xnorm: lam1 8.567 vs null max 6.952 -> DETECTED; recovered 0.01
+L40: v5 pass survives matched-flatness misspecification: True
+L52: data loc_norm PR 58.1; simulated PR by a: +1.00:4.0, +0.50:6.0, +0.25:8.3, +0.00:14.4, -0.25:40.3, -0.50:131.5, -1.00:137.9
+[L52 matched a=-0.50] d    norm     : lam1 9.045 (null max 7.283, p 0.010) | split k1/3/5/10 0.01/0.07/0.08/0.10 (null max k3 0.02, p 0.010) (95s)
+[L52 matched a=-0.50] d    xnorm    : lam1 8.913 (null max 7.161, p 0.010) | split k1/3/5/10 0.01/0.07/0.08/0.10 (null max k3 0.02, p 0.010) (95s)
+[L52 matched a=-0.50] d    raw_trim5: lam1 9.725 (null max 8.355, p 0.010) | split k1/3/5/10 0.00/0.02/0.05/0.07 (null max k3 0.01, p 0.010) (95s)
+[L52 matched a=-0.50] PLANTED norm: lam1 8.979 vs null max 7.115 -> DETECTED; recovered 0.00
+[L52 matched a=-0.50] PLANTED xnorm: lam1 8.848 vs null max 6.988 -> DETECTED; recovered 0.00
+[L52 matched a=-0.25] d    norm     : lam1 7.129 (null max 6.999, p 0.010) | split k1/3/5/10 0.00/0.01/0.02/0.04 (null max k3 0.02, p 0.109) (99s)
+[L52 matched a=-0.25] d    xnorm    : lam1 6.978 (null max 6.820, p 0.010) | split k1/3/5/10 0.00/0.02/0.02/0.04 (null max k3 0.02, p 0.109) (99s)
+[L52 matched a=-0.25] d    raw_trim5: lam1 8.525 (null max 8.327, p 0.010) | split k1/3/5/10 0.01/0.01/0.02/0.03 (null max k3 0.03, p 0.188) (99s)
+[L52 matched a=-0.25] PLANTED norm: lam1 9.764 vs null max 6.739 -> DETECTED; recovered 0.14
+[L52 matched a=-0.25] PLANTED xnorm: lam1 9.578 vs null max 6.567 -> DETECTED; recovered 0.13
+L52: v5 pass survives matched-flatness misspecification: True
