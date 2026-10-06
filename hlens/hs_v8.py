@@ -26,7 +26,7 @@ import hs_flip5 as F5  # noqa: E402
 
 TAG = _a[0] if _a else "small"
 LAYERS = [int(x) for x in _a[1:]] or ([16, 40] if TAG == "full" else [6, 12])
-NP = {"full": 64, "small": 8}[TAG]
+NP = {"full": 128, "small": 8}[TAG]      # deviation (OOM fix): 128 probes x 2 windows = the same 256 fresh windows
 NFLIP, NPLANT = (200, 50) if TAG == "full" else (10, 5)
 OUT = H.OUT
 
@@ -66,7 +66,7 @@ def main():
     t0 = time.time()
     cfg = H.CFG[TAG]
     T = cfg["T"]
-    B = cfg["B"] if TAG == "full" else 2
+    B = 2
     T2 = torch.load(OUT / f"hspace2_{TAG}.pt", map_location="cpu", weights_only=False)
     m = H.Model(cfg["model"], T)
     tok = m.tok
@@ -102,13 +102,17 @@ def main():
             v = torch.randn(d, device="cuda", generator=gen) @ Sh
             s1 = (torch.randint(0, 2, (B, T), device="cuda", generator=gen).float() * 2 - 1) * valid[None]
             s2 = (torch.randint(0, 2, (B, T), device="cuda", generator=gen).float() * 2 - 1) * valid[None]
-            x = X.clone().requires_grad_(True)
-            with torch.enable_grad():
-                hL = m.run(x, l + 1)
-                Fv = (hL[:, valid] @ c).sum()
-                (g,) = torch.autograd.grad(Fv, x, create_graph=True)
-                (h1,) = torch.autograd.grad((g * (s1[..., None] * v)).sum(), x, retain_graph=True)
-                (h2,) = torch.autograd.grad((g * (s2[..., None] * v)).sum(), x)
+            hs_ = []
+            for sv in (s1, s2):                    # separate graphs per HVP (deviation: OOM fix; same math)
+                x = X.clone().requires_grad_(True)
+                with torch.enable_grad():
+                    hL = m.run(x, l + 1)
+                    Fv = (hL[:, valid] @ c).sum()
+                    (g,) = torch.autograd.grad(Fv, x, create_graph=True)
+                    (hh,) = torch.autograd.grad((g * (sv[..., None] * v)).sum(), x)
+                hs_.append(hh.detach()); g = g.detach()
+                del x, hL, Fv
+            h1, h2 = hs_
             with torch.no_grad():
                 Y1.append(((s1[..., None] * h1)[:, valid] @ Sh).reshape(-1, d).to(torch.bfloat16).cpu())
                 Y2.append(((s2[..., None] * h2)[:, valid] @ Sh).reshape(-1, d).to(torch.bfloat16).cpu())
@@ -117,7 +121,7 @@ def main():
                 npos = int(valid.sum())
                 PR.append(torch.full((B * npos,), i))
                 WI.append(ix.repeat_interleave(npos))
-            del x, hL, g, h1, h2
+            del g, h1, h2, hs_
             if i % max(1, NP // 8) == 0 or i == NP - 1:
                 print(f"[v8] L{l} probe {i+1}/{NP} ({time.time()-t0:.0f}s, peak {torch.cuda.max_memory_allocated()/2**30:.1f} GB)", flush=True)
         D = {"loc_y1": torch.cat(Y1), "loc_y2": torch.cat(Y2), "proxy": torch.cat(PX), "loc_tok": torch.cat(TK),
