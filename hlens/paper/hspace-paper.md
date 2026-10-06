@@ -239,7 +239,7 @@ This paper makes three moves:
 **v7 (laptop, dumps, frozen rule; digits): not found (0/4 layers).** Digit-row curvature has large λ1 (3.3–5.3× the flip maximum), but no stable 3-D subspace (split@3 0.40–0.68). Punctuation rows were the descriptive exception: split@3 0.60–0.80.
 
 **v8 (fresh 27B data, prereg `SCOPE-hspace-v8.md` pushed before the pod existed): punctuation-conditional H-structure REPLICATED.**
-- **Data.** 256 fresh wikitext-train windows; 33 duplicates of run-2 windows were dropped.
+- **Data.** 256 fresh wikitext-train windows. The script dropped 33 windows that duplicated **run 1** (seed 0); it should have deduplicated against run 2 (seed 10), and 15 of the 256 windows turned out to be shared with run 2. Excluding them leaves the replication intact (`hs_v8_dedup.py`, `results/CORRECTIONS.md`).
 - **Method.** The v5 sign-flip machinery restricted to punctuation rows (3,775 per layer), in run-2's whitening frame.
 
 | layer | norm λ1 (flip max) | norm split@3 | xnorm λ1 (flip max) | xnorm split@3 | cross-run top-5 overlap with run 2 (chance) |
