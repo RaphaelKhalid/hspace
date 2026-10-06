@@ -1,0 +1,15 @@
+L40: variant d drops 178 PCA axes (1-5 + top C-mass axes; C mass removed in window 0.90)
+[L40] d    norm     : lam1 5.115 (null max 1.559, p 0.005) | split k1/3/5/10 0.87/0.90/0.85/0.74 (null max k3 0.01, p 0.005) (437s)
+[L40] d    xnorm    : lam1 3.472 (null max 1.160, p 0.005) | split k1/3/5/10 0.87/0.82/0.77/0.64 (null max k3 0.02, p 0.005) (437s)
+[L40] d    raw_trim5: lam1 5.353 (null max 2.084, p 0.005) | split k1/3/5/10 0.79/0.63/0.60/0.54 (null max k3 0.02, p 0.005) (437s)
+[L40] PLANTED norm: lam1 5.173 vs null max 1.559 -> DETECTED; recovered 0.59
+[L40] PLANTED xnorm: lam1 4.758 vs null max 1.164 -> DETECTED; recovered 0.81
+L40: Csur25 vs loc_norm 0.8253742456436157; saved (545s)
+L52: variant d drops 151 PCA axes (1-5 + top C-mass axes; C mass removed in window 0.90)
+[L52] d    norm     : lam1 12.535 (null max 1.900, p 0.005) | split k1/3/5/10 0.95/0.94/0.93/0.85 (null max k3 0.02, p 0.005) (452s)
+[L52] d    xnorm    : lam1 8.540 (null max 1.656, p 0.005) | split k1/3/5/10 0.92/0.88/0.86/0.74 (null max k3 0.02, p 0.005) (452s)
+[L52] d    raw_trim5: lam1 11.933 (null max 2.375, p 0.005) | split k1/3/5/10 0.93/0.85/0.80/0.71 (null max k3 0.02, p 0.005) (452s)
+[L52] PLANTED norm: lam1 12.371 vs null max 1.896 -> DETECTED; recovered 0.01
+[L52] PLANTED xnorm: lam1 8.486 vs null max 1.644 -> DETECTED; recovered 0.24
+L52: Csur25 vs loc_norm 0.7885822057723999; saved (567s)
+DECISION v5 (variant d axis-aligned, L40 & L52, norm & xnorm): PASS: non-Sigma-commuting H-structure
