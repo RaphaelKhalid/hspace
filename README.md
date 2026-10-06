@@ -6,7 +6,7 @@ Anthropic's J-lens (arXiv 2607.15495) averages the **Jacobian** of a model's fin
 
 I call that subspace **H-space**, after the Hessian.
 
-**Status (Oct 6 2026): run 1, run 2 and the follow-up tests are complete; negatives, one retraction and one robust-but-non-causal positive are included.** This is research code plus a paper draft, built in one push on a $17 GPU budget.
+**Status (Oct 6 2026): run 1, run 2 and eleven tests are complete, including a preregistered replication (v8) and a preregistered interaction test (v9) of a punctuation-conditional H-subspace, both passed. Negatives, one retraction and all later corrections (`results/CORRECTIONS.md`) are included. Decoding, ablation/steering, class-specificity and a second model are untested.** This is research code plus a paper draft, built in one push on a $17 GPU budget.
 
 ## Results so far
 
@@ -20,7 +20,7 @@ I call that subspace **H-space**, after the Hessian.
 | 52 | | 0.41 ❌ | 0.99 ✅ | 0.29 ✅ | 97× ✅ | 197× ✅ | 1.86 ❌ |
 
 **What this shows.**
-- **What holds:** there is a subspace, distinct from J-space, whose directions interact about 100× more than random ones at natural activation scale. Deleting it damages next-token predictions 84–197× more than deleting random subspaces; at layers 40 and 52 that is *more* than deleting J-space.
+- **What holds, with caveats:** the top-25 has low overlap with my whitened J-space (0.15–0.29), though two halves of the same estimate overlap only 0.33–0.41, so this does not show it is distinct. Its directions interact 79–103× more than random whitened pairs at 1σ, but C4 had no variance-matched control (at 0.8B the pair-norm product alone gives 23–29×; theory-v2 §6). Deleting it damages next-token predictions 84–197× more than deleting random subspaces; at layers 40 and 52 that is *more* than deleting J-space.
 - **What fails:** the raw estimator is not reproducible (C1), and its deletion is not interaction-specific (C6). A planted-gate positive control (C0) shows the instrument itself works, so these are findings, not a broken instrument.
 
 ### Why C1 and C6 failed: diagnosis, written up before any follow-up data
@@ -34,14 +34,14 @@ I call that subspace **H-space**, after the Hessian.
   - At L16 the heaviest 0.1% of (position, probe) rows carry **97.5%** of the raw Hessian energy.
   - Digit tokens are 7% of rows but 88% of that energy.
   - Dropping the heaviest 5% of rows gives split-half 0.95 at k = 5.
-- **The Σ prior (theory §6B, Prop. 8).** Any lens whitened by Σ^{1/2} returns PCA-ordered, reproducible directions whenever curvature is a function of Σ. So the robust estimators' 0.97–0.99 reproducibility is **not** by itself evidence of H-specific structure.
+- **The Σ prior (theory §6B, Prop. 8).** My Σ^{1/2}-whitened curvature estimators return reproducible PCA-axis directions whenever curvature is a function of Σ (more generally, whenever its law is invariant under PCA sign flips). A similar prior plausibly affects J-space computed in whitened coordinates, as mine is; Anthropic's released J-lens does not whiten. So the robust estimators' 0.97–0.99 reproducibility is **not** by itself evidence of H-specific structure.
 
 ### Sign-flip randomization tests (exact null for Σ-commuting curvature; theory §6B, Cor. 8.1)
 | test (rule frozen before computing) | layers | result |
 |---|---|---|
 | flip, massive span deflated by projection | 16, 28 | **FAIL**. λ1 beats all 200 flips everywhere, but split-half has no power under a non-axis-aligned projection |
 | **flip v5**, axis-aligned drop (commutes with the flips) | **40, 52 (held out)** | **PASS**. λ1 3–6.6× the flip maximum; split@3 0.82–0.94 vs a null of 0.01–0.02; planted control detected |
-| v5 vs matched-flatness basis-misspecification null | 40, 52 | **robust**. Simulated split@3 0.01–0.07 vs data 0.90–0.94 (a steep f = Σ misspecification *can* fake v5, but the data's spectrum rules that regime out) |
+| v5 vs matched-flatness basis-misspecification null | 40, 52 | **split-half robust**. Simulated split@3 0.01–0.07 vs data 0.82–0.94; simulated λ1 still beats the flip maximum (1.0–1.8× vs 3–6.6× for the data). A steep f = Σ misspecification *can* fake v5, but the data's spectrum (participation ratio 58–91 vs 2.6–4.0) rules that regime out. The calibration matches the participation ratio only. |
 | **causal Σ-orbit twin ablation** of the v5 patterns (needs REAL at both layers) | 40, 52 | **FAIL**. At L40 the v5 patterns are not more interaction-specific than 8 exactly variance-matched twins: S = 0.014 vs 0.002, rank 2/9, CI includes 0 |
 
 **Update (Oct 6, ~14:00 UTC): v9 PASS. Natural-scale pairwise interaction concentrates in the replicated H-subspace.**
@@ -66,7 +66,7 @@ I call that subspace **H-space**, after the Hessian.
   - End to end the saving is much smaller: if an HVP costs c screening passes, it is c / (1 + c/G) with G = 80 / 10.6, about 1.7–3.8× for c = 2–4, and never more than c.
 
 **Bottom line (Oct 6, before the follow-ups).**
-- At two held-out layers of Qwen3.6-27B, the H-lens contains a **reproducible second-order structure that is not a function of the activation covariance**. It is also not J-space (overlap at chance), not the massive-activation geometry, and not explained by basis-estimation error.
+- At two held-out layers of Qwen3.6-27B, the H-lens contains a **reproducible second-order structure that is not a function of the activation covariance**. It is also not J-space (overlap at chance) and not the massive-activation geometry (largely by construction: those axes are masked), and its split-half reproducibility survives a spectrum-matched basis-misspecification null (its λ1 statistic does not).
 - But under the frozen causal test it is **not interaction-specific**.
 - So I have **not** found an H-space "as provably as J-space". What exists is a reproducible non-Σ-commuting curvature structure without demonstrated function.
 - Every step, including one retraction (`results/CORRECTIONS.md`), is hashed in `results/runlog_pod.md` before its data.
