@@ -1,0 +1,600 @@
+{
+ "16": {
+  "loc": {
+   "m4_raw": {
+    "dimC": 10,
+    "energy_share_in_C": 0.315,
+    "energy_share_in_random_same_dim": 0.001,
+    "top10_mass_in_C": [
+     0.334,
+     0.38,
+     0.258,
+     0.368,
+     0.072,
+     0.083,
+     0.027,
+     0.021,
+     0.064,
+     0.045
+    ],
+    "deflated_energy_retained_top25": 0.683,
+    "PR_before": 1.5,
+    "PR_after": 1.52,
+    "split_before": {
+     "k1": 0.089,
+     "k2": 0.071,
+     "k3": 0.254,
+     "k5": 0.23,
+     "k10": 0.226,
+     "k25": 0.222
+    },
+    "split_after": {
+     "k1": 0.012,
+     "k2": 0.018,
+     "k3": 0.166,
+     "k5": 0.141,
+     "k10": 0.167,
+     "k25": 0.185
+    },
+    "overlap_after_vs_before_top10": 0.832
+   },
+   "m4_norm": {
+    "dimC": 10,
+    "energy_share_in_C": 0.163,
+    "energy_share_in_random_same_dim": 0.0018,
+    "top10_mass_in_C": [
+     0.794,
+     0.59,
+     0.594,
+     0.203,
+     0.235,
+     0.33,
+     0.12,
+     0.139,
+     0.037,
+     0.051
+    ],
+    "deflated_energy_retained_top25": 0.648,
+    "PR_before": 57.97,
+    "PR_after": 132.69,
+    "split_before": {
+     "k1": 0.996,
+     "k2": 0.995,
+     "k3": 0.995,
+     "k5": 0.994,
+     "k10": 0.984,
+     "k25": 0.959
+    },
+    "split_after": {
+     "k1": 0.937,
+     "k2": 0.992,
+     "k3": 0.992,
+     "k5": 0.99,
+     "k10": 0.886,
+     "k25": 0.946
+    },
+    "overlap_after_vs_before_top10": 0.663
+   },
+   "m4_x": {
+    "dimC": 10,
+    "energy_share_in_C": -0.205,
+    "energy_share_in_random_same_dim": 0.0004,
+    "top10_mass_in_C": [
+     0.26,
+     0.302,
+     0.045,
+     0.048,
+     0.074,
+     0.037,
+     0.042,
+     0.025,
+     0.091,
+     0.031
+    ],
+    "deflated_energy_retained_top25": 0.788,
+    "PR_before": 4.14,
+    "PR_after": 4.69,
+    "split_before": {
+     "k1": 0.014,
+     "k2": 0.025,
+     "k3": 0.106,
+     "k5": 0.13,
+     "k10": 0.153,
+     "k25": 0.146
+    },
+    "split_after": {
+     "k1": 0.028,
+     "k2": 0.021,
+     "k3": 0.087,
+     "k5": 0.116,
+     "k10": 0.13,
+     "k25": 0.135
+    },
+    "overlap_after_vs_before_top10": 0.888
+   },
+   "m4_xnorm": {
+    "dimC": 10,
+    "energy_share_in_C": 0.147,
+    "energy_share_in_random_same_dim": 0.0018,
+    "top10_mass_in_C": [
+     0.743,
+     0.524,
+     0.617,
+     0.173,
+     0.271,
+     0.313,
+     0.108,
+     0.169,
+     0.053,
+     0.098
+    ],
+    "deflated_energy_retained_top25": 0.655,
+    "PR_before": 64.27,
+    "PR_after": 144.48,
+    "split_before": {
+     "k1": 0.981,
+     "k2": 0.937,
+     "k3": 0.953,
+     "k5": 0.944,
+     "k10": 0.914,
+     "k25": 0.818
+    },
+    "split_after": {
+     "k1": 0.857,
+     "k2": 0.968,
+     "k3": 0.96,
+     "k5": 0.857,
+     "k10": 0.883,
+     "k25": 0.777
+    },
+    "overlap_after_vs_before_top10": 0.652
+   },
+   "m16_raw": {
+    "dimC": 34,
+    "energy_share_in_C": 0.414,
+    "energy_share_in_random_same_dim": 0.0072,
+    "top10_mass_in_C": [
+     0.427,
+     0.473,
+     0.56,
+     0.419,
+     0.196,
+     0.125,
+     0.087,
+     0.088,
+     0.196,
+     0.103
+    ],
+    "deflated_energy_retained_top25": 0.583,
+    "PR_before": 1.5,
+    "PR_after": 1.5,
+    "split_before": {
+     "k1": 0.089,
+     "k2": 0.071,
+     "k3": 0.254,
+     "k5": 0.23,
+     "k10": 0.226,
+     "k25": 0.222
+    },
+    "split_after": {
+     "k1": 0.011,
+     "k2": 0.014,
+     "k3": 0.119,
+     "k5": 0.107,
+     "k10": 0.134,
+     "k25": 0.151
+    },
+    "overlap_after_vs_before_top10": 0.727
+   },
+   "m16_norm": {
+    "dimC": 34,
+    "energy_share_in_C": 0.269,
+    "energy_share_in_random_same_dim": 0.0067,
+    "top10_mass_in_C": [
+     0.847,
+     0.788,
+     0.821,
+     0.786,
+     0.553,
+     0.656,
+     0.444,
+     0.453,
+     0.404,
+     0.208
+    ],
+    "deflated_energy_retained_top25": 0.454,
+    "PR_before": 57.97,
+    "PR_after": 216.35,
+    "split_before": {
+     "k1": 0.996,
+     "k2": 0.995,
+     "k3": 0.995,
+     "k5": 0.994,
+     "k10": 0.984,
+     "k25": 0.959
+    },
+    "split_after": {
+     "k1": 0.991,
+     "k2": 0.99,
+     "k3": 0.921,
+     "k5": 0.967,
+     "k10": 0.913,
+     "k25": 0.926
+    },
+    "overlap_after_vs_before_top10": 0.355
+   },
+   "m16_x": {
+    "dimC": 34,
+    "energy_share_in_C": -0.149,
+    "energy_share_in_random_same_dim": -0.0009,
+    "top10_mass_in_C": [
+     0.526,
+     0.374,
+     0.191,
+     0.128,
+     0.147,
+     0.093,
+     0.09,
+     0.183,
+     0.17,
+     0.107
+    ],
+    "deflated_energy_retained_top25": 0.622,
+    "PR_before": 4.14,
+    "PR_after": 5.65,
+    "split_before": {
+     "k1": 0.014,
+     "k2": 0.025,
+     "k3": 0.106,
+     "k5": 0.13,
+     "k10": 0.153,
+     "k25": 0.146
+    },
+    "split_after": {
+     "k1": 0.0,
+     "k2": 0.002,
+     "k3": 0.077,
+     "k5": 0.091,
+     "k10": 0.11,
+     "k25": 0.116
+    },
+    "overlap_after_vs_before_top10": 0.778
+   },
+   "m16_xnorm": {
+    "dimC": 34,
+    "energy_share_in_C": 0.249,
+    "energy_share_in_random_same_dim": 0.0065,
+    "top10_mass_in_C": [
+     0.825,
+     0.805,
+     0.823,
+     0.746,
+     0.571,
+     0.59,
+     0.39,
+     0.388,
+     0.367,
+     0.226
+    ],
+    "deflated_energy_retained_top25": 0.455,
+    "PR_before": 64.27,
+    "PR_after": 250.93,
+    "split_before": {
+     "k1": 0.981,
+     "k2": 0.937,
+     "k3": 0.953,
+     "k5": 0.944,
+     "k10": 0.914,
+     "k25": 0.818
+    },
+    "split_after": {
+     "k1": 0.947,
+     "k2": 0.93,
+     "k3": 0.636,
+     "k5": 0.907,
+     "k10": 0.83,
+     "k25": 0.743
+    },
+    "overlap_after_vs_before_top10": 0.376
+   }
+  },
+  "int": {
+   "m4_raw": {
+    "dimC": 10,
+    "energy_share_in_C": 0.133,
+    "energy_share_in_random_same_dim": 0.002,
+    "top10_mass_in_C": [
+     0.109,
+     0.306,
+     0.153,
+     0.068,
+     0.174,
+     0.056,
+     0.223,
+     0.23,
+     0.106,
+     0.131
+    ],
+    "deflated_energy_retained_top25": 0.867,
+    "PR_before": 1.73,
+    "PR_after": 1.64,
+    "split_before": {
+     "k1": 0.064,
+     "k2": 0.055,
+     "k3": 0.049,
+     "k5": 0.086,
+     "k10": 0.176,
+     "k25": 0.287
+    },
+    "split_after": {
+     "k1": 0.044,
+     "k2": 0.036,
+     "k3": 0.031,
+     "k5": 0.052,
+     "k10": 0.124,
+     "k25": 0.245
+    },
+    "overlap_after_vs_before_top10": 0.842
+   },
+   "m4_norm": {
+    "dimC": 10,
+    "energy_share_in_C": 0.183,
+    "energy_share_in_random_same_dim": 0.0018,
+    "top10_mass_in_C": [
+     0.688,
+     0.589,
+     0.46,
+     0.241,
+     0.323,
+     0.206,
+     0.211,
+     0.136,
+     0.045,
+     0.138
+    ],
+    "deflated_energy_retained_top25": 0.651,
+    "PR_before": 38.32,
+    "PR_after": 84.6,
+    "split_before": {
+     "k1": 0.996,
+     "k2": 0.994,
+     "k3": 0.996,
+     "k5": 0.993,
+     "k10": 0.964,
+     "k25": 0.955
+    },
+    "split_after": {
+     "k1": 0.978,
+     "k2": 0.992,
+     "k3": 0.993,
+     "k5": 0.988,
+     "k10": 0.98,
+     "k25": 0.941
+    },
+    "overlap_after_vs_before_top10": 0.653
+   },
+   "m4_x": {
+    "dimC": 10,
+    "energy_share_in_C": 0.021,
+    "energy_share_in_random_same_dim": 0.0014,
+    "top10_mass_in_C": [
+     0.081,
+     0.166,
+     0.075,
+     0.099,
+     0.079,
+     0.046,
+     0.22,
+     0.071,
+     0.052,
+     0.034
+    ],
+    "deflated_energy_retained_top25": 0.905,
+    "PR_before": 1.56,
+    "PR_after": 1.52,
+    "split_before": {
+     "k1": 0.0,
+     "k2": 0.011,
+     "k3": 0.013,
+     "k5": 0.047,
+     "k10": 0.091,
+     "k25": 0.119
+    },
+    "split_after": {
+     "k1": 0.001,
+     "k2": 0.01,
+     "k3": 0.012,
+     "k5": 0.04,
+     "k10": 0.085,
+     "k25": 0.114
+    },
+    "overlap_after_vs_before_top10": 0.845
+   },
+   "m4_xnorm": {
+    "dimC": 10,
+    "energy_share_in_C": 0.135,
+    "energy_share_in_random_same_dim": 0.0017,
+    "top10_mass_in_C": [
+     0.642,
+     0.503,
+     0.456,
+     0.255,
+     0.305,
+     0.243,
+     0.085,
+     0.107,
+     0.109,
+     0.066
+    ],
+    "deflated_energy_retained_top25": 0.706,
+    "PR_before": 60.07,
+    "PR_after": 114.16,
+    "split_before": {
+     "k1": 0.907,
+     "k2": 0.91,
+     "k3": 0.923,
+     "k5": 0.78,
+     "k10": 0.771,
+     "k25": 0.718
+    },
+    "split_after": {
+     "k1": 0.488,
+     "k2": 0.895,
+     "k3": 0.847,
+     "k5": 0.871,
+     "k10": 0.726,
+     "k25": 0.703
+    },
+    "overlap_after_vs_before_top10": 0.679
+   },
+   "m16_raw": {
+    "dimC": 34,
+    "energy_share_in_C": 0.286,
+    "energy_share_in_random_same_dim": 0.0049,
+    "top10_mass_in_C": [
+     0.286,
+     0.372,
+     0.215,
+     0.205,
+     0.358,
+     0.111,
+     0.315,
+     0.306,
+     0.201,
+     0.259
+    ],
+    "deflated_energy_retained_top25": 0.714,
+    "PR_before": 1.73,
+    "PR_after": 1.72,
+    "split_before": {
+     "k1": 0.064,
+     "k2": 0.055,
+     "k3": 0.049,
+     "k5": 0.086,
+     "k10": 0.176,
+     "k25": 0.287
+    },
+    "split_after": {
+     "k1": 0.047,
+     "k2": 0.044,
+     "k3": 0.039,
+     "k5": 0.06,
+     "k10": 0.094,
+     "k25": 0.208
+    },
+    "overlap_after_vs_before_top10": 0.733
+   },
+   "m16_norm": {
+    "dimC": 34,
+    "energy_share_in_C": 0.308,
+    "energy_share_in_random_same_dim": 0.0066,
+    "top10_mass_in_C": [
+     0.785,
+     0.782,
+     0.814,
+     0.74,
+     0.575,
+     0.532,
+     0.61,
+     0.406,
+     0.356,
+     0.463
+    ],
+    "deflated_energy_retained_top25": 0.447,
+    "PR_before": 38.32,
+    "PR_after": 137.09,
+    "split_before": {
+     "k1": 0.996,
+     "k2": 0.994,
+     "k3": 0.996,
+     "k5": 0.993,
+     "k10": 0.964,
+     "k25": 0.955
+    },
+    "split_after": {
+     "k1": 0.992,
+     "k2": 0.979,
+     "k3": 0.888,
+     "k5": 0.975,
+     "k10": 0.965,
+     "k25": 0.922
+    },
+    "overlap_after_vs_before_top10": 0.339
+   },
+   "m16_x": {
+    "dimC": 34,
+    "energy_share_in_C": 0.126,
+    "energy_share_in_random_same_dim": 0.0029,
+    "top10_mass_in_C": [
+     0.255,
+     0.24,
+     0.2,
+     0.196,
+     0.159,
+     0.162,
+     0.313,
+     0.192,
+     0.131,
+     0.114
+    ],
+    "deflated_energy_retained_top25": 0.747,
+    "PR_before": 1.56,
+    "PR_after": 1.58,
+    "split_before": {
+     "k1": 0.0,
+     "k2": 0.011,
+     "k3": 0.013,
+     "k5": 0.047,
+     "k10": 0.091,
+     "k25": 0.119
+    },
+    "split_after": {
+     "k1": 0.003,
+     "k2": 0.005,
+     "k3": 0.007,
+     "k5": 0.029,
+     "k10": 0.077,
+     "k25": 0.103
+    },
+    "overlap_after_vs_before_top10": 0.72
+   },
+   "m16_xnorm": {
+    "dimC": 34,
+    "energy_share_in_C": 0.243,
+    "energy_share_in_random_same_dim": 0.006,
+    "top10_mass_in_C": [
+     0.757,
+     0.766,
+     0.833,
+     0.658,
+     0.581,
+     0.555,
+     0.308,
+     0.241,
+     0.317,
+     0.374
+    ],
+    "deflated_energy_retained_top25": 0.505,
+    "PR_before": 60.07,
+    "PR_after": 182.91,
+    "split_before": {
+     "k1": 0.907,
+     "k2": 0.91,
+     "k3": 0.923,
+     "k5": 0.78,
+     "k10": 0.771,
+     "k25": 0.718
+    },
+    "split_after": {
+     "k1": 0.88,
+     "k2": 0.802,
+     "k3": 0.799,
+     "k5": 0.829,
+     "k10": 0.684,
+     "k25": 0.662
+    },
+    "overlap_after_vs_before_top10": 0.395
+   }
+  }
+ }
+}
