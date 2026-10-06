@@ -1,0 +1,183 @@
+{
+ "version": "v10",
+ "tokenizer": "Qwen/Qwen3.6-27B (add_special_tokens=False)",
+ "validated": "2026-10-06",
+ "validator": "scratchpad/validate_v10_banks.py (independent re-check; tokenizer only, no weights, no GPU)",
+ "contexts": {
+  "primary": [
+   "negation_truth",
+   "entity_attribute",
+   "relational_composition"
+  ],
+  "backups": [
+   "binding_backup"
+  ],
+  "negative_control": "null_unrelated"
+ },
+ "context_order": [
+  "negation_truth",
+  "entity_attribute",
+  "relational_composition",
+  "binding_backup",
+  "null_unrelated"
+ ],
+ "banks": {
+  "negation_truth": {
+   "file": "negation_truth.jsonl",
+   "n_items": 64,
+   "n_clusters": 23,
+   "cluster_sizes": {
+    "2": 5,
+    "3": 18
+   },
+   "token_len_min": 8,
+   "token_len_max": 11,
+   "sha256": "98ef610550a3409d7ac683c40b292cd3a4a9fbb69d5990d6cd7875fcefac449c",
+   "gold_pattern_00_01_10_11": [
+    [
+     "X",
+     "Y",
+     "Y",
+     "X"
+    ]
+   ],
+   "hard_constraints": "all pass (validator re-check)",
+   "punct_site_lacks_factor_info": {
+    "A": 0,
+    "B": 0
+   },
+   "natural_site_lacks_factor_info": {
+    "A": 0,
+    "B": 0
+   },
+   "issues": [],
+   "fixed_by": "fix_banks.py (pre-data, Oct 6): sites after the factor words, per-cell natural sites, family clusters"
+  },
+  "entity_attribute": {
+   "file": "entity_attribute.jsonl",
+   "n_items": 64,
+   "n_clusters": 19,
+   "cluster_sizes": {
+    "3": 12,
+    "4": 7
+   },
+   "token_len_min": 7,
+   "token_len_max": 12,
+   "sha256": "faafdfde0f6dfa4d15126ea2ab0433a857452b4319f9e9c0d5136765060fff05",
+   "gold_pattern_00_01_10_11": [
+    [
+     "neither",
+     "Y",
+     "neither",
+     "X"
+    ]
+   ],
+   "hard_constraints": "all pass (validator re-check)",
+   "punct_site_lacks_factor_info": {
+    "A": 64,
+    "B": 64
+   },
+   "natural_site_lacks_factor_info": {
+    "A": 64,
+    "B": 0
+   },
+   "issues": [
+    "meta-only (not gold): SpaceX headquarters given as Hawthorne (moved to Starbase, TX in 2024); Volkswagen founder given as Ferdinand (founded by the German Labour Front; Porsche was the designer)."
+   ],
+   "fixed_by": "fix_banks.py (pre-data, Oct 6): sites after the factor words, per-cell natural sites, family clusters"
+  },
+  "relational_composition": {
+   "file": "relational_composition.jsonl",
+   "n_items": 64,
+   "n_clusters": 32,
+   "cluster_sizes": {
+    "2": 32
+   },
+   "token_len_min": 19,
+   "token_len_max": 25,
+   "sha256": "899e92e95d9548d6ec75e53fdb41acc1041d61d04fb3d7b2b4543f256f46457e",
+   "gold_pattern_00_01_10_11": [
+    [
+     "neither",
+     "neither",
+     "neither",
+     "X"
+    ]
+   ],
+   "hard_constraints": "all pass (validator re-check)",
+   "punct_site_lacks_factor_info": {
+    "A": 0,
+    "B": 0
+   },
+   "natural_site_lacks_factor_info": {
+    "A": 0,
+    "B": 0
+   },
+   "issues": [
+    "Only 16 distinct (X,Y) name pairs: clusters are scene ids (32), but meta.entity_family (16 x 4) is the conservative bootstrap unit."
+   ],
+   "fixed_by": "fix_banks.py (pre-data, Oct 6): sites after the factor words, per-cell natural sites, family clusters"
+  },
+  "binding_backup": {
+   "file": "binding_backup.jsonl",
+   "n_items": 64,
+   "n_clusters": 16,
+   "cluster_sizes": {
+    "4": 16
+   },
+   "token_len_min": 16,
+   "token_len_max": 16,
+   "sha256": "a6182ad04f7031276e30f386fe9fbf02fec3e8a9173743286526da6ba0c41015",
+   "gold_pattern_00_01_10_11": [
+    [
+     "Y",
+     "X",
+     "X",
+     "Y"
+    ]
+   ],
+   "hard_constraints": "all pass (validator re-check)",
+   "punct_site_lacks_factor_info": {
+    "A": 64,
+    "B": 0
+   },
+   "natural_site_lacks_factor_info": {
+    "A": 0,
+    "B": 0
+   },
+   "issues": [],
+   "fixed_by": "fix_banks.py (pre-data, Oct 6): sites after the factor words, per-cell natural sites, family clusters"
+  },
+  "null_unrelated": {
+   "file": "null_unrelated.jsonl",
+   "n_items": 32,
+   "n_clusters": 16,
+   "cluster_sizes": {
+    "2": 16
+   },
+   "token_len_min": 13,
+   "token_len_max": 13,
+   "sha256": "9efa47545b3fdfe56066ab5c917a4a8a94122b4556e71d5c158ff676cb43ce08",
+   "gold_pattern_00_01_10_11": [
+    [
+     "Y",
+     "Y",
+     "X",
+     "X"
+    ]
+   ],
+   "hard_constraints": "all pass (validator re-check)",
+   "punct_site_lacks_factor_info": {
+    "A": 0,
+    "B": 0
+   },
+   "natural_site_lacks_factor_info": {
+    "A": 0,
+    "B": 32
+   },
+   "issues": [],
+   "fixed_by": "fix_banks.py (pre-data, Oct 6): sites after the factor words, per-cell natural sites, family clusters"
+  }
+ },
+ "post_fix_note": "sha256 values are of the post-fix files that hs_v10.py asserts against"
+}
