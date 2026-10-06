@@ -1,0 +1,27 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 2578.68it/s]
+The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:   0%|          | 1/851 [00:00<01:56,  7.30it/s]Loading weights:   0%|          | 2/851 [00:00<02:21,  6.01it/s]Loading weights:   3%|▎         | 27/851 [00:00<00:09, 83.88it/s]Loading weights:   6%|▌         | 47/851 [00:00<00:06, 118.76it/s]Loading weights:   9%|▉         | 76/851 [00:00<00:04, 169.40it/s]Loading weights:  11%|█         | 95/851 [00:00<00:04, 174.70it/s]Loading weights:  14%|█▍        | 120/851 [00:00<00:03, 195.83it/s]Loading weights:  17%|█▋        | 147/851 [00:00<00:03, 213.34it/s]Loading weights:  20%|█▉        | 170/851 [00:01<00:03, 215.98it/s]Loading weights:  23%|██▎       | 193/851 [00:01<00:03, 215.04it/s]Loading weights:  25%|██▌       | 215/851 [00:01<00:03, 203.88it/s]Loading weights:  28%|██▊       | 240/851 [00:01<00:02, 209.78it/s]Loading weights:  31%|███       | 262/851 [00:01<00:02, 203.06it/s]Loading weights:  34%|███▍      | 291/851 [00:01<00:02, 209.71it/s]Loading weights:  37%|███▋      | 313/851 [00:01<00:02, 206.54it/s]Loading weights:  41%|████      | 345/851 [00:01<00:02, 229.81it/s]Loading weights:  43%|████▎     | 369/851 [00:01<00:02, 217.04it/s]Loading weights:  46%|████▋     | 395/851 [00:02<00:02, 215.91it/s]Loading weights:  49%|████▉     | 418/851 [00:02<00:02, 213.62it/s]Loading weights:  53%|█████▎    | 450/851 [00:02<00:01, 237.70it/s]Loading weights:  56%|█████▌    | 474/851 [00:02<00:01, 225.00it/s]Loading weights:  59%|█████▉    | 504/851 [00:02<00:01, 244.03it/s]Loading weights:  62%|██████▏   | 529/851 [00:02<00:01, 229.12it/s]Loading weights:  66%|██████▌   | 558/851 [00:02<00:01, 238.48it/s]Loading weights:  69%|██████▊   | 583/851 [00:02<00:01, 230.67it/s]Loading weights:  72%|███████▏  | 611/851 [00:03<00:01, 235.85it/s]Loading weights:  75%|███████▍  | 635/851 [00:03<00:00, 226.05it/s]Loading weights:  78%|███████▊  | 664/851 [00:03<00:00, 235.98it/s]Loading weights:  81%|████████  | 688/851 [00:03<00:00, 228.14it/s]Loading weights:  84%|████████▍ | 717/851 [00:03<00:00, 238.10it/s]Loading weights:  87%|████████▋ | 741/851 [00:03<00:00, 229.93it/s]Loading weights:  90%|█████████ | 770/851 [00:03<00:00, 239.87it/s]Loading weights:  93%|█████████▎| 795/851 [00:03<00:00, 233.91it/s]Loading weights:  97%|█████████▋| 823/851 [00:03<00:00, 239.74it/s]Loading weights: 100%|█████████▉| 848/851 [00:04<00:00, 228.18it/s]Loading weights: 100%|██████████| 851/851 [00:04<00:00, 209.91it/s]
+Fetching 1 files:   0%|          | 0/1 [00:00<?, ?it/s]Fetching 1 files: 100%|██████████| 1/1 [00:00<00:00, 1316.07it/s]
+[09:36:43] [hspace] [c6t] full: held-out windows 228..454 (227), 454 targets (16s)
+[09:37:58] [hspace] [c6t] L40 window 25/227 (91s)
+[09:39:04] [hspace] [c6t] L40 window 50/227 (157s)
+[09:40:09] [hspace] [c6t] L40 window 75/227 (222s)
+[09:41:15] [hspace] [c6t] L40 window 100/227 (288s)
+[09:42:21] [hspace] [c6t] L40 window 125/227 (354s)
+[09:43:26] [hspace] [c6t] L40 window 150/227 (419s)
+[09:44:32] [hspace] [c6t] L40 window 175/227 (485s)
+[09:45:38] [hspace] [c6t] L40 window 200/227 (551s)
+[09:46:43] [hspace] [c6t] L40 window 225/227 (616s)
+[09:46:49] [hspace] [c6t] L40 (k=5, 227 windows): S(EX)=+0.014 twins mean +0.002 rank 2/9 dS CI [-0.003,+0.029] drI CI [-0.023,+0.007] drM lo -0.002 KL EX 0.0015 twins [0.0009,0.0011] pca25 S +0.393 -> not real (622s)
+[09:47:37] [hspace] [c6t] L52 window 25/227 (670s)
+[09:48:16] [hspace] [c6t] L52 window 50/227 (709s)
+[09:48:55] [hspace] [c6t] L52 window 75/227 (748s)
+[09:49:34] [hspace] [c6t] L52 window 100/227 (787s)
+[09:50:12] [hspace] [c6t] L52 window 125/227 (825s)
+[09:50:51] [hspace] [c6t] L52 window 150/227 (864s)
+[09:51:30] [hspace] [c6t] L52 window 175/227 (903s)
+[09:52:09] [hspace] [c6t] L52 window 200/227 (942s)
+[09:52:48] [hspace] [c6t] L52 window 225/227 (981s)
+[09:52:51] [hspace] [c6t] L52 (k=5, 227 windows): S(EX)=+0.013 twins mean +0.007 rank 3/9 dS CI [-0.011,+0.026] drI CI [-0.020,+0.021] drM lo -0.007 KL EX 0.0018 twins [0.0012,0.0013] pca25 S -0.079 -> not real (984s)
+[09:52:51] [hspace] [c6t] DONE (984s)
