@@ -1,0 +1,5 @@
+L16 loc: top1% rows carry 1.00 of energy | split k25: raw=0.22 trim1=0.43 trim5=0.72 norm=0.96 x=0.15 x_trim1=0.16 | top toks: '1' '2' '-' ' one' '1' ' ' ' County' '2'
+L16 int: top1% rows carry 1.00 of energy | split k25: raw=0.29 trim1=0.51 trim5=0.71 norm=0.95 x=0.12 x_trim1=0.13 | top toks: ' the' ' track' ' .' ' The' ' "' ' ,' 'ess' ' and'
+L28 loc: top1% rows carry 0.99 of energy | split k25: raw=0.21 trim1=0.54 trim5=0.87 norm=0.96 x=0.11 x_trim1=0.32 | top toks: ' one' '-' ' ' '2' ' Pun' ' Farmer' ' "' ' SR'
+L28 int: top1% rows carry 0.99 of energy | split k25: raw=0.48 trim1=0.62 trim5=0.74 norm=0.92 x=0.19 x_trim1=0.22 | top toks: ' ,' '1' '1' '-' '2' ' ,' ' ,' ' \n'
+done
