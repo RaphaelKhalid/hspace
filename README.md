@@ -44,13 +44,22 @@ I call that subspace **H-space**, after the Hessian.
 | v5 vs matched-flatness basis-misspecification null | 40, 52 | **robust**. Simulated split@3 0.01–0.07 vs data 0.90–0.94 (a steep f = Σ misspecification *can* fake v5, but the data's spectrum rules that regime out) |
 | **causal Σ-orbit twin ablation** of the v5 patterns (needs REAL at both layers) | 40, 52 | **FAIL**. At L40 the v5 patterns are not more interaction-specific than 8 exactly variance-matched twins: S = 0.014 vs 0.002, rank 2/9, CI includes 0 |
 
-**Bottom line (Oct 6).**
+**Update (Oct 6, ~12:40 UTC): two follow-up tests, both frozen before the data existed.**
+- **v8: punctuation-conditional H-structure REPLICATED on fresh 27B data.**
+  - At L16 and L40 the curvature at punctuation positions has a low-dimensional, non-Σ-commuting subspace. Split-half is 0.82–0.87, against a flip null of 0.02.
+  - It reproduces across independent runs: top-5 overlap with run 2 is 0.86 / 0.79, against 0.006 by chance.
+  - No causal test yet, so this is a replicated candidate, not proven function.
+- **First-order screen (goal 2).**
+  - At 27B a J-lens-cost gradient screen predicts where H-lens curvature lives: Spearman 0.82–0.85 over rows.
+  - Sampling windows by the screen cuts the HVPs needed by **80× / 10.6×** at equal estimator variance. End to end, including the screen, the saving is about 2.5–3×.
+
+**Bottom line (Oct 6, before the follow-ups).**
 - At two held-out layers of Qwen3.6-27B, the H-lens contains a **reproducible second-order structure that is not a function of the activation covariance**. It is also not J-space (overlap at chance), not the massive-activation geometry, and not explained by basis-estimation error.
 - But under the frozen causal test it is **not interaction-specific**.
 - So I have **not** found an H-space "as provably as J-space". What exists is a reproducible non-Σ-commuting curvature structure without demonstrated function.
 - Every step, including one retraction (`results/CORRECTIONS.md`), is hashed in `results/runlog_pod.md` before its data.
 - **C6′ (descriptive):** S is mostly dose. At L16 it tracks the raw variance each ablation removes (r = 0.999), and the robust subspace's interaction-per-damage ratio equals J25's. At matched damage (L28, L40) the robust subspace is about 1.5–1.7× more interaction-selective than J25, but it is mostly the Σ prior (correction in `results/CORRECTIONS.md`).
-- **Compute:** one RTX PRO 6000 pod for 7.65 h, about $13.1 in total. All 78 result files were verified by sha256 on a private HF dataset before the pod was terminated.
+- **Compute:** one RTX PRO 6000 pod for 7.65 h, plus a 38-minute v8 pod: about $14.2 in total. All 78 result files were verified by sha256 on a private HF dataset before the pod was terminated.
 
 ## Theory (`hlens/paper/theory-v2.md`, red-teamed by 48 adversarial agents)
 - **Lemma 1, the second-order adjoint (standard):** the exact block decomposition of the residual Hessian, verified to ≤ 1.5e-6 on Qwen3.5-0.8B.

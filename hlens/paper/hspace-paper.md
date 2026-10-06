@@ -233,6 +233,32 @@ This paper makes three moves:
 - **So this is not an H-space "as provable as J-space":** it is a reproducible, non-Σ-commuting curvature structure without a demonstrated function.
 - **Open caveat.** Position-dependent covariance could produce non-Σ-commuting structure. Several patterns carry 1.2–1.6× more energy early in the window. The dumps cannot rule this out.
 
+## 4c. Token-conditional H-structure and a first-order screen (Oct 6, after run 2)
+
+**v7 (laptop, dumps, frozen rule; digits): not found (0/4 layers).** Digit-row curvature has large λ1 (3.3–5.3× the flip maximum), but no stable 3-D subspace (split@3 0.40–0.68). Punctuation rows were the descriptive exception: split@3 0.60–0.80.
+
+**v8 (fresh 27B data, prereg `SCOPE-hspace-v8.md` pushed before the pod existed): punctuation-conditional H-structure REPLICATED.**
+- **Data.** 256 fresh wikitext-train windows; 33 duplicates of run-2 windows were dropped.
+- **Method.** The v5 sign-flip machinery restricted to punctuation rows (3,775 per layer), in run-2's whitening frame.
+
+| layer | norm λ1 (flip max) | norm split@3 | xnorm λ1 (flip max) | xnorm split@3 | cross-run top-5 overlap with run 2 (chance) |
+|---|---|---|---|---|---|
+| 16 | 16.4 (2.4) | 0.82 | 8.3 (1.5) | 0.82 | **0.86** (0.0055) |
+| 40 | 10.9 (2.4) | 0.87 | 8.4 (1.9) | 0.82 | **0.79** (0.0061) |
+
+- The planted rank-3 control was "detected" at both layers, but its recovery was low (0.01–0.24) because the real structure dominates, so it is a weak power check.
+
+**What this licenses.** At two layers of Qwen3.6-27B, the curvature measured at punctuation positions contains a low-dimensional, non-Σ-commuting subspace. It reproduces within a run and **across independent runs and fresh data** (top-5 overlap 0.79–0.86), and it is specific to that token class.
+
+**What it does not license.** Function. v8 has no causal test, and the earlier causal test of the all-rows v5 patterns failed. So this is a replicated *candidate* H-subspace, not an H-space "as provable as J-space".
+
+**First-order screen (goal 2; Prop. 9, Obs. 8.3).**
+- At 27B the H-lens rows are extremely heavy-tailed: the Kish effective sample size is 0.005% / 0.015% of rows.
+- The J-lens-cost screen |Σ^{1/2} ∂F/∂x_p|² predicts each row's curvature energy: Spearman 0.82 / 0.85 over rows and 0.71 / 0.78 over windows.
+- Sampling windows by screen mass (Prop. 9) cuts the HVPs needed at equal Frobenius variance by **80× (L16) and 10.6× (L40)**. The oracle bound is 12,272× / 368×.
+- End to end, including one backward pass per screened window, the saving is about 2.5–3×.
+- This makes the H-lens's dominant cost, HVPs, nearly negligible relative to the J-lens-cost screen.
+
 ## 5. White-box control read (goal 3): preregistered primary NEGATIVE
 
 **Setup.**
