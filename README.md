@@ -76,9 +76,9 @@ I call that subspace **H-space**, after the Hessian.
 - **Lemma 3, the mixed-difference identity (standard):** a finite 2×2 interaction equals the Hessian averaged over the rectangle the two moves span.
   - On real 0.8B activations at feature scale, the Hessian at the data point predicts interactions at r = −0.09. The full rectangle average predicts them at r = 0.98 (a check of the code and quadrature).
 - **Proposition 0:** three energy operators, M^row ⪰ M^diag ⪰ M^lens, and what each estimator converges to (§6A).
-- **Construction 6.1, the J-adjoint local H-lens:** truncate to the next k blocks and use the J-lens adjoint of record.
-  - On 0.8B, k = 1 (6–9% of the exact cost) captures 83–84% of the exact H-space energy, and k = 4 captures 90–94%.
-  - This is the H-lens at roughly J-lens cost.
+- **Construction 6.1, the J-adjoint local H-lens:** differentiate only the next k blocks and use the J-lens adjoint of record. It is exact only at k = L*−ℓ; for smaller k it is a heuristic.
+  - On 0.8B (one seed, in-sample), k = 1 differentiates 1/17–1/11 of the downstream blocks (roughly 13–26% of the exact estimator's cost, an estimate), and its top-25 captures 83% of the energy the exact top-25 captures; k = 4 captures 90–94%.
+  - The global J-lens Gram top-25, which needs no HVPs, already captures 77–79%. So k = 1 is not clearly better than J-space; from k ≈ 4 it is (theory-v2 §6).
 - **Engineering:** `bf16w.BFLinear` stores weights in bf16 and computes in exact fp32, differentiable to any order. Its HVP matches all-fp32 to 7e-7, which puts exact Hessian-vector products of a 27B model on one 96 GB GPU.
 
 ## Goal 3: white-box signals in AI control: mechanical prereg verdict UNCALIBRATED (descriptive only); NEGATIVE on the statistics

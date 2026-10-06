@@ -55,9 +55,9 @@ This paper makes three moves:
 
 **New verified constructions:**
 - **The local J-adjoint H-lens** (Construction 6.1; `hs_local.py`, 0.8B). Truncate to the k blocks after the source layer and use the J-lens adjoint of record.
-  - With **k = 1 (6–9% of the exact cost) it captures 83–84% of the exact top-25 H-energy**, with subspace overlap 0.56–0.60.
+  - With **k = 1 (1/17–1/11 of the downstream blocks differentiated; roughly 13–26% of the exact estimator's cost, an estimate) its top-25 captures 83% of the energy the exact top-25 captures**, with subspace overlap 0.56–0.60 (one seed, in-sample).
   - With k = 4 it captures 90–94%; with k = 8, 93–98%.
-  - This is the H-lens at roughly J-lens cost (goal 2).
+  - The global J-lens Gram top-25, which needs no HVPs, captures 77–79%. So k = 1 is not clearly better than J-space; from k ≈ 4 it is (theory-v2 §6).
 - **The rectangle check** (`hs_rectangle.py`, 0.8B, layer 12, feature-scale moves). The local Hessian predicts finite interactions at r = −0.09. The full-rectangle average (5×5 Gauss–Legendre) predicts them at r = 0.98.
   - This is a check of the code and the quadrature, not of the lemma.
   - It locates v1's effective-scale failure in *where* the Hessian is evaluated.
