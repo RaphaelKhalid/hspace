@@ -35,7 +35,7 @@ OPTS = ["-i", KEY, "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=10", 
 D = "/workspace/mats/interpcontrol/hlens"
 REMOTE = (f'cd {D}; echo "@@R"; grep -E "\\] \\[(hspace|ctrl)\\]|^\\[pod " runlog.md | tail -300; echo "@@G"; '
           'nvidia-smi --query-gpu=utilization.gpu,memory.used,power.draw --format=csv,noheader,nounits; '
-          'echo "@@D"; du -sb /workspace/hf 2>/dev/null | cut -f1; echo "@@J"; stat -c %Y out/hspace_full.json 2>/dev/null; '
+          'echo "@@D"; du -sb /workspace/hf 2>/dev/null | cut -f1; echo "@@J"; stat -c %Y out/hspace_full.json 2>/dev/null; echo "@@K"; stat -c %Y out/hspace2_full.json 2>/dev/null; echo "@@L"; stat -c %Y out/c6prime_full.json 2>/dev/null; '
           'echo "@@E"; grep -E "Error|Traceback|OutOfMemory" out/hspace_full.log out/ctrl_full.log 2>/dev/null | tail -3')
 STATE: dict = {"updated": 0, "ok": False}
 ACC = {"wh": 0.0, "pflop": 0.0, "t": None}          # integrated GPU energy and estimated compute (peak ~110 TFLOP/s x util)
@@ -46,7 +46,7 @@ try:
 except Exception:  # noqa: BLE001
     ACC["pflop"] = 105.7          # carried over from the previous dashboard process (measured 05:04 UTC)
 CTR = []                                              # (t, phase, i) history for a live rate
-JSON_MTIME = {"v": None}
+JSON_MTIME = {"v": None, "v2": None, "c6": None}
 
 
 def sh(args, timeout=40):
@@ -106,6 +106,8 @@ def parse(out: str) -> dict:
         st["hf_gb"] = 0
     st["errors"] = sec.get("E", "").strip()[-400:]
     st["json_mtime"] = sec.get("J", "").strip()
+    st["json2_mtime"] = sec.get("K", "").strip()
+    st["c6_mtime"] = sec.get("L", "").strip()
     return st
 
 
@@ -136,6 +138,30 @@ def results() -> dict:
     return {"rows": rows, "labels": r.get("labels")}
 
 
+def results2() -> dict:
+    out = {}
+    try:
+        r2 = json.loads((LOCAL / "hspace2_full.json").read_text()) if (LOCAL / "hspace2_full.json").exists() else {"layers": {}}
+        r3 = json.loads((LOCAL / "c6prime_full.json").read_text()) if (LOCAL / "c6prime_full.json").exists() else {"layers": {}}
+    except ValueError:
+        return out
+    for l, L in r2.get("layers", {}).items():
+        x, nrm, ix = L.get("loc_x", {}), L.get("loc_norm", {}), L.get("int_x", {})
+        ab = L.get("ablation", {})
+        c3 = L.get("ablation", {}) and None
+        out[l] = {"x25": x.get("split_half"), "x5": x.get("split_half_k5"), "xf": x.get("split_half_kfloor"), "kf": x.get("kfloor"),
+                  "n25": nrm.get("split_half"), "i25": ix.get("split_half"), "PR": x.get("PR"),
+                  "C3": L.get("C3_loc_x_vs_J25"), "KLx": (ab.get("loc_x") or {}).get("KL_x_rand"),
+                  "S": ((r3.get("layers", {}).get(l) or {}).get("conds", {}).get("loc_x") or {}).get("S"),
+                  "S_ci": ((r3.get("layers", {}).get(l) or {}).get("conds", {}).get("loc_x") or {}).get("S_ci95"),
+                  "c6p": (r3.get("layers", {}).get(l) or {}).get("C6prime_pass_loc_x")}
+    for l, L in r3.get("layers", {}).items():
+        if l not in out:
+            c = (L.get("conds", {}).get("loc_x") or {})
+            out[l] = {"S": c.get("S"), "S_ci": c.get("S_ci95"), "c6p": L.get("C6prime_pass_loc_x")}
+    return out
+
+
 def loop():
     while True:
         try:
@@ -146,7 +172,13 @@ def loop():
                 r = sh([SCP, *OPTS, "-P", PORT, f"root@{HOST}:{D}/out/hspace_full.json", str(LOCAL / "hspace_full.json")])
                 if r.returncode == 0:
                     JSON_MTIME["v"] = st["json_mtime"]
+            for key_, fn, mt in (("v2", "hspace2_full.json", st.get("json2_mtime")), ("c6", "c6prime_full.json", st.get("c6_mtime"))):
+                if mt and mt != JSON_MTIME[key_]:
+                    r = sh([SCP, *OPTS, "-P", PORT, f"root@{HOST}:{D}/out/{fn}", str(LOCAL / fn)])
+                    if r.returncode == 0:
+                        JSON_MTIME[key_] = mt
             st["res"] = results()
+            st["res2"] = results2()
             now = time.time()
             g = st.get("gpu") or {}
             if ACC["t"] is not None and g:

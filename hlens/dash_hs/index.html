@@ -34,6 +34,8 @@ pre{white-space:pre-wrap;color:#9a9a9a;font-size:12px;margin:0;max-height:260px;
 <div class="card" style="margin-top:12px"><div class="k">preregistered criteria (27B, per layer) · PASS needs C0 + all of C1–C6 at ≥2 of 4 layers</div>
 <table><thead><tr><th>layer</th><th>C1 split ≥0.7</th><th>C2 energy ≥0.5</th><th>C3 J-overlap &lt;0.5</th><th>C4 1σ ratio ≥10</th><th>C5 KL ×rand ≥3</th><th>C6 dissoc ≥2</th><th>PR</th></tr></thead><tbody id="rows"><tr><td colspan="8" class="na">waiting for the first layer…</td></tr></tbody></table>
 <div class="sub" id="c0" style="margin-top:8px"></div></div>
+<div class="card" style="margin-top:12px"><div class="k">run 2 (exploratory) + v3 prereg · robust estimators · C1' = split at noise-floor k ≥ 0.7 (k ≥ 3) · C6' = AND-specificity S ≥ 0.2 with CI &gt; 0 and &gt; J/random</div>
+<table><thead><tr><th>layer</th><th>loc_x split@25</th><th>@5</th><th>@k_floor (k)</th><th>loc_norm @25</th><th>int_x @25</th><th>PR</th><th>vs J25</th><th>KL ×rand</th><th>C6' S [CI]</th></tr></thead><tbody id="rows2"><tr><td colspan="10" class="na">waiting for run 2 (starts after the control read)…</td></tr></tbody></table></div>
 <div class="card" style="margin-top:12px"><div class="k">pod log (live)</div><pre id="log"></pre></div>
 </div>
 <script>
@@ -58,6 +60,10 @@ function render(){
   if(ks.length){document.getElementById('rows').innerHTML=ks.map(l=>{const x=R[l];
     const c6=x.C6_ratio==null?'<td class="na">—</td>':`<td class="${(x.C6_ratio>=2&&x.C6_perp>=2&&x.C6_lo>x.C6_bar)?'pass':'fail'}">${f(x.C6_ratio)} / ⊥J ${f(x.C6_perp)}</td>`;
     return `<tr><td>L${l}</td>${cell(x.C1_split,v=>v>=0.7)}${cell(x.C2_energy,v=>v>=0.5)}${cell(x.C3_Jover,v=>v<0.5)}${cell(x.C4_nat,v=>v>=10,1)}${cell(x.C5_KL,v=>v>=3,1)}${c6}<td>${f(x.PR,1)}</td></tr>`}).join('')}
+  const R2=S.res2||{};const k2=Object.keys(R2).sort((a,b)=>a-b);
+  if(k2.length){document.getElementById('rows2').innerHTML=k2.map(l=>{const x=R2[l];
+    const sp=x.S==null?'<td class="na">pending</td>':`<td class="${x.c6p?'pass':'fail'}">${f(x.S)} [${x.S_ci?f(x.S_ci[0]):'-'}, ${x.S_ci?f(x.S_ci[1]):'-'}]</td>`;
+    return `<tr><td>L${l}</td>${cell(x.x25,v=>v>=0.7)}${cell(x.x5,v=>v>=0.7)}<td class="${(x.xf>=0.7&&x.kf>=3)?'pass':(x.xf==null?'na':'fail')}">${f(x.xf)} (${x.kf==null?'-':x.kf})</td>${cell(x.n25,v=>v>=0.7)}${cell(x.i25,v=>v>=0.7)}<td>${f(x.PR,1)}</td>${cell(x.C3,v=>v<0.5)}${cell(x.KLx,v=>v>=3,1)}${sp}</tr>`}).join('')}
   const pc=Object.values(R).map(x=>x.pc).find(v=>v!=null);
   document.getElementById('c0').innerHTML=pc==null?'C0 positive control: pending (layer 40)':`C0 positive control (planted gate recovery ≥0.8): <span class="${pc>=0.8?'pass':'fail'}">${f(pc)}</span> ${pc>=0.8?'✅ instrument valid':'⛔ VOID'}`;
   document.getElementById('log').textContent=(S.lines||[]).join('\n')+(S.errors?'\n\n⚠️ '+S.errors:'');
