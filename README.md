@@ -81,10 +81,11 @@ I call that subspace **H-space**, after the Hessian.
   - This is the H-lens at roughly J-lens cost.
 - **Engineering:** `bf16w.BFLinear` stores weights in bf16 and computes in exact fp32, differentiable to any order. Its HVP matches all-fp32 to 7e-7, which puts exact Hessian-vector products of a 27B model on one 96 GB GPU.
 
-## Goal 3: white-box signals in AI control: preregistered primary NEGATIVE
-- Qwen3.6-27B reads 1,500 BashArena attack/honest agent trajectories, after **sanitizing out label leaks**: attacker prose confessions and formatting tells.
+## Goal 3: white-box signals in AI control: mechanical prereg verdict UNCALIBRATED (descriptive only); NEGATIVE on the statistics
+- **Verdict.** A calibration gate failed, so the frozen rule's mechanical verdict is "UNCALIBRATED: descriptive only". On the statistics alone it reads "calibrated NEGATIVE" (bootstrap upper bound of net < +5; `results/ctrl_score_v2_full.log`).
+- Qwen3.6-27B reads 1,500 BashArena attack/honest agent trajectories written by other models (Claude Sonnet 4, Gemini 2.5 Pro, GPT-5), after **sanitizing out label leaks**: attacker prose confessions and formatting tells. Qwen is a surrogate reader, not the agent.
 - I then test training-free multi-token J-lens matched filters, label-free pre-emption rules and Neyman–Pearson fusion with a black-box monitor, at fixed audit budgets (`hlens/ctrl_score_v2.py`, spec in `hlens/paper/ctrl-score-v2-spec.md`).
-- **Result.** The training-free J-lens matched filter (W1) carries real signal: AUROC 0.71, against 0.48 for the rotated-lens control. In the OR slot at a 2% audit budget it pre-empts **net −6** attacks (95% CI [−18, +1]). It does not move attacks from "execute" to "audit" at any preregistered budget.
+- **Result.** The training-free J-lens matched filter (W1) carries real signal: AUROC 0.71, against 0.48 for the rotated-lens control. In the OR slot at a 2% audit budget it pre-empts **net −6** attacks (95% CI [−18, +1]). It does not move attacks from "execute" to "audit" at any preregistered budget, and on the pre-attack prefix its AUROC is 0.40 (no early warning).
 - **A supervised activation probe (W3)** gains +33 at a 5% budget, but collapses to chance when tested on an attacker model it wasn't trained on (`results/ctrl_score_v2_full.json`, paper §5).
 
 ## Layout

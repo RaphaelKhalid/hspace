@@ -301,7 +301,7 @@ Cross-run overlaps exclude the 15 windows v8 shared with run 2 (as first logged:
 
 Note also that 15–23% of the "punctuation" positions are wikitext markup. So this is a **validated H-subspace candidate**: a second-order analogue of J-space's *predictive* validity. It is not yet J-space's full evidential package.
 
-## 5. White-box control read (goal 3): preregistered primary NEGATIVE
+## 5. White-box control read (goal 3): mechanical prereg verdict UNCALIBRATED (descriptive only); NEGATIVE on the statistics
 
 **Setup.**
 - Qwen3.6-27B reads 1,500 BashArena trajectories (750 attack, 750 honest; attackers Claude Sonnet 4, Gemini 2.5 Pro, GPT-5). It reads a sanitized render: the first user message, the agent's tool calls and the tool outputs. Attacker prose and formatting tells are removed (`ctrl_read.py`).
