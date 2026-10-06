@@ -196,3 +196,24 @@
 [07:48:30] [hspace] [v2] L52 probe 97/256 (6118s, peak 90.9 GB)
 [freeze v5 DECISION RULE, written before any flip computation on L40 or L52] hs_flip5.py sha 4553eef77ee2e338. Motivation (from L16 variant b, exploratory): lambda_1 beat all 200 flips for every estimator, but deflating a fixed non-axis-aligned span made the null itself reproduce (null split3 max 0.98), so split3 had no power. v5 replaces deflation with an axis-aligned drop (PCA axes 1-5 + the axes with most massive/radial-span mass until 90% of that mass inside PCA 1..1000 is removed), which commutes with the flips. PASS = "non-Sigma-commuting H-structure (v5)" iff at BOTH L40 and L52, for BOTH norm and xnorm: lambda_1 > all 200 flip replicates, split3 > all 200 flip replicates, split3 >= 0.7, and the planted rank-3 control is detected. Else FAIL. Reported regardless: top-10 pattern overlap with J25w (J leakage; >= 0.5 means first-order J structure), with C, PCA25/100; raw_trim5 (descriptive). The frozen v4-flip rule on L16/L28 (variant b) is reported as FAIL independently of v5.
 [07:50:09] [hspace] [v2] L52 probe 129/256 (6218s, peak 90.9 GB)
+[07:51:50] [hspace] [v2] L52 probe 161/256 (6318s, peak 90.9 GB)
+[07:53:28] [hspace] [v2] L52 probe 193/256 (6416s, peak 90.9 GB)
+[07:55:06] [hspace] [v2] L52 probe 225/256 (6514s, peak 90.9 GB)
+[07:56:41] [hspace] [v2] L52 probe 256/256 (6609s, peak 90.9 GB)
+[07:57:02] [hspace] [v2] L52 split-half: loc_raw=0.37 loc_norm=0.97 loc_x=0.29 loc_xnorm=0.93 int_raw=0.72 int_norm=0.90 int_x=0.65 int_xnorm=0.84 | locP: raw=0.47 norm=0.94 x=0.44 xnorm=0.92 | k5: loc_raw=0.35 loc_norm=0.80 loc_x=0.35 loc_xnorm=0.97 int_raw=0.74 int_norm=0.92 int_x=0.69 int_xnorm=0.92 | PR: loc_raw=1.1 loc_norm=58.1 loc_x=1.1 loc_xnorm=56.6 int_raw=2.0 int_norm=37.3 int_x=21.8 int_xnorm=41.4 | vsJ25: loc_raw=0.26 loc_norm=0.58 loc_x=0.25 loc_xnorm=0.60 int_raw=0.44 int_norm=0.55 int_x=0.50 int_xnorm=0.57 (6630s)
+[07:57:05] [hspace] [v2] labels 1/455 (6633s)
+[07:59:39] [hspace] [v2] labels 57/455 (6787s)
+[08:02:15] [hspace] [v2] labels 113/455 (6943s)
+[freeze 08:03:12] TWIN RULE (written before v5 result): hs_c6twin.py --v5 ee7a663b9c7eec61, chain5.sh 2a9588e40ce5cdf3. Runs only if v5 PASSES. Per layer REAL iff S(EX) ranks 1/9 vs 8 Sigma-orbit twins, paired-window bootstrap CI of dS > 0, CI of drI < 0, drM lower bound > -0.05, KL(EX) within twin range (held-out windows 228-454, ablate positions >= SKIP). Overall: H-space causally confirmed (v5-twin) iff REAL at BOTH L40 and L52.
+[08:04:52] [hspace] [v2] labels 169/455 (7100s)
+[pod 08:05:23] starting v5 flip test (L40, L52)
+[08:07:20] [hspace] [v2] labels 225/455 (7248s)
+[08:09:58] [hspace] [v2] labels 281/455 (7406s)
+[08:12:29] [hspace] [v2] labels 337/455 (7557s)
+[08:15:06] [hspace] [v2] labels 393/455 (7714s)
+[08:17:47] [hspace] [v2] labels 449/455 (7875s)
+[08:18:04] [hspace] [v2] labels: 910 targets, 91/91 (7892s)
+[08:18:07] [hspace] [v2] L16 ablation window 1/455 (7895s)
+[08:23:26] [hspace] [v2] L16 ablation window 114/455 (8214s)
+[pod 08:24:46] v5 flip test exit 0
+[pod 08:26:54] DEVIATION (scheduling only): chain3 (C6prime) and chain5 replaced by chain6 a11f8edb9b68b28b: after run 2, the frozen v5-twin causal test runs first (deadline 10:50, before the 11:00 watchdog), then the preregistered C6prime with its frozen 10:30 deadline. Reason: v3 verdict already determined (C1prime fails at L16/L28/L40/L52), so C6prime cannot change it; the twin test is the frozen causal test of the passing v5 rule. No analysis code or threshold changed.
