@@ -1,0 +1,35 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 2753.37it/s]
+The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:   0%|          | 1/851 [00:00<01:52,  7.52it/s]Loading weights:   0%|          | 2/851 [00:00<02:19,  6.08it/s]Loading weights:   3%|▎         | 27/851 [00:00<00:09, 87.93it/s]Loading weights:   5%|▌         | 46/851 [00:00<00:06, 119.39it/s]Loading weights:   8%|▊         | 68/851 [00:00<00:05, 149.23it/s]Loading weights:  11%|█         | 95/851 [00:00<00:04, 185.26it/s]Loading weights:  14%|█▍        | 119/851 [00:00<00:03, 200.52it/s]Loading weights:  17%|█▋        | 143/851 [00:00<00:03, 211.00it/s]Loading weights:  19%|█▉        | 165/851 [00:01<00:03, 208.52it/s]Loading weights:  22%|██▏       | 187/851 [00:01<00:03, 204.89it/s]Loading weights:  24%|██▍       | 208/851 [00:01<00:03, 198.39it/s]Loading weights:  28%|██▊       | 235/851 [00:01<00:02, 217.57it/s]Loading weights:  30%|███       | 258/851 [00:01<00:02, 207.91it/s]Loading weights:  33%|███▎      | 280/851 [00:01<00:02, 204.27it/s]Loading weights:  36%|███▌      | 307/851 [00:01<00:02, 220.61it/s]Loading weights:  39%|███▉      | 331/851 [00:01<00:02, 223.37it/s]Loading weights:  42%|████▏     | 358/851 [00:01<00:02, 234.32it/s]Loading weights:  45%|████▍     | 382/851 [00:02<00:02, 227.59it/s]Loading weights:  48%|████▊     | 405/851 [00:02<00:02, 220.81it/s]Loading weights:  50%|█████     | 428/851 [00:02<00:01, 218.28it/s]Loading weights:  53%|█████▎    | 452/851 [00:02<00:01, 223.30it/s]Loading weights:  56%|█████▌    | 475/851 [00:02<00:01, 220.01it/s]Loading weights:  59%|█████▉    | 504/851 [00:02<00:01, 239.45it/s]Loading weights:  62%|██████▏   | 529/851 [00:02<00:01, 225.91it/s]Loading weights:  66%|██████▌   | 558/851 [00:02<00:01, 236.86it/s]Loading weights:  68%|██████▊   | 582/851 [00:02<00:01, 226.80it/s]Loading weights:  72%|███████▏  | 610/851 [00:03<00:00, 241.40it/s]Loading weights:  75%|███████▍  | 635/851 [00:03<00:00, 224.29it/s]Loading weights:  78%|███████▊  | 664/851 [00:03<00:00, 235.03it/s]Loading weights:  81%|████████  | 688/851 [00:03<00:00, 227.89it/s]Loading weights:  84%|████████▍ | 717/851 [00:03<00:00, 238.13it/s]Loading weights:  87%|████████▋ | 741/851 [00:03<00:00, 229.99it/s]Loading weights:  90%|█████████ | 770/851 [00:03<00:00, 239.90it/s]Loading weights:  93%|█████████▎| 795/851 [00:03<00:00, 234.32it/s]Loading weights:  97%|█████████▋| 823/851 [00:03<00:00, 240.18it/s]Loading weights: 100%|█████████▉| 848/851 [00:04<00:00, 233.89it/s]Loading weights: 100%|██████████| 851/851 [00:04<00:00, 210.10it/s]
+Fetching 1 files:   0%|          | 0/1 [00:00<?, ?it/s]Fetching 1 files: 100%|██████████| 1/1 [00:00<00:00, 1272.16it/s]
+[09:53:11] [hspace] [c6p] full: 228 windows, 456 targets, layers [16, 28, 40, 52] (16s)
+[09:53:16] [hspace] [c6p] L16 window 1/228 (21s)
+[09:55:14] [hspace] [c6p] L16 window 39/228 (139s)
+[09:57:12] [hspace] [c6p] L16 window 77/228 (257s)
+[09:59:11] [hspace] [c6p] L16 window 115/228 (376s)
+[10:01:09] [hspace] [c6p] L16 window 153/228 (495s)
+[10:03:08] [hspace] [c6p] L16 window 191/228 (613s)
+[10:05:03] [hspace] [c6p] L16: loc_x rI=0.75 rM=0.91 S=+0.17 [+0.07,+0.28] | loc_norm rI=0.33 rM=0.86 S=+0.52 [+0.32,+0.71] | run1_H25 rI=0.52 rM=0.89 S=+0.36 [+0.21,+0.51] | J25 rI=0.65 rM=0.92 S=+0.28 [+0.13,+0.44] | rand_0 rI=0.98 rM=1.00 S=+0.02 [-0.01,+0.05] | rand_1 rI=0.96 rM=0.99 S=+0.03 [+0.01,+0.06] | C6' loc_x fail (729s)
+[10:05:07] [hspace] [c6p] L28 window 1/228 (733s)
+[10:06:41] [hspace] [c6p] L28 window 39/228 (826s)
+[10:08:14] [hspace] [c6p] L28 window 77/228 (920s)
+[10:09:48] [hspace] [c6p] L28 window 115/228 (1014s)
+[10:11:22] [hspace] [c6p] L28 window 153/228 (1107s)
+[10:12:55] [hspace] [c6p] L28 window 191/228 (1201s)
+[10:14:27] [hspace] [c6p] L28: loc_x rI=0.60 rM=0.93 S=+0.33 [+0.13,+0.55] | loc_norm rI=0.29 rM=0.87 S=+0.59 [+0.40,+0.76] | run1_H25 rI=0.44 rM=0.89 S=+0.45 [+0.28,+0.59] | J25 rI=0.60 rM=0.87 S=+0.27 [+0.11,+0.43] | rand_0 rI=0.99 rM=1.00 S=+0.01 [-0.01,+0.05] | rand_1 rI=0.98 rM=1.00 S=+0.02 [-0.01,+0.05] | C6' loc_x fail (1293s)
+[10:14:31] [hspace] [c6p] L40 window 1/228 (1296s)
+[10:15:39] [hspace] [c6p] L40 window 39/228 (1365s)
+[10:16:48] [hspace] [c6p] L40 window 77/228 (1433s)
+[10:17:56] [hspace] [c6p] L40 window 115/228 (1501s)
+[10:19:05] [hspace] [c6p] L40 window 153/228 (1570s)
+[10:20:14] [hspace] [c6p] L40 window 191/228 (1639s)
+[10:21:21] [hspace] [c6p] L40: loc_x rI=0.87 rM=1.00 S=+0.12 [+0.00,+0.24] | loc_norm rI=0.75 rM=0.95 S=+0.20 [+0.03,+0.39] | run1_H25 rI=0.74 rM=0.94 S=+0.20 [+0.03,+0.35] | J25 rI=0.83 rM=0.95 S=+0.12 [-0.08,+0.30] | rand_0 rI=0.99 rM=1.00 S=+0.01 [-0.01,+0.04] | rand_1 rI=0.98 rM=1.00 S=+0.02 [-0.01,+0.04] | C6' loc_x fail (1706s)
+[10:21:23] [hspace] [c6p] L52 window 1/228 (1709s)
+[10:22:07] [hspace] [c6p] L52 window 39/228 (1753s)
+[10:22:51] [hspace] [c6p] L52 window 77/228 (1797s)
+[10:23:35] [hspace] [c6p] L52 window 115/228 (1841s)
+[10:24:19] [hspace] [c6p] L52 window 153/228 (1884s)
+[10:25:03] [hspace] [c6p] L52 window 191/228 (1928s)
+[10:25:46] [hspace] [c6p] L52: loc_x rI=1.08 rM=1.10 S=+0.03 [-0.15,+0.21] | loc_norm rI=0.90 rM=1.05 S=+0.15 [-0.05,+0.35] | run1_H25 rI=0.91 rM=0.95 S=+0.05 [-0.07,+0.18] | J25 rI=1.10 rM=1.11 S=+0.01 [-0.19,+0.22] | rand_0 rI=0.99 rM=1.00 S=+0.01 [-0.02,+0.04] | rand_1 rI=0.98 rM=0.99 S=+0.01 [-0.02,+0.03] | C6' loc_x fail (1972s)
+[10:25:46] [hspace] [c6p] DONE (1972s)
