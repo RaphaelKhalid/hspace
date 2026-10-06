@@ -67,7 +67,8 @@ A per-probe PCA **sign-flip randomization test** (`hlens/hs_flip.py`). It is an 
 
 ## Oct 6 2026, ~18:28 UTC: source added for "the spatial-sign top-25 overlaps PCA-25 by 0.78"
 
-- Paper §4b quoted this figure, but no committed file contained it. `hlens/hs_pca_overlap.py` now computes it from `hspace2_full.pt` and writes `results/hs_pca_overlap_run2.json`: `loc_norm` 0.776 at L16 (0.78–0.83 across layers), `loc_xnorm` 0.78–0.82, and my whitened J25 0.30–0.61 (random 0.005). The number stands; it is now reproducible.
+- Paper §4b quoted this figure. Its only committed source was `Csur25_vs_loc_norm` in `results/hs_flip_full.json` (0.776 at L16, 0.829 at L28): Csur25 is a reweighted-PCA axis set that coincides with PCA-25 at L16, L28 and L52 and differs only at L40 (0.825 vs 0.830). So the paper's "overlaps PCA-25 by 0.78" and "Csur25 recovers 0.78–0.83" were the same measurement, not two pieces of evidence.
+- `hlens/hs_pca_overlap.py` now computes the PCA-25 overlap directly from `hspace2_full.pt` and writes `results/hs_pca_overlap_run2.json`: `loc_norm` 0.776 at L16 (0.78–0.83 across layers), `loc_xnorm` 0.78–0.82, and my whitened J25 0.295–0.607 (random 0.005). The number stands.
 
 ## Oct 6 2026, ~18:28 UTC: v7 digit λ1 range is 2.7–5.3×, not 3.3–5.3×
 
