@@ -1,0 +1,25 @@
+RUN 2 (exploratory; SCOPE-hspace-v2) — per variant: C1 split@25, C2 debiased energy, C3 vs J25, C5 KLxrand, C6 ratio
+  L16 loc_raw   C1=0.29 k5=0.26 kfloor=25:0.29 C2=0.95* PR=4.2 C3=0.15* C5=110.6* C6=-3.07 
+  L16 loc_norm  C1=0.99* k5=1.00 kfloor=25:0.99 C2=0.42 PR=58.4 C3=0.30* C5=246.9* C6=0.40 
+  L16 loc_x     C1=0.13 k5=0.10 kfloor=1:0.02 C2=nan PR=9.6 C3=0.11* C5=41.2* C6=-1.08 
+  L16 int_x     C1=0.12 k5=0.05 kfloor=1:0.00 C2=1.12* PR=1.6 C3=0.11* C5=21.1* C6=-3.47 
+  L28 loc_raw   C1=0.30 k5=0.21 kfloor=25:0.30 C2=0.93* PR=4.6 C3=0.21* C5=83.9* C6=-1.56 
+  L28 loc_norm  C1=0.99* k5=1.00 kfloor=25:0.99 C2=0.41 PR=65.0 C3=0.39* C5=145.4* C6=0.19 
+  L28 loc_x     C1=0.15 k5=0.18 kfloor=1:0.01 C2=0.78* PR=2.7 C3=0.16* C5=45.1* C6=-4.29 
+  L28 int_x     C1=0.19 k5=0.13 kfloor=1:0.00 C2=nan PR=7.0 C3=0.15* C5=32.7* C6=-0.14 
+  L40 loc_raw   C1=0.27 k5=0.13 kfloor=25:0.27 C2=0.94* PR=4.5 C3=0.19* C5=135.0* C6=0.62 
+  L40 loc_norm  C1=0.99* k5=1.00 kfloor=25:0.99 C2=0.37 PR=91.4 C3=0.45* C5=296.3* C6=0.50 
+  L40 loc_x     C1=0.17 k5=0.06 kfloor=1:0.01 C2=0.75* PR=6.4 C3=0.16* C5=41.2* C6=1.27 
+  L40 int_x     C1=0.26 k5=0.14 kfloor=1:0.17 C2=nan PR=5.9 C3=0.12* C5=45.9* C6=9.21 
+  L52 loc_raw   C1=0.37 k5=0.35 kfloor=25:0.37 C2=1.00* PR=1.1 C3=0.26* C5=188.9* C6=2.39 
+  L52 loc_norm  C1=0.97* k5=0.80 kfloor=25:0.97 C2=0.46 PR=58.1 C3=0.58 C5=307.8* C6=1.62 
+  L52 loc_x     C1=0.29 k5=0.35 kfloor=1:0.42 C2=0.98* PR=1.1 C3=0.25* C5=117.7* C6=2.10 
+  L52 int_x     C1=0.65 k5=0.69 kfloor=2:0.47 C2=0.27 PR=21.8 C3=0.50* C5=253.6* C6=1.41 
+RUN-2 exploratory claim 'robust H-space found' (loc_x or loc_norm all-pass at >=2 layers): NO {'loc_x': 0, 'loc_norm': 0}
+
+V3 (SCOPE-hspace-v3) — loc_x: C1' (kfloor>=3 & split@kfloor>=0.7) [k5>=0.7 secondary], C6' (S>=0.2, CI>0, CI(S-ref)>0), C3
+  L16: C1' kfloor=1 split=0.02 k5=0.10 -> fail | C6' S=- CI=None CI(S-ref)=None -> not run | C3=0.11 -> 
+  L28: C1' kfloor=1 split=0.01 k5=0.18 -> fail | C6' S=- CI=None CI(S-ref)=None -> not run | C3=0.16 -> 
+  L40: C1' kfloor=1 split=0.01 k5=0.06 -> fail | C6' S=- CI=None CI(S-ref)=None -> not run | C3=0.16 -> 
+  L52: C1' kfloor=1 split=0.42 k5=0.35 -> fail | C6' S=- CI=None CI(S-ref)=None -> not run | C3=0.25 -> 
+V3 VERDICT: not found (v3)  (0/4 layers pass C1' & C6' & C3; C0 passed in run 1)
