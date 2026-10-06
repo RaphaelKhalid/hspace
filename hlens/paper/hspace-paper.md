@@ -18,6 +18,7 @@
   - **The Σ prior.** I prove that every Σ^{1/2}-whitened lens, the J-lens included, returns reproducible PCA-ordered directions whenever curvature is Σ-commuting. I give an exact sign-flip randomization test for this.
   - **v5 sign-flip test (frozen rule, held-out layers): PASS.** It finds a reproducible non-Σ-commuting second-order structure that is not J-space or massive-activation geometry, and is robust to basis-estimation error.
   - **Frozen causal test: FAIL.** Deleting that structure is not more interaction-specific than deleting exact variance-matched twins.
+  - **Follow-ups (v8, v9; frozen rules, fresh data).** A punctuation-conditional H-subspace replicates across runs (top-5 overlap 0.86 / 0.78). On fresh text, its directions produce 2.5–6× more natural-scale pairwise interaction than exactly variance-matched twins. That establishes predictive second-order validity; decoding and steering are untested.
   - **Goal 3.** A training-free multi-token J-lens add-on to a control monitor is net-negative at fixed audit budgets.
 
 ## 1. Introduction
@@ -258,6 +259,44 @@ This paper makes three moves:
 - Sampling windows by screen mass (Prop. 9) cuts the HVPs needed at equal Frobenius variance by **80× (L16) and 10.6× (L40)**. The oracle bound is 12,272× / 368×.
 - End to end, including one backward pass per screened window, the saving is about 2.5–3×.
 - This makes the H-lens's dominant cost, HVPs, nearly negligible relative to the J-lens-cost screen.
+
+## 4d. v9: the replicated punctuation-conditional H-subspace carries excess second-order interaction (preregistered PASS)
+
+**Prereg.** `SCOPE-hspace-v9.md` was frozen and pushed before the pod existed. Before that, an adversarial review found that a bf16 trunk would have measured rounding noise, so the design was revised. A $0 laptop validation on the final code then passed: a random EX was correctly "not shown", and a planted bilinear gate was detected on both I and I_trunk.
+
+**Object.** EX is the top-5 punctuation-conditional patterns from fresh v8 data. The cross-run top-5 overlap is 0.865 / 0.777, after excluding the windows v8 shared with run 2.
+
+**Controls.** 8 Σ-orbit twins with identical raw variance and per-PCA-axis profile; their overlap with EX is 0.01–0.03.
+
+**Data.** 89 fresh wikitext-103 validation windows from 60 articles. This split was never used at 27B.
+
+**Measurement.** Exact fp32 trunk, float64 log-softmax, 1σ moves at a punctuation position. I is the 2×2 interaction in the summed log-likelihood of the next 16 tokens. I_trunk removes the final-norm/softmax part.
+
+| layer | EX / twins (I) | log CI | EX / twins (I_trunk) | log CI | per-main-effect T3 CI | rank of EX among 9 | noise floor / twin signal |
+|---|---|---|---|---|---|---|---|
+| 16 | **5.9×** | [1.58, 1.95] | **6.0×** | [1.60, 1.99] | [0.82, 1.14] | 1 / 1 | 0.20 |
+| 40 | **2.5×** | [0.78, 1.10] | **2.5×** | [0.75, 1.09] | [0.24, 0.57] | 1 / 1 | 0.10 |
+
+**Verdict (mechanical): "EX carries excess within-span trunk pairwise interaction vs Σ-orbit twins (v9)", REAL9 at both layers.**
+
+**Robustness (descriptive).**
+- At L16, EX beats every twin in 88% of windows (69% at L40), and beats the mean twin in 98% (82%).
+- Without the top-5 windows the ratio is still 4.3× (2.4×).
+- All 10 EX pairs agree with the 3 matched pairs.
+- The effect is mostly in the trunk: |I_trunk| is 2.4e-3, against 6.6e-4 for |I_soft|.
+
+**What the chain of preregistered tests now establishes, at L16 and L40 of Qwen3.6-27B:**
+1. **Reproducible structure.** At punctuation positions the H-lens has a 5-dimensional structure that reproduces within a run (split@3 0.82–0.87 against a flip null of 0.02) and across independent runs on fresh data (0.86 / 0.78). That is v8.
+2. **Not trivial.** It is not explained by activation covariance (sign-flip test), nor by J-space (overlap 0.06–0.12), nor by the massive-activation geometry.
+3. **Predictive of second-order function.** On fresh text, moving along its directions produces 2.5–6× more natural-scale pairwise interaction than exactly variance-matched directions, per unit of first-order effect as well. That is v9.
+
+**Not established:**
+- decoded or verbalisable content;
+- steering or ablation function;
+- class-specificity (no matched arm at non-punctuation positions);
+- generality across models, corpora, or the other token classes.
+
+Note also that 15–23% of the "punctuation" positions are wikitext markup. So this is a **validated H-subspace candidate**: a second-order analogue of J-space's *predictive* validity. It is not yet J-space's full evidential package.
 
 ## 5. White-box control read (goal 3): preregistered primary NEGATIVE
 
