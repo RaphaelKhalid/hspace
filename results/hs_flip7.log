@@ -1,0 +1,77 @@
+[L16 digit] d    norm     : lam1 19.624 (null max 3.687, p 0.005) | split k1/3/5/10 0.82/0.61/0.72/0.61 (null max k3 0.02, p 0.005) (57s)
+[L16 digit] d    xnorm    : lam1 7.121 (null max 2.516, p 0.005) | split k1/3/5/10 0.03/0.45/0.38/0.33 (null max k3 0.02, p 0.005) (57s)
+[L16 digit] d    raw_trim5: lam1 38.618 (null max 28.212, p 0.005) | split k1/3/5/10 0.00/0.18/0.17/0.16 (null max k3 0.02, p 0.005) (57s)
+[L16 digit] PLANTED norm: lam1 19.352 vs null max 3.653 -> DETECTED; recovered 0.01
+[L16 digit] PLANTED xnorm: lam1 7.168 vs null max 2.525 -> DETECTED; recovered 0.30
+L16 digit: rows 1217; top-10 overlap with all-rows patterns 0.471
+[L16 punctuation] d    norm     : lam1 14.835 (null max 2.770, p 0.005) | split k1/3/5/10 0.11/0.79/0.73/0.72 (null max k3 0.02, p 0.005) (67s)
+[L16 punctuation] d    xnorm    : lam1 8.233 (null max 1.785, p 0.005) | split k1/3/5/10 0.30/0.70/0.60/0.47 (null max k3 0.02, p 0.005) (67s)
+[L16 punctuation] d    raw_trim5: lam1 27.950 (null max 18.431, p 0.005) | split k1/3/5/10 0.08/0.13/0.15/0.15 (null max k3 0.02, p 0.005) (67s)
+[L16 punctuation] PLANTED norm: lam1 14.621 vs null max 2.797 -> DETECTED; recovered 0.01
+[L16 punctuation] PLANTED xnorm: lam1 8.134 vs null max 1.809 -> DETECTED; recovered 0.10
+L16 punctuation: rows 2205; top-10 overlap with all-rows patterns 0.506
+[L16 word] d    norm     : lam1 7.518 (null max 1.655, p 0.005) | split k1/3/5/10 0.28/0.66/0.92/0.80 (null max k3 0.02, p 0.005) (140s)
+[L16 word] d    xnorm    : lam1 3.236 (null max 0.871, p 0.005) | split k1/3/5/10 0.87/0.62/0.59/0.59 (null max k3 0.02, p 0.005) (140s)
+[L16 word] d    raw_trim5: lam1 13.338 (null max 4.696, p 0.005) | split k1/3/5/10 0.30/0.42/0.38/0.46 (null max k3 0.01, p 0.005) (140s)
+[L16 word] PLANTED norm: lam1 7.442 vs null max 1.653 -> DETECTED; recovered 0.03
+[L16 word] PLANTED xnorm: lam1 4.842 vs null max 0.878 -> DETECTED; recovered 0.86
+L16 word: rows 12398; top-10 overlap with all-rows patterns 0.843
+[L28 digit] d    norm     : lam1 10.467 (null max 3.492, p 0.005) | split k1/3/5/10 0.00/0.68/0.56/0.43 (null max k3 0.02, p 0.005) (54s)
+[L28 digit] d    xnorm    : lam1 7.017 (null max 2.622, p 0.005) | split k1/3/5/10 0.59/0.40/0.31/0.28 (null max k3 0.02, p 0.005) (54s)
+[L28 digit] d    raw_trim5: lam1 20.665 (null max 17.479, p 0.005) | split k1/3/5/10 0.05/0.03/0.04/0.06 (null max k3 0.02, p 0.005) (54s)
+[L28 digit] PLANTED norm: lam1 10.340 vs null max 3.499 -> DETECTED; recovered 0.02
+[L28 digit] PLANTED xnorm: lam1 7.390 vs null max 2.628 -> DETECTED; recovered 0.25
+L28 digit: rows 1217; top-10 overlap with all-rows patterns 0.458
+[L28 punctuation] d    norm     : lam1 11.232 (null max 2.706, p 0.005) | split k1/3/5/10 0.75/0.79/0.63/0.62 (null max k3 0.02, p 0.005) (63s)
+[L28 punctuation] d    xnorm    : lam1 7.617 (null max 1.956, p 0.005) | split k1/3/5/10 0.77/0.68/0.57/0.43 (null max k3 0.02, p 0.005) (63s)
+[L28 punctuation] d    raw_trim5: lam1 16.685 (null max 8.123, p 0.005) | split k1/3/5/10 0.48/0.25/0.20/0.17 (null max k3 0.01, p 0.005) (63s)
+[L28 punctuation] PLANTED norm: lam1 11.104 vs null max 2.713 -> DETECTED; recovered 0.02
+[L28 punctuation] PLANTED xnorm: lam1 7.620 vs null max 1.947 -> DETECTED; recovered 0.15
+L28 punctuation: rows 2205; top-10 overlap with all-rows patterns 0.482
+[L28 word] d    norm     : lam1 6.196 (null max 1.639, p 0.005) | split k1/3/5/10 0.92/0.82/0.87/0.80 (null max k3 0.02, p 0.005) (123s)
+[L28 word] d    xnorm    : lam1 3.110 (null max 1.016, p 0.005) | split k1/3/5/10 0.83/0.82/0.73/0.51 (null max k3 0.02, p 0.005) (123s)
+[L28 word] d    raw_trim5: lam1 7.397 (null max 2.726, p 0.005) | split k1/3/5/10 0.62/0.51/0.53/0.49 (null max k3 0.01, p 0.005) (123s)
+[L28 word] PLANTED norm: lam1 6.231 vs null max 1.630 -> DETECTED; recovered 0.28
+[L28 word] PLANTED xnorm: lam1 4.896 vs null max 1.024 -> DETECTED; recovered 0.86
+L28 word: rows 12398; top-10 overlap with all-rows patterns 0.813
+[L40 digit] d    norm     : lam1 12.802 (null max 3.385, p 0.005) | split k1/3/5/10 0.84/0.50/0.49/0.33 (null max k3 0.01, p 0.005) (48s)
+[L40 digit] d    xnorm    : lam1 8.225 (null max 2.758, p 0.005) | split k1/3/5/10 0.72/0.46/0.37/0.24 (null max k3 0.01, p 0.005) (48s)
+[L40 digit] d    raw_trim5: lam1 19.492 (null max 9.819, p 0.005) | split k1/3/5/10 0.01/0.10/0.10/0.09 (null max k3 0.02, p 0.005) (48s)
+[L40 digit] PLANTED norm: lam1 12.682 vs null max 3.377 -> DETECTED; recovered 0.19
+[L40 digit] PLANTED xnorm: lam1 8.254 vs null max 2.767 -> DETECTED; recovered 0.31
+L40 digit: rows 1217; top-10 overlap with all-rows patterns 0.361
+[L40 punctuation] d    norm     : lam1 10.504 (null max 2.674, p 0.005) | split k1/3/5/10 0.59/0.80/0.63/0.47 (null max k3 0.01, p 0.005) (55s)
+[L40 punctuation] d    xnorm    : lam1 8.333 (null max 2.156, p 0.005) | split k1/3/5/10 0.77/0.72/0.55/0.40 (null max k3 0.01, p 0.005) (55s)
+[L40 punctuation] d    raw_trim5: lam1 15.708 (null max 6.069, p 0.005) | split k1/3/5/10 0.59/0.23/0.16/0.15 (null max k3 0.02, p 0.005) (55s)
+[L40 punctuation] PLANTED norm: lam1 10.373 vs null max 2.656 -> DETECTED; recovered 0.04
+[L40 punctuation] PLANTED xnorm: lam1 8.241 vs null max 2.162 -> DETECTED; recovered 0.21
+L40 punctuation: rows 2205; top-10 overlap with all-rows patterns 0.444
+[L40 word] d    norm     : lam1 5.337 (null max 1.656, p 0.005) | split k1/3/5/10 0.90/0.71/0.84/0.70 (null max k3 0.02, p 0.005) (114s)
+[L40 word] d    xnorm    : lam1 3.710 (null max 1.234, p 0.005) | split k1/3/5/10 0.86/0.67/0.61/0.56 (null max k3 0.02, p 0.005) (114s)
+[L40 word] d    raw_trim5: lam1 5.414 (null max 2.076, p 0.005) | split k1/3/5/10 0.83/0.53/0.64/0.47 (null max k3 0.02, p 0.005) (114s)
+[L40 word] PLANTED norm: lam1 5.326 vs null max 1.646 -> DETECTED; recovered 0.53
+[L40 word] PLANTED xnorm: lam1 4.760 vs null max 1.238 -> DETECTED; recovered 0.77
+L40 word: rows 12398; top-10 overlap with all-rows patterns 0.845
+[L52 digit] d    norm     : lam1 13.481 (null max 3.665, p 0.005) | split k1/3/5/10 0.52/0.66/0.60/0.46 (null max k3 0.02, p 0.005) (50s)
+[L52 digit] d    xnorm    : lam1 10.692 (null max 3.239, p 0.005) | split k1/3/5/10 0.85/0.52/0.43/0.32 (null max k3 0.02, p 0.005) (50s)
+[L52 digit] d    raw_trim5: lam1 13.942 (null max 13.555, p 0.005) | split k1/3/5/10 0.01/0.01/0.02/0.04 (null max k3 0.02, p 0.015) (50s)
+[L52 digit] PLANTED norm: lam1 13.340 vs null max 3.635 -> DETECTED; recovered 0.02
+[L52 digit] PLANTED xnorm: lam1 10.642 vs null max 3.250 -> DETECTED; recovered 0.21
+L52 digit: rows 1217; top-10 overlap with all-rows patterns 0.550
+[L52 punctuation] d    norm     : lam1 13.371 (null max 3.049, p 0.005) | split k1/3/5/10 0.86/0.60/0.72/0.60 (null max k3 0.02, p 0.005) (59s)
+[L52 punctuation] d    xnorm    : lam1 10.231 (null max 2.708, p 0.005) | split k1/3/5/10 0.80/0.69/0.59/0.48 (null max k3 0.02, p 0.005) (59s)
+[L52 punctuation] d    raw_trim5: lam1 15.915 (null max 6.187, p 0.005) | split k1/3/5/10 0.74/0.42/0.45/0.30 (null max k3 0.01, p 0.005) (59s)
+[L52 punctuation] PLANTED norm: lam1 13.217 vs null max 2.990 -> DETECTED; recovered 0.03
+[L52 punctuation] PLANTED xnorm: lam1 10.123 vs null max 2.675 -> DETECTED; recovered 0.05
+L52 punctuation: rows 2205; top-10 overlap with all-rows patterns 0.631
+[L52 word] d    norm     : lam1 13.504 (null max 2.064, p 0.005) | split k1/3/5/10 0.95/0.94/0.91/0.84 (null max k3 0.02, p 0.005) (116s)
+[L52 word] d    xnorm    : lam1 9.007 (null max 1.798, p 0.005) | split k1/3/5/10 0.90/0.88/0.83/0.66 (null max k3 0.02, p 0.005) (116s)
+[L52 word] d    raw_trim5: lam1 13.491 (null max 2.580, p 0.005) | split k1/3/5/10 0.92/0.80/0.72/0.72 (null max k3 0.01, p 0.005) (116s)
+[L52 word] PLANTED norm: lam1 13.301 vs null max 2.028 -> DETECTED; recovered 0.02
+[L52 word] PLANTED xnorm: lam1 8.892 vs null max 1.762 -> DETECTED; recovered 0.29
+L52 word: rows 12398; top-10 overlap with all-rows patterns 0.958
+L16: digit-conditional rule fail
+L28: digit-conditional rule fail
+L40: digit-conditional rule fail
+L52: digit-conditional rule fail
+token-conditional H-space, digits (v7): not found (0/4 layers)
