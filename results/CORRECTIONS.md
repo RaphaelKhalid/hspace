@@ -72,3 +72,8 @@ A per-probe PCA **sign-flip randomization test** (`hlens/hs_flip.py`). It is an 
 ## Oct 6 2026, ~18:55 UTC: v7 digit λ1 range is 2.7–5.3×, not 3.3–5.3×
 
 - From `results/hs_flip7.log`, digit-row λ1 divided by the flip maximum is 5.32 / 2.83 (L16, norm / xnorm), 3.00 / 2.68 (L28), 3.78 / 2.98 (L40) and 3.68 / 3.30 (L52). So the range is **2.7–5.3×** (3.0–5.3× for norm). `runlog_laptop.md` and paper §4c said 3.3–5.3×. The v7 verdict ("not found", decided by split@3 0.40–0.68 < 0.7) is unchanged.
+
+## Oct 6 2026, ~19:05 UTC: theory-v2 Observation 8.2 overstated two facts
+
+- "Run 2 `loc_x`: no eigenvalue above its noise floor" holds at L16 only. Per `results/hspace2_full.json` (now committed; it is the run-2 summary that `verdict_v23_run2.txt` was computed from), the counts are 0 / 2 / 5 / 2 of 5,120 at L16 / L28 / L40 / L52, and k_floor = 1 at every layer, so the v3 verdict is unchanged.
+- "L28 is similar" (after the L16 digit-energy figure) holds for concentration (top 0.1% of rows: 88%) but not for digits, which carry 4.4% of L28 energy (`results/hs_dump_analysis_full.json`).

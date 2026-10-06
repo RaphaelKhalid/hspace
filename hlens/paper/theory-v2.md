@@ -781,8 +781,8 @@ Let P be the PCA eigenbasis of Σ, and let 𝒟 = {P diag(±1) Pᵀ} be the grou
 - Axis-aligned removal avoids this. That is v5 (`hs_flip5.py`): drop PCA axes 1–5, plus the axes that carry the most massive/radial-span mass, until 90% of that mass is removed.
 
 ### Observation 8.2 (heavy tails explain C1 and C1′) [measured]
-- **Concentration.** At L16 the heaviest 0.1% of (position, probe) rows carry 97.5% of the raw second moment. Digit tokens are 7.4% of rows but carry 88% of the energy. L28 is similar.
-- **Consequence.** The raw and cross-moment estimators are controlled by O(10) rows, so their top eigenspaces change between halves. Run 1 C1: 0.33–0.41. Run 2 `loc_x`: no eigenvalue above its noise floor.
+- **Concentration.** At L16 the heaviest 0.1% of (position, probe) rows carry 97.5% of the raw second moment. Digit tokens are 7.4% of rows but carry 88% of the energy. L28 is similarly concentrated (top 0.1%: 88%), but there digits carry only 4.4% (`results/hs_dump_analysis_full.json`).
+- **Consequence.** The raw and cross-moment estimators are controlled by O(10) rows, so their top eigenspaces change between halves. Run 1 C1: 0.33–0.41. Run 2 `loc_x`: almost no eigenvalue above its noise floor (0 / 2 / 5 / 2 of 5,120 at L16 / L28 / L40 / L52, so k_floor = 1 everywhere; `results/hspace2_full.json`).
 - **Trimming fixes reproducibility.** Dropping the heaviest 5% of rows gives raw split-half 0.95 at k = 5 and 0.72–0.87 at k = 25.
 - **Caveat on spatial-sign estimators.** They are robust, but they estimate a different population object (the shape operator). Its eigenvectors equal those of the raw operator only for elliptical row laws.
 
