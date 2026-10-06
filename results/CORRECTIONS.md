@@ -42,3 +42,14 @@ A per-probe PCA **sign-flip randomization test** (`hlens/hs_flip.py`). It is an 
 - So the larger S is dose, not specificity.
 
 **What survives, descriptively (no CIs).** At L28 and L40, where main-effect damage is matched, φ is 5.5 / 5.0 for `loc_norm` against 3.2 / 3.3 for J25.
+
+## Oct 6 2026, ~13:30 UTC: v8 "33 duplicates of run-2 windows" was wrong
+
+**What I claimed.** `hs_v8.py` deduplicated its fresh windows against **seed 0**, which is run 1, but run 2's estimation windows used **seed 10**. "Dropped 33 duplicates of run-2 windows" was therefore false. The v9 design review found this.
+
+**The recount (`hs_v8_dedup.py`).**
+- 15 of the 256 v8 windows (9 of them run-2 probe windows) were identical to run-2 estimation windows.
+- Excluding their 190 punctuation rows, the cross-run top-5 overlap is:
+  - L16: 0.865 → **0.865**;
+  - L40: 0.792 → **0.777**.
+- Chance is 0.006, so the v8 replication verdict is unchanged (bar ≥ 0.5).

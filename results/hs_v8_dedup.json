@@ -1,0 +1,47 @@
+{
+ "n_v8_windows": 256,
+ "dup_run2_all": [
+  15,
+  37,
+  38,
+  44,
+  74,
+  80,
+  87,
+  92,
+  94,
+  103,
+  108,
+  133,
+  163,
+  212,
+  233
+ ],
+ "dup_run2_probe": [
+  15,
+  38,
+  44,
+  80,
+  94,
+  108,
+  133,
+  212,
+  233
+ ],
+ "layers": {
+  "16": {
+   "rows_removed": 190,
+   "punct_rows_clean": 3585,
+   "overlap_all_vs_run2": 0.8649721145629883,
+   "overlap_clean_vs_run2": 0.8654139637947083,
+   "overlap_clean_vs_all": 0.9973366856575012
+  },
+  "40": {
+   "rows_removed": 190,
+   "punct_rows_clean": 3585,
+   "overlap_all_vs_run2": 0.7915655970573425,
+   "overlap_clean_vs_run2": 0.7769213914871216,
+   "overlap_clean_vs_all": 0.9826083183288574
+  }
+ }
+}
