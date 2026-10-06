@@ -5,9 +5,9 @@ set -euo pipefail
 SRC="${HS_SRC:-/c/Users/rapha/OneDrive/Desktop/Claude/matsempirical2027}"
 R="$(cd "$(dirname "$0")/.." && pwd)"
 H="$SRC/interpcontrol/hlens"
-cp "$H"/{bf16w,common,hl2,hvp,ladder,hspace,hs_s7,hspace2,hs_c6prime,hs_anatomy,hs_integrated,hs_rectangle,hs_local,hs_diag_top,hs_dump_analysis,ctrl_read,ctrl_score,ctrl_score_v2}.py "$R/hlens/" 2>/dev/null || true
+cp "$H"/{bf16w,common,hl2,hvp,ladder,hspace,hs_s7,hspace2,hs_c6prime,hs_anatomy,hs_integrated,hs_rectangle,hs_local,hs_diag_top,hs_dump_analysis,hs_confound,hs_c6defl,hs_relcurv,hs_relcurv_gain,ctrl_read,ctrl_score,ctrl_score_v2}.py "$R/hlens/" 2>/dev/null || true
 cp "$H"/tests/{conftest,test_bf16w,test_swiglu,test_hvp,test_deltanet_patch}.py "$R/hlens/tests/" 2>/dev/null || true
-cp "$H"/pod/{hs_run.sh,hs_bundle.sh,chain2.sh,chain3.sh,watchdog11.sh,hf_sync.py} "$R/hlens/pod/" 2>/dev/null || true
+cp "$H"/pod/{hs_run.sh,hs_bundle.sh,chain2.sh,chain3.sh,chain4.sh,relcurv_layers.sh,watchdog11.sh,hf_sync.py} "$R/hlens/pod/" 2>/dev/null || true
 cp "$H"/dash_hs/{server.py,index.html} "$R/hlens/dash_hs/"
 cp "$H"/paper/*.md "$H"/paper/*.py "$H"/paper/redteam-theory.json "$R/hlens/paper/" 2>/dev/null || true
 cp "$SRC"/flagship/src/wor/{__init__,_paths,modeling}.py "$R/flagship/src/wor/"
