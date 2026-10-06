@@ -59,16 +59,22 @@ for f in sorted(OUT.glob(f"hspace2_{tag}_dump_L*.pt")):
              "energy_share_top": {p: float(e[order[: max(1, int(p * len(e)))]].sum() / tot) for p in (0.001, 0.01, 0.05)}}
         top = order[:40]
         r["top_rows"] = [{"tok": tok.decode([int(toks[i])]), "pos": int(pos[i]), "norm": float(n1[i])} for i in top]
-        cls = {}
+        cls, cnt = {}, {}
+        ut = {int(t_): klass(tok.decode([int(t_)])) for t_ in torch.unique(toks)}
         for i in range(len(e)):
-            c = klass(tok.decode([int(toks[i])]))
-            cls[c] = cls.get(c, 0.0) + float(e[i])
+            c = ut[int(toks[i])]
+            cls[c] = cls.get(c, 0.0) + float(e[i]); cnt[c] = cnt.get(c, 0) + 1
         r["energy_by_token_class"] = {c: v / tot for c, v in cls.items()}
-        cnt = {}
-        for i in range(len(e)):
-            c = klass(tok.decode([int(toks[i])]))
-            cnt[c] = cnt.get(c, 0) + 1
         r["rows_by_token_class"] = {c: v / len(e) for c, v in cnt.items()}
+        pe = {}
+        for i in order[: max(1, int(0.01 * len(e)))]:
+            pe[int(pos[i])] = pe.get(int(pos[i]), 0) + 1
+        r["top1pct_rows_by_position"] = dict(sorted(pe.items(), key=lambda x: -x[1])[:10])
+        pp = {}
+        for i in order[: max(1, int(0.01 * len(e)))]:
+            pp[int(pr[i])] = pp.get(int(pr[i]), 0) + 1
+        r["top1pct_rows_n_probes"] = len(pp)
+        r["top1pct_rows_max_from_one_probe"] = max(pp.values())
         half = (pr % 2 == 0)
         q99, q95 = torch.quantile(n1, 0.99), torch.quantile(n1, 0.95)
 
@@ -88,7 +94,8 @@ for f in sorted(OUT.glob(f"hspace2_{tag}_dump_L*.pt")):
             m0 = half if keep is None else (half & (n1 <= keep))
             m1 = (~half) if keep is None else ((~half) & (n1 <= keep))
             A, B = est(m0, kind_), est(m1, kind_)
-            sh[name] = {f"k{k}": ov(top_eigvecs(A, k), top_eigvecs(B, k)) for k in (5, 10, 25)}
+            UA, UB = top_eigvecs(A, 25), top_eigvecs(B, 25)          # one eigendecomposition per half, sliced per k
+            sh[name] = {f"k{k}": ov(UA[:, :k], UB[:, :k]) for k in (1, 3, 5, 10, 25)}
         r["split_half_from_dump"] = sh
         R[kind] = r
         print(f"L{l} {kind}: top1% rows carry {r['energy_share_top'][0.01]:.2f} of energy | split k25: "
