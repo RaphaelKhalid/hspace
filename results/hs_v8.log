@@ -1,0 +1,40 @@
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 2117.19it/s]
+The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:   0%|          | 1/851 [00:00<01:55,  7.34it/s]Loading weights:   0%|          | 2/851 [00:00<02:20,  6.06it/s]Loading weights:   3%|▎         | 27/851 [00:00<00:09, 87.64it/s]Loading weights:   5%|▌         | 46/851 [00:00<00:06, 119.35it/s]Loading weights:   8%|▊         | 68/851 [00:00<00:05, 149.41it/s]Loading weights:  11%|█         | 95/851 [00:00<00:04, 185.43it/s]Loading weights:  14%|█▍        | 119/851 [00:00<00:03, 200.31it/s]Loading weights:  17%|█▋        | 143/851 [00:00<00:03, 210.75it/s]Loading weights:  19%|█▉        | 165/851 [00:01<00:03, 209.54it/s]Loading weights:  22%|██▏       | 187/851 [00:01<00:03, 202.59it/s]Loading weights:  24%|██▍       | 208/851 [00:01<00:03, 196.68it/s]Loading weights:  28%|██▊       | 236/851 [00:01<00:02, 218.94it/s]Loading weights:  30%|███       | 259/851 [00:01<00:02, 201.62it/s]Loading weights:  34%|███▍      | 288/851 [00:01<00:02, 218.07it/s]Loading weights:  37%|███▋      | 311/851 [00:01<00:02, 211.26it/s]Loading weights:  39%|███▉      | 333/851 [00:01<00:02, 210.87it/s]Loading weights:  42%|████▏     | 360/851 [00:01<00:02, 225.14it/s]Loading weights:  45%|████▌     | 384/851 [00:02<00:02, 226.48it/s]Loading weights:  48%|████▊     | 411/851 [00:02<00:01, 236.65it/s]Loading weights:  51%|█████     | 435/851 [00:02<00:01, 227.29it/s]Loading weights:  54%|█████▍    | 458/851 [00:02<00:01, 227.21it/s]Loading weights:  57%|█████▋    | 481/851 [00:02<00:01, 221.26it/s]Loading weights:  59%|█████▉    | 506/851 [00:02<00:01, 221.42it/s]Loading weights:  62%|██████▏   | 529/851 [00:02<00:01, 217.61it/s]Loading weights:  65%|██████▌   | 556/851 [00:02<00:01, 231.37it/s]Loading weights:  68%|██████▊   | 580/851 [00:02<00:01, 225.70it/s]Loading weights:  72%|███████▏  | 610/851 [00:03<00:00, 243.17it/s]Loading weights:  75%|███████▍  | 635/851 [00:03<00:00, 225.31it/s]Loading weights:  78%|███████▊  | 664/851 [00:03<00:00, 235.09it/s]Loading weights:  81%|████████  | 688/851 [00:03<00:00, 227.12it/s]Loading weights:  84%|████████▍ | 717/851 [00:03<00:00, 237.43it/s]Loading weights:  87%|████████▋ | 741/851 [00:03<00:00, 228.76it/s]Loading weights:  90%|█████████ | 770/851 [00:03<00:00, 238.10it/s]Loading weights:  93%|█████████▎| 794/851 [00:03<00:00, 224.09it/s]Loading weights:  97%|█████████▋| 823/851 [00:03<00:00, 241.43it/s]Loading weights: 100%|█████████▉| 848/851 [00:04<00:00, 229.29it/s]Loading weights: 100%|██████████| 851/851 [00:04<00:00, 209.02it/s]
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1373.83it/s]
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1266.40it/s]
+[v8] full: 256 fresh windows (dropped 33 duplicates of run-2 windows), layers [16, 40] (28s)
+[v8] L16 probe 1/128 (31s, peak 69.3 GB)
+[v8] L16 probe 17/128 (73s, peak 69.3 GB)
+[v8] L16 probe 33/128 (116s, peak 69.3 GB)
+[v8] L16 probe 49/128 (159s, peak 69.3 GB)
+[v8] L16 probe 65/128 (202s, peak 69.3 GB)
+[v8] L16 probe 81/128 (245s, peak 69.3 GB)
+[v8] L16 probe 97/128 (288s, peak 69.3 GB)
+[v8] L16 probe 113/128 (332s, peak 69.3 GB)
+[v8] L16 probe 128/128 (373s, peak 69.3 GB)
+[v8] L16 (A) screen: Kish ESS 0.005% | Spearman rows 0.82 windows 0.71 | window IS: proxy 79.99x, oracle 12271.90x
+[v8 L16 punctuation] d    norm     : lam1 16.389 (null max 2.424, p 0.005) | split k1/3/5/10 0.75/0.82/0.76/0.73 (null max k3 0.02, p 0.005) (152s)
+[v8 L16 punctuation] d    xnorm    : lam1 8.255 (null max 1.454, p 0.005) | split k1/3/5/10 0.70/0.82/0.67/0.62 (null max k3 0.02, p 0.005) (152s)
+[v8 L16 punctuation] d    raw_trim5: lam1 28.682 (null max 15.012, p 0.005) | split k1/3/5/10 0.34/0.19/0.16/0.16 (null max k3 0.01, p 0.005) (152s)
+[v8 L16 punctuation] PLANTED norm: lam1 16.159 vs null max 2.421 -> DETECTED; recovered 0.01
+[v8 L16 punctuation] PLANTED xnorm: lam1 8.125 vs null max 1.464 -> DETECTED; recovered 0.07
+[v8] L16 (B) punctuation: rows 3775 | cross-run top-5 overlap 0.8649719953536987 (random 0.0055) -> layer PASS
+[v8] L40 probe 1/128 (578s, peak 69.3 GB)
+[v8] L40 probe 17/128 (602s, peak 69.3 GB)
+[v8] L40 probe 33/128 (627s, peak 69.3 GB)
+[v8] L40 probe 49/128 (652s, peak 69.3 GB)
+[v8] L40 probe 65/128 (677s, peak 69.3 GB)
+[v8] L40 probe 81/128 (702s, peak 69.3 GB)
+[v8] L40 probe 97/128 (727s, peak 69.3 GB)
+[v8] L40 probe 113/128 (752s, peak 69.3 GB)
+[v8] L40 probe 128/128 (775s, peak 69.3 GB)
+[v8] L40 (A) screen: Kish ESS 0.015% | Spearman rows 0.85 windows 0.78 | window IS: proxy 10.55x, oracle 367.88x
+[v8 L40 punctuation] d    norm     : lam1 10.894 (null max 2.373, p 0.005) | split k1/3/5/10 0.90/0.87/0.71/0.58 (null max k3 0.02, p 0.005) (132s)
+[v8 L40 punctuation] d    xnorm    : lam1 8.394 (null max 1.920, p 0.005) | split k1/3/5/10 0.88/0.82/0.63/0.51 (null max k3 0.02, p 0.005) (132s)
+[v8 L40 punctuation] d    raw_trim5: lam1 15.127 (null max 4.277, p 0.005) | split k1/3/5/10 0.74/0.37/0.37/0.28 (null max k3 0.02, p 0.005) (132s)
+[v8 L40 punctuation] PLANTED norm: lam1 10.783 vs null max 2.347 -> DETECTED; recovered 0.01
+[v8 L40 punctuation] PLANTED xnorm: lam1 8.351 vs null max 1.912 -> DETECTED; recovered 0.24
+[v8] L40 (B) punctuation: rows 3775 | cross-run top-5 overlap 0.7915657758712769 (random 0.0061) -> layer PASS
+[v8] VERDICT: punctuation-conditional H-structure REPLICATED (v8)
+[v8] DONE (953s)
