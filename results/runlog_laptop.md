@@ -48,3 +48,5 @@
 Self-check from the raw per-window data: EX beats every twin in 88% / 69% of windows, the median per-window ratio is 4.95× / 2.26×, and without the top-5 windows the ratio is 4.3× / 2.4×.
 
 [correction 2026-10-06T18:40Z] The "without the top-5 windows 4.3× / 2.4×" figure above does not reproduce. Recomputed by `hs_v9_robust.py` from `hs_v9_full_raw.pt` (88 saved windows), dropping the 5 windows with the largest per-window T1 gives 5.2× / 2.3× (geometric mean) or 4.9× / 2.6× (ratio of means). The 88% / 69% and the 4.95× / 2.26× median reproduce. Recorded in `results/CORRECTIONS.md`.
+
+[correction 2026-10-06T18:55Z] The v7 result line "lambda_1 is 3.3-5.3x the flip maximum at every layer" should read 2.7-5.3x (norm 3.0-5.3x). From `hs_flip7.log`, norm/xnorm lam1 / null max = 5.32/2.83 (L16), 3.00/2.68 (L28), 3.78/2.98 (L40), 3.68/3.30 (L52). The verdict (not found, on split3) is unchanged.

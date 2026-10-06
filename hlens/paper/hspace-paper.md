@@ -236,7 +236,7 @@ This paper makes three moves:
 
 ## 4c. Token-conditional H-structure and a first-order screen (Oct 6, after run 2)
 
-**v7 (laptop, dumps, frozen rule; digits): not found (0/4 layers).** Digit-row curvature has large λ1 (3.3–5.3× the flip maximum), but no stable 3-D subspace (split@3 0.40–0.68). Punctuation rows were the descriptive exception: split@3 0.60–0.80.
+**v7 (laptop, dumps, frozen rule; digits): not found (0/4 layers).** Digit-row curvature has large λ1 (2.7–5.3× the flip maximum; 3.0–5.3× for norm), but no stable 3-D subspace (split@3 0.40–0.68). Punctuation rows were the descriptive exception: split@3 0.60–0.80.
 
 **v8 (fresh 27B data, prereg `SCOPE-hspace-v8.md` pushed before the pod existed): punctuation-conditional H-structure REPLICATED.**
 - **Data.** 256 fresh wikitext-train windows. The script dropped 33 windows that duplicated **run 1** (seed 0); it should have deduplicated against run 2 (seed 10), and 15 of the 256 windows turned out to be shared with run 2. Excluding them leaves the replication intact (`hs_v8_dedup.py`, `results/CORRECTIONS.md`).
