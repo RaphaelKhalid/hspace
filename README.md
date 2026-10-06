@@ -4,7 +4,7 @@ Anthropic's J-lens (arXiv 2607.15495) averages the **Jacobian** of a model's fin
 
 > Is there a low-dimensional subspace where the model's **second-order** computation lives, i.e. the directions that matter only *in combination*?
 
-We call that subspace **H-space**, after the Hessian.
+I call that subspace **H-space**, after the Hessian.
 
 **Status (Oct 6 2026): work in progress, honest negatives included.** This is research code plus a paper draft, built in one push on a $17 GPU budget.
 
@@ -44,7 +44,7 @@ We call that subspace **H-space**, after the Hessian.
 
 ## Goal 3: white-box signals in AI control (in progress)
 - Qwen3.6-27B reads 1,500 BashArena attack/honest agent trajectories, after **sanitizing out label leaks**: attacker prose confessions and formatting tells.
-- We then test training-free multi-token J-lens matched filters, label-free pre-emption rules and Neyman–Pearson fusion with a black-box monitor, at fixed audit budgets (`hlens/ctrl_score_v2.py`, spec in `hlens/paper/ctrl-score-v2-spec.md`).
+- I then test training-free multi-token J-lens matched filters, label-free pre-emption rules and Neyman–Pearson fusion with a black-box monitor, at fixed audit budgets (`hlens/ctrl_score_v2.py`, spec in `hlens/paper/ctrl-score-v2-spec.md`).
 
 ## Layout
 ```

@@ -154,7 +154,7 @@ If the readout passes through the final RMSNorm (a true logit), add the terminal
 - **Attribution.** Each term is curvature *generated* at sublayer s, weighted by the downstream adjoint and the upstream transport. The split depends on the chosen sublayer partition.
 - **Streaming.** The recursion permits block-streamed HVPs in principle (§6). This is not implemented.
 
-**Implementation check [verified].** This is a unit test of our code, not evidence for the mathematics.
+**Implementation check [verified].** This is a unit test of my code, not evidence for the mathematics.
 - **Setting:** Qwen3.5-0.8B, bf16 checkpoint upcast to fp32 blocks, eager attention, DeltaNet on a patched torch path (equivalent to the reference: fwd 8e-7, grad 1.7e-6, `tests/test_deltanet_patch.py`), T = 96.
 - **Comparison:** the sum of the 2(L*−ℓ) pulled-back sublayer HVPs (`hs_anatomy.py`) against the full double-backward HVP.
 - **Metric:** max relative Frobenius error over the whole [B, T, d] output, over 24 batches of 2 contexts. The batches draw on 16 distinct contexts, each reused 3 times, with single-position Σ^{1/2}-shaped tangents.
@@ -201,9 +201,9 @@ How the model's operations fit this form:
 - Polarisation: sym(abᵀ) = ½[(a+b)(a+b)ᵀ − (a−b)(a−b)ᵀ].
 - Refactoring: writing silu(z)·u as z·σ(z)·u splits silu''·u into 2σ'·u (a product) plus zσ''·u (a threshold).
 
-The labels therefore attribute curvature to a chosen computational graph, as the neuron basis does. For SwiGLU the native graph is privileged by the weights (w_g, w_u), so we use it.
+The labels therefore attribute curvature to a chosen computational graph, as the neuron basis does. For SwiGLU the native graph is privileged by the weights (w_g, w_u), so I use it.
 
-**Naming.** We call the cross term a *product atom*. It reads as "a AND b" only when both reads are one-sided. For signed reads (SwiGLU's up read, DeltaNet's v and k) it is a sign-agreement interaction. "AND" also collides with the Harsanyi AND/OR interaction literature.
+**Naming.** I call the cross term a *product atom*. It reads as "a AND b" only when both reads are one-sided. For signed reads (SwiGLU's up read, DeltaNet's v and k) it is a sign-agreement interaction. "AND" also collides with the Harsanyi AND/OR interaction literature.
 
 **Reads are point-dependent.**
 - Even in the MLP, the residual-space read is r·Pᵀdiag(γ)w_g, with P = I − (r²/d)yyᵀ.
@@ -328,7 +328,7 @@ Remarks:
   - the output gate silu(z) × RMSNormGated(core), and the RMSNormGated block;
   - the conv1d, which spreads a source perturbation over p … p+3 before the SiLU, giving cross-position threshold atoms;
   - the L2-norm blocks on q and k.
-- **How we compute it.** No closed form is implemented. `hs_anatomy.py` differentiates each whole sublayer.
+- **How I compute it.** No closed form is implemented. `hs_anatomy.py` differentiates each whole sublayer.
 
 ### 2.4 Measured anatomy [measured: `out/anatomy_08b.json`; ℓ = 18 from runlog 18:05, earlier code]
 **Setup.**
@@ -552,7 +552,7 @@ This is the Hutchinson estimator (Hutchinson 1990) in its block-probe form (Beka
 ### Cost (Qwen3.6-27B, d = 5120) [arithmetic; c_HVP assumed]
 - **J-lens fit.** n·d backward-equivalents, and one fit yields J_ℓ for all 63 source layers.
   - At n = 25 (the draft's figure) that is 1.28×10⁵.
-  - The lens of record (`_n1000` file) has an undocumented prompt count. Sibling configs we inspected report 233 (0.8B) and 417 prompts (`flagship/notes`), so n ≥ 100 (≥ 5.1×10⁵) is the more realistic comparison.
+  - The lens of record (`_n1000` file) has an undocumented prompt count. Sibling configs I inspected report 233 (0.8B) and 417 prompts (`flagship/notes`), so n ≥ 100 (≥ 5.1×10⁵) is the more realistic comparison.
 - **H-space at one layer ℓ.** N_probe × B sequence HVPs through blocks ℓ+1 … 63 cost ≈ N_probe·B·c_HVP·(63−ℓ)/64 backward-equivalents. The pass count is independent of d.
   - With 256 × 4 probes and c_HVP ≈ 4, that is ≤ 4.1×10³.
   - With c_HVP ≈ 6–7.5 (PyTorch benchmarks of an HVP at 4–5× a gradient), it is ≈ 6.1–7.7×10³.
@@ -570,7 +570,7 @@ This is the Hutchinson estimator (Hutchinson 1990) in its block-probe form (Beka
 
 ### Number of probes [open; measured]
 No theorem fixes the probe count.
-- M is a Monte Carlo second moment, not an operator we apply, so randomized range-finder (k + o) bounds do not apply. The draft's "(k + o) probes, independent of d" is withdrawn.
+- M is a Monte Carlo second moment, not an operator I apply, so randomized range-finder (k + o) bounds do not apply. The draft's "(k + o) probes, independent of d" is withdrawn.
 - The count depends on M's effective rank, its eigengap at k and the tails of y.
 
 | model, layers | budget | split-half top-25 overlap | participation ratio | λ25/λ26 |
@@ -760,7 +760,7 @@ For scale, the exact H25 split-half overlap is 0.74 / 0.73.
   - **Not a clean pure-noise instance.** The permutation placebo gives mean net −10.75 (95th percentile +2.0), and the observed −39 has p_perm = 0.984. A review re-analysis (not in RESULT.md) attributes the excess to WB correlating with BB on honest items (Spearman 0.25, p = 0.008) but not on vulnerable ones, which inflates the refit threshold.
   - **Caveats.** Held-out honest flag rates were 17.9% (BB) vs 14.5% (fused), against a nominal 10%. With fixed thresholds the same scores give rescued 5, lost 0, but honest audits rise from 3 to 13 of 117, and BB alone at that budget audits more (102 vs 82 of 216). The run's verdict was **Inconclusive**: the lens sanity gate failed (0.705 < 0.8).
 - **Prior work.** Hua et al. 2025 (arXiv 2507.15886) already allocate interventions by NP with KDE-estimated LRs. They combine two black-box monitors under a cost budget, and their companion post applies it to a probe plus a black-box monitor. G1 is the zero-cost, always-call special case.
-- **Our LR-fusion test.** Only a 12-trajectory smoke run exists (`out/ctrl_score_small.json`: 7 attacks, BB AUROC 0.51, BB TPR 0 at every budget). Its "LR" arm is a cross-fitted two-feature logistic regression, an estimate Λ̂, not Λ.
+- **My LR-fusion test.** Only a 12-trajectory smoke run exists (`out/ctrl_score_small.json`: 7 attacks, BB AUROC 0.51, BB TPR 0 at every budget). Its "LR" arm is a cross-fitted two-feature logistic regression, an estimate Λ̂, not Λ.
 
 ### G2. Hidden goals as low-rank signals; the workspace as dimension reduction
 Status: standard detection-theory and random-matrix results applied to a stylised model; the workspace benefit depends on an unmeasured signal-capture fraction; empirical test pending.
@@ -817,7 +817,7 @@ Status: standard detection-theory and random-matrix results applied to a stylise
 - A policy "act IF unobserved AND opportunity" is a conjunction. At honest-looking steps its gate is closed, so first-order reads miss it (the v2 saturation result).
 - The potential lens (Definition 4.1) might rank such gates. Three caveats apply:
   - it is untested;
-  - it covers per-position MLP atoms only, while the one trained gate we studied is cross-position;
+  - it covers per-position MLP atoms only, while the one trained gate I studied is cross-position;
   - a closed gate is also nearly invisible to every *local* second-order lens (v2: the local quadratic explained ~7% of a +5.0-logit interaction).
 
 **Planned tests.** Dataset: `adityaasinha28/control_arena_bash`, 750 attack and 750 honest BashArena trajectories, read by Qwen3.6-27B as a *surrogate* white-box reader. The control read hit an OOM at 16k tokens and will be rerun at 8192 (runlog 20:07).

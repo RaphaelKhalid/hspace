@@ -4,14 +4,14 @@
 
 ## Abstract (to be finalised after the 27B verdict)
 - **Background.** Anthropic's J-lens averages the Jacobian of a model's final residual with respect to an earlier layer. It revealed a low-dimensional "J-space" that carries verbalisable content.
-- **What we ask.** We ask the next question up the Taylor series. Is there a low-dimensional subspace where the model's *second-order* computation lives, the place where two directions matter only together? We call it **H-space**.
-- **Theory.** We give:
+- **What I ask.** I ask the next question up the Taylor series. Is there a low-dimensional subspace where the model's *second-order* computation lives, the place where two directions matter only together? I call it **H-space**.
+- **Theory.** I give:
   - an exact block decomposition of the residual Hessian (the second-order adjoint), verified to 1e-6 on a real model;
   - closed forms showing every SwiGLU neuron and every gated-attention head contributes rank-2 "AND atoms";
   - a rectangle identity: any finite 2×2 interaction effect equals the Hessian averaged over the rectangle the two moves span;
   - complexity results: the top-k H-space costs O(k) Hessian-vector products independent of the width d, and is cheaper to find than fitting the J-lens itself.
 - **Engineering.** A bf16-stored, fp32-computed linear layer that can be differentiated twice. Exact HVPs of a 27B model then fit on one 96 GB GPU.
-- **Test.** We then test six preregistered criteria for H-space on Qwen3.6-27B: reproducibility, low rank, distinctness from J-space, natural-scale interactions, causal necessity, and a double dissociation on interaction-dependent tokens. A planted bilinear gate serves as the instrument-validity control.
+- **Test.** I then test six preregistered criteria for H-space on Qwen3.6-27B: reproducibility, low rank, distinctness from J-space, natural-scale interactions, causal necessity, and a double dissociation on interaction-dependent tokens. A planted bilinear gate serves as the instrument-validity control.
 - **Result:** **[27B verdict]**.
 
 ## 1. Introduction
@@ -147,7 +147,7 @@ This paper makes three moves:
 
 ## 7. Related work (from `lit-2026-10-05.md`)
 - **Second-order and bilinear interpretability:**
-  - bilinear MLPs (Pearce et al. 2024): our SwiGLU atom with SiLU replaced by the identity;
+  - bilinear MLPs (Pearce et al. 2024): my SwiGLU atom with SiLU replaced by the identity;
   - quadratic approximations of gated MLPs (Belrose & Rigg 2025);
   - HETA, HEAT, and HVP-corrected attribution patching (2606.09899).
 - **Workspace readers:** the J-lens and R-lens; Concept Lens (Gong et al. 2608.31084, the best training-free multi-token reader at 40.3% Rank@10 on Qwen3.6-27B).
