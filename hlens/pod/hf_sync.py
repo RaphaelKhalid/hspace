@@ -17,7 +17,9 @@ PATTERNS = ["out/hspace_full.json", "out/hspace_full.pt", "out/hspace_full_slim.
             "out/hs_diag_top_full.json", "out/ctrl_full.pt", "out/ctrl_full.log", "out/ctrl_score*_full.json",
             "out/hspace2_full.json", "out/hspace2_full.pt", "out/hspace2_full_dump_L*.pt", "out/hspace2_full.log",
             "out/hs_dump_analysis_full.json", "out/hspace_full.log", "out/SHA256SUMS", "runlog.md",
-            "out/c6prime_full.json", "out/hs_c6prime_full.log", "out/hf_sync.log"]
+            "out/c6prime_full.json", "out/hs_c6prime_full.log", "out/hf_sync.log",
+            "out/c6defl_full.json", "out/hs_c6defl_full.log", "out/hs_confound_*.json", "out/hs_confound_*.log",
+            "out/ctrl_score_v2_full.log"]
 api = HfApi()
 api.create_repo(REPO, repo_type="dataset", private=True, exist_ok=True)
 seen = {}
