@@ -15,6 +15,7 @@ mkdir -p "$R/flagship/third_party/jlens/data"
 cp "$SRC"/flagship/third_party/jlens/{__init__,_logging,fitting,hf,hooks,lens,protocol,vis,examples}.py "$SRC"/flagship/third_party/jlens/{LICENSE,PROVENANCE.md} "$R/flagship/third_party/jlens/"
 O="$H/out"
 for f in anatomy_08b.json integrated_08b_L12.json rectangle_08b_L12.json local_hlens_08b.json hspace_small.json hspace2_small.json; do [ -f "$O/$f" ] && cp "$O/$f" "$R/results/"; done
+for f in hs_v9_robust.json hs_pca_overlap_run2.json; do [ -f "$O/$f" ] && cp "$O/$f" "$R/results/"; done
 for f in hspace_full.json; do [ -f "$O/pod/$f" ] && cp "$O/pod/$f" "$R/results/"; done
 for f in "$O"/pod/hf/out/*.json; do [ -f "$f" ] && cp "$f" "$R/results/"; done
 cp "$H/runlog.md" "$R/results/runlog.md"

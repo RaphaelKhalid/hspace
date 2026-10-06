@@ -9,6 +9,7 @@ same ratios after dropping the 5 windows with the largest T1_w. The raw file hol
 scored in hs_v9_full.json, so the full-sample figures differ from the headline in the third digit.
 """
 import json
+import os
 import sys
 
 import numpy as np
@@ -44,6 +45,7 @@ def main():
             "mean_absI_EX": float(ex.mean()),
             "mean_absI_twins": float(tws.mean()),
         }
+    os.makedirs(os.path.dirname(dst) or ".", exist_ok=True)
     json.dump(res, open(dst, "w"), indent=1)
     print(json.dumps(res, indent=1))
 

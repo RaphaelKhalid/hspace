@@ -7,6 +7,7 @@ with PCA-25 is ||P25^T orth(Q)||_F^2 / k (mean squared cosine); a random 25-dim 
 This is the source of the paper's "the spatial-sign top-25 overlaps PCA-25 by 0.78" (loc_norm, L16).
 """
 import json
+import os
 import sys
 
 import torch
@@ -31,6 +32,7 @@ def main():
         row["J25w"] = ov(T[f"J25w_{l}"])
         row["run1H25w"] = ov(T[f"run1H25w_{l}"])
         res["layers"][str(l)] = row
+    os.makedirs(os.path.dirname(dst) or ".", exist_ok=True)
     json.dump(res, open(dst, "w"), indent=1)
     print(json.dumps(res, indent=1))
 
