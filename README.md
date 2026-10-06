@@ -44,14 +44,15 @@ I call that subspace **H-space**, after the Hessian.
 | v5 vs matched-flatness basis-misspecification null | 40, 52 | **robust**. Simulated split@3 0.01–0.07 vs data 0.90–0.94 (a steep f = Σ misspecification *can* fake v5, but the data's spectrum rules that regime out) |
 | **causal Σ-orbit twin ablation** of the v5 patterns (needs REAL at both layers) | 40, 52 | **FAIL**. At L40 the v5 patterns are not more interaction-specific than 8 exactly variance-matched twins: S = 0.014 vs 0.002, rank 2/9, CI includes 0 |
 
-**Update (Oct 6, ~14:00 UTC): v9 PASS. The replicated H-subspace carries second-order function.**
-- On 89 fresh wikitext-validation windows (a split never used before), natural-scale 1σ moves along the 5-d punctuation-conditional H-subspace produce more pairwise interaction in next-16-token log-likelihood than 8 exactly variance- and PCA-profile-matched Σ-orbit twins:
+**Update (Oct 6, ~14:00 UTC): v9 PASS. Natural-scale pairwise interaction concentrates in the replicated H-subspace.**
+- On 89 fresh wikitext-validation windows (a split never used at 27B; the 0.8B development runs used it), natural-scale 1σ moves along the 5-d punctuation-conditional H-subspace produce more pairwise interaction in next-16-token log-likelihood than 8 exactly variance- and PCA-profile-matched Σ-orbit twins:
   - **5.8× at L16** (e^1.766 = 5.85), log CI [1.58, 1.95];
   - **2.5× at L40**, log CI [0.78, 1.10].
-- This holds in the trunk (not just the softmax) and per unit of first-order effect, and EX ranks 1st of 9 at both layers.
+- This holds in the trunk (not just the softmax) and per unit of single-move (main) effect, and EX ranks 1st of 9 at both layers. In absolute terms the effects are small (mean |I| 2.2e-3 / 1.0e-3 nats along EX pairs, against 3.3e-4 / 3.0e-4 for the twins).
 - The rule was frozen before the pod, after an adversarial review and a $0 null/plant validation.
-- **Combined with v8**, this gives a reproducible, non-Σ-commuting, cross-run-replicated H-subspace with predictive second-order validity.
-- **Still untested:** decoding, steering, class-specificity and other models.
+- **Combined with v8**, this gives a reproducible, cross-run-replicated H-subspace that beats global-covariance controls and predicts where natural-scale, same-position interaction lives. That is predictive validity in a narrow sense: it is a perturbation test, not evidence that the model relies on the subspace.
+- **Caveats:** punctuation was chosen after a descriptive look at run-2 data, and v8/v9 are the 10th and 11th tests in the sequence; the twins match the *global* covariance, not the punctuation-row covariance.
+- **Still untested:** decoding, ablation/steering, class-specificity, punctuation-conditional covariance and other models.
 - Details: paper §4d and `results/hs_v9_full.json`.
 
 **Update (Oct 6, ~12:40 UTC): two follow-up tests, both frozen before the data existed.**
