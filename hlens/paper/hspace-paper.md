@@ -136,6 +136,61 @@ This paper makes three moves:
 - **C6's ratio statistic is unstable,** because its denominator ≈ 0 (CIs span 10–20× the estimate). It also tests damage, not the interaction itself.
 - These lead to the v3 preregistration (C1′ at the noise-floor dimension; C6′ interaction-ablation via Lemma 3). It was frozen **before** run-2 data existed.
 
+## 4b. Run 2, the v3 verdict, and the sign-flip tests (Oct 6)
+
+**Run 2.**
+- **Estimators.** Four estimators of the per-position H-lens energy at layers 16, 28, 40 and 52:
+  - raw;
+  - cross-moment (`x`), unbiased, using two independent sign vectors;
+  - spatial sign (`norm`);
+  - spatial-sign cross-moment (`xnorm`).
+- **Budget.** 256 probes × 4 windows per layer, on the same pod.
+- **Samples.** 64 rows per probe were kept for offline tests.
+
+**v3 preregistered verdict (`SCOPE-hspace-v3.md`): H-space NOT found (v3).**
+- The primary estimator `loc_x` fails C1′ at all four layers:
+  - split-half at k = 25 is 0.13 / 0.15 / 0.17 / 0.29;
+  - at L16, no eigenvalue is above the noise floor (k_floor = 1).
+- The verdict needed C1′ at ≥ 2 layers, so it was fixed before C6′ ran. C6′ was then run as a descriptive test.
+
+**Why C1 and C1′ fail: heavy tails (`hs_dump_analysis.py`, theory §6B Obs. 8.2).**
+- At L16, the heaviest 0.1% of (position, probe) rows carry 97.5% of the raw second moment.
+- Digit tokens are 7.4% of rows but 88% of that energy.
+- Both the raw and the unbiased cross-moment estimators are controlled by about 10 rows. Dropping the heaviest 5% of rows gives raw split-half 0.95 at k = 5.
+
+**The Σ prior (theory §6B Prop. 8).**
+- Any whitened lens returns PCA-ordered directions whenever the Hessian law is invariant under sign flips along PCA axes. Examples: H = cI, any f(Σ), random GOE-like curvature.
+- The reproducible spatial-sign estimators reproduce at 0.92–0.99, but their top-25 overlaps PCA-25 by 0.78. A reweighted-PCA axis set (Csur25) recovers 0.78–0.83 of `loc_norm`.
+- **Reproducibility alone is therefore not evidence of H-specific structure.** I retracted one attempted fix, the relative-curvature lens (`results/CORRECTIONS.md`).
+
+**Exact test: per-probe PCA sign-flip randomization (theory §6B Cor. 8.1, `hs_flip.py`).** Under the null "the curvature is Σ-commuting", flipping the PCA-coordinate signs of every row of a probe leaves the law of the data unchanged, so 200 flips give an exact null.
+
+| test | rule frozen before computation | layers | outcome |
+|---|---|---|---|
+| flip, variant (b): massive/radial span deflated by projection | yes | 16, 28 | **FAIL**. λ1 beats all 200 flips for every estimator (1.4–2.1× the flip maximum), but split-half has no power: a non-axis-aligned projection makes the null itself reproduce (null split3 max 0.95–0.98) |
+| flip v5, variant (d): axis-aligned drop of PCA 1–5 + massive-span axes (commutes with flips) | yes, before any L40/L52 flip computation | **40, 52 (held out)** | **PASS** |
+
+**v5 details (spatial sign `norm` / spatial-sign cross-moment `xnorm`):**
+
+| layer | λ1 (flip max) | split k = 1/3/5/10 (flip max at k3) | planted control |
+|---|---|---|---|
+| 40 | 5.12 (1.56) / 3.47 (1.16) | 0.87/0.90/0.85/0.74 and 0.87/0.82/0.77/0.64 (0.01–0.02) | detected, recovered 0.59 / 0.81 |
+| 52 | 12.5 (1.90) / 8.54 (1.66) | 0.95/0.94/0.93/0.85 and 0.92/0.88/0.86/0.74 (0.02) | detected; recovery 0.01 / 0.24, because the real structure dominates |
+
+**What the v5 structure is not:**
+- J-space: its top-10 patterns sit 0.02 inside J25, which is chance level.
+- The massive/radial span: 0.002 of their mass.
+- The top PCs: 0 in PCA-25 and 0.07–0.11 in PCA-100.
+- An axis-aligned artifact: its participation ratio in PCA coordinates is 59–204, so it is diffuse.
+
+**Still open, both running at the time of writing:**
+- Robustness to estimation error in the PCA basis (`hs_flip5_misspec.py`).
+- The frozen causal test (`hs_c6twin.py --v5`): ablate the v5 patterns vs 8 Σ-orbit twins that match variance and PCA profile exactly, on held-out windows.
+
+**Claim, scoped honestly.**
+- At two held-out layers of Qwen3.6-27B, the H-lens has a reproducible second-order structure that is not a function of the activation covariance, not J-space, and not the massive-activation geometry.
+- Whether it is *causally interaction-specific* is decided by the twin test.
+
 ## 5. White-box control read (goal 3): preregistered primary NEGATIVE
 
 **Setup.**
