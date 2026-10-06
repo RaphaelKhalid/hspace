@@ -53,3 +53,8 @@ A per-probe PCA **sign-flip randomization test** (`hlens/hs_flip.py`). It is an 
   - L16: 0.865 → **0.865**;
   - L40: 0.792 → **0.777**.
 - Chance is 0.006, so the v8 replication verdict is unchanged (bar ≥ 0.5).
+
+## Oct 6 2026, ~18:25 UTC: v9 L16 headline is 5.8×, not 5.9×
+
+- The L16 statistic is T1 = 1.766 (`results/hs_v9_full.json`), so e^T1 = 5.85, which rounds to **5.8×**. The v9 result commit message, the README and the paper said 5.9×. The CI and the verdict are unchanged.
+- 5.8× (and 2.5× at L40) is a geometric-mean ratio over windows. The ratio of mean |I| is 6.6× / 3.3×.

@@ -46,7 +46,7 @@ I call that subspace **H-space**, after the Hessian.
 
 **Update (Oct 6, ~14:00 UTC): v9 PASS. The replicated H-subspace carries second-order function.**
 - On 89 fresh wikitext-validation windows (a split never used before), natural-scale 1σ moves along the 5-d punctuation-conditional H-subspace produce more pairwise interaction in next-16-token log-likelihood than 8 exactly variance- and PCA-profile-matched Σ-orbit twins:
-  - **5.9× at L16**, log CI [1.58, 1.95];
+  - **5.8× at L16** (e^1.766 = 5.85), log CI [1.58, 1.95];
   - **2.5× at L40**, log CI [0.78, 1.10].
 - This holds in the trunk (not just the softmax) and per unit of first-order effect, and EX ranks 1st of 9 at both layers.
 - The rule was frozen before the pod, after an adversarial review and a $0 null/plant validation.

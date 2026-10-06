@@ -274,7 +274,7 @@ This paper makes three moves:
 
 | layer | EX / twins (I) | log CI | EX / twins (I_trunk) | log CI | per-main-effect T3 CI | rank of EX among 9 | noise floor / twin signal |
 |---|---|---|---|---|---|---|---|
-| 16 | **5.9×** | [1.58, 1.95] | **6.0×** | [1.60, 1.99] | [0.82, 1.14] | 1 / 1 | 0.20 |
+| 16 | **5.8×** | [1.58, 1.95] | **6.0×** | [1.60, 1.99] | [0.82, 1.14] | 1 / 1 | 0.20 |
 | 40 | **2.5×** | [0.78, 1.10] | **2.5×** | [0.75, 1.09] | [0.24, 0.57] | 1 / 1 | 0.10 |
 
 **Verdict (mechanical): "EX carries excess within-span trunk pairwise interaction vs Σ-orbit twins (v9)", REAL9 at both layers.**
