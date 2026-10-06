@@ -1,4 +1,8 @@
-"""Relative-curvature H-space: second-order structure BEYOND the isotropic-Hessian null (exploratory, post-hoc; Oct 6 2026).
+"""RETRACTED (Oct 6 2026, 07:35 UTC); see results/CORRECTIONS.md in the public repo. geig() returns FILTERS M0^-1/2 V, not
+patterns; the simulated null has rank <= 256 (one z per probe), so "data beats null" is guaranteed; M0 = cI is rejected by
+the data and the ridge eps decides which PCA band the "excess" lands in. Kept for the record only.
+
+Relative-curvature H-space: second-order structure BEYOND the isotropic-Hessian null (exploratory, post-hoc; Oct 6 2026).
 
 Problem found in run 2: the whitened lens y = Sh H Sh z has a built-in PCA prior. If H = cI (no special second-order
 structure at all), y = c Sigma z, so every energy estimator returns the top PCA directions of Sigma. The reproducible
