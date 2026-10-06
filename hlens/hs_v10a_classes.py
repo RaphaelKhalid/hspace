@@ -84,7 +84,7 @@ def main():
                      and B["d"][e_]["obs_split"]["k3"] >= 0.7 and B["planted"][e_]["detected"] for e_ in ("norm", "xnorm"))
             B["replicates"] = bool(ok and rep >= 0.5)
             L[c] = B
-            subs[f"H_{c}_{l}"] = (P[:, cols] @ fresh_pat.cpu()).float()            # whitened run-2 frame, [d, 5]
+            subs[f"H_{c}_{l}"] = (P[:, cols.cpu()] @ fresh_pat.cpu()).float()            # whitened run-2 frame, [d, 5]
             print(f"[v10a] L{l} {c:11s}: rows {len(idx)} (run2 {len(i2)}) | norm lam1 {B['d']['norm']['obs_lam'][0]:.2f} (flip max "
                   f"{B['d']['norm']['null_lam1_max']:.2f}) split3 {B['d']['norm']['obs_split']['k3']:.2f} | xnorm split3 "
                   f"{B['d']['xnorm']['obs_split']['k3']:.2f} | cross-run {rep:.3f} -> {'REPLICATES' if B['replicates'] else 'no'} "

@@ -1,0 +1,61 @@
+[v10a L16 function] d    norm     : lam1 10.564 (null max 1.917, p 0.005) | split k1/3/5/10 0.92/0.91/0.83/0.84 (null max k3 0.02, p 0.005) (39s)
+[v10a L16 function] d    xnorm    : lam1 4.738 (null max 1.068, p 0.005) | split k1/3/5/10 0.81/0.81/0.69/0.51 (null max k3 0.02, p 0.005) (39s)
+[v10a L16 function] d    raw_trim5: lam1 18.755 (null max 8.732, p 0.005) | split k1/3/5/10 0.18/0.36/0.27/0.25 (null max k3 0.02, p 0.005) (39s)
+[v10a L16 function] PLANTED norm: lam1 10.453 vs null max 1.910 -> DETECTED; recovered 0.04
+[v10a L16 function] PLANTED xnorm: lam1 5.529 vs null max 1.089 -> DETECTED; recovered 0.69
+[v10a] L16 function   : rows 8270 (run2 4737) | norm lam1 10.56 (flip max 1.92) split3 0.91 | xnorm split3 0.81 | cross-run 0.912 -> REPLICATES (68s)
+[v10a L16 content] d    norm     : lam1 7.591 (null max 1.765, p 0.005) | split k1/3/5/10 0.88/0.72/0.69/0.86 (null max k3 0.02, p 0.005) (49s)
+[v10a L16 content] d    xnorm    : lam1 4.187 (null max 0.857, p 0.005) | split k1/3/5/10 0.91/0.71/0.55/0.57 (null max k3 0.02, p 0.005) (49s)
+[v10a L16 content] d    raw_trim5: lam1 14.585 (null max 6.470, p 0.005) | split k1/3/5/10 0.56/0.31/0.25/0.25 (null max k3 0.02, p 0.005) (49s)
+[v10a L16 content] PLANTED norm: lam1 7.537 vs null max 1.754 -> DETECTED; recovered 0.02
+[v10a L16 content] PLANTED xnorm: lam1 4.858 vs null max 0.859 -> DETECTED; recovered 0.58
+[v10a] L16 content    : rows 13607 (run2 7661) | norm lam1 7.59 (flip max 1.77) split3 0.72 | xnorm split3 0.71 | cross-run 0.772 -> REPLICATES (134s)
+[v10a L16 digit] d    norm     : lam1 13.729 (null max 3.347, p 0.005) | split k1/3/5/10 0.02/0.75/0.68/0.63 (null max k3 0.02, p 0.005) (41s)
+[v10a L16 digit] d    xnorm    : lam1 5.100 (null max 2.094, p 0.005) | split k1/3/5/10 0.04/0.34/0.32/0.35 (null max k3 0.03, p 0.005) (41s)
+[v10a L16 digit] d    raw_trim5: lam1 30.185 (null max 28.863, p 0.005) | split k1/3/5/10 0.00/0.02/0.04/0.07 (null max k3 0.02, p 0.045) (41s)
+[v10a L16 digit] PLANTED norm: lam1 13.570 vs null max 3.336 -> DETECTED; recovered 0.01
+[v10a L16 digit] PLANTED xnorm: lam1 6.183 vs null max 2.103 -> DETECTED; recovered 0.56
+[v10a] L16 digit      : rows 1826 (run2 1217) | norm lam1 13.73 (flip max 3.35) split3 0.75 | xnorm split3 0.34 | cross-run 0.819 -> no (186s)
+[v10a L16 whitespace] d    norm     : lam1 23.794 (null max 4.545, p 0.005) | split k1/3/5/10 0.86/0.63/0.64/0.48 (null max k3 0.02, p 0.005) (39s)
+[v10a L16 whitespace] d    xnorm    : lam1 8.818 (null max 3.036, p 0.005) | split k1/3/5/10 0.53/0.37/0.38/0.31 (null max k3 0.02, p 0.005) (39s)
+[v10a L16 whitespace] d    raw_trim5: lam1 58.122 (null max 57.355, p 0.005) | split k1/3/5/10 0.00/0.02/0.02/0.06 (null max k3 0.02, p 0.005) (39s)
+[v10a L16 whitespace] PLANTED norm: lam1 23.502 vs null max 4.526 -> DETECTED; recovered 0.01
+[v10a L16 whitespace] PLANTED xnorm: lam1 8.901 vs null max 3.032 -> DETECTED; recovered 0.12
+[v10a] L16 whitespace : rows 938 (run2 564) | norm lam1 23.79 (flip max 4.54) split3 0.63 | xnorm split3 0.37 | cross-run 0.659 -> no (234s)
+[v10a L16 punctuation] d    norm     : lam1 16.389 (null max 2.431, p 0.005) | split k1/3/5/10 0.75/0.82/0.76/0.73 (null max k3 0.02, p 0.005) (43s)
+[v10a L16 punctuation] d    xnorm    : lam1 8.255 (null max 1.478, p 0.005) | split k1/3/5/10 0.70/0.82/0.67/0.62 (null max k3 0.02, p 0.005) (43s)
+[v10a L16 punctuation] d    raw_trim5: lam1 28.682 (null max 15.167, p 0.005) | split k1/3/5/10 0.34/0.19/0.16/0.16 (null max k3 0.01, p 0.005) (43s)
+[v10a L16 punctuation] PLANTED norm: lam1 16.181 vs null max 2.425 -> DETECTED; recovered 0.01
+[v10a L16 punctuation] PLANTED xnorm: lam1 8.114 vs null max 1.472 -> DETECTED; recovered 0.08
+[v10a] L16 punctuation: rows 3775 (run2 2205) | norm lam1 16.39 (flip max 2.43) split3 0.82 | xnorm split3 0.82 | cross-run 0.865 -> REPLICATES (289s)
+[v10a L40 function] d    norm     : lam1 5.837 (null max 2.205, p 0.005) | split k1/3/5/10 0.31/0.58/0.75/0.52 (null max k3 0.02, p 0.005) (40s)
+[v10a L40 function] d    xnorm    : lam1 3.984 (null max 1.727, p 0.005) | split k1/3/5/10 0.74/0.61/0.49/0.32 (null max k3 0.01, p 0.005) (40s)
+[v10a L40 function] d    raw_trim5: lam1 6.643 (null max 2.632, p 0.005) | split k1/3/5/10 0.61/0.66/0.51/0.34 (null max k3 0.01, p 0.005) (40s)
+[v10a L40 function] PLANTED norm: lam1 5.807 vs null max 2.191 -> DETECTED; recovered 0.23
+[v10a L40 function] PLANTED xnorm: lam1 4.676 vs null max 1.724 -> DETECTED; recovered 0.64
+[v10a] L40 function   : rows 8270 (run2 4737) | norm lam1 5.84 (flip max 2.20) split3 0.58 | xnorm split3 0.61 | cross-run 0.859 -> no (356s)
+[v10a L40 content] d    norm     : lam1 4.736 (null max 1.919, p 0.005) | split k1/3/5/10 0.82/0.74/0.73/0.63 (null max k3 0.02, p 0.005) (45s)
+[v10a L40 content] d    xnorm    : lam1 3.232 (null max 1.481, p 0.005) | split k1/3/5/10 0.65/0.50/0.52/0.51 (null max k3 0.02, p 0.005) (45s)
+[v10a L40 content] d    raw_trim5: lam1 5.042 (null max 2.278, p 0.005) | split k1/3/5/10 0.63/0.59/0.57/0.44 (null max k3 0.02, p 0.005) (45s)
+[v10a L40 content] PLANTED norm: lam1 5.150 vs null max 1.868 -> DETECTED; recovered 0.52
+[v10a L40 content] PLANTED xnorm: lam1 4.746 vs null max 1.464 -> DETECTED; recovered 0.77
+[v10a] L40 content    : rows 13607 (run2 7661) | norm lam1 4.74 (flip max 1.92) split3 0.74 | xnorm split3 0.50 | cross-run 0.827 -> no (416s)
+[v10a L40 digit] d    norm     : lam1 11.688 (null max 3.049, p 0.005) | split k1/3/5/10 0.84/0.68/0.47/0.39 (null max k3 0.02, p 0.005) (36s)
+[v10a L40 digit] d    xnorm    : lam1 6.972 (null max 2.439, p 0.005) | split k1/3/5/10 0.70/0.30/0.27/0.22 (null max k3 0.02, p 0.005) (36s)
+[v10a L40 digit] d    raw_trim5: lam1 16.794 (null max 10.211, p 0.005) | split k1/3/5/10 0.42/0.33/0.21/0.14 (null max k3 0.02, p 0.005) (36s)
+[v10a L40 digit] PLANTED norm: lam1 11.550 vs null max 3.016 -> DETECTED; recovered 0.04
+[v10a L40 digit] PLANTED xnorm: lam1 6.887 vs null max 2.431 -> DETECTED; recovered 0.41
+[v10a] L40 digit      : rows 1826 (run2 1217) | norm lam1 11.69 (flip max 3.05) split3 0.68 | xnorm split3 0.30 | cross-run 0.618 -> no (462s)
+[v10a L40 whitespace] d    norm     : lam1 15.213 (null max 3.974, p 0.005) | split k1/3/5/10 0.74/0.69/0.58/0.41 (null max k3 0.01, p 0.005) (34s)
+[v10a L40 whitespace] d    xnorm    : lam1 10.582 (null max 3.409, p 0.005) | split k1/3/5/10 0.72/0.52/0.41/0.28 (null max k3 0.01, p 0.005) (34s)
+[v10a L40 whitespace] d    raw_trim5: lam1 28.366 (null max 14.141, p 0.005) | split k1/3/5/10 0.31/0.17/0.13/0.13 (null max k3 0.01, p 0.005) (34s)
+[v10a L40 whitespace] PLANTED norm: lam1 15.023 vs null max 3.946 -> DETECTED; recovered 0.00
+[v10a L40 whitespace] PLANTED xnorm: lam1 10.448 vs null max 3.387 -> DETECTED; recovered 0.14
+[v10a] L40 whitespace : rows 938 (run2 564) | norm lam1 15.21 (flip max 3.97) split3 0.69 | xnorm split3 0.52 | cross-run 0.724 -> no (505s)
+[v10a L40 punctuation] d    norm     : lam1 10.894 (null max 2.390, p 0.005) | split k1/3/5/10 0.90/0.87/0.71/0.58 (null max k3 0.02, p 0.005) (39s)
+[v10a L40 punctuation] d    xnorm    : lam1 8.394 (null max 1.925, p 0.005) | split k1/3/5/10 0.88/0.82/0.63/0.51 (null max k3 0.02, p 0.005) (39s)
+[v10a L40 punctuation] d    raw_trim5: lam1 15.127 (null max 4.296, p 0.005) | split k1/3/5/10 0.74/0.37/0.37/0.28 (null max k3 0.02, p 0.005) (39s)
+[v10a L40 punctuation] PLANTED norm: lam1 10.740 vs null max 2.361 -> DETECTED; recovered 0.03
+[v10a L40 punctuation] PLANTED xnorm: lam1 8.282 vs null max 1.915 -> DETECTED; recovered 0.13
+[v10a] L40 punctuation: rows 3775 (run2 2205) | norm lam1 10.89 (flip max 2.39) split3 0.87 | xnorm split3 0.82 | cross-run 0.792 -> REPLICATES (554s)
+[v10a] VERDICT: no non-punctuation class replicates (v10a) | punctuation reference replicates: True (554s)

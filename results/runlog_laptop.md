@@ -52,3 +52,6 @@ Self-check from the raw per-window data: EX beats every twin in 88% / 69% of win
 [correction 2026-10-06T18:28Z] The v7 result line "lambda_1 is 3.3-5.3x the flip maximum at every layer" should read 2.7-5.3x (norm 3.0-5.3x). From `hs_flip7.log`, norm/xnorm lam1 / null max = 5.32/2.83 (L16), 3.00/2.68 (L28), 3.78/2.98 (L40), 3.68/3.30 (L52). The verdict (not found, on split3) is unchanged.
 
 [freeze 2026-10-06T19:55:43Z] v10a DECISION RULE (token-class scan, M8b), written and pushed before any non-punctuation v8 row is analysed: a0757ef560a2167e *paper/SCOPE-hspace-v10a.md; 3bbd0f387d916cfe *hs_v10a_classes.py. 12th test in the sequence.
+
+[deviation 2026-10-06T20:05Z] v10a code fix before the full run (no rule change): the smoke run crashed saving subspaces (index tensor on the wrong device); fixed by indexing P with cols.cpu().
+[result 2026-10-06T20:10:34Z] v10a frozen rule: **no non-punctuation class replicates at both layers**. function and content replicate at L16 (split3 0.91/0.72, cross-run 0.912/0.772) but fail split3 >= 0.7 at L40; digit and whitespace fail xnorm split3 at both layers. Punctuation reference replicates (L16 0.865, L40 0.792 cross-run), reproducing v8. Holm is met automatically. M8b therefore adds no class arm to the v10 pod run.
