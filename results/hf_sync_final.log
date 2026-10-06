@@ -1,0 +1,660 @@
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:26:52] uploaded out/hspace_full.json (0.1 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  .../hlens/out/hspace_full.pt:  22%|██▏       | 96.0MB /  431MB            [A[A
+
+  .../hlens/out/hspace_full.pt:  22%|██▏       | 96.0MB /  431MB            [A[AProcessing Files (0 / 1)      :  22%|██▏       | 96.0MB /  431MB,   ???B/s  
+
+  .../hlens/out/hspace_full.pt:  52%|█████▏    |  224MB /  431MB            [A[AProcessing Files (0 / 1)      :  52%|█████▏    |  224MB /  431MB,   ???B/s  
+
+  .../hlens/out/hspace_full.pt:  80%|███████▉  |  344MB /  431MB            [A[AProcessing Files (0 / 1)      :  80%|███████▉  |  344MB /  431MB,   ???B/s  
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[AProcessing Files (1 / 1)      : 100%|██████████|  431MB /  431MB, 42.2MB/s  
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[A
+
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████|  431MB /  431MB, 38.9MB/s  
+New Data Upload               : |          |  0.00B /  0.00B,  0.00B/s  
+Validating                    : ██████████| 100%            
+  .../hlens/out/hspace_full.pt: 100%|██████████|  431MB /  431MB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:26:53] uploaded out/hspace_full.pt (430.9 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[AProcessing Files (1 / 1)      : 100%|██████████| 5.78MB / 5.78MB,   ???B/s  
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████| 5.78MB / 5.78MB,  548kB/s  
+New Data Upload               : |          |  0.00B /  0.00B,  0.00B/s  
+Validating                    : ██████████| 100%            
+  ...s/out/hspace_full_slim.pt: 100%|██████████| 5.78MB / 5.78MB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:26:54] uploaded out/hspace_full_slim.pt (5.8 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:26:55] uploaded out/hs_s7_full.log (0.0 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:26:55] uploaded out/hs_diag_top_full.json (0.0 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  ...ol/hlens/out/ctrl_full.pt:   5%|▌         |  101MB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:   5%|▌         |  101MB / 2.01GB            [A[AProcessing Files (0 / 1)      :   5%|▌         |  101MB / 2.01GB,   ???B/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  10%|█         |  202MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  10%|█         |  202MB / 2.01GB,   ???B/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  15%|█▌        |  304MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  15%|█▌        |  304MB / 2.01GB,   ???B/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  21%|██        |  413MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  21%|██        |  413MB / 2.01GB, 40.6MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  26%|██▌       |  523MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  26%|██▌       |  523MB / 2.01GB, 51.0MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  31%|███▏      |  632MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  31%|███▏      |  632MB / 2.01GB, 61.2MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  37%|███▋      |  749MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  37%|███▋      |  749MB / 2.01GB, 72.1MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  42%|████▏     |  849MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  42%|████▏     |  849MB / 2.01GB, 81.2MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  48%|████▊     |  960MB / 2.01GB            [A[AProcessing Files (0 / 1)      :  48%|████▊     |  960MB / 2.01GB, 91.2MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  53%|█████▎    | 1.07GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  53%|█████▎    | 1.07GB / 2.01GB,  101MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  58%|█████▊    | 1.17GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  58%|█████▊    | 1.17GB / 2.01GB,  110MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  64%|██████▎   | 1.28GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  64%|██████▎   | 1.28GB / 2.01GB,  119MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  69%|██████▉   | 1.39GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  69%|██████▉   | 1.39GB / 2.01GB,  128MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  74%|███████▍  | 1.49GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  74%|███████▍  | 1.49GB / 2.01GB,  138MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  80%|███████▉  | 1.60GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  80%|███████▉  | 1.60GB / 2.01GB,  147MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  85%|████████▌ | 1.71GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  85%|████████▌ | 1.71GB / 2.01GB,  156MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  90%|█████████ | 1.81GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  90%|█████████ | 1.81GB / 2.01GB,  164MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  96%|█████████▌| 1.92GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌| 1.92GB / 2.01GB,  173MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 1.95GB / 2.01GB,  174MB/s  
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 1.95GB / 2.01GB,  166MB/s  
+New Data Upload               :   1%|          |  601kB / 54.6MB, 56.4kB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 1.95GB / 2.01GB,  161MB/s  
+New Data Upload               :   2%|▏         | 1.20MB / 54.6MB,  111kB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  97%|█████████▋| 1.95GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  97%|█████████▋| 1.95GB / 2.01GB,  160MB/s  
+New Data Upload               :   4%|▍         | 2.41MB / 54.6MB,  221kB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  98%|█████████▊| 1.96GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 1.96GB / 2.01GB,  158MB/s  
+New Data Upload               :   9%|▉         | 4.81MB / 54.6MB,  442kB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  98%|█████████▊| 1.96GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt:  98%|█████████▊| 1.96GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 1.96GB / 2.01GB,  156MB/s  
+New Data Upload               :  14%|█▍        | 7.82MB / 54.6MB,  711kB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  98%|█████████▊| 1.97GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 1.97GB / 2.01GB,  155MB/s  
+New Data Upload               :  24%|██▍       | 13.2MB / 54.6MB, 1.20MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  98%|█████████▊| 1.97GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 1.97GB / 2.01GB,  154MB/s  
+New Data Upload               :  32%|███▏      | 17.4MB / 54.6MB, 1.58MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  98%|█████████▊| 1.97GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  98%|█████████▊| 1.97GB / 2.01GB,  153MB/s  
+New Data Upload               :  41%|████      | 22.3MB / 54.6MB, 2.00MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  99%|█████████▊| 1.98GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▊| 1.98GB / 2.01GB,  152MB/s  
+New Data Upload               :  47%|████▋     | 25.9MB / 54.6MB, 2.31MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  99%|█████████▉| 1.98GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 1.98GB / 2.01GB,  151MB/s  
+New Data Upload               :  55%|█████▌    | 30.1MB / 54.6MB, 2.68MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  99%|█████████▉| 1.99GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 1.99GB / 2.01GB,  150MB/s  
+New Data Upload               :  63%|██████▎   | 34.3MB / 54.6MB, 3.04MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  99%|█████████▉| 1.99GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 1.99GB / 2.01GB,  149MB/s  
+New Data Upload               :  72%|███████▏  | 39.1MB / 54.6MB, 3.44MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt:  99%|█████████▉| 2.00GB / 2.01GB            [A[AProcessing Files (0 / 1)      :  99%|█████████▉| 2.00GB / 2.01GB,  148MB/s  
+New Data Upload               :  79%|███████▉  | 43.3MB / 54.6MB, 3.79MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.00GB / 2.01GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 2.00GB / 2.01GB,  147MB/s  
+New Data Upload               :  87%|████████▋ | 47.5MB / 54.6MB, 4.14MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.00GB / 2.01GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 2.00GB / 2.01GB,  146MB/s  
+New Data Upload               :  94%|█████████▎| 51.1MB / 54.6MB, 4.43MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.01GB / 2.01GB            [A[AProcessing Files (0 / 1)      : 100%|█████████▉| 2.01GB / 2.01GB,  145MB/s  
+New Data Upload               : 100%|█████████▉| 54.6MB / 54.6MB, 4.70MB/s  [A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.01GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.01GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.01GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.01GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|█████████▉| 2.01GB / 2.01GB            [A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[AProcessing Files (1 / 1)      : 100%|██████████| 2.01GB / 2.01GB,  137MB/s  
+New Data Upload               : 100%|██████████| 54.6MB / 54.6MB, 4.45MB/s  [A
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    : ██▋       |  27%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    : ██▋       |  27%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    : ███████▉  |  79%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    : ███████▉  |  79%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[A
+
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████| 2.01GB / 2.01GB,  127MB/s  
+New Data Upload               : 100%|██████████| 54.6MB / 54.6MB, 4.13MB/s  
+Validating                    : ██████████| 100%            
+  ...ol/hlens/out/ctrl_full.pt: 100%|██████████| 2.01GB / 2.01GB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:01] uploaded out/ctrl_full.pt (2006.5 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:01] uploaded out/ctrl_full.log (0.0 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:02] uploaded out/ctrl_score_v2_full.json (0.2 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:02] uploaded out/hspace2_full.json (0.1 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  ...hlens/out/hspace2_full.pt:  20%|█▉        |  104MB /  524MB            [A[A
+
+  ...hlens/out/hspace2_full.pt:  20%|█▉        |  104MB /  524MB            [A[AProcessing Files (0 / 1)      :  20%|█▉        |  104MB /  524MB,   ???B/s  
+
+  ...hlens/out/hspace2_full.pt:  44%|████▍     |  232MB /  524MB            [A[AProcessing Files (0 / 1)      :  44%|████▍     |  232MB /  524MB,   ???B/s  
+
+  ...hlens/out/hspace2_full.pt:  67%|██████▋   |  352MB /  524MB            [A[AProcessing Files (0 / 1)      :  67%|██████▋   |  352MB /  524MB,   ???B/s  
+
+  ...hlens/out/hspace2_full.pt:  90%|█████████ |  472MB /  524MB            [A[AProcessing Files (0 / 1)      :  90%|█████████ |  472MB /  524MB, 46.3MB/s  
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[AProcessing Files (1 / 1)      : 100%|██████████|  524MB /  524MB, 51.0MB/s  
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████|  524MB /  524MB, 48.0MB/s  
+New Data Upload               : |          |  0.00B /  0.00B,  0.00B/s  
+Validating                    : ██████████| 100%            
+  ...hlens/out/hspace2_full.pt: 100%|██████████|  524MB /  524MB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:03] uploaded out/hspace2_full.pt (524.3 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  .../hspace2_full_dump_L16.pt:  18%|█▊        |  112MB /  628MB            [A[A
+
+  .../hspace2_full_dump_L16.pt:  18%|█▊        |  112MB /  628MB            [A[AProcessing Files (0 / 1)      :  18%|█▊        |  112MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L16.pt:  37%|███▋      |  232MB /  628MB            [A[AProcessing Files (0 / 1)      :  37%|███▋      |  232MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L16.pt:  56%|█████▌    |  352MB /  628MB            [A[AProcessing Files (0 / 1)      :  56%|█████▌    |  352MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L16.pt:  76%|███████▋  |  480MB /  628MB            [A[AProcessing Files (0 / 1)      :  76%|███████▋  |  480MB /  628MB, 47.1MB/s  
+
+  .../hspace2_full_dump_L16.pt:  96%|█████████▌|  600MB /  628MB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌|  600MB /  628MB, 58.5MB/s  
+
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            [A[AProcessing Files (1 / 1)      : 100%|██████████|  628MB /  628MB, 60.6MB/s  
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████|  628MB /  628MB, 57.3MB/s  
+New Data Upload               : |          |  0.00B /  0.00B,  0.00B/s  
+Validating                    : ██████████| 100%            
+  .../hspace2_full_dump_L16.pt: 100%|██████████|  628MB /  628MB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:05] uploaded out/hspace2_full_dump_L16.pt (627.7 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  .../hspace2_full_dump_L28.pt:  18%|█▊        |  112MB /  628MB            [A[A
+
+  .../hspace2_full_dump_L28.pt:  18%|█▊        |  112MB /  628MB            [A[AProcessing Files (0 / 1)      :  18%|█▊        |  112MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L28.pt:  37%|███▋      |  232MB /  628MB            [A[AProcessing Files (0 / 1)      :  37%|███▋      |  232MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L28.pt:  57%|█████▋    |  360MB /  628MB            [A[AProcessing Files (0 / 1)      :  57%|█████▋    |  360MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L28.pt:  76%|███████▋  |  480MB /  628MB            [A[AProcessing Files (0 / 1)      :  76%|███████▋  |  480MB /  628MB, 47.1MB/s  
+
+  .../hspace2_full_dump_L28.pt:  96%|█████████▌|  600MB /  628MB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌|  600MB /  628MB, 58.5MB/s  
+
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            [A[AProcessing Files (1 / 1)      : 100%|██████████|  628MB /  628MB, 60.6MB/s  
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████|  628MB /  628MB, 57.2MB/s  
+New Data Upload               : |          |  0.00B /  0.00B,  0.00B/s  
+Validating                    : ██████████| 100%            
+  .../hspace2_full_dump_L28.pt: 100%|██████████|  628MB /  628MB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:06] uploaded out/hspace2_full_dump_L28.pt (627.7 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  .../hspace2_full_dump_L40.pt:  18%|█▊        |  112MB /  628MB            [A[A
+
+  .../hspace2_full_dump_L40.pt:  18%|█▊        |  112MB /  628MB            [A[AProcessing Files (0 / 1)      :  18%|█▊        |  112MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L40.pt:  37%|███▋      |  232MB /  628MB            [A[AProcessing Files (0 / 1)      :  37%|███▋      |  232MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L40.pt:  56%|█████▌    |  352MB /  628MB            [A[AProcessing Files (0 / 1)      :  56%|█████▌    |  352MB /  628MB,   ???B/s  
+
+  .../hspace2_full_dump_L40.pt:  76%|███████▋  |  480MB /  628MB            [A[AProcessing Files (0 / 1)      :  76%|███████▋  |  480MB /  628MB, 47.1MB/s  
+
+  .../hspace2_full_dump_L40.pt:  96%|█████████▌|  600MB /  628MB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌|  600MB /  628MB, 58.5MB/s  
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[AProcessing Files (1 / 1)      : 100%|██████████|  628MB /  628MB, 60.6MB/s  
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[A
+
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████|  628MB /  628MB, 57.0MB/s  
+New Data Upload               : |          |  0.00B /  0.00B,  0.00B/s  
+Validating                    : ██████████| 100%            
+  .../hspace2_full_dump_L40.pt: 100%|██████████|  628MB /  628MB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:08] uploaded out/hspace2_full_dump_L40.pt (627.7 MB)
+Processing Files (0 / 0)      : |          |  0.00B /  0.00B            
+New Data Upload               : |          |  0.00B /  0.00B            [A
+
+  .../hspace2_full_dump_L52.pt:  18%|█▊        |  112MB /  627MB            [A[A
+
+  .../hspace2_full_dump_L52.pt:  18%|█▊        |  112MB /  627MB            [A[AProcessing Files (0 / 1)      :  18%|█▊        |  112MB /  627MB,   ???B/s  
+
+  .../hspace2_full_dump_L52.pt:  37%|███▋      |  232MB /  627MB            [A[AProcessing Files (0 / 1)      :  37%|███▋      |  232MB /  627MB,   ???B/s  
+
+  .../hspace2_full_dump_L52.pt:  56%|█████▌    |  352MB /  627MB            [A[AProcessing Files (0 / 1)      :  56%|█████▌    |  352MB /  627MB,   ???B/s  
+
+  .../hspace2_full_dump_L52.pt:  75%|███████▌  |  472MB /  627MB            [A[AProcessing Files (0 / 1)      :  75%|███████▌  |  472MB /  627MB, 46.3MB/s  
+
+  .../hspace2_full_dump_L52.pt:  96%|█████████▌|  600MB /  627MB            [A[AProcessing Files (0 / 1)      :  96%|█████████▌|  600MB /  627MB, 58.5MB/s  
+
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            [A[AProcessing Files (1 / 1)      : 100%|██████████|  627MB /  627MB, 60.6MB/s  
+
+
+Validating                    :           |   0%            [A[A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            [A[A
+
+
+Validating                    :           |   0%            [A[A[A
+
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            [A[A
+
+
+Validating                    : ██████████| 100%            [A[A[AProcessing Files (1 / 1)      : 100%|██████████|  627MB /  627MB, 57.3MB/s  
+New Data Upload               : |          |  0.00B /  0.00B,  0.00B/s  
+Validating                    : ██████████| 100%            
+  .../hspace2_full_dump_L52.pt: 100%|██████████|  627MB /  627MB            
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:10] uploaded out/hspace2_full_dump_L52.pt (627.3 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:10] uploaded out/hspace2_full.log (0.0 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:10] uploaded out/hs_dump_analysis_full.json (0.0 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:10] uploaded out/hspace_full.log (0.0 MB)
+No files have been modified since last commit. Skipping to prevent empty commit.
+[hf_sync 10:27:11] uploaded out/SHA256SUMS (0.0 MB)
+[hf_sync 10:27:11] uploaded runlog.md (0.0 MB)
+[hf_sync 10:27:12] uploaded out/c6prime_full.json (0.0 MB)
+[hf_sync 10:27:13] uploaded out/hs_c6prime_full.log (0.0 MB)
+[hf_sync 10:27:14] uploaded out/hf_sync.log (0.5 MB)
+[hf_sync 10:27:14] uploaded out/hs_confound_dumps_L16.json (0.0 MB)
+[hf_sync 10:27:15] uploaded out/hs_confound_L16.log (0.0 MB)
+[hf_sync 10:27:16] uploaded out/ctrl_score_v2_full.log (0.0 MB)
+[hf_sync 10:27:16] uploaded out/hs_flip5_full.json (0.0 MB)
+[hf_sync 10:27:17] uploaded out/hs_flip_full.json (0.0 MB)
+[hf_sync 10:27:18] uploaded out/hs_flip5_full.log (0.0 MB)
+[hf_sync 10:27:18] uploaded out/hs_flip_full.log (0.0 MB)
+[hf_sync 10:27:19] uploaded out/hs_flip5_misspec.json (0.0 MB)
+[hf_sync 10:27:19] uploaded out/hs_flip5_misspec.log (0.0 MB)
+[hf_sync 10:27:20] uploaded out/hs_flip5_misspec2.json (0.0 MB)
+[hf_sync 10:27:21] uploaded out/hs_flip5_misspec2.log (0.0 MB)
+[hf_sync 10:27:21] uploaded out/hs_flip5_tokens.json (0.0 MB)
+[hf_sync 10:27:22] uploaded out/hs_flip5_tokens.log (0.0 MB)
+[hf_sync 10:27:23] uploaded out/c6twin5_full.json (0.0 MB)
+[hf_sync 10:27:23] uploaded out/hs_c6twin_full.log (0.0 MB)
+[hf_sync 10:27:24] uploaded out/hs_dump_analysis_full.log (0.0 MB)
+[hf_sync 10:27:25] uploaded out/relcurv2_full.json (0.0 MB)
+[hf_sync 10:27:25] uploaded out/hs_relcurv2_L16.log (0.0 MB)
+[hf_sync 10:27:26] uploaded out/hs_relcurv2_L28.log (0.0 MB)
+[hf_sync 10:27:27] uploaded out/hs_relcurv_L16.log (0.0 MB)
+[hf_sync 10:27:27] uploaded out/hs_relcurv_gain.log (0.0 MB)
+[hf_sync 10:27:28] uploaded pod/chain.sh (0.0 MB)
+[hf_sync 10:27:29] uploaded pod/chain2.sh (0.0 MB)
+[hf_sync 10:27:29] uploaded pod/chain3.sh (0.0 MB)
+[hf_sync 10:27:30] uploaded pod/chain4.sh (0.0 MB)
+[hf_sync 10:27:31] uploaded pod/chain5.sh (0.0 MB)
+[hf_sync 10:27:32] uploaded pod/chain6.sh (0.0 MB)
+[hf_sync 10:27:32] uploaded pod/flip5.sh (0.0 MB)
+[hf_sync 10:27:33] uploaded pod/hs_run.sh (0.0 MB)
+[hf_sync 10:27:33] uploaded pod/relcurv_layers.sh (0.0 MB)
+[hf_sync 10:27:34] uploaded pod/watchdog11.sh (0.0 MB)
+[hf_sync 10:27:35] uploaded pod/hf_sync.py (0.0 MB)
+[hf_sync 10:27:35] uploaded pod/verify_hf.py (0.0 MB)
+[hf_sync 10:27:36] uploaded bf16w.py (0.0 MB)
+[hf_sync 10:27:37] uploaded common.py (0.0 MB)
+[hf_sync 10:27:37] uploaded ctrl_read.py (0.0 MB)
+[hf_sync 10:27:38] uploaded ctrl_score_v2.py (0.1 MB)
+[hf_sync 10:27:39] uploaded hs_c6defl.py (0.0 MB)
+[hf_sync 10:27:39] uploaded hs_c6prime.py (0.0 MB)
+[hf_sync 10:27:40] uploaded hs_c6twin.py (0.0 MB)
+[hf_sync 10:27:40] uploaded hs_confound.py (0.0 MB)
+[hf_sync 10:27:41] uploaded hs_diag_top.py (0.0 MB)
+[hf_sync 10:27:42] uploaded hs_dump_analysis.py (0.0 MB)
+[hf_sync 10:27:42] uploaded hs_dump_analysis_da.py (0.0 MB)
+[hf_sync 10:27:43] uploaded hs_flip.py (0.0 MB)
+[hf_sync 10:27:44] uploaded hs_flip5.py (0.0 MB)
+[hf_sync 10:27:44] uploaded hs_flip5_misspec.py (0.0 MB)
+[hf_sync 10:27:45] uploaded hs_flip5_misspec2.py (0.0 MB)
+[hf_sync 10:27:45] uploaded hs_flip5_tokens.py (0.0 MB)
+[hf_sync 10:27:46] uploaded hs_relcurv.py (0.0 MB)
+[hf_sync 10:27:47] uploaded hs_relcurv2.py (0.0 MB)
+[hf_sync 10:27:47] uploaded hs_relcurv_gain.py (0.0 MB)
+[hf_sync 10:27:48] uploaded hs_s7.py (0.0 MB)
+[hf_sync 10:27:49] uploaded hspace.py (0.0 MB)
+[hf_sync 10:27:49] uploaded hspace2.py (0.0 MB)
