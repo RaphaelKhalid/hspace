@@ -1,0 +1,58 @@
+{
+ "6": {
+  "1": {
+   "overlap_top25": 0.6049253940582275,
+   "exact_energy_in_local_top25": 0.49520424008369446,
+   "cost_frac": 0.058823529411764705
+  },
+  "2": {
+   "overlap_top25": 0.6598451733589172,
+   "exact_energy_in_local_top25": 0.5196260213851929,
+   "cost_frac": 0.11764705882352941
+  },
+  "4": {
+   "overlap_top25": 0.7012565732002258,
+   "exact_energy_in_local_top25": 0.5364030003547668,
+   "cost_frac": 0.23529411764705882
+  },
+  "8": {
+   "overlap_top25": 0.7691978216171265,
+   "exact_energy_in_local_top25": 0.558782160282135,
+   "cost_frac": 0.47058823529411764
+  },
+  "17": {
+   "overlap_top25": 1.0,
+   "exact_energy_in_local_top25": 0.5986190438270569,
+   "cost_frac": 1.0
+  },
+  "exact_top25_energy": 0.5986190438270569
+ },
+ "12": {
+  "1": {
+   "overlap_top25": 0.5623539686203003,
+   "exact_energy_in_local_top25": 0.5275761485099792,
+   "cost_frac": 0.09090909090909091
+  },
+  "2": {
+   "overlap_top25": 0.6833562850952148,
+   "exact_energy_in_local_top25": 0.5751055479049683,
+   "cost_frac": 0.18181818181818182
+  },
+  "4": {
+   "overlap_top25": 0.739448606967926,
+   "exact_energy_in_local_top25": 0.5948835611343384,
+   "cost_frac": 0.36363636363636365
+  },
+  "8": {
+   "overlap_top25": 0.8797681927680969,
+   "exact_energy_in_local_top25": 0.6220237016677856,
+   "cost_frac": 0.7272727272727273
+  },
+  "11": {
+   "overlap_top25": 0.9999998807907104,
+   "exact_energy_in_local_top25": 0.6335849165916443,
+   "cost_frac": 1.0
+  },
+  "exact_top25_energy": 0.6335849165916443
+ }
+}
