@@ -66,7 +66,7 @@ I call that subspace **H-space**, after the Hessian.
   - End to end the saving is much smaller: if an HVP costs c screening passes, it is c / (1 + c/G) with G = 80 / 10.6, about 1.7–3.8× for c = 2–4, and never more than c.
 
 **Bottom line (Oct 6, before the follow-ups).**
-- At two held-out layers of Qwen3.6-27B, the H-lens contains a **reproducible second-order structure that is not a function of the activation covariance**. It is also not J-space (overlap at chance) and not the massive-activation geometry (largely by construction: those axes are masked), and its split-half reproducibility survives a spectrum-matched basis-misspecification null (its λ1 statistic does not).
+- At two held-out layers of Qwen3.6-27B, the H-lens contains a **reproducible second-order structure that is not a function of the activation covariance**. It is also not J-space (overlap at chance) and not the massive-activation geometry (largely by construction: those axes are masked), and its split-half reproducibility survives a flatness-matched (participation-ratio-matched) basis-misspecification null (its λ1 statistic does not).
 - But under the frozen causal test it is **not interaction-specific**.
 - So I have **not** found an H-space "as provably as J-space". What exists is a reproducible non-Σ-commuting curvature structure without demonstrated function.
 - Every step, including one retraction (`results/CORRECTIONS.md`), is hashed in `results/runlog_pod.md` before its data.

@@ -16,7 +16,7 @@
   - **Run 1 (preregistered): FAIL.** C1 (reproducibility) and C6 (dissociation) fail.
   - **Run 2 / v3 (preregistered): not found.** The unbiased estimator is pure heavy-tail noise at 27B: 0.1% of rows carry 97.5% of the energy.
   - **The Σ prior.** I prove that my Σ^{1/2}-whitened curvature estimators return reproducible PCA-axis directions whenever the curvature's law is invariant under PCA sign flips (e.g. any function of Σ). A similar prior plausibly affects J-space when it is computed in whitened coordinates, as mine is; Anthropic's released J-lens does not whiten. I give an exact sign-flip randomization test for this.
-  - **v5 sign-flip test (frozen rule, held-out layers): PASS.** It finds a reproducible non-Σ-commuting second-order structure that is not J-space or massive-activation geometry, and whose split-half reproducibility survives a spectrum-matched basis-misspecification null (its λ1 statistic does not).
+  - **v5 sign-flip test (frozen rule, held-out layers): PASS.** It finds a reproducible non-Σ-commuting second-order structure that is not J-space or massive-activation geometry, and whose split-half reproducibility survives a flatness-matched (participation-ratio-matched) basis-misspecification null (its λ1 statistic does not).
   - **Frozen causal test: FAIL.** Deleting that structure is not more interaction-specific than deleting exact variance-matched twins.
   - **Follow-ups (v8, v9; frozen rules, fresh data).** A punctuation-conditional H-subspace replicates across runs (top-5 overlap 0.865 / 0.777). On fresh text, its directions produce 2.5–6× more natural-scale pairwise interaction than twins matched exactly in global variance and PCA profile. That is predictive validity in a narrow sense (where same-position, natural-scale interaction lives); decoding, ablation/steering and punctuation-specificity are untested. Punctuation was chosen after a descriptive look at run-2 data, and v8/v9 are the 10th and 11th tests in the sequence.
   - **Goal 3.** A training-free multi-token J-lens add-on to a control monitor is net-negative at fixed audit budgets.
@@ -166,7 +166,7 @@ This paper makes three moves:
 - Both the raw and the unbiased cross-moment estimators are controlled by about 10 rows. Dropping the heaviest 5% of rows gives raw split-half 0.95 at k = 5.
 
 **The Σ prior (theory §6B Prop. 8).**
-- Any whitened lens returns PCA-ordered directions whenever the Hessian law is invariant under sign flips along PCA axes. Examples: H = cI, any f(Σ), random GOE-like curvature.
+- My Σ^{1/2}-whitened curvature estimators return PCA-axis directions (ranked by their own diagonal in the PCA basis) whenever the Hessian law is invariant under sign flips along PCA axes. Examples: H = cI, any f(Σ), random GOE-like curvature.
 - The reproducible spatial-sign estimators reproduce at 0.92–0.99, but their top-25 overlaps PCA-25 by 0.78 (`loc_norm` at L16; 0.78–0.83 for `loc_norm` and `loc_xnorm` across the four layers, against 0.005 at random; `hs_pca_overlap.py`, `results/hs_pca_overlap_run2.json`). A reweighted-PCA axis set (Csur25) recovers 0.78–0.83 of `loc_norm`.
 - **Reproducibility alone is therefore not evidence of H-specific structure.** I retracted one attempted fix, the relative-curvature lens (`results/CORRECTIONS.md`).
 
@@ -211,7 +211,7 @@ This paper makes three moves:
 - **The threat.** Rows that are Σ-commuting with respect to the *true* Σ look non-commuting in the estimated basis. I used run-1's independent Σ estimate as a stand-in for the truth.
 - **A steep f = Σ null can fake the v5 pass.** Simulated λ1 is 122–221 and split@3 is 0.88–0.93.
 - **The data rule that regime out.** That null has spectrum PR 3–4; the data's is 58–91.
-- **Matched null.** I calibrated f = Σ^a so the simulated spectrum flatness matches the data at each layer. The simulated split@3 is 0.01–0.07, against 0.90–0.94 in the data. **v5 survives** (rule frozen before running).
+- **Matched null.** I calibrated f = Σ^a so the simulated spectrum flatness matches the data at each layer. The simulated split@3 is 0.01–0.07, against 0.82–0.94 in the data (norm and xnorm), but the simulated λ1 still beats the flip maximum (1.0–1.8×, against 3–6.6× for the data). The calibration matches the participation ratio only. **v5's split-half result survives** (rule frozen before running).
 
 **Causal test (frozen rule, `hs_c6twin.py --v5`): FAIL.**
 - **Design.** Ablate the top-5 v5 patterns versus 8 Σ-orbit twins, which match variance and PCA profile exactly. I used the 227 held-out eval windows and ablated positions ≥ 16 only.
@@ -226,10 +226,10 @@ This paper makes three moves:
 
 **Claim, scoped honestly.**
 - At two held-out layers of Qwen3.6-27B, the H-lens contains a reproducible second-order structure that is:
-  - not a function of the activation covariance;
+  - not a function of the global activation covariance (in the estimated basis);
   - not J-space;
-  - not the massive-activation geometry;
-  - not an artifact of basis estimation.
+  - not the massive-activation geometry (largely by construction: those axes are masked);
+  - not reproduced, in split-half terms, by a flatness-matched basis-misspecification null (its λ1 statistic is).
 - Under the frozen causal test it is **not interaction-specific**. Deleting it is slightly more consequential than deleting matched directions, but it does not selectively remove AND-type computation.
 - **So this is not an H-space "as provable as J-space":** it is a reproducible, non-Σ-commuting curvature structure without a demonstrated function.
 - **Open caveat.** Position-dependent covariance could produce non-Σ-commuting structure. Several patterns carry 1.2–1.6× more energy early in the window. The dumps cannot rule this out.
@@ -290,7 +290,7 @@ Cross-run overlaps exclude the 15 windows v8 shared with run 2 (as first logged:
 
 **What the chain of preregistered tests now establishes, at L16 and L40 of Qwen3.6-27B:**
 1. **Reproducible structure.** At punctuation positions the H-lens has a low-dimensional structure (its top 5 patterns, EX; k = 5 fixed by the prereg, no spectral gap there) that reproduces within a run (split@3 0.82–0.87 against a flip null of 0.02) and across independent runs on fresh data (0.865 / 0.777). That is v8.
-2. **Not trivial.** It beats exact sign-flip nulls and Σ-orbit twins built from the *global* activation covariance (in run 2's estimated basis). It lies mostly outside J-space (0.06–0.12 of its mass in J25, against 0.017–0.026 for its twins) and outside the PCA and massive-activation axes, the latter largely by construction because those axes are masked before estimation. A punctuation-conditional mean or covariance, and basis misspecification for punctuation rows, are not ruled out.
+2. **Not trivial.** It beats exact sign-flip nulls and Σ-orbit twins built from the *global* activation covariance (in run 2's estimated basis). It lies mostly outside J-space (0.06–0.12 of its mass in J25, against twin means of 0.017–0.026, individual twins 0.013–0.029) and outside the PCA and massive-activation axes, the latter largely by construction because those axes are masked before estimation. A punctuation-conditional mean or covariance, and basis misspecification for punctuation rows, are not ruled out.
 3. **Predictive of where interaction lives.** On fresh text, 1σ moves along pairs of its directions at the same punctuation position produce 2.5–6× more natural-scale pairwise interaction than twins matched in global variance and PCA profile, per unit of single-move (main) effect as well. That is v9. It is a perturbation test, so it does not show that the model relies on EX.
 
 **Not established:**

@@ -764,7 +764,7 @@ Let P be the PCA eigenbasis of Σ, and let 𝒟 = {P diag(±1) Pᵀ} be the grou
   - large overlap with PCA;
   - a flat spectrum.
 - The 25/d "random subspace" baseline is the wrong comparison.
-- The same prior applies to any lens whitened by Σ^{1/2}. At 27B, J25 overlaps PCA-25 by 0.29–0.61. At 0.8B, the M^row H25 overlapped PCA-25 by 0.69–0.78.
+- A similar prior plausibly applies to other lenses computed in Σ^{1/2}-whitened coordinates, such as my J25, though Prop. 8 is proved only for these curvature estimators. At 27B, J25 overlaps PCA-25 by 0.30–0.61 (`results/hs_pca_overlap_run2.json`). At 0.8B, the M^row H25 overlapped PCA-25 by 0.69–0.78.
 
 ### Corollary 8.1 (an exact randomization test) [proved]
 **The null, H0.** The law of the blocks is invariant under 𝒟, as in Proposition 8.
