@@ -189,6 +189,20 @@ This paper makes three moves:
 - The top PCs: 0 in PCA-25 and 0.07–0.11 in PCA-100.
 - An axis-aligned artifact: its participation ratio in PCA coordinates is 59–204, so it is diffuse.
 
+**C6′ (preregistered, run after the v3 verdict was already fixed, so descriptive).** S = r_M − r_I on the first 228 eval windows:
+
+| layer | loc_x | loc_norm | run-1 H25 | J25 | random |
+|---|---|---|---|---|---|
+| 16 | 0.17 [0.07, 0.28] | **0.52** [0.32, 0.71] | 0.36 | 0.28 | 0.02–0.03 |
+| 28 | 0.33 [0.13, 0.55] | **0.59** [0.40, 0.76] | 0.45 | 0.27 | 0.01–0.02 |
+| 40 | 0.12 | 0.20 | 0.20 | 0.12 | 0.01–0.02 |
+| 52 | 0.03 | 0.15 | 0.05 | 0.01 | 0.01 |
+
+- `loc_x` fails C6′ at every layer: the CI of S − max(J25, rand) includes 0.
+- `loc_norm` is strongly AND-specific at L16 and L28. Deleting it removes about 70% of 2×2 interactions while keeping 86–87% of main effects, about twice the specificity of J25.
+- But `loc_norm` is largely the Σ prior (Prop. 8). PCA-25 alone gives S = 0.39 at L40 in the twin test.
+- This says interaction computation is concentrated in high-variance directions. It does not show an H-*specific* subspace.
+
 **Robustness to estimation error in the PCA basis (`hs_flip5_misspec*.py`).**
 - **The threat.** Rows that are Σ-commuting with respect to the *true* Σ look non-commuting in the estimated basis. I used run-1's independent Σ estimate as a stand-in for the truth.
 - **A steep f = Σ null can fake the v5 pass.** Simulated λ1 is 122–221 and split@3 is 0.88–0.93.
