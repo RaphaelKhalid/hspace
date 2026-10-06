@@ -21,3 +21,16 @@
 [freeze 2026-10-06T11:58:44Z] v8 frozen before the pod exists: SCOPE-hspace-v8.md a96729b3782e0c33, hs_v8.py 63c391646449f272, hs_flip5.py 4553eef77ee2e338, hs_run8.sh 72c99c05009078dd.
 - Local 0.8B smoke test passed (the L6 screen and the punctuation pipeline ran end to end).
 - Authorised by the user's "feel free to use up the full runpod budget" and "do whatever is necessary"; about .0–1.2 of the remaining ≈ .9, with a 50-min self-terminate.
+
+[result, Oct 6 ~12:37 UTC] v8: **REPLICATED** (frozen rule, both layers). Pod terminated after sha-verifying 7/7 files on HF; about $1.10.
+- **Punctuation rows on fresh data** (256 windows; 33 duplicates of run-2 windows dropped):
+  - L16: norm λ1 16.4 vs flip max 2.4, split@3 0.82; xnorm 8.3 vs 1.5, split@3 0.82; cross-run top-5 overlap 0.86 (chance 0.0055).
+  - L40: norm 10.9 vs 2.4, split@3 0.87; xnorm 8.4 vs 1.9, split@3 0.82; overlap 0.79 (chance 0.0061).
+  - The planted control was "detected", but its recovery was low (0.01–0.24) because the real structure dominates, so it is a weak power check.
+- **Screen (goal 2):**
+  - Kish ESS of rows: 0.005% / 0.015%.
+  - Spearman(curvature, first-order screen): 0.82 / 0.85 over rows, 0.71 / 0.78 over windows.
+  - Window-level importance sampling cuts HVPs 80× / 10.6× (oracle 12,272× / 368×). That is "useful" by the frozen ≥ 5× bar.
+  - End to end, including screening every candidate window with one backward pass, the saving is about 2.5–3×.
+- **Deviation:** the first launch ran out of memory, so I switched to separate HVP graphs and 128×2 probes. The analysis is unchanged; it is logged in the pod run log.
+- **Not licensed:** function. There was no causal test in v8.
