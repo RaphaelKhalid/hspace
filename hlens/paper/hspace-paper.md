@@ -199,9 +199,12 @@ This paper makes three moves:
 | 52 | 0.03 | 0.15 | 0.05 | 0.01 | 0.01 |
 
 - `loc_x` fails C6′ at every layer: the CI of S − max(J25, rand) includes 0.
-- `loc_norm` is strongly AND-specific at L16 and L28. Deleting it removes about 70% of 2×2 interactions while keeping 86–87% of main effects, about twice the specificity of J25.
-- But `loc_norm` is largely the Σ prior (Prop. 8). PCA-25 alone gives S = 0.39 at L40 in the twin test.
-- This says interaction computation is concentrated in high-variance directions. It does not show an H-*specific* subspace.
+- **Correction (Oct 6, after the v6 design review): most of S is dose.** Across the four learned subspaces at L16, S is almost linear in the raw variance each ablation removes (r = 0.999):
+  - `loc_norm` removes 22% of raw variance; J25 removes 13%.
+  - Their interaction-per-main-effect damage ratios are equal: φ = (1 − r_I)/(1 − r_M) = 4.7 vs 4.6.
+  - So the larger S of `loc_norm` at L16 is dose, not specificity.
+- **At L28 and L40, main-effect damage is matched** (1 − r_M = 0.129 vs 0.126, and 0.051 vs 0.051). There `loc_norm` removes interactions about 1.5–1.7× more selectively than J25 (φ 5.5 / 5.0 vs 3.2 / 3.3). This is descriptive, with no CIs, and it does not separate H from the Σ prior, which `loc_norm` largely is (Prop. 8).
+- An earlier draft of this paragraph said "about twice the specificity of J25". That was wrong; see `results/CORRECTIONS.md`.
 
 **Robustness to estimation error in the PCA basis (`hs_flip5_misspec*.py`).**
 - **The threat.** Rows that are Σ-commuting with respect to the *true* Σ look non-commuting in the estimated basis. I used run-1's independent Σ estimate as a stand-in for the truth.

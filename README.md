@@ -49,7 +49,7 @@ I call that subspace **H-space**, after the Hessian.
 - But under the frozen causal test it is **not interaction-specific**.
 - So I have **not** found an H-space "as provably as J-space". What exists is a reproducible non-Σ-commuting curvature structure without demonstrated function.
 - Every step, including one retraction (`results/CORRECTIONS.md`), is hashed in `results/runlog_pod.md` before its data.
-- **C6′ (descriptive):** deleting the robust spatial-sign subspace removes about 70% of 2×2 interactions while keeping about 86% of main effects (S = 0.52 / 0.59 at L16 / L28, against 0.27–0.28 for J25). But that subspace is mostly the Σ prior: interactions concentrate in high-variance directions.
+- **C6′ (descriptive):** S is mostly dose. At L16 it tracks the raw variance each ablation removes (r = 0.999), and the robust subspace's interaction-per-damage ratio equals J25's. At matched damage (L28, L40) the robust subspace is about 1.5–1.7× more interaction-selective than J25, but it is mostly the Σ prior (correction in `results/CORRECTIONS.md`).
 - **Compute:** one RTX PRO 6000 pod for 7.65 h, about $13.1 in total. All 78 result files were verified by sha256 on a private HF dataset before the pod was terminated.
 
 ## Theory (`hlens/paper/theory-v2.md`, red-teamed by 48 adversarial agents)

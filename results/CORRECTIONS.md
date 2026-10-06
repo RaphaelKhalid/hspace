@@ -30,3 +30,15 @@ A per-probe PCA **sign-flip randomization test** (`hlens/hs_flip.py`). It is an 
 - It has a planted power control.
 - Its decision rule was written into the pod run log before any real-data computation.
 - Results: see `results/hs_flip_full.json` when available.
+
+## Oct 6 2026, ~11:00 UTC: C6′ "about 2× J25 specificity" corrected to dose
+
+**What I claimed.** Deleting the robust spatial-sign subspace (`loc_norm`) is about twice as interaction-specific as deleting J25 (S = 0.52 / 0.59 vs 0.28 / 0.27 at L16 / L28). This was in the paper §4b and the README.
+
+**Why it is wrong.** The v6 design review (3 skeptics plus a synthesis) found it, and I re-checked it against `hspace2_full.pt`, `hspace_full.pt` and `c6prime_full.json`.
+- **At L16, S is nearly linear in the raw variance removed** across the four learned subspaces (r = 0.999).
+- `loc_norm` removes 22% of raw variance, J25 13%.
+- The interaction-per-main-effect damage ratio φ = (1 − r_I)/(1 − r_M) is equal: 4.7 vs 4.6.
+- So the larger S is dose, not specificity.
+
+**What survives, descriptively (no CIs).** At L28 and L40, where main-effect damage is matched, φ is 5.5 / 5.0 for `loc_norm` against 3.2 / 3.3 for J25.
