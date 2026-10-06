@@ -167,7 +167,7 @@ This paper makes three moves:
 
 **The Σ prior (theory §6B Prop. 8).**
 - Any whitened lens returns PCA-ordered directions whenever the Hessian law is invariant under sign flips along PCA axes. Examples: H = cI, any f(Σ), random GOE-like curvature.
-- The reproducible spatial-sign estimators reproduce at 0.92–0.99, but their top-25 overlaps PCA-25 by 0.78. A reweighted-PCA axis set (Csur25) recovers 0.78–0.83 of `loc_norm`.
+- The reproducible spatial-sign estimators reproduce at 0.92–0.99, but their top-25 overlaps PCA-25 by 0.78 (`loc_norm` at L16; 0.78–0.83 for `loc_norm` and `loc_xnorm` across the four layers, against 0.005 at random; `hs_pca_overlap.py`, `results/hs_pca_overlap_run2.json`). A reweighted-PCA axis set (Csur25) recovers 0.78–0.83 of `loc_norm`.
 - **Reproducibility alone is therefore not evidence of H-specific structure.** I retracted one attempted fix, the relative-curvature lens (`results/CORRECTIONS.md`).
 
 **Exact test: per-probe PCA sign-flip randomization (theory §6B Cor. 8.1, `hs_flip.py`).** Under the null "the curvature is Σ-commuting", flipping the PCA-coordinate signs of every row of a probe leaves the law of the data unchanged, so 200 flips give an exact null.
