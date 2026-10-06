@@ -61,7 +61,8 @@ I call that subspace **H-space**, after the Hessian.
   - No causal test yet, so this is a replicated candidate, not proven function.
 - **First-order screen (goal 2).**
   - At 27B a J-lens-cost gradient screen predicts where H-lens curvature lives: Spearman 0.82–0.85 over rows.
-  - Sampling windows by the screen cuts the HVPs needed by **80× / 10.6×** at equal estimator variance. End to end, including the screen, the saving is about 2.5–3×.
+  - For the raw energy estimator, sampling windows by the screen cuts the HVPs needed by **80× / 10.6×** at equal Frobenius variance (computed retrospectively on the same 256 windows, no CI; not computed for the spatial-sign estimator behind EX).
+  - End to end the saving is much smaller: if an HVP costs c screening passes, it is c / (1 + c/G) with G = 80 / 10.6, about 1.7–3.8× for c = 2–4, and never more than c.
 
 **Bottom line (Oct 6, before the follow-ups).**
 - At two held-out layers of Qwen3.6-27B, the H-lens contains a **reproducible second-order structure that is not a function of the activation covariance**. It is also not J-space (overlap at chance), not the massive-activation geometry, and not explained by basis-estimation error.

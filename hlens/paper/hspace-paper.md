@@ -259,8 +259,8 @@ Cross-run overlaps exclude the 15 windows v8 shared with run 2 (as first logged:
 - At 27B the H-lens rows are extremely heavy-tailed: the Kish effective sample size is 0.005% / 0.015% of rows.
 - The J-lens-cost screen |Σ^{1/2} ∂F/∂x_p|² predicts each row's curvature energy: Spearman 0.82 / 0.85 over rows and 0.71 / 0.78 over windows.
 - Sampling windows by screen mass (Prop. 9) cuts the HVPs needed at equal Frobenius variance by **80× (L16) and 10.6× (L40)**. The oracle bound is 12,272× / 368×.
-- End to end, including one backward pass per screened window, the saving is about 2.5–3×.
-- This makes the H-lens's dominant cost, HVPs, nearly negligible relative to the J-lens-cost screen.
+- These are for the raw energy estimator, computed retrospectively on the same 256 windows, with no CI; I have not computed them for the spatial-sign estimator behind EX.
+- End to end the saving is much smaller. If an HVP costs c screening passes, screening every window and running HVPs only on the sampled ones saves c / (1 + c/G), with G = 80 / 10.6: about 1.7–3.8× for c = 2–4, and never more than c. (The earlier "about 2.5–3×" was this back-of-envelope figure.)
 
 ## 4d. v9: the replicated punctuation-conditional H-subspace carries excess second-order interaction (preregistered PASS)
 
