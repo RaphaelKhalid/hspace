@@ -57,7 +57,7 @@ I call that subspace **H-space**, after the Hessian.
 **Update (Oct 6, ~12:40 UTC): two follow-up tests, both frozen before the data existed.**
 - **v8: punctuation-conditional H-structure REPLICATED on fresh 27B data.**
   - At L16 and L40 the curvature at punctuation positions has a low-dimensional, non-Σ-commuting subspace. Split-half is 0.82–0.87, against a flip null of 0.02.
-  - It reproduces across independent runs: top-5 overlap with run 2 is 0.86 / 0.79, against 0.006 by chance.
+  - It reproduces across independent runs: top-5 overlap with run 2 is 0.865 / 0.777 after excluding the 15 windows v8 shared with run 2 (`results/CORRECTIONS.md`), against 0.006 by chance.
   - No causal test yet, so this is a replicated candidate, not proven function.
 - **First-order screen (goal 2).**
   - At 27B a J-lens-cost gradient screen predicts where H-lens curvature lives: Spearman 0.82–0.85 over rows.

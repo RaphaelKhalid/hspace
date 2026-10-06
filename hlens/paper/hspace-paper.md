@@ -18,7 +18,7 @@
   - **The Σ prior.** I prove that every Σ^{1/2}-whitened lens, the J-lens included, returns reproducible PCA-ordered directions whenever curvature is Σ-commuting. I give an exact sign-flip randomization test for this.
   - **v5 sign-flip test (frozen rule, held-out layers): PASS.** It finds a reproducible non-Σ-commuting second-order structure that is not J-space or massive-activation geometry, and is robust to basis-estimation error.
   - **Frozen causal test: FAIL.** Deleting that structure is not more interaction-specific than deleting exact variance-matched twins.
-  - **Follow-ups (v8, v9; frozen rules, fresh data).** A punctuation-conditional H-subspace replicates across runs (top-5 overlap 0.86 / 0.78). On fresh text, its directions produce 2.5–6× more natural-scale pairwise interaction than exactly variance-matched twins. That establishes predictive second-order validity; decoding and steering are untested.
+  - **Follow-ups (v8, v9; frozen rules, fresh data).** A punctuation-conditional H-subspace replicates across runs (top-5 overlap 0.865 / 0.777). On fresh text, its directions produce 2.5–6× more natural-scale pairwise interaction than exactly variance-matched twins. That establishes predictive second-order validity; decoding and steering are untested.
   - **Goal 3.** A training-free multi-token J-lens add-on to a control monitor is net-negative at fixed audit budgets.
 
 ## 1. Introduction
@@ -244,12 +244,14 @@ This paper makes three moves:
 
 | layer | norm λ1 (flip max) | norm split@3 | xnorm λ1 (flip max) | xnorm split@3 | cross-run top-5 overlap with run 2 (chance) |
 |---|---|---|---|---|---|
-| 16 | 16.4 (2.4) | 0.82 | 8.3 (1.5) | 0.82 | **0.86** (0.0055) |
-| 40 | 10.9 (2.4) | 0.87 | 8.4 (1.9) | 0.82 | **0.79** (0.0061) |
+| 16 | 16.4 (2.4) | 0.82 | 8.3 (1.5) | 0.82 | **0.865** (0.0055) |
+| 40 | 10.9 (2.4) | 0.87 | 8.4 (1.9) | 0.82 | **0.777** (0.0061) |
+
+Cross-run overlaps exclude the 15 windows v8 shared with run 2 (as first logged: 0.865 / 0.792; see `results/CORRECTIONS.md`).
 
 - The planted rank-3 control was "detected" at both layers, but its recovery was low (0.01–0.24) because the real structure dominates, so it is a weak power check.
 
-**What this licenses.** At two layers of Qwen3.6-27B, the curvature measured at punctuation positions contains a low-dimensional, non-Σ-commuting subspace. It reproduces within a run and **across independent runs and fresh data** (top-5 overlap 0.79–0.86), and it is specific to that token class.
+**What this licenses.** At two layers of Qwen3.6-27B, the curvature measured at punctuation positions contains a low-dimensional, non-Σ-commuting subspace. It reproduces within a run and **across independent runs and fresh data** (top-5 overlap 0.777–0.865), and it is specific to that token class.
 
 **What it does not license.** Function. v8 has no causal test, and the earlier causal test of the all-rows v5 patterns failed. So this is a replicated *candidate* H-subspace, not an H-space "as provable as J-space".
 
@@ -286,7 +288,7 @@ This paper makes three moves:
 - The effect is mostly in the trunk: |I_trunk| is 2.4e-3, against 6.6e-4 for |I_soft|.
 
 **What the chain of preregistered tests now establishes, at L16 and L40 of Qwen3.6-27B:**
-1. **Reproducible structure.** At punctuation positions the H-lens has a 5-dimensional structure that reproduces within a run (split@3 0.82–0.87 against a flip null of 0.02) and across independent runs on fresh data (0.86 / 0.78). That is v8.
+1. **Reproducible structure.** At punctuation positions the H-lens has a 5-dimensional structure that reproduces within a run (split@3 0.82–0.87 against a flip null of 0.02) and across independent runs on fresh data (0.865 / 0.777). That is v8.
 2. **Not trivial.** It is not explained by activation covariance (sign-flip test), nor by J-space (overlap 0.06–0.12), nor by the massive-activation geometry.
 3. **Predictive of second-order function.** On fresh text, moving along its directions produces 2.5–6× more natural-scale pairwise interaction than exactly variance-matched directions, per unit of first-order effect as well. That is v9.
 
