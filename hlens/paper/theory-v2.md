@@ -793,7 +793,13 @@ The "relative-curvature H-lens" (a generalized eigenproblem against the H = cI n
 - **Frozen rule, L16 and L28: FAIL**, judged on variant (b) with the massive span deflated.
 - **What did beat all 200 flips:** λ1 of the D-normalized operator, at both layers, for every estimator and in every variant (a, b, c). With the massive span removed it beat the flip-null maximum by 1.4–2.1×.
 - **Why the rule still fails:** split-half had no power under non-axis-aligned deflation.
-- **v5** (held-out L40 and L52, axis-aligned, frozen before computation): see §8.
+- **v5** (held-out L40 and L52, axis-aligned, frozen before computation): **PASS**.
+  - λ1 is 3–6.6× the flip maximum.
+  - Split@3 is 0.82–0.94, against a flip null of 0.01–0.02.
+  - The structure survives a matched-flatness misspecification null: simulated split@3 is 0.01–0.07.
+  - A steep f = Σ null *can* fake it, but the data's PR of 58–91 excludes that regime.
+- **Frozen causal Σ-orbit twin test: FAIL at both layers.** S(EX) is 0.013–0.014 against twin means of 0.002–0.007, and the confidence intervals include 0.
+- **Interpretation.** The non-Σ-commuting structure is real and reproducible, but has no demonstrated interaction-specific function.
 
 ## 7. White-box signals in control protocols (goal 3)
 
@@ -892,7 +898,13 @@ Status: standard detection-theory and random-matrix results applied to a stylise
 ## 8. Open questions
 1. **Does H-space exist at 27B?**
    - For M^row (run 1, preregistered): **FAIL**. C1 fails at all four layers, with split-half 0.33–0.41. C5 and C6 are pending but cannot change the verdict.
-   - Open: is M^diag, M^rect or the spatial-sign operator reproducible at 27B (run 2, exploratory)?
+   - M^diag via `loc_x` (v3, preregistered): **not found**. It is unmeasurable at this budget because of heavy tails (§6B Obs. 8.2).
+   - The spatial-sign operator is reproducible (0.97–0.99), but mostly through the Σ prior (Prop. 8).
+   - Its non-Σ-commuting part is reproducible on held-out layers (v5 PASS), but is not interaction-specific under the frozen twin test.
+   - Open:
+     - a non-Σ-commuting H-structure with demonstrated function;
+     - better causal readouts, for example interactions on the lens objective itself or on clause-initial subject tokens;
+     - ruling out position-dependent covariance.
 2. **Does the integrated H-lens fix v1's effective-scale failure?** Not at 0.8B, ℓ = 12, λ = 1 (r 0.16 vs 0.25 for the local lens). Open: other layers, the triangular weight, and v1's own setting.
 3. **Does the potential lens find the planted pirate × animal sleeper from honest data?** Open; nothing is implemented. The gate is cross-position, which a per-position MLP lens may not see.
 4. **Is H-space distinct from J-space?**
