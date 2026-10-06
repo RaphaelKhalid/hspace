@@ -37,21 +37,34 @@ DEADLINE = 1791286200 if "--late" in sys.argv else 1791283800   # 11:30 / 10:50 
 N_TWIN, K_PCA = 8, 1000
 
 
-def ex_patterns(T2, l, k, dump):
+def ex_patterns(T2, l, k, dump, v5=False):
     Sh, mu = T2[f"Sh{l}"].double(), T2[f"mu{l}"].double()
     ev, P = torch.linalg.eigh(Sh)
     P = P[:, torch.argsort(ev, descending=True)]
-    Qp = P.T @ conf_basis(mu, Sh, 4)
+    C = conf_basis(mu, Sh, 4)
     Y = dump["loc_y1"].double() @ P
-    Y = Y - (Y @ Qp) @ Qp.T
-    U = (Y / Y.norm(dim=1, keepdim=True))[:, :K_PCA]
+    if v5:                                                      # hs_flip5 variant d: axis-aligned drop (identical rule)
+        wC = (P.T @ C).pow(2).sum(1)
+        drop = torch.zeros(P.shape[0], dtype=torch.bool); drop[:5] = True
+        tot = float(wC[:K_PCA].sum())
+        for i_ in torch.argsort(wC[:K_PCA], descending=True):
+            if float(wC[:K_PCA][drop[:K_PCA]].sum()) >= 0.9 * tot:
+                break
+            drop[int(i_)] = True
+        Y = Y * (~drop).double()
+        cols = torch.nonzero(~drop[:K_PCA]).squeeze(1)
+    else:
+        Qp = P.T @ C
+        Y = Y - (Y @ Qp) @ Qp.T
+        cols = torch.arange(K_PCA)
+    U = (Y / Y.norm(dim=1, keepdim=True))[:, cols]
     M = U.T @ U / len(U)
     dg = torch.diagonal(M)
     R = dg.rsqrt()[:, None] * M * dg.rsqrt()[None, :]
     e, V = torch.linalg.eigh(R)
     V = V[:, torch.argsort(e, descending=True)[:k]]
-    pat = torch.linalg.qr(dg.sqrt()[:, None] * V)[0]            # PCA coords 1..K
-    EX = P[:, :K_PCA] @ pat                                     # whitened frame, orthonormal
+    pat = torch.linalg.qr(dg.sqrt()[:, None] * V)[0]            # retained PCA coords
+    EX = P[:, cols] @ pat                                       # whitened frame, orthonormal
     g = torch.Generator().manual_seed(4242 + l)
     tw = [P @ ((torch.randint(0, 2, (P.shape[0], 1), generator=g).double() * 2 - 1) * (P.T @ EX)) for _ in range(N_TWIN)]
     pca25 = P[:, :25]
@@ -64,7 +77,10 @@ def main():
     cfg = CFG[tag]
     t0 = time.time()
     T2 = torch.load(OUT / f"hspace2_{tag}.pt", map_location="cpu", weights_only=False)
-    FL = json.load(open(OUT / f"hs_flip_{tag}.json")) if (OUT / f"hs_flip_{tag}.json").exists() else {}
+    V5 = "--v5" in sys.argv
+    fpath = OUT / (f"hs_flip5_{tag}.json" if V5 else f"hs_flip_{tag}.json")
+    FL = json.load(open(fpath)) if fpath.exists() else {}
+    VAR = "d" if V5 else "b"
     m = Model(cfg["model"], cfg["T"])
     bf16w.MODE = "bf16"
     T, d = cfg["T"], m.d
@@ -84,10 +100,10 @@ def main():
     labs = [x for x in labs if x[0] >= w_lo]
     ws = sorted({x[0] for x in labs})
     log(f"[c6t] {tag}: held-out windows {w_lo}..{n_all-1} ({len(ws)}), {len(labs)} targets ({time.time()-t0:.0f}s)")
-    res_path = OUT / f"c6twin_{tag}.json"
+    res_path = OUT / (f"c6twin5_{tag}.json" if V5 else f"c6twin_{tag}.json")
     res = json.load(open(res_path)) if res_path.exists() else {"tag": tag, "layers": {}}
     for l in (lay or cfg["layers"]):
-        fl = (FL.get(str(l)) or {}).get("b", {}).get("norm")
+        fl = (FL.get(str(l)) or {}).get(VAR, {}).get("norm")
         if tag == "full":
             if not fl:
                 log(f"[c6t] L{l}: no flip result, skipped"); continue
@@ -98,7 +114,7 @@ def main():
         else:
             k = 3
         dump = torch.load(OUT / f"hspace2_{tag}_dump_L{l}.pt", map_location="cpu", weights_only=False)
-        EX, tw, pca25 = ex_patterns(T2, l, k, dump)
+        EX, tw, pca25 = ex_patterns(T2, l, k, dump, V5)
         mu2, Sh2 = T2[f"mu{l}"].cuda(), T2[f"Sh{l}"].cuda()
         Sih2 = torch.linalg.inv(Sh2.double()).float()
         conds = {"none": None, "EX": EX.float().cuda(), **{f"tw_{j}": q.float().cuda() for j, q in enumerate(tw)}, "pca25": pca25.float().cuda()}
