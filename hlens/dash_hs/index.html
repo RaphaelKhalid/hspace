@@ -36,8 +36,8 @@ pre{white-space:pre-wrap;color:#9a9a9a;font-size:12px;margin:0;max-height:260px;
 <div class="sub" id="c0" style="margin-top:8px"></div></div>
 <div class="card" style="margin-top:12px"><div class="k">run 2 (exploratory) + v3 prereg · robust estimators · C1' = split at noise-floor k ≥ 0.7 (k ≥ 3) · C6' = AND-specificity S ≥ 0.2 with CI &gt; 0 and &gt; J/random</div>
 <table><thead><tr><th>layer</th><th>loc_x split@25</th><th>@5</th><th>@k_floor (k)</th><th>loc_norm @25</th><th>int_x @25</th><th>PR</th><th>vs J25</th><th>KL ×rand</th><th>C6' S [CI]</th></tr></thead><tbody id="rows2"><tr><td colspan="10" class="na">waiting for run 2 (starts after the control read)…</td></tr></tbody></table></div>
-<div class="card" style="margin-top:12px"><div class="k">post-hoc (NOT prereg) · relative curvature = excess over the isotropic-Hessian (PCA) null · causal: S(rel25) vs variance-matched random, S(loc_norm) vs PCA25</div>
-<table><thead><tr><th>layer</th><th>rel split@1</th><th>@5</th><th>@25</th><th>null @25</th><th>vs PCA25</th><th>massive-span mass</th><th>S rel25</th><th>S vm-rand</th><th>Δ CI</th><th>S loc_norm − S pca25 CI</th></tr></thead><tbody id="rows3"><tr><td colspan="11" class="na">relative-curvature analysis running…</td></tr></tbody></table></div>
+<div class="card" style="margin-top:12px"><div class="k">sign-flip randomization · exact null for Sigma-commuting curvature · variant a none / b massive span deflated / c + J25 / d axis-aligned drop (v5, frozen, L40+L52) · PASS needs lambda1 AND split3 above all 200 flips, split3 ≥ 0.7</div>
+<table><thead><tr><th>layer · variant · estimator</th><th>λ1</th><th>flip-null max</th><th>split@3</th><th>flip-null max</th><th>top-10 in J25</th><th>top-10 in PCA25</th></tr></thead><tbody id="rows3"><tr><td colspan="7" class="na">flip test running…</td></tr></tbody></table></div>
 <div class="card" style="margin-top:12px"><div class="k">pod log (live)</div><pre id="log"></pre></div>
 </div>
 <script>
@@ -66,10 +66,9 @@ function render(){
   if(k2.length){document.getElementById('rows2').innerHTML=k2.map(l=>{const x=R2[l];
     const sp=x.S==null?'<td class="na">pending</td>':`<td class="${x.c6p?'pass':'fail'}">${f(x.S)} [${x.S_ci?f(x.S_ci[0]):'-'}, ${x.S_ci?f(x.S_ci[1]):'-'}]</td>`;
     return `<tr><td>L${l}</td>${cell(x.x25,v=>v>=0.7)}${cell(x.x5,v=>v>=0.7)}<td class="${(x.xf>=0.7&&x.kf>=3)?'pass':(x.xf==null?'na':'fail')}">${f(x.xf)} (${x.kf==null?'-':x.kf})</td>${cell(x.n25,v=>v>=0.7)}${cell(x.i25,v=>v>=0.7)}<td>${f(x.PR,1)}</td>${cell(x.C3,v=>v<0.5)}${cell(x.KLx,v=>v>=3,1)}${sp}</tr>`}).join('')}
-  const R3=S.res3||{};const k3=Object.keys(R3).sort((a,b)=>a-b);
-  if(k3.length){document.getElementById('rows3').innerHTML=k3.map(l=>{const x=R3[l];const ci=v=>v?`[${f(v[0])}, ${f(v[1])}]`:'<span class="na">pending</span>';
-    const cc=v=>v?(v[0]>0?'pass':'fail'):'na';
-    return `<tr><td>L${l}</td>${cell(x.s1,v=>v>=0.7)}${cell(x.s5,v=>v>=0.7)}${cell(x.s25,v=>v>=0.7)}<td>${f(x.n25)}</td>${cell(x.pca,v=>v<0.5)}${cell(x.C16,v=>v<0.1)}<td>${f(x.S_rel)}</td><td>${f(x.S_vm)}</td><td class="${cc(x.ci_rel)}">${ci(x.ci_rel)}</td><td class="${cc(x.ci_pca)}">${ci(x.ci_pca)}</td></tr>`}).join('')}
+  const R3=S.res3||{};const k3=Object.keys(R3);
+  if(k3.length){document.getElementById('rows3').innerHTML=k3.map(n=>{const x=R3[n];
+    return `<tr><td>${n}</td><td class="${x.lam>x.lam_null?'pass':'fail'}">${f(x.lam,2)}</td><td>${f(x.lam_null,2)}</td><td class="${(x.s3>x.s3_null&&x.s3>=0.7)?'pass':'fail'}">${f(x.s3)}</td><td>${f(x.s3_null)}</td><td>${f(x.J)}</td><td>${f(x.pca)}</td></tr>`}).join('')}
   const pc=Object.values(R).map(x=>x.pc).find(v=>v!=null);
   document.getElementById('c0').innerHTML=pc==null?'C0 positive control: pending (layer 40)':`C0 positive control (planted gate recovery ≥0.8): <span class="${pc>=0.8?'pass':'fail'}">${f(pc)}</span> ${pc>=0.8?'✅ instrument valid':'⛔ VOID'}`;
   document.getElementById('log').textContent=(S.lines||[]).join('\n')+(S.errors?'\n\n⚠️ '+S.errors:'');
