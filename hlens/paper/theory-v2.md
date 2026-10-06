@@ -732,6 +732,69 @@ For scale, the exact H25 split-half overlap is 0.74 / 0.73.
 - A pre-v2 0.8B run (raw/norm/trim variants) gave split-half 0.70 (raw) vs 0.87 (spatial sign) at ℓ = 6 before an OOM at ℓ = 12 (runlog 20:34; `out/hspace2_small.log`).
 - No 27B run-2 numbers exist yet [open].
 
+## 6B. Lens nulls: the Σ prior, heavy tails and sign-flip invariance (Oct 6, after run 2)
+
+**Setup.** A run-2 probe row is y_p = Σ_q s_p s_q H̃_pq z, where:
+- H̃_pq = Σ^{1/2} H_pq Σ^{1/2} are the whitened Hessian blocks;
+- z ~ N(0, I) is shared by every row of a probe;
+- s is a vector of independent ±1 signs (Rademacher).
+
+Let P be the PCA eigenbasis of Σ, and let 𝒟 = {P diag(±1) Pᵀ} be the group of sign flips along the PCA axes.
+
+### Proposition 8 (the Σ prior) [proved]
+**Statement.** Suppose the joint law of the blocks {H̃_pq} (over windows and positions) is invariant under simultaneous conjugation H̃ ↦ D H̃ D, for every D ∈ 𝒟. Then E[M] is diagonal in P for all four run-2 estimators: raw, spatial sign, cross-moment, and spatial-sign cross-moment.
+
+**Proof.**
+1. The map z ↦ Dz preserves N(0, I).
+2. The conjugation therefore sends every row of a probe to Dy.
+3. Each estimator is equivariant: M(Dy) = D M(y) D, because |Dy| = |y|.
+4. Invariance of the law gives E[M] = D E[M] D. Choosing D to flip a single axis i makes every entry (i, j ≠ i) equal to its own negative, so it is zero. ∎
+
+**Laws that satisfy the hypothesis:**
+- H = cI;
+- any f(Σ);
+- GOE- or Haar-random curvature;
+- the isotropic RMSNorm term of §2.
+
+**Consequences.**
+- Under such laws the whitened lens returns PCA-ordered directions.
+- With near-independent rows (each row mixes about 111 cross-position blocks), it does so *reproducibly*. A simulated GOE-type null at the run-2 budget gives split-half 0.98 and PCA-25 overlap 0.997, with a participation ratio of 52–125.
+- So three things are **not** evidence of H-specific structure:
+  - high split-half;
+  - large overlap with PCA;
+  - a flat spectrum.
+- The 25/d "random subspace" baseline is the wrong comparison.
+- The same prior applies to any lens whitened by Σ^{1/2}. At 27B, J25 overlaps PCA-25 by 0.29–0.61. At 0.8B, the M^row H25 overlapped PCA-25 by 0.69–0.78.
+
+### Corollary 8.1 (an exact randomization test) [proved]
+**The null, H0.** The law of the blocks is invariant under 𝒟, as in Proposition 8.
+
+**The test.**
+1. Draw one D uniformly from 𝒟 per probe and apply it to every row of that probe.
+2. Under H0 the flipped dataset has the same law as the original.
+3. So for any statistic T, the replicates give an exact Monte Carlo p-value, (1 + #{T_r ≥ T_0}) / (N + 1).
+
+**Which preprocessing keeps the test useful.**
+- A preprocessing g that commutes with 𝒟 keeps the test exact and adds no structure to the null replicates. Examples: masking axes, normalizing rows, selecting PCA coordinates.
+- A fixed projection that is *not* axis-aligned, g(Y) = Y(I − QQᵀ), keeps the test exact, since g is fixed. But g(DY) contains the term −(DYQ)Qᵀ along the fixed directions Q, so the null patterns themselves become reproducible.
+- With such a projection, split-half statistics lose all power. Measured: with the massive span removed, the null maximum of split3 was 0.95–0.98 at L16 and L28.
+- Axis-aligned removal avoids this. That is v5 (`hs_flip5.py`): drop PCA axes 1–5, plus the axes that carry the most massive/radial-span mass, until 90% of that mass is removed.
+
+### Observation 8.2 (heavy tails explain C1 and C1′) [measured]
+- **Concentration.** At L16 the heaviest 0.1% of (position, probe) rows carry 97.5% of the raw second moment. Digit tokens are 7.4% of rows but carry 88% of the energy. L28 is similar.
+- **Consequence.** The raw and cross-moment estimators are controlled by O(10) rows, so their top eigenspaces change between halves. Run 1 C1: 0.33–0.41. Run 2 `loc_x`: no eigenvalue above its noise floor.
+- **Trimming fixes reproducibility.** Dropping the heaviest 5% of rows gives raw split-half 0.95 at k = 5 and 0.72–0.87 at k = 25.
+- **Caveat on spatial-sign estimators.** They are robust, but they estimate a different population object (the shape operator). Its eigenvectors equal those of the raw operator only for elliptical row laws.
+
+### Retracted construction
+The "relative-curvature H-lens" (a generalized eigenproblem against the H = cI null) is **not** a valid fix. It returns filters rather than patterns, its null is misspecified, and the ridge decided the outcome (see `results/CORRECTIONS.md`).
+
+### Flip-test results so far
+- **Frozen rule, L16 and L28: FAIL**, judged on variant (b) with the massive span deflated.
+- **What did beat all 200 flips:** λ1 of the D-normalized operator, at both layers, for every estimator and in every variant (a, b, c). With the massive span removed it beat the flip-null maximum by 1.4–2.1×.
+- **Why the rule still fails:** split-half had no power under non-axis-aligned deflation.
+- **v5** (held-out L40 and L52, axis-aligned, frozen before computation): see §8.
+
 ## 7. White-box signals in control protocols (goal 3)
 
 **Setup.**
