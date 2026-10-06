@@ -5,7 +5,7 @@ set -euo pipefail
 SRC="${HS_SRC:-/c/Users/rapha/OneDrive/Desktop/Claude/matsempirical2027}"
 R="$(cd "$(dirname "$0")/.." && pwd)"
 H="$SRC/interpcontrol/hlens"
-cp "$H"/{bf16w,common,hl2,hvp,ladder,hspace,hs_s7,hspace2,hs_c6prime,hs_anatomy,hs_integrated,hs_rectangle,hs_local,hs_diag_top,hs_dump_analysis,hs_confound,hs_c6defl,hs_relcurv,hs_relcurv_gain,hs_flip,hs_flip5,hs_flip5_misspec,hs_flip5_misspec2,hs_flip5_attrib,hs_c6twin,ctrl_read,ctrl_score,ctrl_score_v2}.py "$R/hlens/" 2>/dev/null || true
+cp "$H"/{bf16w,common,hl2,hvp,ladder,hspace,hs_s7,hspace2,hs_c6prime,hs_anatomy,hs_integrated,hs_rectangle,hs_local,hs_diag_top,hs_dump_analysis,hs_confound,hs_c6defl,hs_relcurv,hs_relcurv_gain,hs_flip,hs_flip5,hs_flip5_misspec,hs_flip5_misspec2,hs_flip7,hs_importance,hs_proxy08,hs_c6twin6,hs_flip5_attrib,hs_c6twin,ctrl_read,ctrl_score,ctrl_score_v2}.py "$R/hlens/" 2>/dev/null || true
 cp "$H"/tests/{conftest,test_bf16w,test_swiglu,test_hvp,test_deltanet_patch}.py "$R/hlens/tests/" 2>/dev/null || true
 cp "$H"/pod/{hs_run.sh,hs_bundle.sh,chain2.sh,chain3.sh,chain4.sh,relcurv_layers.sh,flip5.sh,chain5.sh,chain6.sh,watchdog11.sh,hf_sync.py,verify_hf.py} "$R/hlens/pod/" 2>/dev/null || true
 cp "$H"/dash_hs/{server.py,index.html} "$R/hlens/dash_hs/"
