@@ -46,3 +46,5 @@
 | noise floor / twin | 0.20 | 0.10 |
 
 Self-check from the raw per-window data: EX beats every twin in 88% / 69% of windows, the median per-window ratio is 4.95× / 2.26×, and without the top-5 windows the ratio is 4.3× / 2.4×.
+
+[correction 2026-10-06T18:40Z] The "without the top-5 windows 4.3× / 2.4×" figure above does not reproduce. Recomputed by `hs_v9_robust.py` from `hs_v9_full_raw.pt` (88 saved windows), dropping the 5 windows with the largest per-window T1 gives 5.2× / 2.3× (geometric mean) or 4.9× / 2.6× (ratio of means). The 88% / 69% and the 4.95× / 2.26× median reproduce. Recorded in `results/CORRECTIONS.md`.

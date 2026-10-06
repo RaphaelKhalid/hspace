@@ -1,0 +1,29 @@
+{
+ "source": "out/pod/live/hs_v9_full_raw.pt",
+ "layers": {
+  "16": {
+   "n_windows": 88,
+   "geomean_ratio": 5.803779351830775,
+   "ratio_of_means": 6.595164785863042,
+   "median_window_ratio": 4.947891278680073,
+   "frac_beats_every_twin": 0.875,
+   "frac_beats_mean_twin": 0.9772727272727273,
+   "drop_top5_geomean_ratio": 5.240214377365365,
+   "drop_top5_ratio_of_means": 4.9421249503887,
+   "mean_absI_EX": 0.002178403189939684,
+   "mean_absI_twins": 0.0003303030721247731
+  },
+  "40": {
+   "n_windows": 88,
+   "geomean_ratio": 2.5138625993395234,
+   "ratio_of_means": 3.2717938164357023,
+   "median_window_ratio": 2.262459855869983,
+   "frac_beats_every_twin": 0.6931818181818182,
+   "frac_beats_mean_twin": 0.8181818181818182,
+   "drop_top5_geomean_ratio": 2.3051710837489954,
+   "drop_top5_ratio_of_means": 2.6137202168062275,
+   "mean_absI_EX": 0.0009737313691950497,
+   "mean_absI_twins": 0.0002976139157374636
+  }
+ }
+}

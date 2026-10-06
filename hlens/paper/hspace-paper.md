@@ -283,7 +283,8 @@ Cross-run overlaps exclude the 15 windows v8 shared with run 2 (as first logged:
 
 **Robustness (descriptive).**
 - At L16, EX beats every twin in 88% of windows (69% at L40), and beats the mean twin in 98% (82%).
-- Without the top-5 windows the ratio is still 4.3× (2.4×).
+- The median per-window ratio is 4.95× (2.26×), and without the top-5 windows the geometric-mean ratio is 5.2× (2.3×) (`hs_v9_robust.py`, `results/hs_v9_robust.json`; an earlier "4.3× (2.4×)" did not reproduce, see `results/CORRECTIONS.md`).
+- In absolute terms the effects are small: mean |I| along EX pairs is 2.2e-3 (1.0e-3) nats, against 3.3e-4 (3.0e-4) for the twins.
 - All 10 EX pairs agree with the 3 matched pairs.
 - The effect is mostly in the trunk: |I_trunk| is 2.4e-3, against 6.6e-4 for |I_soft|.
 

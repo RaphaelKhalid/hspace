@@ -58,3 +58,9 @@ A per-probe PCA **sign-flip randomization test** (`hlens/hs_flip.py`). It is an 
 
 - The L16 statistic is T1 = 1.766 (`results/hs_v9_full.json`), so e^T1 = 5.85, which rounds to **5.8×**. The v9 result commit message, the README and the paper said 5.9×. The CI and the verdict are unchanged.
 - 5.8× (and 2.5× at L40) is a geometric-mean ratio over windows. The ratio of mean |I| is 6.6× / 3.3×.
+
+## Oct 6 2026, ~18:40 UTC: v9 "4.3× / 2.4× without the top-5 windows" does not reproduce
+
+- `runlog_laptop.md` and paper §4d said that dropping the 5 strongest windows still leaves 4.3× (L16) / 2.4× (L40).
+- Recomputed from `hs_v9_full_raw.pt` (88 saved windows) by the new `hlens/hs_v9_robust.py` (`results/hs_v9_robust.json`), dropping the 5 windows with the largest per-window T1 gives **5.2× / 2.3×** (geometric mean) or 4.9× / 2.6× (ratio of means). No definition I tried gives 4.3×.
+- The other robustness figures reproduce: EX beats every twin in 88% / 69% of windows, and the median per-window ratio is 4.95× / 2.26×. The conclusion (a few extreme windows do not drive the result) is unchanged.
