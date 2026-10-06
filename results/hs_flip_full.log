@@ -1,0 +1,25 @@
+[L16] a    norm     : lam1 8.479 (null max 1.614, p 0.005) | split k1/3/5/10 0.94/0.89/0.97/0.85 (null max k3 0.11, p 0.005) (148s)
+[L16] a    xnorm    : lam1 3.307 (null max 0.845, p 0.005) | split k1/3/5/10 0.70/0.81/0.72/0.67 (null max k3 0.08, p 0.005) (148s)
+[L16] a    raw_trim5: lam1 17.124 (null max 4.490, p 0.005) | split k1/3/5/10 0.75/0.76/0.72/0.61 (null max k3 0.08, p 0.005) (148s)
+[L16] b    norm     : lam1 11.158 (null max 6.996, p 0.005) | split k1/3/5/10 0.98/0.86/0.97/0.88 (null max k3 0.98, p 1.000) (372s)
+[L16] b    xnorm    : lam1 3.897 (null max 2.680, p 0.005) | split k1/3/5/10 0.92/0.65/0.90/0.76 (null max k3 0.87, p 0.995) (372s)
+[L16] b    raw_trim5: lam1 19.111 (null max 9.083, p 0.005) | split k1/3/5/10 0.83/0.59/0.63/0.62 (null max k3 0.45, p 0.005) (372s)
+[L16] c    norm     : lam1 16.321 (null max 13.092, p 0.005) | split k1/3/5/10 0.97/0.98/0.97/0.96 (null max k3 0.98, p 0.005) (591s)
+[L16] c    xnorm    : lam1 6.104 (null max 4.831, p 0.005) | split k1/3/5/10 0.92/0.91/0.74/0.78 (null max k3 0.91, p 0.025) (591s)
+[L16] c    raw_trim5: lam1 22.589 (null max 15.774, p 0.005) | split k1/3/5/10 0.83/0.65/0.74/0.69 (null max k3 0.82, p 1.000) (591s)
+[L16] PLANTED norm: lam1 11.076 vs null max 6.905 -> DETECTED; recovered 0.00
+[L16] PLANTED xnorm: lam1 4.884 vs null max 2.648 -> DETECTED; recovered 0.78
+L16: Csur25 vs loc_norm 0.7761540412902832; saved (643s)
+[L28] a    norm     : lam1 7.155 (null max 1.599, p 0.005) | split k1/3/5/10 0.68/0.96/0.92/0.83 (null max k3 0.09, p 0.005) (155s)
+[L28] a    xnorm    : lam1 3.776 (null max 0.996, p 0.005) | split k1/3/5/10 0.97/0.74/0.85/0.77 (null max k3 0.08, p 0.005) (155s)
+[L28] a    raw_trim5: lam1 9.532 (null max 2.848, p 0.005) | split k1/3/5/10 0.45/0.86/0.69/0.71 (null max k3 0.06, p 0.005) (155s)
+[L28] b    norm     : lam1 9.771 (null max 6.591, p 0.005) | split k1/3/5/10 0.99/0.97/0.96/0.86 (null max k3 0.98, p 0.682) (367s)
+[L28] b    xnorm    : lam1 5.216 (null max 3.371, p 0.005) | split k1/3/5/10 0.97/0.81/0.90/0.85 (null max k3 0.95, p 1.000) (367s)
+[L28] b    raw_trim5: lam1 11.199 (null max 7.523, p 0.005) | split k1/3/5/10 0.91/0.67/0.71/0.74 (null max k3 0.91, p 0.995) (367s)
+[L28] c    norm     : lam1 19.387 (null max 15.052, p 0.005) | split k1/3/5/10 0.99/0.99/0.94/0.96 (null max k3 0.98, p 0.005) (784s)
+[L28] c    xnorm    : lam1 9.621 (null max 7.678, p 0.005) | split k1/3/5/10 0.98/0.96/0.89/0.89 (null max k3 0.96, p 0.015) (784s)
+[L28] c    raw_trim5: lam1 20.383 (null max 15.663, p 0.005) | split k1/3/5/10 0.97/0.89/0.70/0.81 (null max k3 0.93, p 0.980) (784s)
+[L28] PLANTED norm: lam1 9.741 vs null max 6.556 -> DETECTED; recovered 0.00
+[L28] PLANTED xnorm: lam1 5.330 vs null max 3.358 -> DETECTED; recovered 0.54
+L28: Csur25 vs loc_norm 0.8287684917449951; saved (946s)
+DECISION (variant b, L16 & L28, norm & xnorm): FAIL
