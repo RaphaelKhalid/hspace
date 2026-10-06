@@ -49,6 +49,8 @@ I call that subspace **H-space**, after the Hessian.
 - But under the frozen causal test it is **not interaction-specific**.
 - So I have **not** found an H-space "as provably as J-space". What exists is a reproducible non-Σ-commuting curvature structure without demonstrated function.
 - Every step, including one retraction (`results/CORRECTIONS.md`), is hashed in `results/runlog_pod.md` before its data.
+- **C6′ (descriptive):** deleting the robust spatial-sign subspace removes about 70% of 2×2 interactions while keeping about 86% of main effects (S = 0.52 / 0.59 at L16 / L28, against 0.27–0.28 for J25). But that subspace is mostly the Σ prior: interactions concentrate in high-variance directions.
+- **Compute:** one RTX PRO 6000 pod for 7.65 h, about $13.1 in total. All 78 result files were verified by sha256 on a private HF dataset before the pod was terminated.
 
 ## Theory (`hlens/paper/theory-v2.md`, red-teamed by 48 adversarial agents)
 - **Lemma 1, the second-order adjoint (standard):** the exact block decomposition of the residual Hessian, verified to ≤ 1.5e-6 on Qwen3.5-0.8B.
