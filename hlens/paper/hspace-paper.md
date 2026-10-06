@@ -12,7 +12,13 @@
   - complexity results: the top-k H-space costs O(k) Hessian-vector products independent of the width d, and is cheaper to find than fitting the J-lens itself.
 - **Engineering.** A bf16-stored, fp32-computed linear layer that can be differentiated twice. Exact HVPs of a 27B model then fit on one 96 GB GPU.
 - **Test.** I then test six preregistered criteria for H-space on Qwen3.6-27B: reproducibility, low rank, distinctness from J-space, natural-scale interactions, causal necessity, and a double dissociation on interaction-dependent tokens. A planted bilinear gate serves as the instrument-validity control.
-- **Result:** **[27B verdict]**.
+- **Result.**
+  - **Run 1 (preregistered): FAIL.** C1 (reproducibility) and C6 (dissociation) fail.
+  - **Run 2 / v3 (preregistered): not found.** The unbiased estimator is pure heavy-tail noise at 27B: 0.1% of rows carry 97.5% of the energy.
+  - **The Σ prior.** I prove that every Σ^{1/2}-whitened lens, the J-lens included, returns reproducible PCA-ordered directions whenever curvature is Σ-commuting. I give an exact sign-flip randomization test for this.
+  - **v5 sign-flip test (frozen rule, held-out layers): PASS.** It finds a reproducible non-Σ-commuting second-order structure that is not J-space or massive-activation geometry, and is robust to basis-estimation error.
+  - **Frozen causal test: FAIL.** Deleting that structure is not more interaction-specific than deleting exact variance-matched twins.
+  - **Goal 3.** A training-free multi-token J-lens add-on to a control monitor is net-negative at fixed audit budgets.
 
 ## 1. Introduction
 J-space (arXiv 2607.15495) is a first-order object. The J-lens transports a residual direction linearly to the output and decodes it as tokens.
@@ -183,13 +189,32 @@ This paper makes three moves:
 - The top PCs: 0 in PCA-25 and 0.07–0.11 in PCA-100.
 - An axis-aligned artifact: its participation ratio in PCA coordinates is 59–204, so it is diffuse.
 
-**Still open, both running at the time of writing:**
-- Robustness to estimation error in the PCA basis (`hs_flip5_misspec.py`).
-- The frozen causal test (`hs_c6twin.py --v5`): ablate the v5 patterns vs 8 Σ-orbit twins that match variance and PCA profile exactly, on held-out windows.
+**Robustness to estimation error in the PCA basis (`hs_flip5_misspec*.py`).**
+- **The threat.** Rows that are Σ-commuting with respect to the *true* Σ look non-commuting in the estimated basis. I used run-1's independent Σ estimate as a stand-in for the truth.
+- **A steep f = Σ null can fake the v5 pass.** Simulated λ1 is 122–221 and split@3 is 0.88–0.93.
+- **The data rule that regime out.** That null has spectrum PR 3–4; the data's is 58–91.
+- **Matched null.** I calibrated f = Σ^a so the simulated spectrum flatness matches the data at each layer. The simulated split@3 is 0.01–0.07, against 0.90–0.94 in the data. **v5 survives** (rule frozen before running).
+
+**Causal test (frozen rule, `hs_c6twin.py --v5`): FAIL.**
+- **Design.** Ablate the top-5 v5 patterns versus 8 Σ-orbit twins, which match variance and PCA profile exactly. I used the 227 held-out eval windows and ablated positions ≥ 16 only.
+
+| layer | S(EX) | twin mean S | rank of EX among 9 | CI of ΔS | KL(EX) vs twin range | REAL? |
+|---|---|---|---|---|---|---|
+| 40 | +0.014 | +0.002 | 2 | [−0.003, +0.029] | 0.0015 vs [0.0009, 0.0011] | no |
+| 52 | +0.013 | +0.007 | 3 | [−0.011, +0.026] | 0.0018 vs [0.0012, 0.0013] | no |
+
+- At both layers, deleting the v5 patterns does 1.4–1.6× more general damage (KL) than deleting the exact twins. It is **not** detectably more interaction-specific.
+- For reference, deleting PCA-25 gives S = +0.39 at L40 and −0.08 at L52.
 
 **Claim, scoped honestly.**
-- At two held-out layers of Qwen3.6-27B, the H-lens has a reproducible second-order structure that is not a function of the activation covariance, not J-space, and not the massive-activation geometry.
-- Whether it is *causally interaction-specific* is decided by the twin test.
+- At two held-out layers of Qwen3.6-27B, the H-lens contains a reproducible second-order structure that is:
+  - not a function of the activation covariance;
+  - not J-space;
+  - not the massive-activation geometry;
+  - not an artifact of basis estimation.
+- Under the frozen causal test it is **not interaction-specific**. Deleting it is slightly more consequential than deleting matched directions, but it does not selectively remove AND-type computation.
+- **So this is not an H-space "as provable as J-space":** it is a reproducible, non-Σ-commuting curvature structure without a demonstrated function.
+- **Open caveat.** Position-dependent covariance could produce non-Σ-commuting structure. Several patterns carry 1.2–1.6× more energy early in the window. The dumps cannot rule this out.
 
 ## 5. White-box control read (goal 3): preregistered primary NEGATIVE
 
