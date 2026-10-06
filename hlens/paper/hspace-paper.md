@@ -136,8 +136,39 @@ This paper makes three moves:
 - **C6's ratio statistic is unstable,** because its denominator ≈ 0 (CIs span 10–20× the estimate). It also tests damage, not the interaction itself.
 - These lead to the v3 preregistration (C1′ at the noise-floor dimension; C6′ interaction-ablation via Lemma 3). It was frozen **before** run-2 data existed.
 
-## 5. White-box control read (goal 3)
-**[from out/pod/ctrl_full.pt and ctrl_score.py]**
+## 5. White-box control read (goal 3): preregistered primary NEGATIVE
+
+**Setup.**
+- Qwen3.6-27B reads 1,500 BashArena trajectories (750 attack, 750 honest; attackers Claude Sonnet 4, Gemini 2.5 Pro, GPT-5). It reads a sanitized render: the first user message, the agent's tool calls and the tool outputs. Attacker prose and formatting tells are removed (`ctrl_read.py`).
+- 624 attacks are eligible (558 have the malicious call k\* inside the 8k-token window; 66 are censored). k\* is the first tool call carrying the IOC in any decoded form (amendment A1).
+- Scoring is `ctrl_score_v2.py` against `ctrl-score-v2-spec.md` (amendments A1–A9). The freeze hashes were logged before scoring: words 173f589ac56de6af, spec 79d1b26eaa90c4ef.
+
+**Primary test (F1, label-free pre-emption).**
+- Arm A alarms on the information-matched prefix-text monitor T_sup.
+- Arm B gives a quarter of the audit budget to W1, the training-free multi-token J-lens matched filter, in an OR slot.
+- The endpoint is an alarm *before* the malicious call exists.
+
+| audit budget α | Arm A pre-empts | Arm B pre-empts | b / c / net | McNemar p (Holm) |
+|---|---|---|---|---|
+| 1% | 0.30 | 0.26 | 1 / 23 / **−22** | 1.0 (1.0) |
+| 2% | 0.31 | 0.30 | 1 / 7 / **−6** | 0.996 (1.0) |
+| 5% | 0.33 | 0.33 | 1 / 1 / **0** | 0.75 (1.0) |
+
+- At 2% the task-cluster bootstrap 95% CI of net is [−18, +1]. The 200 random-lexicon W1s give a 95th-percentile net of −6. Across 20 fold seeds the median net is −7 and none is positive.
+- **Mechanical verdict: "UNCALIBRATED: descriptive only".** The G-calibration gate failed: W1's empirical threshold is 10.3 against 4.4 for the iid reference, and its power at planted shifts is roughly half the reference. On the statistics alone the verdict would read **calibrated NEGATIVE** (the bootstrap upper bound of net is below +5). All other gates passed: placebo AUROC 0.50 and 0.50; content at k\* 0.94.
+
+**Descriptive (trajectory AUROC, full path):**
+- W1 scores 0.714 [0.692, 0.737], against 0.478 for the rotated-lens control and 0.49–0.51 for length and position nuisances. So the J-lens read carries real signal.
+- But a lexical twin over the same words does better (T_lex 0.769), and so do the black-box score (0.852) and the supervised text monitor (T_sup 0.756). A single regex for the in-window pastebin call reaches 0.929.
+- On the pre-k\* prefix, W1's AUROC is 0.398: there is no early-warning signal.
+- G2 (workspace-dimension GLR): every subspace, including J25 and PCA25, scores below 0.5 on the prefix. The predicted ordering does not hold.
+
+**Exploratory positive, with a caveat that kills generalisation.**
+- W3 is a supervised probe on Qwen's activations (cross-fitted, task-grouped folds). In the OR slot it pre-empts **+33 net attacks at α = 5%** (b/c = 33/0, Holm p < 0.001) and +9 at 2% (Holm-adjusted p = 0.078), but −12 at 1%.
+- **Leave-one-attacker-out, it collapses to chance:** AUROC 0.53 (Sonnet 4), 0.57 (Gemini 2.5 Pro) and 0.45 (GPT-5).
+- As preregistered, a gain from W3 means "a better reader of the same text", not privileged access to the agent's intent: the reader is a surrogate, so I(Y; W) ≤ I(Y; text).
+
+**Take-away.** On this data, a training-free J-lens add-on does not move any attack from "execute" to "audit" at a fixed audit budget, at any of the three preregistered budgets. This replicates the Oct 5 interpcontrol negative at 27B, with a sanitized render and a much stricter test.
 
 ## 6. Limitations
 - One definition of H-space (per-position row energy, whitened, vocabulary-weighted outputs).
