@@ -786,6 +786,34 @@ Let P be the PCA eigenbasis of Σ, and let 𝒟 = {P diag(±1) Pᵀ} be the grou
 - **Trimming fixes reproducibility.** Dropping the heaviest 5% of rows gives raw split-half 0.95 at k = 5 and 0.72–0.87 at k = 25.
 - **Caveat on spatial-sign estimators.** They are robust, but they estimate a different population object (the shape operator). Its eigenvectors equal those of the raw operator only for elliptical row laws.
 
+### Proposition 9 (importance-sampled H-lens) [standard; proved]
+**Statement.** Write the H-lens energy operator as a sum over windows, M = Σ_w Y_w, where Y_w = Σ_{p∈w} y_p y_pᵀ.
+- Draw a window w with probability q_w and return Y_w / q_w. This estimator is unbiased.
+- Its per-draw Frobenius variance is Σ_w ‖Y_w‖_F² / q_w − ‖M‖_F².
+- The variance is minimized at q_w ∝ ‖Y_w‖_F.
+
+**Proof.** Lagrange multipliers, or Cauchy–Schwarz on Σ_w q_w = 1. ∎
+
+**Why windows, not positions.** One HVP covers every position of a window, so windows are the unit to sample.
+
+### Observation 8.3 (C1 is a rare-event estimation problem, and a first-order screen) [measured]
+**27B (`hs_importance.py`):**
+- The Kish effective sample size of the H-lens rows under uniform probing is **0.01–0.06%** of rows. That is about 2–10 effective rows out of 16,384.
+- A row-level oracle importance sampler would need **324–8,354× fewer** samples at equal Frobenius variance.
+- Token class is **not** a usable proxy (0.0–0.5×), because the heavy tail lives within classes.
+
+**0.8B (laptop, `hs_proxy08.py`):**
+- The tail is mild: the effective sample size is 13–19% of rows.
+- The first-order screen |Σ^{1/2} ∂F/∂x_p|², which costs one backward pass (J-lens cost), predicts the per-row H-lens energy. Spearman correlation is 0.73–0.83 over rows and 0.56–0.59 over windows.
+- Window-level importance sampling with this screen saves 1.15–1.43×. The oracle saves 1.45–2.87×; there is little to gain at small scale.
+
+**Design (untested at 27B): the first-order-screened H-lens.**
+1. Screen candidate windows with one backward pass each.
+2. Sample windows with q_w ∝ (screen mass) and run HVPs only on those.
+3. Reweight by 1/q_w.
+
+The open question is whether the screen's rank correlation survives at 27B, where the oracle gain is three to four orders of magnitude.
+
 ### Retracted construction
 The "relative-curvature H-lens" (a generalized eigenproblem against the H = cI null) is **not** a valid fix. It returns filters rather than patterns, its null is misspecified, and the ridge decided the outcome (see `results/CORRECTIONS.md`).
 
