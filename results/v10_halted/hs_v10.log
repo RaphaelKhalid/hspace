@@ -1,0 +1,17 @@
+[v10 21:34:50 +0.0m] start full, layers [16, 40], budget 170.0 min
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+[v10 21:36:33 +1.7m] S0: class moments from 768 windows
+[v10 21:36:41 +1.9m] S0 L16: rows {'punctuation': 11571, 'word': 64920, 'function': 24557, 'content': 40363, 'digit': 5813, 'whitespace': 2944, 'all': 85248} | M2 ov25 0.026 (ref max 0.023) mean-energy 0.003 (ref max 0.004) -> ok | J-match maxdev 0.93 | H mean-energy 0.0025 vs twins max 0.0074, raw norm 0.694 vs twins max 0.606
+[v10 21:36:49 +2.0m] S0 L40: rows {'punctuation': 11571, 'word': 64920, 'function': 24557, 'content': 40363, 'digit': 5813, 'whitespace': 2944, 'all': 85248} | M2 ov25 0.024 (ref max 0.017) mean-energy 0.004 (ref max 0.004) -> ok | J-match maxdev 0.82 | H mean-energy 0.0040 vs twins max 0.0085, raw norm 1.554 vs twins max 1.364
+[v10 21:36:49 +2.0m] S0 done (1.8 min); live layers [16, 40]
+[v10 21:36:50 +2.0m] W: 40 windows from 40 articles (validation offsets k>=2)
+[v10 21:41:21 +6.5m] W window 4/40 (67.9s/window, peak 58.5 GB)
+[v10 21:45:54 +11.1m] W window 8/40 (68.0s/window, peak 58.5 GB)
+[v10 21:50:26 +15.6m] W window 12/40 (68.0s/window, peak 58.5 GB)
+[v10 21:54:58 +20.1m] W window 16/40 (68.1s/window, peak 58.5 GB)
+[v10 21:59:31 +24.7m] W window 20/40 (68.1s/window, peak 58.5 GB)
+[v10 22:04:04 +29.2m] W window 24/40 (68.1s/window, peak 58.5 GB)
+[v10 22:08:36 +33.8m] W window 28/40 (68.1s/window, peak 58.5 GB)
+[v10 22:13:09 +38.3m] W window 32/40 (68.1s/window, peak 58.5 GB)
