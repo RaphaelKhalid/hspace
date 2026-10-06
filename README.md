@@ -6,7 +6,7 @@ Anthropic's J-lens (arXiv 2607.15495) averages the **Jacobian** of a model's fin
 
 I call that subspace **H-space**, after the Hessian.
 
-**Status (Oct 6 2026): work in progress, honest negatives included.** This is research code plus a paper draft, built in one push on a $17 GPU budget.
+**Status (Oct 6 2026): run 1, run 2 and the follow-up tests are complete; negatives, one retraction and one robust-but-non-causal positive are included.** This is research code plus a paper draft, built in one push on a $17 GPU budget.
 
 ## Results so far
 
@@ -28,9 +28,27 @@ I call that subspace **H-space**, after the Hessian.
 - **C6 is a ratio whose denominator is ≈ 0.** Its 95% CIs span [−1, 10] and [0.4, 18].
 - **The run-1 operator includes cross-position blocks.**
 
-### Run 2 and v3 (in progress)
-- **Run 2 (exploratory).** Unbiased cross-moment estimator (two HVPs with independent sign vectors), spatial-sign (robust) estimator, and a rectangle-averaged Hessian.
-- **v3 preregistration** (frozen before any run-2 data): `hlens/paper/SCOPE-hspace-v3.md`. It adds C1′ (reliability at the noise-floor dimension) and C6′ (ablate H-space and measure the 2×2 interaction itself).
+### Run 2 and the v3 preregistration: verdict **not found (v3)**
+- **The preregistered primary (`loc_x`, an unbiased cross-moment estimator) fails C1′ at 4/4 layers.** Split-half at k = 25 is 0.13–0.29, and at L16 no eigenvalue is above its noise floor.
+- **Why (C1 and C1′):** heavy tails.
+  - At L16 the heaviest 0.1% of (position, probe) rows carry **97.5%** of the raw Hessian energy.
+  - Digit tokens are 7% of rows but 88% of that energy.
+  - Dropping the heaviest 5% of rows gives split-half 0.95 at k = 5.
+- **The Σ prior (theory §6B, Prop. 8).** Any lens whitened by Σ^{1/2} returns PCA-ordered, reproducible directions whenever curvature is a function of Σ. So the robust estimators' 0.97–0.99 reproducibility is **not** by itself evidence of H-specific structure.
+
+### Sign-flip randomization tests (exact null for Σ-commuting curvature; theory §6B, Cor. 8.1)
+| test (rule frozen before computing) | layers | result |
+|---|---|---|
+| flip, massive span deflated by projection | 16, 28 | **FAIL**. λ1 beats all 200 flips everywhere, but split-half has no power under a non-axis-aligned projection |
+| **flip v5**, axis-aligned drop (commutes with the flips) | **40, 52 (held out)** | **PASS**. λ1 3–6.6× the flip maximum; split@3 0.82–0.94 vs a null of 0.01–0.02; planted control detected |
+| v5 vs matched-flatness basis-misspecification null | 40, 52 | **robust**. Simulated split@3 0.01–0.07 vs data 0.90–0.94 (a steep f = Σ misspecification *can* fake v5, but the data's spectrum rules that regime out) |
+| **causal Σ-orbit twin ablation** of the v5 patterns (needs REAL at both layers) | 40, 52 | **FAIL**. At L40 the v5 patterns are not more interaction-specific than 8 exactly variance-matched twins: S = 0.014 vs 0.002, rank 2/9, CI includes 0 |
+
+**Bottom line (Oct 6).**
+- At two held-out layers of Qwen3.6-27B, the H-lens contains a **reproducible second-order structure that is not a function of the activation covariance**. It is also not J-space (overlap at chance), not the massive-activation geometry, and not explained by basis-estimation error.
+- But under the frozen causal test it is **not interaction-specific**.
+- So I have **not** found an H-space "as provably as J-space". What exists is a reproducible non-Σ-commuting curvature structure without demonstrated function.
+- Every step, including one retraction (`results/CORRECTIONS.md`), is hashed in `results/runlog_pod.md` before its data.
 
 ## Theory (`hlens/paper/theory-v2.md`, red-teamed by 48 adversarial agents)
 - **Lemma 1, the second-order adjoint (standard):** the exact block decomposition of the residual Hessian, verified to ≤ 1.5e-6 on Qwen3.5-0.8B.
@@ -42,9 +60,11 @@ I call that subspace **H-space**, after the Hessian.
   - This is the H-lens at roughly J-lens cost.
 - **Engineering:** `bf16w.BFLinear` stores weights in bf16 and computes in exact fp32, differentiable to any order. Its HVP matches all-fp32 to 7e-7, which puts exact Hessian-vector products of a 27B model on one 96 GB GPU.
 
-## Goal 3: white-box signals in AI control (in progress)
+## Goal 3: white-box signals in AI control: preregistered primary NEGATIVE
 - Qwen3.6-27B reads 1,500 BashArena attack/honest agent trajectories, after **sanitizing out label leaks**: attacker prose confessions and formatting tells.
 - I then test training-free multi-token J-lens matched filters, label-free pre-emption rules and Neyman–Pearson fusion with a black-box monitor, at fixed audit budgets (`hlens/ctrl_score_v2.py`, spec in `hlens/paper/ctrl-score-v2-spec.md`).
+- **Result.** The training-free J-lens matched filter (W1) carries real signal: AUROC 0.71, against 0.48 for the rotated-lens control. In the OR slot at a 2% audit budget it pre-empts **net −6** attacks (95% CI [−18, +1]). It does not move attacks from "execute" to "audit" at any preregistered budget.
+- **A supervised activation probe (W3)** gains +33 at a 5% budget, but collapses to chance when tested on an attacker model it wasn't trained on (`results/ctrl_score_v2_full.json`, paper §5).
 
 ## Layout
 ```
