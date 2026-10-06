@@ -34,3 +34,15 @@
   - End to end, including screening every candidate window with one backward pass, the saving is about 2.5–3×.
 - **Deviation:** the first launch ran out of memory, so I switched to separate HVP graphs and 128×2 probes. The analysis is unchanged; it is logged in the pod run log.
 - **Not licensed:** function. There was no causal test in v8.
+
+[result, Oct 6 ~14:00 UTC] v9: **REAL9 at both layers**. Verdict: "EX carries excess within-span trunk pairwise interaction vs Σ-orbit twins (v9)". Pod 32 min, about $0.90; 5/5 files sha-verified on HF before termination.
+
+| | L16 (n = 89) | L40 (n = 89) |
+|---|---|---|
+| T1 on I (log EX/twins) | +1.77, CI [1.58, 1.95] | +0.93, CI [0.78, 1.10] |
+| T1 on I_trunk | +1.79 | +0.92 |
+| T3 CI on I | [0.82, 1.14] | [0.24, 0.57] |
+| rank | 1 / 9 | 1 / 9 |
+| noise floor / twin | 0.20 | 0.10 |
+
+Self-check from the raw per-window data: EX beats every twin in 88% / 69% of windows, the median per-window ratio is 4.95× / 2.26×, and without the top-5 windows the ratio is 4.3× / 2.4×.
