@@ -173,6 +173,8 @@
       while ((m = matcher.exec(text)) !== null) {
         var key = keyFor(m[1]);
         if (!key || key === selfKey || used[key]) continue;
+        /* "mean" as a verb ("does mean", "to mean", "they mean") is not the statistic */
+        if (key === "mean" && /\b(does|do|did|to|will|would|can|could|might|may|must|they|we|you|I|these|those|which|that|this|it|words?|not|n't)\s+$/i.test(text.slice(Math.max(0, m.index - 12), m.index))) continue;
         used[key] = 1;
         if (!frag) frag = document.createDocumentFragment();
         frag.appendChild(document.createTextNode(text.slice(last, m.index)));
