@@ -357,7 +357,7 @@ For any invertible matrix \(B\), the matrices \(H\) and \(B^\top HB\) have the s
 </div>
 
 <div class="ex" data-answer="-1.25" data-tol="0.001" data-unit="bushels per unit step²">
-<p><b>Exercise 9.3.</b> Compute the farm's curvature along the unit direction \((1, -1)/\sqrt2\) (one more bucket, one fewer bag). Then check it from the yields: compute \(Y(14 + t, 10 - t)\) for \(t = 1\) and compare with \(29 + \tfrac12\,\mathbf{v}^\top H\mathbf{v}\,t^2\) for \(\mathbf{v} = (1, -1)\).</p>
+<p><b>Exercise 9.3.</b> <span class="small">(The farm: yield \(Y(W, F) = 2W + 3F + 0.5\,WF - 0.25\,W^2 - 0.5\,F^2\) bushels, with \(W\) = water in buckets of 10 litres and \(F\) = fertiliser in bags.)</span> Compute the farm's curvature along the unit direction \((1, -1)/\sqrt2\) (one more bucket, one fewer bag). Then check it from the yields: compute \(Y(14 + t, 10 - t)\) for \(t = 1\) and compare with \(29 + \tfrac12\,\mathbf{v}^\top H\mathbf{v}\,t^2\) for \(\mathbf{v} = (1, -1)\).</p>
 <details><summary>Show answer</summary>
 <p>\(\mathbf{v}^\top H\mathbf{v} = -0.5\times1 + 2\times0.5\times(1)(-1) - 1\times1 = -0.5 - 1 - 1 = -2.5\). Unit direction: divide by \(\lVert\mathbf{v}\rVert^2 = 2\): \(-1.25\). Check: \(Y(15, 9) = 30 + 27 + 67.5 - 56.25 - 40.5 = 27.75\), and \(29 + \tfrac12(-2.5)(1) = 27.75\). Equal.</p>
 </details>
@@ -378,7 +378,7 @@ For any invertible matrix \(B\), the matrices \(H\) and \(B^\top HB\) have the s
 </div>
 
 <div class="ex" data-answer="0.7071" data-tol="0.002" data-unit="bushels per bucket per bag">
-<p><b>Exercise 9.6.</b> Replace the farm's \(0.5\,WF\) by \(b\,WF\), keeping everything else. For which \(b \gt 0\) does the best plan stop existing (the critical point becomes a saddle)? Give the boundary value.</p>
+<p><b>Exercise 9.6.</b> <span class="small">(The farm: yield \(Y(W, F) = 2W + 3F + 0.5\,WF - 0.25\,W^2 - 0.5\,F^2\) bushels, with \(W\) = water in buckets of 10 litres and \(F\) = fertiliser in bags.)</span> Replace the farm's \(0.5\,WF\) by \(b\,WF\), keeping everything else. For which \(b \gt 0\) does the best plan stop existing (the critical point becomes a saddle)? Give the boundary value.</p>
 <details><summary>Show answer</summary>
 <p>The mixed partial becomes \(b\), so \(H = \begin{pmatrix} -0.5 & b \\ b & -1\end{pmatrix}\) and \(\det H = 0.5 - b^2\). It turns negative when \(b^2 \gt 0.5\), that is \(b \gt \sqrt{0.5} = 0.7071\) bushels per bucket per bag.</p>
 </details>
@@ -399,7 +399,7 @@ For any invertible matrix \(B\), the matrices \(H\) and \(B^\top HB\) have the s
 </div>
 
 <div class="ex" data-answer="-0.0016" data-tol="0.01" data-unit="bushels per kg²">
-<p><b>Exercise 9.9.</b> Suppose one bag of fertiliser holds 25 kg (a made-up figure). Rewrite the farm Hessian with water in litres and fertiliser in kg, using \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 0.04 \end{pmatrix}\). Give the new \(\partial^2 Y/\partial(\text{kg})^2\) entry, and confirm the plan is still a maximum.</p>
+<p><b>Exercise 9.9.</b> <span class="small">(The farm Hessian: \(H = \begin{pmatrix} -0.5 & 0.5 \ 0.5 & -1 \end{pmatrix}\), in bushels per bucket², per bucket per bag, and per bag², with \(W\) in buckets and \(F\) in bags.)</span> Suppose one bag of fertiliser holds 25 kg (a made-up figure). Rewrite the farm Hessian with water in litres and fertiliser in kg, using \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 0.04 \end{pmatrix}\). Give the new \(\partial^2 Y/\partial(\text{kg})^2\) entry, and confirm the plan is still a maximum.</p>
 <details><summary>Show answer</summary>
 <p>\(B^\top HB\) multiplies entry \((i, j)\) by \(B_{ii}B_{jj}\): \(-0.5\times0.01 = -0.005\), \(0.5\times0.1\times0.04 = 0.002\), \(-1\times0.04^2 = -0.0016\) bushels per kg². Determinant \((-0.005)(-0.0016) - 0.002^2 = 0.000008 - 0.000004 = 0.000004 \gt 0\), and the diagonal is negative: still negative definite, still a maximum. The numbers shrank a lot; the signs did not move (Sylvester).</p>
 </details>

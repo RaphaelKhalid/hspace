@@ -268,7 +268,7 @@ $$ \text{relative error} = \frac{\lVert\mathbf{p} - \mathbf{q}\rVert}{\lVert\mat
 </div>
 
 <div class="ex" data-answer="-0.5" data-tol="0.001" data-unit="bushels per bucket">
-<p><b>Exercise 11.3.</b> For the farm Hessian of 11.2, compute \(H\mathbf{v}\) for \(\mathbf{v} = (2\ \text{buckets},\ 1\ \text{bag})\). Enter the first entry, and say what both entries mean.</p>
+<p><b>Exercise 11.3.</b> <span class="small">(The farm Hessian: \(H = \begin{pmatrix} -0.5 & 0.5 \ 0.5 & -1 \end{pmatrix}\), in bushels per bucket², per bucket per bag, and per bag², with \(W\) in buckets and \(F\) in bags.)</span> For the farm Hessian of 11.2, compute \(H\mathbf{v}\) for \(\mathbf{v} = (2\ \text{buckets},\ 1\ \text{bag})\). Enter the first entry, and say what both entries mean.</p>
 <details><summary>Show answer</summary>
 <p>First: \((-0.5)(2) + (0.5)(1) = -1 + 0.5 = -0.5\) bushels per bucket. Second: \((0.5)(2) + (-1)(1) = 1 - 1 = 0\) bushels per bag. Moving 2 buckets and 1 bag together makes the next bucket worth half a bushel less, and leaves the value of the next bag unchanged.</p>
 </details>
@@ -289,7 +289,7 @@ $$ \text{relative error} = \frac{\lVert\mathbf{p} - \mathbf{q}\rVert}{\lVert\mat
 </div>
 
 <div class="ex" data-answer="0.6228" data-tol="0.002" data-unit="">
-<p><b>Exercise 11.6.</b> Run the double-backward lines of 11.5 for the tiny network at \(\mathbf{x} = (1,2)\) with \(\mathbf{v} = (1, 0)\). What is the first entry of \(H\mathbf{v}\)? Which entry of \(H\) have you computed?</p>
+<p><b>Exercise 11.6.</b> <span class="small">(The tiny network: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(a_i = \operatorname{silu}(z_i) = z_i\,\sigma(z_i)\), \(y = c_1a_1 + c_2a_2\), with \(W = \begin{pmatrix} 1 & -1 \ 0.5 & 1 \end{pmatrix}\), \(\mathbf{b} = (0.5, -1)\), \(\mathbf{c} = (1.5, -1)\).)</span> Run the double-backward lines of 11.5 for the tiny network at \(\mathbf{x} = (1,2)\) with \(\mathbf{v} = (1, 0)\). What is the first entry of \(H\mathbf{v}\)? Which entry of \(H\) have you computed?</p>
 <details><summary>Show answer</summary>
 <p>\(\dot{\mathbf{z}} = W\mathbf{v} = (1, 0.5)\). \(\dot{\bar{\mathbf{z}}} = (1.5\times0.4412\times1,\ -1\times0.1562\times0.5) = (0.6618, -0.0781)\). \(H\mathbf{v} = W^\top\dot{\bar{\mathbf{z}}} = (0.6618 + 0.5(-0.0781),\ -0.6618 - 0.0781) = (0.6228, -0.7399)\). With \(\mathbf{v}\) the first unit vector, \(H\mathbf{v}\) is the first column of \(H\): \(H_{11} = 0.6228\), \(H_{21} = -0.7399\).</p>
 </details>

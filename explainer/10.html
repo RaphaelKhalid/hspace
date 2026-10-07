@@ -370,7 +370,7 @@ $$ \mathcal{L} = \tfrac12\,(y - y^\ast)^2, $$
 </div>
 
 <div class="ex" data-answer="0.7358" data-tol="0.002" data-unit="">
-<p><b>Exercise 10.5.</b> Run the tiny network's forward pass at \(\mathbf{x} = (0, 0)\). What is \(y\)? (Use \(\sigma(0.5) = 0.6225\) and \(\sigma(-1) = 0.2689\).)</p>
+<p><b>Exercise 10.5.</b> <span class="small">(The tiny network: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(a_i = \operatorname{silu}(z_i) = z_i\,\sigma(z_i)\), \(y = c_1a_1 + c_2a_2\), with \(W = \begin{pmatrix} 1 & -1 \ 0.5 & 1 \end{pmatrix}\), \(\mathbf{b} = (0.5, -1)\), \(\mathbf{c} = (1.5, -1)\).)</span> Run the tiny network's forward pass at \(\mathbf{x} = (0, 0)\). What is \(y\)? (Use \(\sigma(0.5) = 0.6225\) and \(\sigma(-1) = 0.2689\).)</p>
 <details><summary>Show answer</summary>
 <p>\(z_1 = 1(0) - 1(0) + 0.5 = 0.5\); \(z_2 = 0.5(0) + 1(0) - 1 = -1\). \(a_1 = 0.5\times0.6225 = 0.3112\); \(a_2 = -1\times0.2689 = -0.2689\). \(y = 1.5\times0.3112 + (-1)(-0.2689) = 0.4668 + 0.2689 = 0.7358\). You can confirm it in Figure 10.3 by setting both sliders to 0.</p>
 </details>

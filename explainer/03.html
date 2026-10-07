@@ -299,7 +299,7 @@ $$ z'(t) = 20 - 10t\ \ \text{m/s}, \qquad z''(t) = -10\ \text{m/s}^2 . $$
 <h2>Exercises</h2>
 
 <div class="ex" data-answer="9" data-tol="0.001" data-unit="m/s">
-<p><b>Exercise 3.1.</b> The car's speed at \(t = 4\) s is 8 m/s and its acceleration is 2 m/s². Using only the acceleration, predict its speed at \(t = 4.5\) s. Check with \(s'(t) = 2t\).</p>
+<p><b>Exercise 3.1.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds, so its speed is \(s\'(t) = 2t\) m/s and its acceleration is 2 m/s².)</span> The car's speed at \(t = 4\) s is 8 m/s and its acceleration is 2 m/s². Using only the acceleration, predict its speed at \(t = 4.5\) s. Check with \(s'(t) = 2t\).</p>
 <details><summary>Show answer</summary>
 <p>Change in speed \(\approx s'' \cdot \Delta t = 2\ \text{m/s}^2 \times 0.5\ \text{s} = 1\) m/s, so the speed is \(8 + 1 = 9\) m/s. Check: \(s'(4.5) = 9\) m/s. Exact here because \(s''\) is constant.</p>
 </details>
@@ -348,14 +348,14 @@ $$ z'(t) = 20 - 10t\ \ \text{m/s}, \qquad z''(t) = -10\ \text{m/s}^2 . $$
 </div>
 
 <div class="ex" data-answer="7200" data-tol="0.001" data-unit="m/min²">
-<p><b>Exercise 3.8.</b> Express the car's acceleration, 2 m/s², in metres per minute per minute.</p>
+<p><b>Exercise 3.8.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds, so its speed is \(s\'(t) = 2t\) m/s and its acceleration is 2 m/s².)</span> Express the car's acceleration, 2 m/s², in metres per minute per minute.</p>
 <details><summary>Show answer</summary>
 <p>1 s = 1/60 min, so 1/s² = 3600/min². \(2\ \text{m/s}^2 = 2 \times 3600\ \text{m/min}^2 = 7200\ \text{m/min}^2\). The input unit grew 60 times; the second derivative grew \(60^2\) times.</p>
 </details>
 </div>
 
 <div class="ex" data-answer="0.04" data-tol="0.001" data-unit="m">
-<p><b>Exercise 3.9.</b> How far above its tangent line at \(t = 5\) s is the car's curve at \(t = 5.2\) s? Use the second derivative, then check directly.</p>
+<p><b>Exercise 3.9.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds, so its speed is \(s\'(t) = 2t\) m/s and its acceleration is 2 m/s².)</span> How far above its tangent line at \(t = 5\) s is the car's curve at \(t = 5.2\) s? Use the second derivative, then check directly.</p>
 <details><summary>Show answer</summary>
 <p>Gap \(= \tfrac12 s''\,\Delta t^2 = \tfrac12 \cdot 2\ \text{m/s}^2 \cdot (0.2\ \text{s})^2 = 0.04\) m. Direct: \(s(5.2) = 27.04\) m, and the tangent gives \(25 + 10 \cdot 0.2 = 27\) m. Gap 0.04 m.</p>
 </details>

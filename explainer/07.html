@@ -371,7 +371,7 @@ In 2-D, two arrows pointing in random directions often make a small angle. In 5,
 </div>
 
 <div class="ex" data-answer="4" data-tol="0.001" data-unit="cakes">
-<p><b>Exercise 7.5.</b> Using the bakery matrix \(R\) and its inverse from 7.8, the bakery used 4.6 kg of flour and 16 eggs. How many cakes did it bake? Then find the number of loaves, and check by multiplying back.</p>
+<p><b>Exercise 7.5.</b> <span class="small">(The bakery: \(R = \begin{pmatrix} 0.5 & 0.3 \ 0 & 4 \end{pmatrix}\) turns (loaves, cakes) into (kg of flour, eggs), and \(R^{-1} = \begin{pmatrix} 2 & -0.15 \ 0 & 0.25 \end{pmatrix}\).)</span> Using the bakery matrix \(R\) and its inverse from 7.8, the bakery used 4.6 kg of flour and 16 eggs. How many cakes did it bake? Then find the number of loaves, and check by multiplying back.</p>
 <details><summary>Show answer</summary>
 <p>\(R^{-1}(4.6, 16) = (2\times4.6 - 0.15\times16,\ 0\times4.6 + 0.25\times16) = (9.2 - 2.4,\ 4) = (6.8, 4)\). So 4 cakes and 6.8 loaves. (A real bakery would not bake 0.8 of a loaf; the numbers are made up to be clean.) Check: \(R(6.8, 4) = (0.5\times6.8 + 0.3\times4,\ 4\times4) = (3.4 + 1.2, 16) = (4.6, 16)\).</p>
 </details>

@@ -347,7 +347,7 @@ A step is small or big only <i>compared with the distance over which the curvatu
 </div>
 
 <div class="ex" data-answer="1.5" data-tol="0.001">
-<p><b>Exercise 4.8.</b> For the dimmer with \(w = 0.25\) cm, built at \(x_0 = 0\), what does the quadratic model predict for the brightness after a 1 cm turn? Why can this not be right?</p>
+<p><b>Exercise 4.8.</b> <span class="small">(The dimmer: brightness \(g(x) = 1/(1 + e^{-x/w})\) as a fraction of full brightness, with the knob at \(x\) cm and gate width \(w\) cm.)</span> For the dimmer with \(w = 0.25\) cm, built at \(x_0 = 0\), what does the quadratic model predict for the brightness after a 1 cm turn? Why can this not be right?</p>
 <details><summary>Show answer</summary>
 <p>\(g(0) = 0.5\), \(g'(0) = 1\) per cm, \(g''(0) = 0\). So \(T_2 = 0.5 + 1 \times 1 + 0 = 1.5\). Brightness is a fraction of full brightness and can never exceed 1. The move is four widths long (\(\Delta x / w = 4\)), so the derivatives at the middle know nothing about the flat top of the switch.</p>
 </details>
@@ -361,7 +361,7 @@ A step is small or big only <i>compared with the distance over which the curvatu
 </div>
 
 <div class="ex">
-<p><b>Exercise 4.10.</b> Someone says: “I computed the exact second derivative at my starting point, so my quadratic model is reliable.” Using the dimmer, give one situation where they are right and one where they are wrong. What single number would you ask them for?</p>
+<p><b>Exercise 4.10.</b> <span class="small">(The dimmer: brightness \(g(x) = 1/(1 + e^{-x/w})\) as a fraction of full brightness, with the knob at \(x\) cm and gate width \(w\) cm.)</span> Someone says: “I computed the exact second derivative at my starting point, so my quadratic model is reliable.” Using the dimmer, give one situation where they are right and one where they are wrong. What single number would you ask them for?</p>
 <details><summary>Show answer</summary>
 <p>Right: \(w = 2\) cm, a 1 cm move from \(x_0 = 0\). The error is 0.0025, about 2% of the true change of 0.122. Wrong: \(w = 0.25\) cm, the same 1 cm move. The error is larger than the whole change. Ask for the ratio of the move size they care about to the distance over which the curvature changes (here \(\Delta x / w\)). Exact derivatives do not help if that ratio is large.</p>
 </details>
