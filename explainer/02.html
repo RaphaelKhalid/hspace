@@ -83,9 +83,16 @@ $$ \Delta s = s(3) - s(1) = 9\ \text{m} - 1\ \text{m} = 8\ \text{m}, \qquad \Del
 <p><b>Real-world example.</b> Average-speed cameras on motorways photograph a car at two points a known distance apart and divide that distance by the time between photos. They measure exactly this difference quotient, over a long stretch.</p>
 
 <h3>Mechanics: a formula for every interval of the car</h3>
-<p>For the car we can do the division once, for all \(t_1\) and \(t_2\). Use the fact \(t_2^2 - t_1^2 = (t_2 - t_1)(t_2 + t_1)\). (Check by multiplying out: \((t_2 - t_1)(t_2 + t_1) = t_2^2 + t_2 t_1 - t_1 t_2 - t_1^2 = t_2^2 - t_1^2\).) Then</p>
-$$ \frac{s(t_2) - s(t_1)}{t_2 - t_1} = \frac{t_2^2 - t_1^2}{t_2 - t_1} = \frac{(t_2 - t_1)(t_2 + t_1)}{t_2 - t_1} = t_1 + t_2 . $$
-<p>With the hidden unit of Level 1, \(1\ \text{m/s}^2 \times (t_1 + t_2)\) is in m/s. So the average speed of the car between any two times is just their sum, read in metres per second. Check: \(1 + 3 = 4\) m/s. Mechanics: move the later end one second later and the average speed goes up by exactly 1 m/s.</p>
+<p>For the car we can do the division once, for all \(t_1\) and \(t_2\), instead of plugging in numbers each time. Here is every step.</p>
+<p><b>Step 1: write out the two positions.</b> The car's rule is \(s(t) = t^2\): to get the position, square the time. So at time \(t_1\) the position is \(s(t_1) = t_1^2\), and at time \(t_2\) it is \(s(t_2) = t_2^2\). For example, with \(t_1 = 1\) s and \(t_2 = 3\) s: \(s(1) = 1^2 = 1\) m and \(s(3) = 3^2 = 9\) m.</p>
+<p><b>Step 2: put them into the average-speed fraction.</b> Replace \(s(t_2)\) by \(t_2^2\) and \(s(t_1)\) by \(t_1^2\):</p>
+$$ \frac{s(t_2) - s(t_1)}{t_2 - t_1} = \frac{t_2^2 - t_1^2}{t_2 - t_1}. $$
+<p>In the example: \(\dfrac{9 - 1}{3 - 1} = \dfrac{8}{2} = 4\).</p>
+<p><b>Step 3: factor the top.</b> Use the fact \(t_2^2 - t_1^2 = (t_2 - t_1)(t_2 + t_1)\). Check it by multiplying out the right side: \((t_2 - t_1)(t_2 + t_1) = t_2^2 + t_2 t_1 - t_1 t_2 - t_1^2 = t_2^2 - t_1^2\), because the middle two terms cancel. In the example: \(9 - 1 = 8\) and \((3 - 1)(3 + 1) = 2 \times 4 = 8\).</p>
+<p><b>Step 4: cancel.</b> The factor \(t_2 - t_1\) is on top and on the bottom, so it cancels (it is not zero, because the two times differ):</p>
+$$ \frac{t_2^2 - t_1^2}{t_2 - t_1} = \frac{(t_2 - t_1)(t_2 + t_1)}{t_2 - t_1} = t_1 + t_2 . $$
+<p><b>Step 5: put the units back.</b> In full, the car's rule is \(s(t) = (1\ \text{m/s}^2) \times t^2\) (the “1 m/s²” was left out of the short form, see Level 1). Carrying it through the same steps gives \((1\ \text{m/s}^2) \times (t_1 + t_2)\). Seconds times m/s² is m/s, a speed, as it should be.</p>
+<p>So the average speed of the car between any two times is just the sum of the two times, read in metres per second. Example: between \(t_1 = 1\) s and \(t_2 = 3\) s it is \(1 + 3 = 4\) m/s, the same 4 as Step 2. Mechanics: move the later time one second later and the average speed goes up by exactly 1 m/s.</p>
 
 <h2>2.3 The secant line and the word “slope”</h2>
 <p>Draw the two moments as points on the car's graph: \((t_1, s(t_1))\) and \((t_2, s(t_2))\). The straight line through them is called a secant line. Going from the first point to the second, the line runs \(\Delta t\) across and rises \(\Delta s\) up. Its steepness, rise divided by run, is</p>
