@@ -89,8 +89,13 @@ $$ s(3) = 3^2 = 9\ \text{m}, \qquad s'(3) = 2 \times 3 = 6\ \text{m/s}, \qquad s
 <h2>4.2 Order 0: assume nothing changes</h2>
 <p>The laziest forecast: wherever you are now, you will still be there. In symbols,</p>
 $$ T_0(x_0 + \Delta x) = f(x_0). $$
-<p>For the car: \(T_0(3 + \Delta t) = 9\) m, whatever \(\Delta t\) is. The error is the truth minus the guess:</p>
-$$ E_0 = (3 + \Delta t)^2 - 9 = 9 + 6\,\Delta t + \Delta t^2 - 9 = 6\,\Delta t + \Delta t^2\ \text{m}. $$
+<p>For the car: \(T_0(3 + \Delta t) = 9\) m, whatever \(\Delta t\) is. The error is the truth minus the guess. Here are the steps, with \(\Delta t = 0.1\) s worked alongside.</p>
+<p><b>Step 1: write the truth.</b> The rule is \(s(t) = t^2\), so the true position is \(s(3 + \Delta t) = (3 + \Delta t)^2\). Example: \(3.1^2 = 9.61\) m.</p>
+<p><b>Step 2: subtract the guess.</b> \(E_0 = (3 + \Delta t)^2 - 9\). Example: \(9.61 - 9 = 0.61\) m.</p>
+<p><b>Step 3: expand the square.</b> As at Level 2, \((3 + \Delta t)^2 = (3 + \Delta t)(3 + \Delta t) = 9 + 6\,\Delta t + \Delta t^2\). Example: \(9 + 0.6 + 0.01 = 9.61\).</p>
+<p><b>Step 4: cancel the 9s.</b></p>
+$$ E_0 = 9 + 6\,\Delta t + \Delta t^2 - 9 = 6\,\Delta t + \Delta t^2\ \text{m}. $$
+<p>Example: \(0.6 + 0.01 = 0.61\) m. It matches Step 2.</p>
 <p>Check the units. \(6\) has unit m/s and \(\Delta t\) has unit s, so \(6\,\Delta t\) is in metres. \(\Delta t^2\) is in s², and the hidden coefficient in front of it is 1 m/s², so that term is in metres too. Good.</p>
 <p>Numbers: if \(\Delta t = 1\) s, \(E_0 = 6 + 1 = 7\) m. If \(\Delta t = 0.1\) s, \(E_0 = 0.6 + 0.01 = 0.61\) m. If \(\Delta t = 0.01\) s, \(E_0 = 0.06 + 0.0001 = 0.0601\) m. Make the step ten times smaller and the error gets about ten times smaller. The error is roughly proportional to \(\Delta t\).</p>
 <p>Order 0 is not useless. A photograph is an order-0 forecast. It is right for an instant.</p>
@@ -103,8 +108,13 @@ $$ T_1(x_0 + \Delta x) = f(x_0) + f'(x_0)\,\Delta x. $$
 <h3>Worked example: the car, order 1</h3>
 <p>Put in the dashboard values:</p>
 $$ T_1(3 + \Delta t) = 9\ \text{m} + 6\ \tfrac{\text{m}}{\text{s}} \times \Delta t. $$
-<p>Units: \(\tfrac{\text{m}}{\text{s}} \times \text{s} = \text{m}\). Both terms are distances. The error is</p>
-$$ E_1 = (3 + \Delta t)^2 - (9 + 6\,\Delta t) = 9 + 6\,\Delta t + \Delta t^2 - 9 - 6\,\Delta t = \Delta t^2. $$
+<p>Units: \(\tfrac{\text{m}}{\text{s}} \times \text{s} = \text{m}\). Both terms are distances. Now the error, step by step, with \(\Delta t = 0.1\) s worked alongside.</p>
+<p><b>Step 1: truth minus forecast.</b> \(E_1 = (3 + \Delta t)^2 - (9 + 6\,\Delta t)\). Example: \(9.61 - 9.6 = 0.01\) m.</p>
+<p><b>Step 2: expand the square.</b> \((3 + \Delta t)^2 = 9 + 6\,\Delta t + \Delta t^2\) (Section 4.2, Step 3).</p>
+<p><b>Step 3: remove the brackets.</b> The minus sign flips both signs of \(9 + 6\,\Delta t\): \(E_1 = 9 + 6\,\Delta t + \Delta t^2 - 9 - 6\,\Delta t\).</p>
+<p><b>Step 4: cancel.</b> The 9s cancel and the \(6\,\Delta t\)s cancel:</p>
+$$ E_1 = 9 + 6\,\Delta t + \Delta t^2 - 9 - 6\,\Delta t = \Delta t^2. $$
+<p>Example: \(0.1^2 = 0.01\) m. It matches Step 1.</p>
 <p>Everything cancels except \(\Delta t^2\). For this car, the order-1 error is exactly \(\Delta t^2\) metres (with a hidden 1 m/s² in front). Now the numbers:</p>
 <div class="tablewrap">
 <table>
@@ -154,7 +164,10 @@ $$ (6 + \Delta t) \times \Delta t = 6\,\Delta t + \Delta t^2 = 6\,\Delta t + \tf
 <p>The extra speed builds up from zero. On average you only have half of it. That “half” is the ½.</p>
 
 <h3>Worked example: the car, order 2</h3>
+<p><b>Step 1: put in the dashboard values.</b> \(f(x_0) = s(3) = 9\) m, \(f'(x_0) = s'(3) = 6\) m/s and \(f''(x_0) = s''(3) = 2\) m/s² go into the recipe \(T_2 = f(x_0) + f'(x_0)\,\Delta x + \tfrac12 f''(x_0)\,\Delta x^2\), with \(\Delta t\) as the step.</p>
+<p><b>Step 2: simplify the last coefficient.</b> \(\tfrac12 \times 2 = 1\):</p>
 $$ T_2(3 + \Delta t) = 9 + 6\,\Delta t + \tfrac12 \times 2 \times \Delta t^2 = 9 + 6\,\Delta t + \Delta t^2. $$
+<p>Example: with \(\Delta t = 0.1\) s, \(T_2 = 9 + 0.6 + 0.01 = 9.61\) m, and the truth is \(3.1^2 = 9.61\) m.</p>
 <p>Units of the new term: \(\tfrac12\) is a pure number, \(2\) m/s² times \(\Delta t^2\) s² gives metres. Now compare with the truth: \((3 + \Delta t)^2 = 9 + 6\,\Delta t + \Delta t^2\). They are the same. The error \(E_2\) is exactly zero for every \(\Delta t\), even \(\Delta t = 100\) s.</p>
 <p>That is not luck. The car's function is a quadratic. A quadratic is fixed completely by its value, slope and curvature at any one point. So the order-2 approximation of any quadratic is the quadratic itself. Keep this in mind: the farm on <a href="05.html">Level 5</a> is a quadratic in two inputs, and that is why its numbers come out exact.</p>
 
@@ -166,9 +179,19 @@ $$ T_2(3 + \Delta t) = 9 + 6\,\Delta t + \tfrac12 \times 2 \times \Delta t^2 = 9
 $$ f(x) = x^3, \quad f'(x) = 3x^2, \quad f''(x) = 6x, \quad f'''(x) = 6. $$
 <p>Units: \(f'\) is m³ per m = m² (an area: the cube's faces). \(f''\) is m³ per m² = m (a distance: the cube's edges). \(f'''\) is m³ per m³ = a pure number. At \(x_0 = 2\) m:</p>
 $$ f(2) = 8\ \text{m}^3, \quad f'(2) = 12\ \text{m}^2, \quad f''(2) = 12\ \text{m}, \quad f'''(2) = 6. $$
-<p>Find the order-3 recipe the same way as before. Let \(p(\Delta x) = c_0 + c_1\Delta x + c_2\Delta x^2 + c_3\Delta x^3\). Then \(p' = c_1 + 2c_2\Delta x + 3c_3\Delta x^2\), \(p'' = 2c_2 + 6c_3\Delta x\) and \(p''' = 6c_3\). At \(\Delta x = 0\): \(p'''(0) = 6c_3\), so \(c_3 = f'''(x_0)/6\). The cube's order-3 approximation is</p>
+<p>Find the order-3 recipe the same way as before.</p>
+<p><b>Step 1: the trial polynomial.</b> Let \(p(\Delta x) = c_0 + c_1\Delta x + c_2\Delta x^2 + c_3\Delta x^3\).</p>
+<p><b>Step 2: differentiate three times</b> (power rule, term by term):</p>
+$$ p' = c_1 + 2c_2\Delta x + 3c_3\Delta x^2, \qquad p'' = 2c_2 + 6c_3\Delta x, \qquad p''' = 6c_3 . $$
+<p><b>Step 3: put in \(\Delta x = 0\).</b> Every term that still holds a \(\Delta x\) becomes 0: \(p(0) = c_0\), \(p'(0) = c_1\), \(p''(0) = 2c_2\), \(p'''(0) = 6c_3\).</p>
+<p><b>Step 4: match the derivatives of \(f\).</b> \(c_0 = f(x_0)\), \(c_1 = f'(x_0)\), \(c_2 = f''(x_0)/2\), and \(6c_3 = f'''(x_0)\), so \(c_3 = f'''(x_0)/6\).</p>
+<p><b>Step 5: put in the cube's numbers.</b> \(c_0 = 8\), \(c_1 = 12\), \(c_2 = 12/2 = 6\), \(c_3 = 6/6 = 1\). The cube's order-3 approximation is</p>
 $$ T_3(2 + \Delta x) = 8 + 12\,\Delta x + \tfrac{12}{2}\,\Delta x^2 + \tfrac{6}{6}\,\Delta x^3 = 8 + 12\,\Delta x + 6\,\Delta x^2 + \Delta x^3. $$
-<p>Check by multiplying out the truth: \((2 + \Delta x)^3 = (2 + \Delta x)(4 + 4\Delta x + \Delta x^2) = 8 + 8\Delta x + 2\Delta x^2 + 4\Delta x + 4\Delta x^2 + \Delta x^3 = 8 + 12\,\Delta x + 6\,\Delta x^2 + \Delta x^3\). Exact again, because \(x^3\) is a cubic.</p>
+<p>Check by multiplying out the truth.</p>
+<p><b>Check, Step 1: the square.</b> \((2 + \Delta x)^2 = 4 + 2 \cdot 2\,\Delta x + \Delta x^2 = 4 + 4\Delta x + \Delta x^2\) (the expansion of Section 4.3 with \(x_0 = 2\)).</p>
+<p><b>Check, Step 2: one more factor.</b> \((2 + \Delta x)^3 = (2 + \Delta x)(4 + 4\Delta x + \Delta x^2)\). Multiply each term by 2, then each term by \(\Delta x\):</p>
+$$ 2\,(4 + 4\Delta x + \Delta x^2) = 8 + 8\Delta x + 2\Delta x^2, \qquad \Delta x\,(4 + 4\Delta x + \Delta x^2) = 4\Delta x + 4\Delta x^2 + \Delta x^3 . $$
+<p><b>Check, Step 3: add and collect.</b> \(8\Delta x + 4\Delta x = 12\Delta x\) and \(2\Delta x^2 + 4\Delta x^2 = 6\Delta x^2\), so \((2 + \Delta x)^3 = 8 + 12\,\Delta x + 6\,\Delta x^2 + \Delta x^3\). Example: \(\Delta x = 0.1\) gives \(8 + 1.2 + 0.06 + 0.001 = 9.261 = 2.1^3\). Exact again, because \(x^3\) is a cubic.</p>
 <p>Each term is a real piece of the bigger cube. \(12\,\Delta x\) is three slabs on three faces, each \(2 \times 2 \times \Delta x\). \(6\,\Delta x^2\) is three rods along three edges, each \(2 \times \Delta x \times \Delta x\). \(\Delta x^3\) is the tiny corner cube. With \(\Delta x = 0.1\) m: slabs 1.2 m³, rods 0.06 m³, corner 0.001 m³. Each order adds a piece that is about ten times smaller than the last.</p>
 
 <h3>The general recipe</h3>
@@ -182,7 +205,7 @@ Every term has the unit of \(f\): (output per inputᵏ) × inputᵏ = output. It
 <h3>Worked example: \(e^x\) at \(x_0 = 0\)</h3>
 <p>The exponential function is its own derivative, so every derivative of \(e^x\) at 0 equals \(e^0 = 1\). The recipe gives</p>
 $$ T_3(0 + \Delta x) = 1 + \Delta x + \frac{\Delta x^2}{2} + \frac{\Delta x^3}{6}. $$
-<p>At \(\Delta x = 0.1\): \(T_3 = 1 + 0.1 + 0.005 + 0.000167 = 1.105167\). The true value is \(e^{0.1} = 1.105171\). Four terms got six digits right.</p>
+<p>At \(\Delta x = 0.1\): \(\Delta x^2/2 = 0.01/2 = 0.005\) and \(\Delta x^3/6 = 0.001/6 \approx 0.000167\). So \(T_3 = 1 + 0.1 + 0.005 + 0.000167 = 1.105167\). The true value is \(e^{0.1} = 1.105171\). Four terms got six digits right.</p>
 
 <figure class="sim" id="sim-builder">
 <figcaption><b>Figure 4.2.</b> The Taylor builder. Black: the true function. Tick the boxes to add \(T_0\) (grey), \(T_1\) (blue), \(T_2\) (red) and \(T_3\) (green), all built at the black dot \(x_0\). Drag the dot along the curve to move \(x_0\). The dashed line marks the test point \(x_0 + \Delta x\); the <span class="nogl">readout</span> gives the true value and each \(T_n\) there. Notice two things: near the dot every curve hugs the truth, and each extra order hugs it for a longer stretch, but far away all of them leave.</figcaption>
@@ -213,8 +236,12 @@ $$ f(x_0 + \Delta x) = f(x_0) + f'(x_0)\,\Delta x + \tfrac12 f''(x_0)\,\Delta x^
 </div>
 
 <h3>Reading the error off a log-log plot</h3>
-<p>If \(|E| = C\,\Delta x^k\), take \(\log_{10}\) of both sides. Logs turn products into sums and powers into multiples:</p>
+<p>Suppose \(|E| = C\,\Delta x^k\). Here are the steps.</p>
+<p><b>Step 1: take \(\log_{10}\) of both sides.</b> \(\log_{10}|E| = \log_{10}\big(C\,\Delta x^k\big)\).</p>
+<p><b>Step 2: split the product.</b> The log of a product is the sum of the logs (Level 1): \(\log_{10}\big(C\,\Delta x^k\big) = \log_{10} C + \log_{10}\big(\Delta x^k\big)\).</p>
+<p><b>Step 3: bring the power down.</b> \(\Delta x^k\) is \(k\) copies of \(\Delta x\) multiplied together, so by Step 2's rule its log is \(k\) copies of \(\log_{10}\Delta x\) added together: \(\log_{10}\big(\Delta x^k\big) = k \log_{10} \Delta x\). So</p>
 $$ \log_{10}|E| = \log_{10} C + k \log_{10} \Delta x. $$
+<p>Example: \(C = 1\), \(k = 2\), \(\Delta x = 0.01\): \(|E| = 0.0001\), and \(\log_{10} 0.0001 = -4 = 0 + 2 \times (-2)\).</p>
 <p>So if you plot \(\log_{10}|E|\) against \(\log_{10}\Delta x\), you get a straight line with slope \(k\). The order of the error is the steepness of the line. This is how numerical people check a derivative code: they plot the error on log-log axes and read off the slope.</p>
 
 <figure class="sim" id="sim-loglog">
@@ -225,7 +252,9 @@ $$ \log_{10}|E| = \log_{10} C + k \log_{10} \Delta x. $$
 <p>A Taylor polynomial knows only what happens at \(x_0\). Far away, it can be wildly wrong.</p>
 
 <h3>Example: the sine wave</h3>
-<p>The sine function \(\sin x\) wiggles between −1 and 1 forever. Its derivatives at 0 go round a cycle of four (we take these from a table; you do not need to derive them): \(\sin 0 = 0\), \(\sin'(0) = \cos 0 = 1\), \(\sin''(0) = -\sin 0 = 0\), \(\sin'''(0) = -\cos 0 = -1\). So, with \(x_0 = 0\) and \(\Delta x = x\),</p>
+<p>The sine function \(\sin x\) wiggles between −1 and 1 forever. Its derivatives at 0 go round a cycle of four (we take these from a table; you do not need to derive them): \(\sin 0 = 0\), \(\sin'(0) = \cos 0 = 1\), \(\sin''(0) = -\sin 0 = 0\), \(\sin'''(0) = -\cos 0 = -1\). Take \(x_0 = 0\), so the step \(\Delta x\) is just \(x\).</p>
+<p><b>Step 1: divide each derivative by its factorial.</b> \(0/0! = 0\), \(1/1! = 1\), \(0/2! = 0\), \(-1/3! = -1/6\).</p>
+<p><b>Step 2: put them into the recipe.</b> \(T_3(x) = 0 + 1 \cdot x + 0 \cdot x^2 - \tfrac16 x^3\). Drop the zero terms:</p>
 $$ T_1(x) = x, \qquad T_3(x) = x - \frac{x^3}{3!} = x - \frac{x^3}{6}. $$
 <div class="tablewrap">
 <table>
@@ -240,9 +269,12 @@ $$ T_1(x) = x, \qquad T_3(x) = x - \frac{x^3}{3!} = x - \frac{x^3}{6}. $$
 <p>Near 0 the cubic is superb. At \(x = 6\) it predicts −30 for a function that never goes below −1. Every polynomial eventually runs off to plus or minus infinity. A wave never does. So a fixed number of terms must fail far enough out. For sine and for \(e^x\), adding more terms pushes the failure further out. That is not true for every function.</p>
 
 <h3>Example: more terms can make it worse</h3>
-<p>Take \(\ln(1 + x)\) at \(x_0 = 0\). Its derivatives at 0 are \(1, -1, 2, -6, \dots\), which gives</p>
-$$ T_4(x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4}. $$
-<p>At \(x = 0.5\) the terms shrink and the sums home in on \(\ln 1.5 = 0.405465\): \(T_1 = 0.5\), \(T_2 = 0.375\), \(T_3 = 0.416667\), \(T_4 = 0.401042\). At \(x = 2\) the terms grow, and the sums swing wildly around \(\ln 3 = 1.098612\): \(T_1 = 2\), \(T_2 = 0\), \(T_3 = 2.667\), \(T_4 = -1.333\), \(T_5 = 5.067\). Adding terms makes the forecast worse, not better. For this function the expansion at 0 is only trustworthy for \(|x| \lt 1\). That distance is called the radius of convergence.</p>
+<p>Take \(\ln(1 + x)\) at \(x_0 = 0\). Its value at 0 is \(\ln 1 = 0\). Its first five derivatives at 0 are \(1, -1, 2, -6, 24\) (taken as given here).</p>
+<p><b>Step 1: divide each derivative by its factorial.</b> \(1/1! = 1\), \(-1/2! = -\tfrac12\), \(2/3! = 2/6 = \tfrac13\), \(-6/4! = -6/24 = -\tfrac14\), \(24/5! = 24/120 = \tfrac15\).</p>
+<p><b>Step 2: put them into the recipe.</b> With \(\Delta x = x\):</p>
+$$ T_4(x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4}, \qquad T_5(x) = T_4(x) + \frac{x^5}{5}. $$
+<p><b>Step 3: add the terms one at a time at \(x = 0.5\).</b> The terms are \(0.5\), \(-0.125\), \(+0.041667\), \(-0.015625\). They shrink, and the sums home in on \(\ln 1.5 = 0.405465\): \(T_1 = 0.5\), \(T_2 = 0.375\), \(T_3 = 0.416667\), \(T_4 = 0.401042\).</p>
+<p><b>Step 4: the same at \(x = 2\).</b> The terms are \(2\), \(-2\), \(+2.667\), \(-4\), \(+6.4\). They grow, and the sums swing wildly around \(\ln 3 = 1.098612\): \(T_1 = 2\), \(T_2 = 0\), \(T_3 = 2.667\), \(T_4 = -1.333\), \(T_5 = 5.067\). Adding terms makes the forecast worse, not better. For this function the expansion at 0 is only trustworthy for \(|x| \lt 1\). That distance is called the radius of convergence.</p>
 <p>Try both functions in Figure 4.2 (choose them from the menu). Move the test point far from the dot and watch the green curve leave the black one.</p>
 
 <h2>4.8 When curvature changes fast: the natural move size</h2>
@@ -272,7 +304,12 @@ $$ g'(0) = \frac{0.5 \times 0.5}{0.25} = 1\ \text{per cm}, \qquad g''(0) = \frac
 <p>The “true change” is \(g(\Delta x) - g(0)\). At a 1 cm turn the model predicts 150% brightness, which is impossible, and its error is bigger than the whole real change. The model is exact in its derivatives. It is still useless at that move size.</p>
 
 <h3>The other direction: the model can also miss a switch entirely</h3>
-<p>Start below the switch, at \(x_0 = -1\) cm. Then \(g(-1) = 0.017986\), \(g'(-1) = 0.070651\) per cm and \(g''(-1) = 0.272437\) per cm². The quadratic model for a 1 cm turn predicts \(0.017986 + 0.070651 + \tfrac12 \times 0.272437 = 0.224856\). The truth is \(g(0) = 0.5\). The derivatives at \(x_0\) see a faint upward bend. They cannot see that the full switch is about to happen.</p>
+<p>Start below the switch, at \(x_0 = -1\) cm, still with \(w = 0.25\) cm.</p>
+<p><b>Step 1: the value.</b> \(-x/w = 1/0.25 = 4\), so \(g(-1) = 1/(1 + e^{4}) = 1/(1 + 54.59815) = 0.017986\).</p>
+<p><b>Step 2: the slope.</b> \(g\,(1 - g) = 0.017986 \times 0.982014 = 0.017663\). Divide by \(w\): \(g'(-1) = 0.017663 / 0.25 = 0.070651\) per cm.</p>
+<p><b>Step 3: the curvature.</b> \(1 - 2g = 1 - 0.035972 = 0.964028\). So \(g''(-1) = 0.017663 \times 0.964028 / 0.0625 = 0.272437\) per cm².</p>
+<p><b>Step 4: the quadratic model for a 1 cm turn.</b> With \(\Delta x = 1\) cm, \(\Delta x^2 = 1\) cm²: \(0.017986 + 0.070651 \times 1 + \tfrac12 \times 0.272437 \times 1 = 0.017986 + 0.070651 + 0.136219 = 0.224856\).</p>
+<p><b>Step 5: the truth.</b> \(g(0) = 0.5\). The derivatives at \(x_0\) see a faint upward bend. They cannot see that the full switch is about to happen.</p>
 
 <div class="box key">
 <span class="boxtitle">What “small” means</span>
@@ -283,7 +320,12 @@ A step is small or big only <i>compared with the distance over which the curvatu
 <figcaption><b>Figure 4.4.</b> The dimmer \(g(x)\) (black) and its quadratic model built at the black dot (red dashed). The blue dot is the true brightness after a move of \(\Delta x\); the red ring is what the quadratic model predicts. Start with a small move and see them agree. Then increase \(\Delta x\) to 1 cm. Then widen \(w\) to 2 cm with the same move: the same move is now “small”, and the model is good again. The ratio \(\Delta x / w\) decides.</figcaption>
 </figure>
 
-<p>Mechanics in one line: hold \(x_0 = 0\) and \(\Delta x = 1\) cm, and change only \(w\). With \(w = 0.25\) cm the error is −0.518. With \(w = 2\) cm, \(\Delta x / w = 0.5\), the truth is \(g(1) = 1/(1 + e^{-0.5}) = 0.622459\), the model gives \(0.5 + 0.125 \times 1 = 0.625\) (because \(g'(0) = 0.25/2 = 0.125\) per cm), and the error is only −0.0025.</p>
+<p>Mechanics: hold \(x_0 = 0\) and \(\Delta x = 1\) cm, and change only \(w\). With \(w = 0.25\) cm the error is −0.518 (the table). Now take \(w = 2\) cm.</p>
+<p><b>Step 1: the ratio.</b> \(\Delta x / w = 1/2 = 0.5\).</p>
+<p><b>Step 2: the truth.</b> \(g(1) = 1/(1 + e^{-0.5}) = 1/(1 + 0.606531) = 0.622459\).</p>
+<p><b>Step 3: the slope at the middle.</b> \(g(0) = 0.5\) for any \(w\), so \(g'(0) = 0.5 \times 0.5 / w = 0.25/2 = 0.125\) per cm. The curvature is still 0, because \(1 - 2 \times 0.5 = 0\).</p>
+<p><b>Step 4: the model.</b> \(0.5 + 0.125 \times 1 + 0 = 0.625\).</p>
+<p><b>Step 5: the error.</b> \(0.622459 - 0.625 = -0.0025\). Small.</p>
 
 <h2>4.9 Why this matters for H-space</h2>
 <p>A Hessian (Level 9) is the curvature term of a Taylor approximation in many inputs at once. The many-input version of the key box reads, in words: new value ≈ old value + (each slope × its step, added up) + ½ (each curvature × the two steps it couples, added up). So everything on this page carries over. In particular:</p>
@@ -299,7 +341,7 @@ A step is small or big only <i>compared with the distance over which the curvatu
 <div class="ex" data-answer="20" data-tol="0.001" data-unit="m">
 <p><b>Exercise 4.1.</b> The car has \(s(t) = t^2\) m. Build \(T_1\) at \(t_0 = 4\) s and use it to predict \(s(4.5)\).</p>
 <details><summary>Show answer</summary>
-<p>\(s(4) = 16\) m and \(s'(4) = 2 \times 4 = 8\) m/s. With \(\Delta t = 0.5\) s: \(T_1 = 16\ \text{m} + 8\ \tfrac{\text{m}}{\text{s}} \times 0.5\ \text{s} = 16 + 4 = 20\) m.</p>
+<p>\(s(4) = 4^2 = 16\) m and \(s'(4) = 2 \times 4 = 8\) m/s. With \(\Delta t = 4.5 - 4 = 0.5\) s: \(T_1 = 16\ \text{m} + 8\ \tfrac{\text{m}}{\text{s}} \times 0.5\ \text{s} = 16 + 4 = 20\) m.</p>
 </details>
 </div>
 
@@ -313,15 +355,22 @@ A step is small or big only <i>compared with the distance over which the curvatu
 <div class="ex" data-answer="20.25" data-tol="0.0005" data-unit="m">
 <p><b>Exercise 4.3.</b> Now build \(T_2\) at \(t_0 = 4\) s and predict \(s(4.5)\). Why is the answer exact?</p>
 <details><summary>Show answer</summary>
-<p>\(s''(4) = 2\) m/s². \(T_2 = 16 + 8 \times 0.5 + \tfrac12 \times 2 \times 0.5^2 = 16 + 4 + 0.25 = 20.25\) m. It is exact because \(s\) is a quadratic, and a quadratic is fully fixed by its value, slope and curvature at one point.</p>
+<p><b>Step 1: the three numbers.</b> \(s(4) = 16\) m, \(s'(4) = 8\) m/s, \(s''(4) = 2\) m/s².</p>
+<p><b>Step 2: the three terms.</b> \(16\); \(8 \times 0.5 = 4\); \(\tfrac12 \times 2 \times 0.5^2 = 1 \times 0.25 = 0.25\).</p>
+<p><b>Step 3: add.</b> \(T_2 = 16 + 4 + 0.25 = 20.25\) m.</p>
+<p> It is exact because \(s\) is a quadratic, and a quadratic is fully fixed by its value, slope and curvature at one point.</p>
 </details>
 </div>
 
 <div class="ex" data-answer="2.0998734" data-tol="0.00003">
 <p><b>Exercise 4.4.</b> Use \(T_2\) at \(x_0 = 4\) to approximate \(\sqrt{4.41}\). You are given: \(f(x) = \sqrt{x}\), \(f'(x) = \tfrac{1}{2\sqrt{x}}\), \(f''(x) = -\tfrac{1}{4x^{3/2}}\). Give at least five decimal places.</p>
 <details><summary>Show answer</summary>
-<p>\(f(4) = 2\). \(f'(4) = 1/(2 \times 2) = 0.25\). \(f''(4) = -1/(4 \times 8) = -0.03125\). \(\Delta x = 0.41\), so \(\Delta x^2 = 0.1681\).</p>
-<p>\(T_2 = 2 + 0.25 \times 0.41 + \tfrac12 \times (-0.03125) \times 0.1681 = 2 + 0.1025 - 0.0026266 = 2.0998734\). The truth is \(\sqrt{4.41} = 2.1\). The error is about 0.000127, close to the next term \(\tfrac{f'''(4)}{6}\Delta x^3\).</p>
+<p><b>Step 1: the value.</b> \(f(4) = \sqrt4 = 2\).</p>
+<p><b>Step 2: the slope.</b> \(f'(4) = 1/(2\sqrt4) = 1/(2 \times 2) = 0.25\).</p>
+<p><b>Step 3: the curvature.</b> \(4^{3/2} = (\sqrt4)^3 = 2^3 = 8\), using the power-of-a-power rule of Level 1 (\(4^{3/2} = (4^{1/2})^3\)). So \(f''(4) = -1/(4 \times 8) = -1/32 = -0.03125\).</p>
+<p><b>Step 4: the step.</b> \(\Delta x = 4.41 - 4 = 0.41\), so \(\Delta x^2 = 0.41 \times 0.41 = 0.1681\).</p>
+<p><b>Step 5: the three terms.</b> \(2\); \(0.25 \times 0.41 = 0.1025\); \(\tfrac12 \times (-0.03125) \times 0.1681 = -0.0026266\).</p>
+<p><b>Step 6: add.</b> \(T_2 = 2 + 0.1025 - 0.0026266 = 2.0998734\). The truth is \(\sqrt{4.41} = 2.1\). The error is about 0.000127, close to the next term \(\tfrac{f'''(4)}{6}\Delta x^3\).</p>
 </details>
 </div>
 
@@ -356,7 +405,10 @@ A step is small or big only <i>compared with the distance over which the curvatu
 <div class="ex" data-answer="9.26" data-tol="0.0005" data-unit="m³">
 <p><b>Exercise 4.9.</b> A cube has sides of 2 m. Its sides grow to 2.1 m. Use \(T_2\) for \(f(x) = x^3\) at \(x_0 = 2\) to approximate the new volume. Then say which piece of the cube \(T_2\) leaves out, and how big it is.</p>
 <details><summary>Show answer</summary>
-<p>\(T_2 = 8 + 12 \times 0.1 + 6 \times 0.01 = 8 + 1.2 + 0.06 = 9.26\) m³. The truth is \(2.1^3 = 9.261\) m³. \(T_2\) leaves out the corner cube \(\Delta x^3 = 0.001\) m³.</p>
+<p><b>Step 1: the recipe.</b> Section 4.5 gave \(f(2) = 8\), \(f'(2) = 12\), \(f''(2) = 12\), so \(T_2 = 8 + 12\,\Delta x + \tfrac{12}{2}\,\Delta x^2 = 8 + 12\,\Delta x + 6\,\Delta x^2\).</p>
+<p><b>Step 2: the step.</b> \(\Delta x = 2.1 - 2 = 0.1\) m, so \(\Delta x^2 = 0.01\) m².</p>
+<p><b>Step 3: put it in.</b> \(T_2 = 8 + 12 \times 0.1 + 6 \times 0.01 = 8 + 1.2 + 0.06 = 9.26\) m³.</p>
+<p> The truth is \(2.1^3 = 9.261\) m³. \(T_2\) leaves out the corner cube \(\Delta x^3 = 0.001\) m³.</p>
 </details>
 </div>
 

@@ -175,10 +175,13 @@ $$ \frac{\partial Y}{\partial F} = 3 + 0.5\,W - F\ \ \text{bushels per bag}. $$
 <p>Check at \((4, 2)\): \(2 + 0.5 \times 2 - 0.5 \times 4 = 2 + 1 - 2 = 1\), and \(3 + 0.5 \times 4 - 2 = 3 + 2 - 2 = 3\). Same as the slices. Good.</p>
 
 <h3>Check with real numbers: a finite difference</h3>
-<p>Never trust a formula you have not checked. Add 0.01 bucket and keep \(F = 2\):</p>
+<p>Never trust a formula you have not checked. Add 0.01 bucket and keep \(F = 2\).</p>
+<p><b>Step 1: each term at \((4.01, 2)\).</b> \(2W = 2 \times 4.01 = 8.02\). \(3F = 3 \times 2 = 6\). \(0.5\,WF = 0.5 \times 4.01 \times 2 = 4.01\). \(-0.25\,W^2 = -0.25 \times 16.0801 = -4.020025\). \(-0.5\,F^2 = -0.5 \times 4 = -2\).</p>
+<p><b>Step 2: add them.</b></p>
 $$ Y(4.01, 2) = 8.02 + 6 + 4.01 - 4.020025 - 2 = 12.009975. $$
+<p><b>Step 3: subtract \(Y(4, 2) = 12\) and divide by the step.</b></p>
 $$ \frac{Y(4.01, 2) - Y(4, 2)}{0.01} = \frac{0.009975}{0.01} = 0.9975\ \text{bushels per bucket} \approx 1. $$
-<p>Add 0.01 bag and keep \(W = 4\): \(Y(4, 2.01) = 12.02995\), so the ratio is \(0.02995 / 0.01 = 2.995 \approx 3\) bushels per bag. Both agree. The small gaps (0.0025 and 0.005) are the curvature terms from Level 4, and they shrink if you use a smaller step.</p>
+<p>Now add 0.01 bag and keep \(W = 4\). <b>Step 1:</b> the terms are \(2 \times 4 = 8\), \(3 \times 2.01 = 6.03\), \(0.5 \times 4 \times 2.01 = 4.02\), \(-0.25 \times 16 = -4\), \(-0.5 \times 2.01^2 = -0.5 \times 4.0401 = -2.02005\). <b>Step 2:</b> \(Y(4, 2.01) = 8 + 6.03 + 4.02 - 4 - 2.02005 = 12.02995\). <b>Step 3:</b> the ratio is \((12.02995 - 12) / 0.01 = 0.02995 / 0.01 = 2.995 \approx 3\) bushels per bag. Both agree. The small gaps (0.0025 and 0.005) are the curvature terms from Level 4, and they shrink if you use a smaller step.</p>
 
 <h2>5.5 What happens to the partials when you move</h2>
 <p>The partials are not fixed numbers. They are functions of where you are. Here is \(\partial Y/\partial W = 2 + 0.5F - 0.5W\), in bushels per bucket, on a grid:</p>
@@ -212,10 +215,24 @@ Units: (bushels per bucket) × buckets + (bushels per bag) × bags = bushels. Ge
 </div>
 
 <h3>Worked example: from (4, 2) to (5, 3)</h3>
-<p>Prediction: \(\Delta Y \approx 1 \times 1 + 3 \times 1 = 4\) bushels. Truth: \(Y(5, 3) - Y(4, 2)\). Compute \(Y(5, 3) = 10 + 9 + 7.5 - 6.25 - 4.5 = 15.75\). So the true change is \(15.75 - 12 = 3.75\) bushels. The prediction is 0.25 too high.</p>
-<p>Where does the 0.25 go? Because the farm is a quadratic, we can expand exactly. Put \(W + \Delta W\) and \(F + \Delta F\) into the formula, multiply out, and subtract \(Y(W, F)\). Every term that does not contain a \(\Delta\) cancels, and what is left is</p>
+<p><b>Prediction.</b> The partials at \((4, 2)\) are 1 and 3, and \(\Delta W = \Delta F = 1\): \(\Delta Y \approx 1 \times 1 + 3 \times 1 = 4\) bushels.</p>
+<p><b>Truth, Step 1: each term of \(Y(5, 3)\).</b> \(2 \times 5 = 10\). \(3 \times 3 = 9\). \(0.5 \times 5 \times 3 = 7.5\). \(-0.25 \times 5^2 = -0.25 \times 25 = -6.25\). \(-0.5 \times 3^2 = -0.5 \times 9 = -4.5\).</p>
+<p><b>Truth, Step 2: add.</b> \(Y(5, 3) = 10 + 9 + 7.5 - 6.25 - 4.5 = 15.75\).</p>
+<p><b>Truth, Step 3: subtract.</b> \(15.75 - Y(4, 2) = 15.75 - 12 = 3.75\) bushels. The prediction is 0.25 too high.</p>
+<p>Where does the 0.25 go? Because the farm is a quadratic, we can expand exactly. Here is every step, with \((W, F) = (4, 2)\) and \(\Delta W = \Delta F = 1\) worked alongside.</p>
+<p><b>Step 1: put the moved inputs into each term.</b> Replace \(W\) by \(W + \Delta W\) and \(F\) by \(F + \Delta F\). Then multiply out each term on its own:</p>
+$$ 2(W + \Delta W) = 2W + 2\,\Delta W $$
+$$ 3(F + \Delta F) = 3F + 3\,\Delta F $$
+$$ 0.5\,(W + \Delta W)(F + \Delta F) = 0.5\,WF + 0.5\,W\,\Delta F + 0.5\,F\,\Delta W + 0.5\,\Delta W\,\Delta F $$
+$$ -0.25\,(W + \Delta W)^2 = -0.25\,W^2 - 0.5\,W\,\Delta W - 0.25\,\Delta W^2 $$
+$$ -0.5\,(F + \Delta F)^2 = -0.5\,F^2 - F\,\Delta F - 0.5\,\Delta F^2 $$
+<p>The third line multiplies every term of one bracket by every term of the other. The last two expand the square as at Level 2, \((W + \Delta W)^2 = W^2 + 2W\,\Delta W + \Delta W^2\) (and the same with \(F\)), then multiply by \(-0.25\) or \(-0.5\). Example, term by term: \(10 = 8 + 2\); \(9 = 6 + 3\); \(7.5 = 4 + 2 + 1 + 0.5\); \(-6.25 = -4 - 2 - 0.25\); \(-4.5 = -2 - 2 - 0.5\).</p>
+<p><b>Step 2: subtract \(Y(W, F)\).</b> The first piece on each line, \(2W\), \(3F\), \(0.5\,WF\), \(-0.25\,W^2\), \(-0.5\,F^2\), is exactly a term of \(Y(W, F)\). So they all cancel. Every remaining piece contains a \(\Delta\). Example: \(15.75 - 12 = 3.75\).</p>
+<p><b>Step 3: collect the pieces with one \(\Delta W\).</b> \(2\,\Delta W + 0.5\,F\,\Delta W - 0.5\,W\,\Delta W = (2 + 0.5F - 0.5W)\,\Delta W\). The bracket is \(\partial Y/\partial W\). Example: \(2 + 1 - 2 = 1\).</p>
+<p><b>Step 4: collect the pieces with one \(\Delta F\).</b> \(3\,\Delta F + 0.5\,W\,\Delta F - F\,\Delta F = (3 + 0.5W - F)\,\Delta F\). The bracket is \(\partial Y/\partial F\). Example: \(3 + 2 - 2 = 3\).</p>
+<p><b>Step 5: list what is left.</b> \(-0.25\,\Delta W^2\), \(-0.5\,\Delta F^2\) and \(+0.5\,\Delta W\,\Delta F\). So</p>
 $$ \Delta Y = \underbrace{(2 + 0.5F - 0.5W)}_{\partial Y/\partial W}\,\Delta W + \underbrace{(3 + 0.5W - F)}_{\partial Y/\partial F}\,\Delta F \;-\; 0.25\,\Delta W^2 \;-\; 0.5\,\Delta F^2 \;+\; 0.5\,\Delta W\,\Delta F. $$
-<p>With \(\Delta W = \Delta F = 1\) at \((4, 2)\):</p>
+<p><b>Step 6: put in the numbers.</b> With \(\Delta W = \Delta F = 1\) at \((4, 2)\):</p>
 $$ \Delta Y = 1 + 3 - 0.25 - 0.5 + 0.5 = 3.75. $$
 <p>Exact. The three extra pieces are second-order: water's diminishing returns (−0.25), fertiliser's diminishing returns (−0.5) and the interaction (+0.5). For a small move like \(\Delta W = \Delta F = 0.1\), they are 100 times smaller (−0.0025, −0.005, +0.005), and the linear approximation is nearly perfect.</p>
 
@@ -226,7 +243,12 @@ $$ \nabla Y = \left( \frac{\partial Y}{\partial W},\ \frac{\partial Y}{\partial 
 <p>Draw the gradient as an arrow on the map, starting at the plan: 1 map unit across (water) and 3 map units up (fertiliser). To draw it we had to decide that “1 bushel per bucket” and “1 bushel per bag” are the same length on paper. Section 5.10 shows that this decision matters.</p>
 <p>Its length, by Pythagoras, is</p>
 $$ \lVert \nabla Y \rVert = \sqrt{1^2 + 3^2} = \sqrt{10} \approx 3.162. $$
-<p>At the best plan \((14, 10)\): \(\partial Y/\partial W = 2 + 5 - 7 = 0\) and \(\partial Y/\partial F = 3 + 7 - 10 = 0\). The gradient is \((0, 0)\): no arrow. At the top of a hill there is no uphill. Solving “both partials equal zero” is how we find the top: \(2 + 0.5F - 0.5W = 0\) gives \(W = 4 + F\); putting that into \(3 + 0.5W - F = 0\) gives \(3 + 2 + 0.5F - F = 0\), so \(F = 10\) and \(W = 14\). Then \(Y(14, 10) = 28 + 30 + 70 - 49 - 50 = 29\) bushels. (That this flat spot is a top and not a saddle is checked with second derivatives at <a href="09.html">Level 9</a>.)</p>
+<p>At the best plan \((14, 10)\): \(\partial Y/\partial W = 2 + 5 - 7 = 0\) and \(\partial Y/\partial F = 3 + 7 - 10 = 0\). The gradient is \((0, 0)\): no arrow. At the top of a hill there is no uphill. Solving “both partials equal zero” is how we find the top.</p>
+<p><b>Step 1: solve the first equation for \(W\).</b> \(2 + 0.5F - 0.5W = 0\). Add \(0.5W\) to both sides: \(0.5W = 2 + 0.5F\). Multiply both sides by 2: \(W = 4 + F\).</p>
+<p><b>Step 2: put that into the second equation.</b> \(3 + 0.5W - F = 0\) becomes \(3 + 0.5\,(4 + F) - F = 0\).</p>
+<p><b>Step 3: multiply out and collect.</b> \(0.5\,(4 + F) = 2 + 0.5F\), so \(3 + 2 + 0.5F - F = 0\), which is \(5 - 0.5F = 0\).</p>
+<p><b>Step 4: solve.</b> \(0.5F = 5\), so \(F = 10\). Then Step 1 gives \(W = 4 + 10 = 14\).</p>
+<p><b>Step 5: the yield there.</b> Term by term: \(2 \times 14 = 28\), \(3 \times 10 = 30\), \(0.5 \times 14 \times 10 = 70\), \(-0.25 \times 196 = -49\), \(-0.5 \times 100 = -50\). So \(Y(14, 10) = 28 + 30 + 70 - 49 - 50 = 29\) bushels. (That this flat spot is a top and not a saddle is checked with second derivatives at <a href="09.html">Level 9</a>.)</p>
 
 <h2>5.8 The directional derivative: any direction you like</h2>
 <p>Partials answer “what if I change only water?” and “what if I change only fertiliser?”. A farmer can also change both in a fixed mix: say 0.6 bucket for every 0.8 bag. How fast does yield change per unit walked in that direction?</p>
@@ -270,6 +292,12 @@ $$ D_{\mathbf{u}} Y = \lVert \nabla Y \rVert \times 1 \times \cos\alpha. $$
 <li>along the contour, to \((4.03, 1.99)\): \(Y = 11.999575\), a change of only −0.000425 bushels (a second-order leftover);</li>
 <li>along the gradient, the same distance, to \((4.01, 2.03)\): \(Y = 12.099675\), a change of +0.0997 bushels.</li>
 </ul>
+<p>Both changes come straight from the exact expansion of section 5.6, with partials 1 and 3.</p>
+<ul>
+<li>Contour step, \(\Delta W = 0.03\), \(\Delta F = -0.01\). First order: \(1 \times 0.03 + 3 \times (-0.01) = 0.03 - 0.03 = 0\). Second order: \(-0.25 \times 0.0009 - 0.5 \times 0.0001 + 0.5 \times 0.03 \times (-0.01) = -0.000225 - 0.00005 - 0.00015 = -0.000425\).</li>
+<li>Gradient step, \(\Delta W = 0.01\), \(\Delta F = 0.03\). First order: \(1 \times 0.01 + 3 \times 0.03 = 0.01 + 0.09 = 0.1\). Second order: \(-0.25 \times 0.0001 - 0.5 \times 0.0009 + 0.5 \times 0.01 \times 0.03 = -0.000025 - 0.00045 + 0.00015 = -0.000325\). Total \(0.1 - 0.000325 = 0.099675\).</li>
+<li>Same distance: both steps are 0.01 times an arrow of length \(\sqrt{3^2 + 1^2} = \sqrt{1^2 + 3^2} = \sqrt{10}\).</li>
+</ul>
 <p>Same distance walked. More than two hundred times more yield change one way than the other.</p>
 
 <figure class="sim" id="sim-ascent">
@@ -285,7 +313,7 @@ $$ \frac{\partial Y}{\partial L} = \frac{\partial Y}{\partial W} \times \frac{1\
 <p>In (litre, bag) units the gradient is \((0.1, 3)\). Its direction is almost pure fertiliser. Compare the steepest-ascent mixes:</p>
 <ul>
 <li>bucket ruler: gradient \((1, 3)\), so walk 1 bucket for every 3 bags, that is 0.333 buckets per bag;</li>
-<li>litre ruler: gradient \((0.1, 3)\), so walk 0.1 litre for every 3 bags, that is 0.0333 litres = 0.00333 buckets per bag.</li>
+<li>litre ruler: gradient \((0.1, 3)\), so walk 0.1 litre for every 3 bags. Per bag that is \(0.1 / 3 = 0.0333\) litres. In buckets that is \(0.0333 / 10 = 0.00333\) buckets per bag.</li>
 </ul>
 <p>The “steepest” mix of water and fertiliser changed by a factor of 100. The farm did not change. Only the ruler did. (The factor is \(10^2\): one 10 because each litre is worth a tenth as much yield, and another 10 because a step of one litre is a tenth as much water.)</p>
 <p>A real-world version: suppose (a toy assumption) water costs 1 dollar a bucket and fertiliser 5 dollars a bag. Per dollar, water gives \(1 / 1 = 1\) bushel and fertiliser gives \(3 / 5 = 0.6\) bushels. Measured in dollars, the best next dollar goes on water. Measured in buckets and bags, the best next step is mostly fertiliser. Both are right. They answer different questions.</p>
@@ -321,21 +349,27 @@ The values \(\partial Y/\partial W = 1\) bushel per bucket and \(\partial Y/\par
 <div class="ex" data-answer="2" data-tol="0.001" data-unit="bushels per bag">
 <p><b>Exercise 5.3.</b> Compute \(\partial Y/\partial F\) at \((6, 4)\). Then write the F-slice \(Y(6, F)\) (water fixed at 6) as a one-input function and check your answer by differentiating it.</p>
 <details><summary>Show answer</summary>
-<p>\(3 + 0.5 \times 6 - 4 = 2\) bushels per bag. Slice: \(Y(6, F) = 12 + 3F + 3F - 9 - 0.5F^2 = 6F - 0.5F^2 + 3\). Its derivative is \(6 - F\), which is 2 at \(F = 4\).</p>
+<p><b>Step 1: the formula.</b> \(\partial Y/\partial F = 3 + 0.5W - F\). At \((6, 4)\): \(3 + 0.5 \times 6 - 4 = 3 + 3 - 4 = 2\) bushels per bag.</p>
+<p><b>Step 2: the slice.</b> Put \(W = 6\) into each term: \(2 \times 6 = 12\), \(3F\), \(0.5 \times 6 \times F = 3F\), \(-0.25 \times 36 = -9\), \(-0.5F^2\). So \(Y(6, F) = 12 + 3F + 3F - 9 - 0.5F^2\).</p>
+<p><b>Step 3: collect.</b> \(3F + 3F = 6F\) and \(12 - 9 = 3\): \(Y(6, F) = 6F - 0.5F^2 + 3\).</p>
+<p><b>Step 4: differentiate.</b> \(6F\) gives 6, \(-0.5F^2\) gives \(-0.5 \cdot 2F = -F\), 3 gives 0. So the derivative is \(6 - F\), which is \(6 - 4 = 2\) at \(F = 4\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="0.4" data-tol="0.001" data-unit="bushels">
 <p><b>Exercise 5.4.</b> From \((6, 4)\), add 0.2 bucket and 0.1 bag. Use the first-order change to predict \(\Delta Y\). Then find the exact change with the full expansion of section 5.6.</p>
 <details><summary>Show answer</summary>
-<p>Prediction: \(1 \times 0.2 + 2 \times 0.1 = 0.4\) bushels. Exact: add \(-0.25 \times 0.04 - 0.5 \times 0.01 + 0.5 \times 0.2 \times 0.1 = -0.01 - 0.005 + 0.01 = -0.005\). So \(\Delta Y = 0.395\) bushels.</p>
+<p><b>Step 1: prediction.</b> The partials at \((6, 4)\) are 1 and 2 (Exercises 5.2 and 5.3). \(\Delta Y \approx 1 \times 0.2 + 2 \times 0.1 = 0.2 + 0.2 = 0.4\) bushels.</p>
+<p><b>Step 2: the squares and the product of the steps.</b> \(\Delta W^2 = 0.2^2 = 0.04\), \(\Delta F^2 = 0.1^2 = 0.01\), \(\Delta W\,\Delta F = 0.2 \times 0.1 = 0.02\).</p>
+<p><b>Step 3: the second-order pieces.</b> \(-0.25 \times 0.04 = -0.01\), \(-0.5 \times 0.01 = -0.005\), \(+0.5 \times 0.02 = +0.01\). They add to \(-0.005\).</p>
+<p><b>Step 4: exact change.</b> \(\Delta Y = 0.4 - 0.005 = 0.395\) bushels.</p>
 </details>
 </div>
 
 <div class="ex" data-answer="3" data-tol="0.001" data-unit="bushels per map unit">
 <p><b>Exercise 5.5.</b> At \((4, 2)\), what is the directional derivative in the direction \(\mathbf{u} = (0.6, 0.8)\)? First check that \(\mathbf{u}\) has length 1.</p>
 <details><summary>Show answer</summary>
-<p>Length: \(\sqrt{0.36 + 0.64} = 1\). \(D_{\mathbf{u}}Y = 1 \times 0.6 + 3 \times 0.8 = 3.0\) bushels per map unit. That is a little less than the maximum, 3.162, because \(\mathbf{u}\) points at 53.1°, not 71.6°.</p>
+<p>Length: \(\sqrt{0.36 + 0.64} = 1\). \(D_{\mathbf{u}}Y = 1 \times 0.6 + 3 \times 0.8 = 3.0\) bushels per map unit. That is a little less than the maximum, 3.162, because \(\mathbf{u}\) points at 53.1° (\(\cos 53.1° \approx 0.6\) and \(\sin 53.1° \approx 0.8\)), not 71.6°.</p>
 </details>
 </div>
 
@@ -349,7 +383,10 @@ The values \(\partial Y/\partial W = 1\) bushel per bucket and \(\partial Y/\par
 <div class="ex" data-answer="6" data-tol="0.001" data-unit="buckets">
 <p><b>Exercise 5.7.</b> With 2 bags of fertiliser, at what amount of water does one more bucket stop helping?</p>
 <details><summary>Show answer</summary>
-<p>Set \(\partial Y/\partial W = 2 + 0.5 \times 2 - 0.5W = 3 - 0.5W = 0\). So \(W = 6\) buckets. Check in the table of section 5.5: row \(F = 2\), column \(W = 6\) shows 0.</p>
+<p><b>Step 1: put \(F = 2\) into the partial.</b> \(\partial Y/\partial W = 2 + 0.5 \times 2 - 0.5W = 2 + 1 - 0.5W = 3 - 0.5W\).</p>
+<p><b>Step 2: set it to zero.</b> One more bucket stops helping when its rate is 0: \(3 - 0.5W = 0\).</p>
+<p><b>Step 3: solve.</b> \(0.5W = 3\), so \(W = 3 / 0.5 = 6\) buckets.</p>
+<p> Check in the table of section 5.5: row \(F = 2\), column \(W = 6\) shows 0.</p>
 </details>
 </div>
 
@@ -370,7 +407,9 @@ The values \(\partial Y/\partial W = 1\) bushel per bucket and \(\partial Y/\par
 <div class="ex" data-answer="12" data-tol="0.001">
 <p><b>Exercise 5.10.</b> Let \(f(x, y) = x^2 y\). Compute \(\partial f/\partial x\) and \(\partial f/\partial y\) at \((3, 2)\). Enter \(\partial f/\partial x\).</p>
 <details><summary>Show answer</summary>
-<p>Treat \(y\) as a number: \(\partial f/\partial x = 2xy = 2 \times 3 \times 2 = 12\). Treat \(x\) as a number: \(\partial f/\partial y = x^2 = 9\).</p>
+<p><b>Step 1: \(\partial f/\partial x\).</b> Treat \(y\) as a number multiplying \(x^2\). The power rule gives \(2x\) for \(x^2\), so \(\partial f/\partial x = 2x \cdot y = 2xy\).</p>
+<p><b>Step 2: put in \((3, 2)\).</b> \(2 \times 3 \times 2 = 12\).</p>
+<p><b>Step 3: \(\partial f/\partial y\).</b> Treat \(x^2\) as a number multiplying \(y\). The derivative of \(y\) is 1, so \(\partial f/\partial y = x^2\). At \((3, 2)\) that is \(3^2 = 9\).</p>
 </details>
 </div>
 

@@ -69,12 +69,19 @@
 </div>
 
 <h2>3.1 The derivative of the derivative</h2>
-<p>At <a href="02.html">Level 2</a> the derivative of the car's position \(s(t) = t^2\) was its speed, \(s'(t) = 2t\) m/s. That speed is itself a function of time. So we can ask how fast <i>it</i> changes. Take its derivative, using the same difference quotient as before:</p>
-$$ \frac{s'(t + \Delta t) - s'(t)}{\Delta t} = \frac{2(t + \Delta t) - 2t}{\Delta t} = \frac{2t + 2\Delta t - 2t}{\Delta t} = \frac{2\,\Delta t}{\Delta t} = 2 . $$
+<p>At <a href="02.html">Level 2</a> the derivative of the car's position \(s(t) = t^2\) was its speed, \(s'(t) = 2t\) m/s. That speed is itself a function of time. So we can ask how fast <i>it</i> changes. Take its derivative, using the same difference quotient as before. Here is every step, with \(t = 3\) s and \(\Delta t = 0.5\) s worked alongside.</p>
+<p><b>Step 1: write the two speeds.</b> The speed rule is \(s'(t) = 2t\): double the time. So at \(t\) the speed is \(2t\), and at \(t + \Delta t\) it is \(2(t + \Delta t)\). Example: \(s'(3) = 6\) m/s and \(s'(3.5) = 7\) m/s.</p>
+<p><b>Step 2: put them into the difference quotient.</b></p>
+$$ \frac{s'(t + \Delta t) - s'(t)}{\Delta t} = \frac{2(t + \Delta t) - 2t}{\Delta t} . $$
+<p>Example: \(\dfrac{7 - 6}{0.5} = 2\).</p>
+<p><b>Step 3: multiply out the bracket.</b> \(2(t + \Delta t) = 2t + 2\Delta t\). Example: \(2 \times 3.5 = 6 + 1 = 7\).</p>
+<p><b>Step 4: cancel the \(2t\).</b> \(+2t\) and \(-2t\) cancel on top:</p>
+$$ \frac{2t + 2\Delta t - 2t}{\Delta t} = \frac{2\,\Delta t}{\Delta t} . $$
+<p><b>Step 5: divide.</b> \(2\,\Delta t / \Delta t = 2\). Example: \(1 / 0.5 = 2\).</p>
 <p>There is not even a leftover \(\Delta t\) to send to zero: the answer is 2 for every step. So</p>
 $$ s''(t) = 2\ \text{m/s}^2 \quad \text{at every time } t. $$
 <p>This is the second derivative: the derivative of the derivative. For the car it is the acceleration, the rate of change of speed. Check with a table of speeds from Level 2: 0, 2, 4, 6, 8 m/s at \(t = 0, 1, 2, 3, 4\) s. Each second the speed rises by 2 m/s. That is what “2 m/s²” means: 2 metres per second, gained every second.</p>
-<p>With the physicists' form \(s(t) = \tfrac12 a t^2\), Level 2 gave \(s'(t) = a t\). One more derivative gives \(s''(t) = a\). So the \(a = 2\) m/s² of Level 1 is exactly the second derivative. That is why it is called the acceleration.</p>
+<p>With the physicists' form \(s(t) = \tfrac12 a t^2\), Level 2 gave \(s'(t) = a t\). One more derivative gives \(s''(t) = a\): the derivative of \(t\) is 1 (Level 2), and the constant \(a\) multiplies it. So the \(a = 2\) m/s² of Level 1 is exactly the second derivative. That is why it is called the acceleration.</p>
 
 <h3>Notation</h3>
 <ul>
@@ -96,15 +103,25 @@ $$ s''(t):\quad \frac{\text{m/s}}{\text{s}} = \frac{\text{m}}{\text{s}\cdot\text
 <p>An acceleration of 2 m/s² changes the speed by 2 m/s for each second. Over a step \(\Delta t\) the speed changes by about \(s''\cdot\Delta t\). With \(\Delta t = 0.5\) s: \(2\ \text{m/s}^2 \times 0.5\ \text{s} = 1\ \text{m/s}\). Check: \(s'(3) = 6\) and \(s'(3.5) = 7\) m/s. The seconds cancel once and leave m/s.</p>
 
 <h3>Mechanics: change the unit of the input</h3>
-<p>Measure time in minutes instead of seconds. One second is \(\tfrac{1}{60}\) minute, so “per second” is “60 per minute”, and “per second per second” is “\(60 \times 60 = 3600\) per minute per minute”:</p>
+<p>Measure time in minutes instead of seconds. Here are the steps.</p>
+<p><b>Step 1: convert one second.</b> One second is \(\tfrac{1}{60}\) minute.</p>
+<p><b>Step 2: convert “per second”.</b> Dividing by \(\tfrac{1}{60}\) min is multiplying by 60 per min: \(\tfrac{1}{\text{s}} = \tfrac{60}{\text{min}}\). So 6 m/s is 6 m for each \(\tfrac{1}{60}\) min, which is \(6 \times 60 = 360\) m per minute.</p>
+<p><b>Step 3: convert “per second per second”.</b> Do Step 2 twice: \(\tfrac{1}{\text{s}^2} = \tfrac{1}{\text{s}}\cdot\tfrac{1}{\text{s}} = \tfrac{60}{\text{min}}\cdot\tfrac{60}{\text{min}} = \tfrac{3600}{\text{min}^2}\).</p>
 $$ 6\ \frac{\text{m}}{\text{s}} = 6 \times 60\ \frac{\text{m}}{\text{min}} = 360\ \frac{\text{m}}{\text{min}}, \qquad 2\ \frac{\text{m}}{\text{s}^2} = 2 \times 60^2\ \frac{\text{m}}{\text{min}^2} = 7200\ \frac{\text{m}}{\text{min}^2} . $$
 <p>The motion did not change. The numbers did. Stretch the input unit by a factor of 60 and the first derivative is multiplied by 60, but the second derivative by \(60^2\). This is not a curiosity. At <a href="13.html">Level 13</a> and <a href="15.html">Level 15</a>, H-space measures curvature in units of each direction's natural spread instead of raw units, and this squared rescaling is exactly what changes which directions look most curved.</p>
 
 <h2>3.3 Position, speed and acceleration together</h2>
 <p>For the car, the acceleration never changes, which makes its third graph a flat line. To see a second derivative that changes, here is a second toy trip. A car leaves one stop sign, speeds up, then brakes and stops exactly at the next stop sign, 50 m away, after 10 s. Its position is</p>
 $$ q(t) = 1.5\,t^2 - 0.1\,t^3 \quad \text{metres}, \qquad 0 \le t \le 10\ \text{s}. $$
-<p>(Hidden units, as with the car: the 1.5 is in m/s² and the 0.1 is in m/s³, so that each term comes out in metres.) Differentiate term by term with the power rule of Level 2:</p>
-$$ q'(t) = 1.5\cdot 2t - 0.1\cdot 3t^2 = 3t - 0.3\,t^2 \ \text{m/s}, \qquad q''(t) = 3 - 0.3\cdot 2t = 3 - 0.6\,t \ \text{m/s}^2 . $$
+<p>(Hidden units, as with the car: the 1.5 is in m/s² and the 0.1 is in m/s³, so that each term comes out in metres.) Differentiate term by term with the rules of Level 2. Here are the steps, with \(t = 2\) s worked alongside.</p>
+<p><b>Step 1: the first term of \(q\).</b> The power rule gives \(2t\) for \(t^2\). The constant 1.5 multiplies it: \(1.5 \cdot 2t = 3t\).</p>
+<p><b>Step 2: the second term of \(q\).</b> The power rule gives \(3t^2\) for \(t^3\). The constant \(-0.1\) multiplies it: \(-0.1 \cdot 3t^2 = -0.3\,t^2\).</p>
+<p><b>Step 3: add (sum rule).</b></p>
+$$ q'(t) = 3t - 0.3\,t^2 \ \text{m/s} . $$
+<p>Example: \(q'(2) = 3 \times 2 - 0.3 \times 4 = 6 - 1.2 = 4.8\) m/s.</p>
+<p><b>Step 4: differentiate again, term by term.</b> \(3t\) gives 3. \(-0.3\,t^2\) gives \(-0.3 \cdot 2t = -0.6\,t\). Add:</p>
+$$ q''(t) = 3 - 0.6\,t \ \text{m/s}^2 . $$
+<p>Example: \(q''(2) = 3 - 0.6 \times 2 = 3 - 1.2 = 1.8\) m/s².</p>
 <div class="tablewrap" style="position: relative">
 <table>
 <tr><th>\(t\) (s)</th><th>position \(q\) (m)</th><th>speed \(q'\) (m/s)</th><th>acceleration \(q''\) (m/s²)</th><th>what the driver is doing</th></tr>
@@ -139,9 +156,12 @@ The height of each graph is the slope of the graph above it. Speed is the slope 
 <p>For \(f(x) = -x^2\), the slopes at the same points are \(4, 2, 0, -2, -4\): falling by 2 per unit step, \(f''(x) = -2\). A cap.</p>
 
 <h3>Worked example: a curve that does both</h3>
-<p>Let \(f(x) = x^3 - 3x\) (toy, pure numbers). Then</p>
+<p>Let \(f(x) = x^3 - 3x\) (toy, pure numbers). Here are the steps.</p>
+<p><b>Step 1: first derivative.</b> Term by term: \(x^3\) gives \(3x^2\) (power rule), and \(-3x\) gives \(-3 \cdot 1 = -3\). So \(f'(x) = 3x^2 - 3\).</p>
+<p><b>Step 2: second derivative.</b> Differentiate \(f'\) term by term: \(3x^2\) gives \(3 \cdot 2x = 6x\), and the constant \(-3\) gives 0. So</p>
 $$ f'(x) = 3x^2 - 3, \qquad f''(x) = 6x . $$
-<p>For negative \(x\), \(6x\) is negative: concave down. For positive \(x\), \(6x\) is positive: concave up. At \(x = 1.5\): \(f'(1.5) = 3 \cdot 2.25 - 3 = 3.75\) and \(f''(1.5) = 9\). Step 0.1 to the right: \(f'(1.6) = 3\cdot 2.56 - 3 = 4.68\). The slope rose by \(4.68 - 3.75 = 0.93\), close to \(f''(1.5) \times 0.1 = 0.9\).</p>
+<p><b>Step 3: read the sign.</b> For negative \(x\), \(6x\) is negative: concave down. For positive \(x\), \(6x\) is positive: concave up.</p>
+<p><b>Step 4: check with numbers.</b> At \(x = 1.5\): \(1.5^2 = 2.25\), so \(f'(1.5) = 3 \cdot 2.25 - 3 = 6.75 - 3 = 3.75\), and \(f''(1.5) = 6 \times 1.5 = 9\). Step 0.1 to the right: \(1.6^2 = 2.56\), so \(f'(1.6) = 3\cdot 2.56 - 3 = 7.68 - 3 = 4.68\). The slope rose by \(4.68 - 3.75 = 0.93\), close to \(f''(1.5) \times 0.1 = 0.9\).</p>
 <p><b>Which side of the tangent line?</b> On a concave-up stretch the curve lies above its tangent lines. On a concave-down stretch it lies below them. Section 3.5 turns that gap into a number.</p>
 
 <p><b>Real-world examples.</b> Revising for an exam: the first hour helps a lot, the tenth hour helps less. The score as a function of hours is concave down, a pattern called diminishing returns. Savings with compound interest: each year adds more than the year before. The balance as a function of time is concave up.</p>
@@ -161,10 +181,18 @@ $$ s(3 + \Delta t) - T(3 + \Delta t) = (9 + 6\Delta t + \Delta t^2) - (9 + 6\Del
 <p>Now look at that gap with the second derivative in hand. \(s'' = 2\) m/s², and \(\tfrac12 s''\,\Delta t^2 = \tfrac12 \cdot 2 \cdot \Delta t^2 = \Delta t^2\). The gap is exactly \(\tfrac12 s''\,\Delta t^2\). Units: \(\text{m/s}^2 \times \text{s}^2 = \text{m}\), as a gap in position should be.</p>
 
 <h3>Worked example: the cubic at \(x = 2\)</h3>
-<p>Take \(f(x) = x^3 - 3x\) again. At \(x = 2\): \(f(2) = 8 - 6 = 2\), \(f'(2) = 12 - 3 = 9\), \(f''(2) = 12\). The tangent line is \(2 + 9\,\Delta x\) after a step \(\Delta x\). Feed \(2 + \Delta x\) into \(f\), using \((2 + \Delta x)^3 = 8 + 12\Delta x + 6\Delta x^2 + \Delta x^3\) (the expansion of Level 2 with \(t = 2\)):</p>
+<p>Take \(f(x) = x^3 - 3x\) again. Here is every step, with \(\Delta x = 0.1\) worked alongside.</p>
+<p><b>Step 1: the three numbers at \(x = 2\).</b> \(f(2) = 2^3 - 3 \cdot 2 = 8 - 6 = 2\). \(f'(2) = 3 \cdot 2^2 - 3 = 12 - 3 = 9\). \(f''(2) = 6 \times 2 = 12\).</p>
+<p><b>Step 2: the tangent line.</b> As at Level 2, the tangent line starts at \(f(2)\) and adds slope × step: \(f(2) + f'(2)\,\Delta x = 2 + 9\,\Delta x\). Example: \(2 + 0.9 = 2.9\).</p>
+<p><b>Step 3: feed \(2 + \Delta x\) into \(f\).</b> Replace \(x\) by \(2 + \Delta x\): \(f(2 + \Delta x) = (2 + \Delta x)^3 - 3(2 + \Delta x)\).</p>
+<p><b>Step 4: expand the cube.</b> Level 2 (Section 2.7) gave \((t + \Delta t)^3 = t^3 + 3t^2\,\Delta t + 3t\,\Delta t^2 + \Delta t^3\). With \(t = 2\) that is \(8 + 12\Delta x + 6\Delta x^2 + \Delta x^3\). Example: \(2.1^3 = 8 + 1.2 + 0.06 + 0.001 = 9.261\).</p>
+<p><b>Step 5: multiply out the second bracket.</b> \(3(2 + \Delta x) = 6 + 3\Delta x\). Example: \(3 \times 2.1 = 6.3\).</p>
+<p><b>Step 6: subtract and collect.</b> \(8 - 6 = 2\) and \(12\Delta x - 3\Delta x = 9\Delta x\):</p>
 $$ f(2 + \Delta x) = 8 + 12\Delta x + 6\Delta x^2 + \Delta x^3 - 6 - 3\Delta x = 2 + 9\,\Delta x + 6\,\Delta x^2 + \Delta x^3 . $$
-<p>Subtract the tangent line \(2 + 9\,\Delta x\):</p>
+<p>Example: \(9.261 - 6.3 = 2.961\), and \(2 + 0.9 + 0.06 + 0.001 = 2.961\).</p>
+<p><b>Step 7: subtract the tangent line \(2 + 9\,\Delta x\).</b> The 2 and the \(9\,\Delta x\) cancel:</p>
 $$ \text{gap} = 6\,\Delta x^2 + \Delta x^3 . $$
+<p>Example: \(2.961 - 2.9 = 0.061\), and \(0.06 + 0.001 = 0.061\).</p>
 <p>The main part is \(6\,\Delta x^2\), and \(6 = \tfrac12 \cdot 12 = \tfrac12 f''(2)\). The extra \(\Delta x^3\) is smaller still for small steps:</p>
 <div class="tablewrap" style="position: relative">
 <table>
@@ -173,7 +201,7 @@ $$ \text{gap} = 6\,\Delta x^2 + \Delta x^3 . $$
 <tr><th>gap ÷ \(\Delta x^2\)</th><td>7</td><td>6.1</td><td>6.01</td></tr>
 </table>
 </div>
-<p>The ratio settles on \(6 = \tfrac12 f''(2)\). The same happens for \(e^x\) at 0, where \(f''(0) = e^0 = 1\): with \(\Delta x = 0.1\), the gap is \(e^{0.1} - 1 - 0.1 \approx 0.005171\), and \(0.005171 / 0.01 \approx 0.517\), close to \(\tfrac12\).</p>
+<p>The ratio settles on \(6 = \tfrac12 f''(2)\). The same happens for \(e^x\) at 0. The derivative of \(e^x\) is \(e^x\) (Level 2), and so is the second derivative. At 0 all three numbers are \(e^0 = 1\). So the tangent line at 0 is \(1 + 1 \cdot \Delta x = 1 + \Delta x\). With \(\Delta x = 0.1\), the curve is at \(e^{0.1} \approx 1.105171\) and the line at \(1.1\). The gap is \(1.105171 - 1.1 \approx 0.005171\). Divide by \(\Delta x^2 = 0.01\): \(0.005171 / 0.01 \approx 0.517\), close to \(\tfrac12 f''(0) = \tfrac12\).</p>
 
 <div class="box key">
 <span class="boxtitle">Curvature as the error of the tangent line</span>
@@ -196,20 +224,40 @@ Geometers use a stricter curvature, \(\kappa = f''(x) / \big(1 + f'(x)^2\big)^{3
 <h2>3.6 The second difference: curvature you can measure</h2>
 <p>Level 2 approximated a derivative with function values only. The same can be done for the second derivative. Use three values, one step either side:</p>
 $$ \frac{f(x + \Delta x) - 2f(x) + f(x - \Delta x)}{\Delta x^2} . $$
-<p>This is called the second difference. Where does it come from? It is a difference of two difference quotients: the slope just ahead minus the slope just behind, per step.</p>
-$$ \frac{1}{\Delta x}\left( \frac{f(x+\Delta x) - f(x)}{\Delta x} - \frac{f(x) - f(x - \Delta x)}{\Delta x} \right) = \frac{\big(f(x+\Delta x) - f(x)\big) - \big(f(x) - f(x - \Delta x)\big)}{\Delta x^2} = \frac{f(x+\Delta x) - 2f(x) + f(x-\Delta x)}{\Delta x^2}. $$
+<p>This is called the second difference. Where does it come from? It is a difference of two difference quotients: the slope just ahead minus the slope just behind, per step. Here are the steps, with the cubic \(f(x) = x^3 - 3x\) at \(x = 2\), \(\Delta x = 0.1\) worked alongside: \(f(2.1) = 2.961\), \(f(2) = 2\), \(f(1.9) = 1.159\).</p>
+<p><b>Step 1: the slope just ahead.</b> \(\dfrac{f(x+\Delta x) - f(x)}{\Delta x}\). Example: \((2.961 - 2)/0.1 = 9.61\).</p>
+<p><b>Step 2: the slope just behind.</b> \(\dfrac{f(x) - f(x - \Delta x)}{\Delta x}\). Example: \((2 - 1.159)/0.1 = 8.41\).</p>
+<p><b>Step 3: subtract them and divide by the step.</b> This is “change in slope per unit of input”:</p>
+$$ \frac{1}{\Delta x}\left( \frac{f(x+\Delta x) - f(x)}{\Delta x} - \frac{f(x) - f(x - \Delta x)}{\Delta x} \right) . $$
+<p>Example: \((9.61 - 8.41)/0.1 = 1.2/0.1 = 12\).</p>
+<p><b>Step 4: put everything over one denominator.</b> Both fractions inside the bracket are over \(\Delta x\), and the bracket is divided by \(\Delta x\) again. So the whole thing is over \(\Delta x \cdot \Delta x = \Delta x^2\):</p>
+$$ \frac{\big(f(x+\Delta x) - f(x)\big) - \big(f(x) - f(x - \Delta x)\big)}{\Delta x^2} . $$
+<p><b>Step 5: remove the brackets and collect.</b> The minus sign flips the second bracket to \(-f(x) + f(x - \Delta x)\). Then \(-f(x) - f(x) = -2f(x)\):</p>
+$$ \frac{f(x+\Delta x) - 2f(x) + f(x-\Delta x)}{\Delta x^2}. $$
+<p>Example: \((2.961 - 4 + 1.159)/0.01 = 0.12/0.01 = 12\). Same number as Step 3.</p>
 <p>The slope changing per unit of input is exactly what \(f''\) measures, so as \(\Delta x \to 0\) this settles on \(f''(x)\) (for a smooth function).</p>
 
 <h3>Worked example: the car, exact at any step</h3>
-<p>Expand both squares:</p>
-$$ (t + \Delta t)^2 - 2t^2 + (t - \Delta t)^2 = (t^2 + 2t\Delta t + \Delta t^2) - 2t^2 + (t^2 - 2t\Delta t + \Delta t^2) = 2\,\Delta t^2 . $$
-<p>The \(t^2\) terms cancel (\(1 - 2 + 1 = 0\)), the \(2t\Delta t\) terms cancel (one plus, one minus), and \(2\Delta t^2\) is left. Divide by \(\Delta t^2\): the second difference is 2 m/s², for every step.</p>
+<p>Here is every step, with \(t = 3\) s and \(\Delta t = 0.5\) s worked alongside.</p>
+<p><b>Step 1: write the top.</b> The rule is \(s(t) = t^2\), so the top of the second difference is \((t + \Delta t)^2 - 2t^2 + (t - \Delta t)^2\). Example: \(3.5^2 - 2 \times 9 + 2.5^2 = 12.25 - 18 + 6.25 = 0.5\).</p>
+<p><b>Step 2: expand the forward square.</b> \((t + \Delta t)^2 = t^2 + 2t\Delta t + \Delta t^2\) (Level 2). Example: \(9 + 3 + 0.25 = 12.25\).</p>
+<p><b>Step 3: expand the backward square.</b> Replace \(\Delta t\) by \(-\Delta t\): \((t - \Delta t)^2 = t^2 - 2t\Delta t + \Delta t^2\), since \((-\Delta t)^2 = \Delta t^2\). Example: \(9 - 3 + 0.25 = 6.25\).</p>
+<p><b>Step 4: add and collect.</b></p>
+$$ (t^2 + 2t\Delta t + \Delta t^2) - 2t^2 + (t^2 - 2t\Delta t + \Delta t^2) = 2\,\Delta t^2 . $$
+<p>The \(t^2\) terms cancel (\(1 - 2 + 1 = 0\)), the \(2t\Delta t\) terms cancel (one plus, one minus), and \(\Delta t^2 + \Delta t^2 = 2\Delta t^2\) is left. Example: \(2 \times 0.25 = 0.5\). It matches Step 1.</p>
+<p><b>Step 5: divide by \(\Delta t^2\).</b> \(2\Delta t^2 / \Delta t^2 = 2\). The second difference is 2 m/s², for every step. Example: \(0.5 / 0.25 = 2\).</p>
 <p>You have seen this before. In the Level 1 table with \(\Delta t = 1\) s, the column “growth of \(\Delta s\)” was 2 m every time. That column was \(s(t+1) - 2s(t) + s(t-1)\). Dividing by \((1\ \text{s})^2\) gives 2 m/s². The acceleration was hiding in the table from the start.</p>
 
 <h3>Worked example: the cubic at \(x = 2\)</h3>
-<p>With \(\Delta x = 0.1\): \(f(2.1) = 9.261 - 6.3 = 2.961\), \(f(2) = 2\), \(f(1.9) = 6.859 - 5.7 = 1.159\).</p>
+<p><b>Step 1: the three values, with \(\Delta x = 0.1\).</b> \(f(2.1) = 2.1^3 - 3 \times 2.1 = 9.261 - 6.3 = 2.961\). \(f(2) = 8 - 6 = 2\). \(f(1.9) = 1.9^3 - 3 \times 1.9 = 6.859 - 5.7 = 1.159\).</p>
+<p><b>Step 2: put them into the second difference.</b></p>
 $$ \frac{2.961 - 2\cdot 2 + 1.159}{0.1^2} = \frac{2.961 - 4 + 1.159}{0.01} = \frac{0.12}{0.01} = 12 . $$
-<p>Exactly \(f''(2) = 12\). Why exact? In \(f(x+\Delta x) + f(x - \Delta x)\), every odd power of \(\Delta x\) appears once with a plus and once with a minus, and cancels. For \(x^3\): \((x+\Delta x)^3 - 2x^3 + (x - \Delta x)^3 = 6x\,\Delta x^2\), and \(6x\) is the exact second derivative. So for any polynomial up to \(x^3\) the second difference has no step error at all.</p>
+<p>Exactly \(f''(2) = 6 \times 2 = 12\). Why exact? Do the \(x^3\) part by algebra.</p>
+<p><b>Step 3: the two cubes.</b> Level 2 (Section 2.10) expanded both: \((x+\Delta x)^3 = x^3 + 3x^2\Delta x + 3x\Delta x^2 + \Delta x^3\) and \((x-\Delta x)^3 = x^3 - 3x^2\Delta x + 3x\Delta x^2 - \Delta x^3\).</p>
+<p><b>Step 4: add them and subtract \(2x^3\).</b> \(x^3 + x^3 - 2x^3 = 0\). The odd powers of \(\Delta x\) appear once with a plus and once with a minus, so \(3x^2\Delta x\) and \(\Delta x^3\) cancel. The \(3x\Delta x^2\) appears twice:</p>
+$$ (x+\Delta x)^3 - 2x^3 + (x - \Delta x)^3 = 6x\,\Delta x^2 . $$
+<p>Example at \(x = 2\): \(9.261 - 16 + 6.859 = 0.12\), and \(6 \times 2 \times 0.01 = 0.12\).</p>
+<p><b>Step 5: divide by \(\Delta x^2\).</b> The result is \(6x\), the exact second derivative of \(x^3\), with no \(\Delta x\) left. The \(-3x\) part is a straight line, whose second difference is 0. So for any polynomial up to \(x^3\) the second difference has no step error at all.</p>
 
 <h3>Worked example: \(e^x\) at 0, where it is not exact</h3>
 <div class="tablewrap" style="position: relative">
@@ -225,7 +273,7 @@ $$ \frac{2.961 - 2\cdot 2 + 1.159}{0.1^2} = \frac{2.961 - 4 + 1.159}{0.01} = \fr
 
 <div class="box plain">
 <span class="boxtitle">Intuition pump: the tight string</span>
-Pin a string to the curve at \(x - \Delta x\) and \(x + \Delta x\) and pull it straight. Its midpoint is at height \(\tfrac12\big(f(x - \Delta x) + f(x + \Delta x)\big)\). The second difference is \(2/\Delta x^2\) times how far that midpoint sits above the curve at \(x\). If the curve sags below the string, it is concave up and the second difference is positive. If the curve bulges above the string, it is negative.
+Pin a string to the curve at \(x - \Delta x\) and \(x + \Delta x\) and pull it straight. Its midpoint is at height \(\tfrac12\big(f(x - \Delta x) + f(x + \Delta x)\big)\), the average of the two ends. How far that midpoint sits above the curve at \(x\) is \(\tfrac12\big(f(x - \Delta x) + f(x + \Delta x)\big) - f(x)\). Multiply by 2: \(f(x - \Delta x) + f(x + \Delta x) - 2f(x)\), the top of the second difference. So the second difference is \(2/\Delta x^2\) times how far that midpoint sits above the curve at \(x\). If the curve sags below the string, it is concave up and the second difference is positive. If the curve bulges above the string, it is negative.
 </div>
 
 <figure class="sim" id="sim-second">
@@ -246,15 +294,22 @@ At a critical point \(x\) (where \(f'(x) = 0\)):
 <p><b>Why it works.</b> Section 3.5 with \(f'(x) = 0\) says \(f(x + \Delta x) \approx f(x) + \tfrac12 f''(x)\,\Delta x^2\). Near the point the graph looks like a small copy of the Level 1 parabola \(y = c\,x^2\), moved to sit at the critical point, with \(c = \tfrac12 f''(x)\). If \(c \gt 0\), every nearby value is higher: a minimum. If \(c \lt 0\), every nearby value is lower: a maximum.</p>
 
 <h3>Worked example: a ball thrown straight up</h3>
-<p>Let \(z(t) = 20t - 5t^2\) metres be the height of a ball thrown up at 20 m/s (a toy: gravity is rounded to 10 m/s², and air is ignored). The hidden units: 20 m/s and 5 m/s². Then</p>
+<p>Let \(z(t) = 20t - 5t^2\) metres be the height of a ball thrown up at 20 m/s (a toy: gravity is rounded to 10 m/s², and air is ignored). The hidden units: 20 m/s and 5 m/s². Here are the steps.</p>
+<p><b>Step 1: first derivative.</b> \(20t\) gives 20. \(-5t^2\) gives \(-5 \cdot 2t = -10t\). So \(z'(t) = 20 - 10t\) m/s.</p>
+<p><b>Step 2: second derivative.</b> The constant 20 gives 0. \(-10t\) gives \(-10\). So</p>
 $$ z'(t) = 20 - 10t\ \ \text{m/s}, \qquad z''(t) = -10\ \text{m/s}^2 . $$
-<p>Critical point: \(20 - 10t = 0\), so \(t = 2\) s. There \(z''(2) = -10 \lt 0\): a maximum. The highest point is \(z(2) = 40 - 20 = 20\) m. The second derivative is the pull of gravity, the same at every moment, and negative because it points down.</p>
+<p><b>Step 3: find the critical point.</b> Set \(z'(t) = 0\): \(20 - 10t = 0\). Add \(10t\) to both sides: \(20 = 10t\). Divide by 10: \(t = 2\) s.</p>
+<p><b>Step 4: test it.</b> \(z''(2) = -10 \lt 0\): a maximum.</p>
+<p><b>Step 5: the height there.</b> \(z(2) = 20 \times 2 - 5 \times 2^2 = 40 - 20 = 20\) m. The second derivative is the pull of gravity, the same at every moment, and negative because it points down.</p>
 
 <h3>Worked example: the cubic</h3>
-<p>For \(f(x) = x^3 - 3x\): \(f'(x) = 3x^2 - 3 = 0\) gives \(x^2 = 1\), so \(x = 1\) or \(x = -1\).</p>
+<p>For \(f(x) = x^3 - 3x\), Section 3.4 gave \(f'(x) = 3x^2 - 3\) and \(f''(x) = 6x\).</p>
+<p><b>Step 1: set the slope to zero.</b> \(3x^2 - 3 = 0\). Add 3 to both sides: \(3x^2 = 3\). Divide by 3: \(x^2 = 1\).</p>
+<p><b>Step 2: solve.</b> Both \(1^2 = 1\) and \((-1)^2 = 1\), so \(x = 1\) or \(x = -1\).</p>
+<p><b>Step 3: test each one.</b></p>
 <ul>
-<li>At \(x = 1\): \(f''(1) = 6 \gt 0\), a local minimum, with \(f(1) = 1 - 3 = -2\).</li>
-<li>At \(x = -1\): \(f''(-1) = -6 \lt 0\), a local maximum, with \(f(-1) = -1 + 3 = 2\).</li>
+<li>At \(x = 1\): \(f''(1) = 6 \times 1 = 6 \gt 0\), a local minimum, with \(f(1) = 1^3 - 3 \times 1 = 1 - 3 = -2\).</li>
+<li>At \(x = -1\): \(f''(-1) = 6 \times (-1) = -6 \lt 0\), a local maximum, with \(f(-1) = (-1)^3 - 3 \times (-1) = -1 + 3 = 2\).</li>
 </ul>
 <p>“Local” matters: far to the right the cubic climbs above 2, and far to the left it falls below −2. The test only describes the neighbourhood.</p>
 
@@ -286,7 +341,9 @@ $$ z'(t) = 20 - 10t\ \ \text{m/s}, \qquad z''(t) = -10\ \text{m/s}^2 . $$
 </table>
 </div>
 <p>The parabola row explains Level 1's mechanics. There, \(y = c\,x^2\) had steps that grew by \(2c\) per unit step. That growth was the second difference, and it equals the second derivative \(2c\) exactly, because a parabola has no \(\Delta x^3\) term. For the car, \(c = 1\) m/s² and \(s'' = 2c = 2\) m/s².</p>
-<p>The last row matters later. For \(\lvert x \rvert\) at 0 the second difference is \(\dfrac{\lvert \Delta x\rvert - 0 + \lvert -\Delta x \rvert}{\Delta x^2} = \dfrac{2}{\lvert \Delta x \rvert}\), which grows without limit as the step shrinks. A function with a corner has zero curvature everywhere except at one point, where the curvature is, in effect, infinitely concentrated. Neural networks built from ReLU have such corners (<a href="10.html">Level 10</a>).</p>
+<p>The last row matters later. For \(\lvert x \rvert\) at 0, put the three values into the second difference. The middle value is \(\lvert 0 \rvert = 0\), so \(-2f(0) = 0\). The outer values are \(\lvert \Delta x \rvert\) and \(\lvert -\Delta x \rvert\), and these are equal, because the absolute value ignores the sign. So the top is \(2\lvert \Delta x \rvert\). The bottom is \(\Delta x^2 = \lvert \Delta x \rvert^2\). Cancel one \(\lvert \Delta x \rvert\):
+$$ \frac{\lvert \Delta x\rvert - 0 + \lvert -\Delta x \rvert}{\Delta x^2} = \frac{2\lvert \Delta x \rvert}{\lvert \Delta x \rvert^2} = \frac{2}{\lvert \Delta x \rvert} . $$
+Example: with \(\Delta x = 0.1\) it is \(0.2 / 0.01 = 20\). This grows without limit as the step shrinks. A function with a corner has zero curvature everywhere except at one point, where the curvature is, in effect, infinitely concentrated. Neural networks built from ReLU have such corners (<a href="10.html">Level 10</a>).</p>
 
 <h2>3.10 Why this matters for H-space</h2>
 <ol>
@@ -308,28 +365,39 @@ $$ z'(t) = 20 - 10t\ \ \text{m/s}, \qquad z''(t) = -10\ \text{m/s}^2 . $$
 <div class="ex" data-answer="22" data-tol="0.001">
 <p><b>Exercise 3.2.</b> Let \(f(x) = 4x^3 - x^2\) (pure numbers). Find \(f''(x)\) and then \(f''(1)\). Is the graph concave up or down at \(x = 1\)?</p>
 <details><summary>Show answer</summary>
-<p>\(f'(x) = 12x^2 - 2x\) and \(f''(x) = 24x - 2\). At \(x = 1\): \(24 - 2 = 22 \gt 0\), so concave up.</p>
+<p><b>Step 1: first derivative.</b> \(4x^3\) gives \(4 \cdot 3x^2 = 12x^2\). \(-x^2\) gives \(-2x\). So \(f'(x) = 12x^2 - 2x\).</p>
+<p><b>Step 2: second derivative.</b> \(12x^2\) gives \(12 \cdot 2x = 24x\). \(-2x\) gives \(-2\). So \(f''(x) = 24x - 2\).</p>
+<p><b>Step 3: put in \(x = 1\).</b> \(24 \times 1 - 2 = 22 \gt 0\), so concave up.</p>
 </details>
 </div>
 
 <div class="ex" data-answer="45" data-tol="0.001" data-unit="m">
 <p><b>Exercise 3.3.</b> A ball is thrown up at 30 m/s, so its height is \(z(t) = 30t - 5t^2\) metres (same toy gravity). When is it highest, how do you know it is a maximum, and how high does it go?</p>
 <details><summary>Show answer</summary>
-<p>\(z'(t) = 30 - 10t = 0\) at \(t = 3\) s. \(z''(t) = -10\ \text{m/s}^2 \lt 0\), so it is a maximum. \(z(3) = 90 - 45 = 45\) m.</p>
+<p><b>Step 1: first derivative.</b> \(30t\) gives 30, and \(-5t^2\) gives \(-10t\). So \(z'(t) = 30 - 10t\) m/s.</p>
+<p><b>Step 2: critical point.</b> \(30 - 10t = 0\), so \(10t = 30\) and \(t = 3\) s.</p>
+<p><b>Step 3: test.</b> \(z''(t) = -10\ \text{m/s}^2 \lt 0\), so it is a maximum.</p>
+<p><b>Step 4: height.</b> \(z(3) = 30 \times 3 - 5 \times 3^2 = 90 - 45 = 45\) m.</p>
 </details>
 </div>
 
 <div class="ex" data-answer="-8" data-tol="0.001">
 <p><b>Exercise 3.4.</b> Let \(f(x) = x^2 - 6x + 1\). Find its critical point, classify it with the second-derivative test, and give \(f\) there.</p>
 <details><summary>Show answer</summary>
-<p>\(f'(x) = 2x - 6 = 0\) at \(x = 3\). \(f''(x) = 2 \gt 0\): a minimum. \(f(3) = 9 - 18 + 1 = -8\).</p>
+<p><b>Step 1: first derivative.</b> \(x^2\) gives \(2x\), \(-6x\) gives \(-6\), and the constant 1 gives 0. So \(f'(x) = 2x - 6\).</p>
+<p><b>Step 2: critical point.</b> \(2x - 6 = 0\), so \(2x = 6\) and \(x = 3\).</p>
+<p><b>Step 3: test.</b> \(f''(x) = 2 \gt 0\): a minimum.</p>
+<p><b>Step 4: value.</b> \(f(3) = 3^2 - 6 \times 3 + 1 = 9 - 18 + 1 = -8\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="2" data-tol="0.001">
 <p><b>Exercise 3.5.</b> Compute the second difference of \(f(x) = x^2\) at \(x = 3\) with \(\Delta x = 0.5\).</p>
 <details><summary>Show answer</summary>
-<p>\(f(3.5) = 12.25\), \(f(3) = 9\), \(f(2.5) = 6.25\). \(\dfrac{12.25 - 18 + 6.25}{0.25} = \dfrac{0.5}{0.25} = 2\). Exactly \(f''(x) = 2\), as Section 3.6 predicts for any parabola.</p>
+<p><b>Step 1: the three values.</b> \(f(3.5) = 3.5^2 = 12.25\), \(f(3) = 3^2 = 9\), \(f(2.5) = 2.5^2 = 6.25\).</p>
+<p><b>Step 2: the top.</b> \(12.25 - 2 \times 9 + 6.25 = 12.25 - 18 + 6.25 = 0.5\).</p>
+<p><b>Step 3: the bottom.</b> \(\Delta x^2 = 0.5^2 = 0.25\).</p>
+<p><b>Step 4: divide.</b> \(0.5 / 0.25 = 2\). Exactly \(f''(x) = 2\), as Section 3.6 predicts for any parabola.</p>
 </details>
 </div>
 
@@ -343,28 +411,38 @@ $$ z'(t) = 20 - 10t\ \ \text{m/s}, \qquad z''(t) = -10\ \text{m/s}^2 . $$
 <div class="ex" data-answer="2" data-tol="0.001">
 <p><b>Exercise 3.7.</b> Where does \(f(x) = x^3 - 6x^2 + 9x\) have an inflection point?</p>
 <details><summary>Show answer</summary>
-<p>\(f'(x) = 3x^2 - 12x + 9\) and \(f''(x) = 6x - 12\). This is 0 at \(x = 2\), negative to the left and positive to the right, so it changes sign: an inflection point at \(x = 2\).</p>
+<p><b>Step 1: first derivative.</b> Term by term: \(x^3\) gives \(3x^2\), \(-6x^2\) gives \(-12x\), \(9x\) gives 9. So \(f'(x) = 3x^2 - 12x + 9\).</p>
+<p><b>Step 2: second derivative.</b> \(3x^2\) gives \(6x\), \(-12x\) gives \(-12\), and 9 gives 0. So \(f''(x) = 6x - 12\).</p>
+<p><b>Step 3: where it is zero.</b> \(6x - 12 = 0\), so \(6x = 12\) and \(x = 2\).</p>
+<p><b>Step 4: check the sign changes.</b> At \(x = 1\): \(6 - 12 = -6\), negative. At \(x = 3\): \(18 - 12 = 6\), positive. It changes sign: an inflection point at \(x = 2\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="7200" data-tol="0.001" data-unit="m/min²">
 <p><b>Exercise 3.8.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds, so its speed is \(s\'(t) = 2t\) m/s and its acceleration is 2 m/s².)</span> Express the car's acceleration, 2 m/s², in metres per minute per minute.</p>
 <details><summary>Show answer</summary>
-<p>1 s = 1/60 min, so 1/s² = 3600/min². \(2\ \text{m/s}^2 = 2 \times 3600\ \text{m/min}^2 = 7200\ \text{m/min}^2\). The input unit grew 60 times; the second derivative grew \(60^2\) times.</p>
+<p><b>Step 1.</b> 1 s = 1/60 min, so 1/s = 60/min.</p>
+<p><b>Step 2.</b> Square it: 1/s² = (60/min)² = 3600/min².</p>
+<p><b>Step 3.</b> \(2\ \text{m/s}^2 = 2 \times 3600\ \text{m/min}^2 = 7200\ \text{m/min}^2\). The input unit grew 60 times; the second derivative grew \(60^2\) times.</p>
 </details>
 </div>
 
 <div class="ex" data-answer="0.04" data-tol="0.001" data-unit="m">
 <p><b>Exercise 3.9.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds, so its speed is \(s\'(t) = 2t\) m/s and its acceleration is 2 m/s².)</span> How far above its tangent line at \(t = 5\) s is the car's curve at \(t = 5.2\) s? Use the second derivative, then check directly.</p>
 <details><summary>Show answer</summary>
-<p>Gap \(= \tfrac12 s''\,\Delta t^2 = \tfrac12 \cdot 2\ \text{m/s}^2 \cdot (0.2\ \text{s})^2 = 0.04\) m. Direct: \(s(5.2) = 27.04\) m, and the tangent gives \(25 + 10 \cdot 0.2 = 27\) m. Gap 0.04 m.</p>
+<p><b>Using the second derivative.</b> The step is \(\Delta t = 5.2 - 5 = 0.2\) s. Gap \(= \tfrac12 s''\,\Delta t^2 = \tfrac12 \cdot 2\ \text{m/s}^2 \cdot (0.2\ \text{s})^2 = 1\ \text{m/s}^2 \cdot 0.04\ \text{s}^2 = 0.04\) m.</p>
+<p><b>Direct check, Step 1: the curve.</b> \(s(5.2) = 5.2^2 = 27.04\) m.</p>
+<p><b>Step 2: the tangent line.</b> \(s(5) = 25\) m and \(s'(5) = 2 \times 5 = 10\) m/s, so the line at 5.2 s is \(25 + 10 \times 0.2 = 27\) m.</p>
+<p><b>Step 3: subtract.</b> \(27.04 - 27 = 0.04\) m.</p>
 </details>
 </div>
 
 <div class="ex" data-answer="7.5" data-tol="0.001" data-unit="m/s">
 <p><b>Exercise 3.10.</b> On the stop-to-stop trip, \(q(t) = 1.5t^2 - 0.1t^3\), at what time is the acceleration zero, and what is the speed then? Why is that the top speed?</p>
 <details><summary>Show answer</summary>
-<p>\(q''(t) = 3 - 0.6t = 0\) at \(t = 5\) s. Speed \(q'(5) = 15 - 7.5 = 7.5\) m/s. Before 5 s the acceleration is positive (speed rising); after, negative (speed falling). So the speed rises up to 5 s and falls after it: 5 s is a critical point of the speed \(q'\), and it is a maximum. In the language of Section 3.8, \(t = 5\) s is the inflection point of the position.</p>
+<p><b>Step 1: zero acceleration.</b> Section 3.3 gave \(q''(t) = 3 - 0.6t\). Set it to 0: \(0.6t = 3\), so \(t = 3 / 0.6 = 5\) s.</p>
+<p><b>Step 2: the speed then.</b> \(q'(t) = 3t - 0.3t^2\), so \(q'(5) = 3 \times 5 - 0.3 \times 25 = 15 - 7.5 = 7.5\) m/s.</p>
+<p><b>Why it is the top speed.</b> Before 5 s the acceleration is positive (speed rising); after, negative (speed falling). So the speed rises up to 5 s and falls after it: 5 s is a critical point of the speed \(q'\), and it is a maximum. In the language of Section 3.8, \(t = 5\) s is the inflection point of the position.</p>
 </details>
 </div>
 

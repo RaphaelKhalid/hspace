@@ -192,22 +192,33 @@ $$ f(x) = m x + b , $$
 <p>Let \(x\) be a temperature in degrees Celsius (°C) and \(f(x)\) the same temperature in degrees Fahrenheit (°F). The rule is</p>
 $$ f(x) = 1.8\,x + 32 . $$
 <p>Here \(m = 1.8\) °F per °C and \(b = 32\) °F. The units matter: \(m\) is a rate, output unit per input unit, and \(b\) is in the output unit. Feed in some numbers:</p>
-$$ f(0) = 1.8\cdot 0 + 32 = 32\ ^\circ\text{F}, \quad f(10) = 18 + 32 = 50\ ^\circ\text{F}, \quad f(20) = 36 + 32 = 68\ ^\circ\text{F}, \quad f(100) = 180 + 32 = 212\ ^\circ\text{F}. $$
+$$ f(0) = 1.8\cdot 0 + 32 = 32\ ^\circ\text{F}, \quad f(10) = 1.8\cdot 10 + 32 = 18 + 32 = 50\ ^\circ\text{F}, $$
+$$ f(20) = 1.8\cdot 20 + 32 = 36 + 32 = 68\ ^\circ\text{F}, \quad f(100) = 1.8\cdot 100 + 32 = 180 + 32 = 212\ ^\circ\text{F}. $$
 <p>Each step of 10 °C adds 18 °F. Each step of 1 °C adds 1.8 °F, whether you start at freezing or at a hot day.</p>
 
 <h3>Mechanics: why every step adds the same amount</h3>
-<p>Take any input \(x\) and step it up by 1. Feed both into \(f\) and subtract:</p>
+<p>Take any input \(x\) and step it up by 1. Here is every step, with the Celsius rule (\(m = 1.8\), \(b = 32\)) and \(x = 10\) worked alongside.</p>
+<p><b>Step 1: feed both inputs into \(f\).</b> Replace \(x\) by \((x + 1)\) for the first, and keep \(x\) for the second. Then subtract:</p>
 $$ f(x+1) - f(x) = \big(m(x+1) + b\big) - \big(m x + b\big). $$
-<p>Multiply out the first bracket: \(m(x+1) = m x + m\). So</p>
-$$ f(x+1) - f(x) = m x + m + b - m x - b = m . $$
-<p>The \(mx\) cancels and the \(b\) cancels. What is left is \(m\), and \(x\) has vanished. So the gain from one step does not depend on where you start. More generally, for a step of size \(\Delta x\),</p>
-$$ f(x+\Delta x) - f(x) = m(x + \Delta x) + b - m x - b = m\,\Delta x . $$
+<p>Example: \(f(11) - f(10) = (1.8 \cdot 11 + 32) - (1.8 \cdot 10 + 32) = 51.8 - 50 = 1.8\).</p>
+<p><b>Step 2: multiply out the first bracket.</b> \(m(x+1) = m x + m\). Example: \(1.8 \cdot 11 = 1.8 \cdot 10 + 1.8 = 18 + 1.8 = 19.8\).</p>
+<p><b>Step 3: remove the outer brackets.</b> The minus sign in front of the second bracket flips both of its signs:</p>
+$$ f(x+1) - f(x) = m x + m + b - m x - b . $$
+<p><b>Step 4: cancel.</b> \(+mx\) and \(-mx\) cancel. \(+b\) and \(-b\) cancel. What is left is \(m\):</p>
+$$ f(x+1) - f(x) = m . $$
+<p>Example: \(18 + 1.8 + 32 - 18 - 32 = 1.8\).</p>
+<p>\(x\) has vanished. So the gain from one step does not depend on where you start. More generally, for a step of size \(\Delta x\), the same four steps give the same kind of answer. Step 2 is now \(m(x + \Delta x) = mx + m\,\Delta x\), and after cancelling</p>
+$$ f(x+\Delta x) - f(x) = m x + m\,\Delta x + b - m x - b = m\,\Delta x . $$
+<p>Example: a step of 5 °C from 10 °C gives \(1.8 \times 5 = 9\) °F. Indeed \(f(15) = 1.8 \cdot 15 + 32 = 27 + 32 = 59\), which is 9 more than \(f(10) = 50\).</p>
 <p>This is the defining property of a straight line: equal steps in, equal steps out. To test a table for straightness, look at the steps. The car's table has steps 1, 3, 5, …: not equal, so the car's graph is not a straight line.</p>
 
 <h3>Worked example: a line from two points</h3>
 <p>Suppose you only know two readings: 10 °C is 50 °F, and 30 °C is 86 °F. Find \(m\) by dividing the change in output by the change in input:</p>
 $$ m = \frac{86\ ^\circ\text{F} - 50\ ^\circ\text{F}}{30\ ^\circ\text{C} - 10\ ^\circ\text{C}} = \frac{36\ ^\circ\text{F}}{20\ ^\circ\text{C}} = 1.8\ \frac{^\circ\text{F}}{^\circ\text{C}} . $$
-<p>Then find \(b\) from either point. Using the first: \(50 = 1.8 \cdot 10 + b = 18 + b\), so \(b = 50 - 18 = 32\) °F. That matches the rule above.</p>
+<p>Then find \(b\) from either point. Use the first point, (10 °C, 50 °F).</p>
+<p><b>Step 1: put the point into the rule.</b> \(f(x) = m x + b\) with \(x = 10\), \(f(x) = 50\) and \(m = 1.8\) gives \(50 = 1.8 \cdot 10 + b\).</p>
+<p><b>Step 2: multiply.</b> \(1.8 \cdot 10 = 18\), so \(50 = 18 + b\).</p>
+<p><b>Step 3: subtract 18 from both sides.</b> \(b = 50 - 18 = 32\) °F. That matches the rule above.</p>
 <p>\(m\) has a standard name: the slope. <a href="02.html">Level 2</a> makes “slope” precise as a rate and extends it to curves, where it changes from place to place. \(b\) is called the intercept: where the line crosses the vertical axis, because \(f(0) = m\cdot 0 + b = b\).</p>
 
 <div class="box plain">
@@ -238,13 +249,17 @@ $$ 3^2 = 3\cdot 3 = 9, \qquad 3^3 = 3\cdot3\cdot3 = 27, \qquad 2^{10} = 1024 . $
 <p>\((3\ \text{m})^2 = 3^2 \cdot \text{m}^2 = 9\ \text{m}^2\), an area. \((2\ \text{m})^3 = 8\ \text{m}^3\), a volume. \((4\ \text{s})^2 = 16\ \text{s}^2\), which is why the car's rule needed the hidden 1 m/s².</p>
 
 <h3>Mechanics: what doubling the input does</h3>
-<p>Replace \(x\) by \(2x\) and use the rules: \((2x)^2 = 2^2 x^2 = 4x^2\) and \((2x)^3 = 2^3 x^3 = 8 x^3\). In general \((2x)^n = 2^n x^n\).</p>
+<p>Replace \(x\) by \(2x\). Here are the steps for the square, with \(x = 3\) worked alongside.</p>
+<p><b>Step 1: write the square as a product.</b> \((2x)^2 = (2x)\cdot(2x) = 2 \cdot x \cdot 2 \cdot x\). Example: \(6^2 = 6 \cdot 6 = 36\).</p>
+<p><b>Step 2: reorder.</b> The order of a multiplication does not matter, so put the 2s together and the \(x\)s together: \(2 \cdot 2 \cdot x \cdot x = 2^2 x^2\).</p>
+<p><b>Step 3: compute.</b> \(2^2 = 4\), so \((2x)^2 = 4x^2\). Example: \(4 \cdot 3^2 = 4 \cdot 9 = 36\). It matches Step 1.</p>
+<p>The cube works the same way with three copies: \((2x)^3 = 2\cdot2\cdot2 \cdot x\cdot x\cdot x = 2^3 x^3 = 8 x^3\). In general \((2x)^n\) has \(n\) copies of 2 and \(n\) copies of \(x\), so \((2x)^n = 2^n x^n\).</p>
 <ul>
 <li>A square floor tile 2 m on a side has area 4 m². A tile 4 m on a side has area 16 m². Double the side, four times the area.</li>
 <li>A cube box 1 m on a side holds 1 m³. A box 2 m on a side holds 8 m³. Double the side, eight times the volume.</li>
 <li>The car: \(s(5) = 25\) m and \(s(10) = 100\) m. Double the time, four times the distance, because \(s\) is a square.</li>
 </ul>
-<p>A polynomial is a sum of powers, each times a constant, such as \(3x^2 - 2x + 7\). Feed in \(x = 2\): \(3\cdot 4 - 2\cdot 2 + 7 = 12 - 4 + 7 = 15\).</p>
+<p>A polynomial is a sum of powers, each times a constant, such as \(3x^2 - 2x + 7\). Feed in \(x = 2\): \(3\cdot 2^2 - 2\cdot 2 + 7 = 3 \cdot 4 - 4 + 7 = 12 - 4 + 7 = 15\).</p>
 
 <h2>1.7 Quadratics and the parabola</h2>
 <p>The simplest curve that is not a straight line is \(y = c\,x^2\), where \(c\) is a constant. Its graph is called a parabola. Take \(c = 1\) and make a table:</p>
@@ -265,13 +280,23 @@ $$ 3^2 = 3\cdot 3 = 9, \qquad 3^3 = 3\cdot3\cdot3 = 27, \qquad 2^{10} = 1024 . $
 <p>\(c\) multiplies every height. With \(c = 2\) every output doubles, so the U is narrower. With \(c = 0.5\) every output halves, so the U is wider. With \(c = -1\) every output flips sign, so the U turns into a cap (∩). A larger \(\lvert c \rvert\) means a narrower curve. With \(c = 0\) the “parabola” is the flat line \(y = 0\).</p>
 
 <h3>Mechanics: the growth of the steps is always \(2c\)</h3>
-<p>Step from \(x\) to \(x + 1\):</p>
-$$ c(x+1)^2 - c\,x^2 = c\,(x^2 + 2x + 1) - c\,x^2 = 2c\,x + c . $$
-<p>(Here \((x+1)^2 = (x+1)(x+1) = x^2 + x + x + 1 = x^2 + 2x + 1\).) The next step, from \(x + 1\) to \(x + 2\), is the same formula with \(x + 1\) in place of \(x\):</p>
-$$ 2c\,(x+1) + c = 2c\,x + 3c . $$
-<p>The difference between the two steps is \((2c\,x + 3c) - (2c\,x + c) = 2c\). So every step is \(2c\) bigger than the one before, wherever you are. For the car, \(c = 1\) m/s² and the growth was 2 m per second, every second. That fixed growth is the bending of the curve. <a href="03.html">Level 3</a> names it curvature and measures it as the second derivative.</p>
+<p>Here is every step, with \(c = 1\) and \(x = 2\) worked alongside (pure numbers). The heights at \(x = 2, 3, 4\) are then 4, 9, 16.</p>
+<p><b>Step 1: write the step from \(x\) to \(x + 1\).</b> It is the height at \(x + 1\) minus the height at \(x\):</p>
+$$ c(x+1)^2 - c\,x^2 . $$
+<p>Example: \(9 - 4 = 5\).</p>
+<p><b>Step 2: expand the square.</b> Multiply every term of one bracket by every term of the other: \((x+1)^2 = (x+1)(x+1) = x^2 + x + x + 1 = x^2 + 2x + 1\). Example: \(3^2 = 4 + 4 + 1 = 9\).</p>
+<p><b>Step 3: multiply by \(c\).</b> \(c\,(x^2 + 2x + 1) = c\,x^2 + 2c\,x + c\). Example: \(4 + 4 + 1 = 9\).</p>
+<p><b>Step 4: subtract \(c\,x^2\).</b> The \(c\,x^2\) terms cancel:</p>
+$$ c(x+1)^2 - c\,x^2 = c\,x^2 + 2c\,x + c - c\,x^2 = 2c\,x + c . $$
+<p>Example: \(2 \cdot 1 \cdot 2 + 1 = 5\). It matches Step 1.</p>
+<p><b>Step 5: write the next step.</b> The step from \(x + 1\) to \(x + 2\) is the same formula with \(x + 1\) in place of \(x\). Multiply out \(2c\,(x+1) = 2c\,x + 2c\), then add the \(c\):</p>
+$$ 2c\,(x+1) + c = 2c\,x + 2c + c = 2c\,x + 3c . $$
+<p>Example: \(2 \cdot 2 + 3 = 7\), which is \(16 - 9\).</p>
+<p><b>Step 6: subtract the two steps.</b> The \(2c\,x\) terms cancel:</p>
+$$ (2c\,x + 3c) - (2c\,x + c) = 3c - c = 2c . $$
+<p>Example: \(7 - 5 = 2 = 2 \cdot 1\). So every step is \(2c\) bigger than the one before, wherever you are. For the car, \(c = 1\) m/s² and the growth was 2 m per second, every second. That fixed growth is the bending of the curve. <a href="03.html">Level 3</a> names it curvature and measures it as the second derivative.</p>
 
-<p>A general quadratic adds a straight-line part and a constant, for example \(y = 2x^2 - 3x + 1\). Feed in \(x = -1, 0, 1, 2\): you get \(2 + 3 + 1 = 6\), then \(1\), then \(2 - 3 + 1 = 0\), then \(8 - 6 + 1 = 3\). It is still a parabola, with its vertex moved away from the origin. A ball thrown straight up has a height that follows a downward parabola over time; Level 3 uses one.</p>
+<p>A general quadratic adds a straight-line part and a constant, for example \(y = 2x^2 - 3x + 1\). Feed in \(x = -1, 0, 1, 2\), one term at a time. At \(x = -1\): \(2\cdot(-1)^2 - 3\cdot(-1) + 1 = 2\cdot 1 + 3 + 1 = 6\). At \(x = 0\): \(2\cdot 0^2 - 3\cdot 0 + 1 = 1\). At \(x = 1\): \(2\cdot 1^2 - 3\cdot 1 + 1 = 2 - 3 + 1 = 0\). At \(x = 2\): \(2\cdot 2^2 - 3\cdot 2 + 1 = 8 - 6 + 1 = 3\). It is still a parabola, with its vertex moved away from the origin. A ball thrown straight up has a height that follows a downward parabola over time; Level 3 uses one.</p>
 
 <figure class="sim" id="sim-parabola">
 <figcaption><b>Figure 1.4.</b> The parabola \(y = c\,x^2\) (toy, pure numbers). Drag \(c\). The grey dashed curve is \(y = x^2\) for comparison. The dots at \(x = 1, 2, 3\) always sit at heights \(c\), \(4c\) and \(9c\): every height scales together. Make \(c\) negative and the U flips into a cap. Set \(c = 0\) and the bending disappears.</figcaption>
@@ -290,7 +315,7 @@ $$ t^2 = \frac{49\ \text{m}}{1\ \text{m/s}^2} = 49\ \text{m} \cdot \frac{\text{s
 
 <h3>Real-world example and mechanics</h3>
 <p>A square room has floor area 20 m². Its side is \(\sqrt{20\ \text{m}^2} \approx 4.47\) m. Check: \(4.47 \cdot 4.47 = 19.98\), close to 20.</p>
-<p>Square roots grow slowly. \(\sqrt{1} = 1\), \(\sqrt{100} = 10\), \(\sqrt{10000} = 100\). Multiply the input by 100 and the output is only multiplied by 10. Multiply the input by 4 and the output doubles: \(\sqrt{4x} = \sqrt4 \cdot \sqrt{x} = 2\sqrt{x}\). This is the mirror of Section 1.6, where doubling the input multiplied a square by 4.</p>
+<p>Square roots grow slowly. \(\sqrt{1} = 1\), \(\sqrt{100} = 10\), \(\sqrt{10000} = 100\). Multiply the input by 100 and the output is only multiplied by 10. Multiply the input by 4 and the output doubles: \(\sqrt{4x} = 2\sqrt{x}\). Why: square \(2\sqrt{x}\). As in Section 1.6, \((2\sqrt{x})^2 = 2^2 \cdot (\sqrt{x})^2\). That is \(4 \cdot x\), because squaring a square root gives back what was inside. So \(2\sqrt{x}\) is not negative and squares to \(4x\). That is the definition of \(\sqrt{4x}\). Example: \(\sqrt{4 \cdot 9} = \sqrt{36} = 6\), and \(2\sqrt{9} = 2 \cdot 3 = 6\). This is the mirror of Section 1.6, where doubling the input multiplied a square by 4.</p>
 
 <h2>1.9 The exponential and the logarithm</h2>
 <p>These two functions appear later inside the softmax and the log-likelihood that language models use (<a href="14.html">Level 14</a>). Here is just enough to read them.</p>
@@ -310,9 +335,11 @@ $$ t^2 = \frac{49\ \text{m}}{1\ \text{m/s}^2} = 49\ \text{m} \cdot \frac{\text{s
 <p>The natural logarithm \(\log(x)\) answers: “to what power must I raise \(e\) to get \(x\)?”. So</p>
 $$ \log(e^x) = x \quad \text{for every } x, \qquad e^{\log(y)} = y \quad \text{for every positive } y . $$
 <p>Values to remember: \(\log(1) = 0\) because \(e^0 = 1\); \(\log(e) = 1\); \(\log(10) \approx 2.302585\). The log of zero or a negative number does not exist, because \(e^x\) is always positive.</p>
-<p><b>Mechanics: logs turn multiplying into adding.</b> Since \(2 \approx e^{0.693147}\) and \(5 \approx e^{1.609438}\),</p>
-$$ 2 \cdot 5 \approx e^{0.693147}\cdot e^{1.609438} = e^{0.693147 + 1.609438} = e^{2.302585} \approx 10 . $$
-<p>So \(\log(2\cdot 5) = \log 2 + \log 5\). In general, the log of a product is the sum of the logs. This is why log-probabilities are added where probabilities are multiplied.</p>
+<p><b>Mechanics: logs turn multiplying into adding.</b> Here are the steps for \(2 \cdot 5 = 10\).</p>
+<p><b>Step 1: write each number as a power of \(e\).</b> By the definition of log, \(2 = e^{\log 2}\) and \(5 = e^{\log 5}\). In numbers, \(\log 2 \approx 0.693147\) and \(\log 5 \approx 1.609438\).</p>
+<p><b>Step 2: multiply, adding the exponents</b> (the first rule for powers):</p>
+$$ 2 \cdot 5 \approx e^{0.693147}\cdot e^{1.609438} = e^{0.693147 + 1.609438} = e^{2.302585} . $$
+<p><b>Step 3: read off the log.</b> The left side is 10. So \(10 \approx e^{2.302585}\), which says \(\log 10 \approx 2.302585\). And 2.302585 was \(\log 2 + \log 5\). So \(\log(2\cdot 5) = \log 2 + \log 5\). In general, the log of a product is the sum of the logs. This is why log-probabilities are added where probabilities are multiplied.</p>
 
 <div class="box warn">
 <span class="boxtitle">Units: exp and log only accept pure numbers</span>
@@ -353,42 +380,60 @@ $$ A(w, d) = w \cdot d \quad \text{square metres}. $$
 <div class="ex" data-answer="3" data-tol="0.001">
 <p><b>Exercise 1.2.</b> Let \(f(x) = x^2 - 2x\). Feed in the expression \(x + 1\) and expand \(f(x+1)\) fully. Then use your formula to find \(f(3)\) (take \(x = 2\)).</p>
 <details><summary>Show answer</summary>
-<p>Replace every \(x\) by \((x+1)\): \(f(x+1) = (x+1)^2 - 2(x+1)\). Expand: \((x+1)^2 = x^2 + 2x + 1\) and \(2(x+1) = 2x + 2\). So \(f(x+1) = x^2 + 2x + 1 - 2x - 2 = x^2 - 1\). At \(x = 2\): \(4 - 1 = 3\). Direct check: \(f(3) = 9 - 6 = 3\).</p>
+<p><b>Step 1: substitute.</b> Replace every \(x\) by \((x+1)\): \(f(x+1) = (x+1)^2 - 2(x+1)\).</p>
+<p><b>Step 2: expand the square.</b> \((x+1)^2 = (x+1)(x+1) = x^2 + x + x + 1 = x^2 + 2x + 1\).</p>
+<p><b>Step 3: multiply out the second bracket.</b> \(2(x+1) = 2x + 2\).</p>
+<p><b>Step 4: put the pieces together.</b> The minus sign flips both signs of \(2x + 2\): \(f(x+1) = x^2 + 2x + 1 - 2x - 2\).</p>
+<p><b>Step 5: cancel and collect.</b> \(+2x\) and \(-2x\) cancel, and \(1 - 2 = -1\). So \(f(x+1) = x^2 - 1\).</p>
+<p><b>Step 6: put in \(x = 2\).</b> \(2^2 - 1 = 4 - 1 = 3\). Direct check: \(f(3) = 3^2 - 2\cdot 3 = 9 - 6 = 3\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="16" data-tol="0.001" data-unit="m">
 <p><b>Exercise 1.3.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds.)</span> How far does the car travel between \(t = 3\) s and \(t = 5\) s?</p>
 <details><summary>Show answer</summary>
-<p>\(\Delta s = s(5) - s(3) = 25\ \text{m} - 9\ \text{m} = 16\ \text{m}\). Check with the table: the steps in the 4th and 5th seconds are 7 m and 9 m, and \(7 + 9 = 16\).</p>
+<p><b>Step 1: the two positions.</b> The rule is \(s(t) = t^2\), so \(s(3) = 3^2 = 9\) m and \(s(5) = 5^2 = 25\) m.</p>
+<p><b>Step 2: subtract.</b> \(\Delta s = s(5) - s(3) = 25\ \text{m} - 9\ \text{m} = 16\ \text{m}\).</p>
+<p>Check with the table: the steps in the 4th and 5th seconds are 7 m and 9 m, and \(7 + 9 = 16\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="1" data-tol="0.001">
 <p><b>Exercise 1.4.</b> A straight line \(f(x) = m x + b\) passes through \((2, 7)\) and \((5, 16)\) (pure numbers). Find \(m\), then enter \(b\).</p>
 <details><summary>Show answer</summary>
-<p>\(m = \dfrac{16 - 7}{5 - 2} = \dfrac{9}{3} = 3\). Then \(7 = 3\cdot 2 + b = 6 + b\), so \(b = 1\). Check the other point: \(3 \cdot 5 + 1 = 16\).</p>
+<p><b>Step 1: the slope.</b> Change in output over change in input: \(m = \dfrac{16 - 7}{5 - 2} = \dfrac{9}{3} = 3\).</p>
+<p><b>Step 2: put the first point into the rule.</b> \(f(2) = 7\) means \(7 = 3\cdot 2 + b\).</p>
+<p><b>Step 3: multiply.</b> \(3 \cdot 2 = 6\), so \(7 = 6 + b\).</p>
+<p><b>Step 4: subtract 6 from both sides.</b> \(b = 7 - 6 = 1\).</p>
+<p><b>Check the other point.</b> \(f(5) = 3 \cdot 5 + 1 = 15 + 1 = 16\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="115" data-tol="0.001" data-unit="$">
 <p><b>Exercise 1.5.</b> A plumber charges a 40 $ call-out fee plus 30 $ per hour. Write the cost as \(f(x) = m x + b\) with \(x\) in hours, give the units of \(m\) and \(b\), and find the cost of a 2.5-hour job.</p>
 <details><summary>Show answer</summary>
-<p>\(m = 30\) $ per hour (a rate: output unit per input unit) and \(b = 40\) $ (output unit). \(f(2.5) = 30\ \tfrac{\$}{\text{h}} \cdot 2.5\ \text{h} + 40\ \$ = 75\ \$ + 40\ \$ = 115\ \$\). The hours cancel in the first term.</p>
+<p>\(m = 30\) $ per hour (a rate: output unit per input unit) and \(b = 40\) $ (output unit). So \(f(x) = 30x + 40\).</p>
+<p><b>Step 1: substitute \(x = 2.5\) h.</b> \(f(2.5) = 30\ \tfrac{\$}{\text{h}} \cdot 2.5\ \text{h} + 40\ \$\).</p>
+<p><b>Step 2: multiply.</b> \(30 \times 2.5 = 75\), and the hours cancel, leaving 75 $.</p>
+<p><b>Step 3: add.</b> \(75\ \$ + 40\ \$ = 115\ \$\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="9" data-tol="0.001" data-unit="s">
 <p><b>Exercise 1.6.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds.)</span> At what time does the car pass the 81 m mark? Keep track of the units.</p>
 <details><summary>Show answer</summary>
-<p>\(\left(1\ \tfrac{\text{m}}{\text{s}^2}\right) t^2 = 81\ \text{m}\), so \(t^2 = 81\ \text{s}^2\) and \(t = \sqrt{81\ \text{s}^2} = 9\ \text{s}\). The other root, \(-9\) s, is outside \(0 \le t \le 10\).</p>
+<p><b>Step 1: write the equation with the hidden unit.</b> \(\left(1\ \tfrac{\text{m}}{\text{s}^2}\right) t^2 = 81\ \text{m}\).</p>
+<p><b>Step 2: divide both sides by 1 m/s².</b> \(t^2 = \dfrac{81\ \text{m}}{1\ \text{m/s}^2} = 81\ \text{m}\cdot\dfrac{\text{s}^2}{\text{m}} = 81\ \text{s}^2\). The metres cancel.</p>
+<p><b>Step 3: take the square root of both sides.</b> \(t = \sqrt{81\ \text{s}^2} = 9\ \text{s}\), since \(9 \cdot 9 = 81\). The other root, \(-9\) s, is outside \(0 \le t \le 10\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="8" data-tol="0.001">
 <p><b>Exercise 1.7.</b> A cube-shaped tank has side 3 m. A second tank has side 6 m. How many times more water does the second tank hold?</p>
 <details><summary>Show answer</summary>
-<p>Volumes: \((3\ \text{m})^3 = 27\ \text{m}^3\) and \((6\ \text{m})^3 = 216\ \text{m}^3\). The ratio is \(216 / 27 = 8\). Without numbers: \((2x)^3 = 2^3 x^3 = 8x^3\). The ratio is a pure number because m³ cancels.</p>
+<p><b>Step 1: the two volumes.</b> A cube's volume is its side cubed. \((3\ \text{m})^3 = 3\cdot3\cdot3\ \text{m}^3 = 27\ \text{m}^3\) and \((6\ \text{m})^3 = 6\cdot6\cdot6\ \text{m}^3 = 216\ \text{m}^3\).</p>
+<p><b>Step 2: divide.</b> \(216\ \text{m}^3 / 27\ \text{m}^3 = 8\). The ratio is a pure number because m³ cancels.</p>
+<p><b>Without numbers.</b> The second side is twice the first: \(2x\) instead of \(x\). By Section 1.6, \((2x)^3 = 2^3 x^3 = 8x^3\), eight times the first volume.</p>
 </details>
 </div>
 
@@ -402,14 +447,16 @@ $$ A(w, d) = w \cdot d \quad \text{square metres}. $$
 <div class="ex" data-answer="6.9078" data-tol="0.001">
 <p><b>Exercise 1.9.</b> Given \(\log(10) \approx 2.302585\), find \(\log(1000)\).</p>
 <details><summary>Show answer</summary>
-<p>\(1000 = 10 \cdot 10 \cdot 10\), and the log of a product is the sum of the logs: \(\log(1000) = 3 \log(10) \approx 3 \times 2.302585 = 6.907755\).</p>
+<p><b>Step 1: write 1000 as a product.</b> \(1000 = 10 \cdot 10 \cdot 10\).</p>
+<p><b>Step 2: the log of a product is the sum of the logs.</b> \(\log(10 \cdot 10 \cdot 10) = \log 10 + \log 10 + \log 10 = 3 \log 10\).</p>
+<p><b>Step 3: put in the number.</b> \(3 \times 2.302585 = 6.907755\). So \(\log(1000) \approx 6.907755\).</p>
 </details>
 </div>
 
 <div class="ex" data-answer="7" data-tol="0.001" data-unit="m²">
 <p><b>Exercise 1.10.</b> A garden bed has depth \(d = 7\) m. By how much does its area \(A(w, d) = w\cdot d\) grow when the width goes from 4 m to 5 m? Would the answer be different if the depth were 2 m? What does that tell you?</p>
 <details><summary>Show answer</summary>
-<p>\(A(5, 7) - A(4, 7) = 35\ \text{m}^2 - 28\ \text{m}^2 = 7\ \text{m}^2\). With \(d = 2\) m the gain is \(10 - 8 = 2\) m². The effect of widening depends on the depth: the two inputs interact. A sum like \(2w + 2d\) would give the same gain from widening at any depth.</p>
+<p>\(A(5, 7) = 5 \cdot 7 = 35\) m² and \(A(4, 7) = 4 \cdot 7 = 28\) m², so the gain is \(35\ \text{m}^2 - 28\ \text{m}^2 = 7\ \text{m}^2\). With \(d = 2\) m the gain is \(5 \cdot 2 - 4 \cdot 2 = 10 - 8 = 2\) m². The effect of widening depends on the depth: the two inputs interact. A sum like \(2w + 2d\) would give the same gain from widening at any depth.</p>
 </details>
 </div>
 

@@ -166,7 +166,12 @@ $$ \frac{\Delta V}{\Delta t} = \frac{90\ \text{L} - 120\ \text{L}}{3\ \text{min}
 <div class="ex" data-answer="2" data-tol="0.001" data-unit="$/km">
 <p><b>Exercise 0.6.</b> A taxi ride of 4 km costs 11 $ and a ride of 7 km costs 17 $. The fare is a start fee plus a fixed amount per km. What is the rate per km?</p>
 <details><summary>Show answer</summary>
-<p>Use changes, so the start fee drops out: \(\dfrac{\Delta(\text{fare})}{\Delta(\text{distance})} = \dfrac{17 - 11\ \$}{7 - 4\ \text{km}} = \dfrac{6\ \$}{3\ \text{km}} = 2\ \$/\text{km}\). (The start fee is then \(11 - 4\times 2 = 3\ \$\).) Taking changes to cancel a constant is exactly what a derivative does.</p>
+<p><b>Step 1: write the rule.</b> Fare = start fee + (rate × distance). So the 4 km fare is start fee + rate × 4 km, and the 7 km fare is start fee + rate × 7 km.</p>
+<p><b>Step 2: subtract the two fares.</b> The start fee appears in both, so it cancels. What is left is rate × (7 km − 4 km) = rate × 3 km. In numbers: \(\Delta(\text{fare}) = 17\ \$ - 11\ \$ = 6\ \$\).</p>
+<p><b>Step 3: divide by the change in distance.</b> \(\Delta(\text{distance}) = 7\ \text{km} - 4\ \text{km} = 3\ \text{km}\), so</p>
+$$ \text{rate} = \frac{\Delta(\text{fare})}{\Delta(\text{distance})} = \frac{6\ \$}{3\ \text{km}} = 2\ \$/\text{km} . $$
+<p><b>Step 4 (bonus): the start fee.</b> Rearrange the 4 km fare: start fee = fare − rate × distance \(= 11\ \$ - 2\ \$/\text{km} \times 4\ \text{km} = 11\ \$ - 8\ \$ = 3\ \$\).</p>
+<p>Taking changes to cancel a constant is exactly what a derivative does.</p>
 </details>
 </div>
 
