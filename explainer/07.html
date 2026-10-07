@@ -118,7 +118,13 @@ $$ k\mathbf{v} = (k v_1,\ k v_2). \qquad 2\,(3, 1) = (6, 2), \qquad -1\,(3, 1) =
 <p>The walk (3, 4) has a straight-line length you can find with Pythagoras' theorem: the two legs are 3 and 4, so the diagonal is \(\sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5\) blocks. We write this as the norm</p>
 $$ \lVert \mathbf{v} \rVert = \sqrt{v_1^2 + v_2^2}, \qquad \lVert (3, 4) \rVert = 5. $$
 <p>In 3-D, with \(\mathbf{v} = (v_1, v_2, v_3)\), you apply Pythagoras twice and get \(\sqrt{v_1^2 + v_2^2 + v_3^2}\). In \(d\) dimensions you keep going: square every component, add, take the square root.</p>
-<p><b>Mechanics.</b> Scale \(\mathbf{v}\) by \(k\): each square gets multiplied by \(k^2\), so \(\lVert k\mathbf{v}\rVert = \lvert k\rvert\,\lVert \mathbf{v}\rVert\). Doubling the walk doubles its length: \(\lVert (6, 8) \rVert = 10\).</p>
+<p><b>Mechanics.</b> Scale \(\mathbf{v}\) by \(k\) and follow the length through, one operation at a time. The worked numbers use \(k = 2\) and \(\mathbf{v} = (3, 4)\).</p>
+<p><b>Step 1: scale.</b> \(k\mathbf{v} = (k v_1,\ k v_2)\). Example: \(2\,(3, 4) = (6, 8)\).</p>
+<p><b>Step 2: square each component.</b> \((k v_1)^2 = k^2 v_1^2\) and \((k v_2)^2 = k^2 v_2^2\). Example: \(6^2 = 36 = 4\times9\) and \(8^2 = 64 = 4\times16\).</p>
+<p><b>Step 3: add, and take out the common factor \(k^2\).</b> \(k^2 v_1^2 + k^2 v_2^2 = k^2\,(v_1^2 + v_2^2)\). Example: \(36 + 64 = 100 = 4\times25\).</p>
+<p><b>Step 4: take the square root.</b> The square root of a product is the product of the square roots, so \(\sqrt{k^2\,(v_1^2 + v_2^2)} = \sqrt{k^2}\,\sqrt{v_1^2 + v_2^2}\). A square root is never negative, so \(\sqrt{k^2} = \lvert k\rvert\) (for example \(\sqrt{(-2)^2} = \sqrt4 = 2\)). So</p>
+$$ \lVert k\mathbf{v}\rVert = \lvert k\rvert\,\lVert \mathbf{v}\rVert . $$
+<p>Example: \(\sqrt{100} = 10 = 2\times5\). Doubling the walk doubles its length: \(\lVert (6, 8) \rVert = 10\).</p>
 
 <h3>Unit vectors: pure direction</h3>
 <p>Divide a vector by its own length and you get an arrow of length exactly 1 pointing the same way. That is a unit vector, written with a hat:</p>
@@ -144,14 +150,23 @@ $$ \mathbf{a}\cdot\mathbf{b} = a_1 b_1 + a_2 b_2 + \dots + a_d b_d. $$
 <h3>The hidden angle</h3>
 <p>Now a geometric fact. For two arrows \(\mathbf{a}\) and \(\mathbf{b}\) with angle \(\theta\) between them,</p>
 $$ \mathbf{a}\cdot\mathbf{b} = \lVert \mathbf{a} \rVert\, \lVert \mathbf{b} \rVert \cos\theta. $$
-<p>Here \(\cos\theta\) is the cosine of the angle: 1 when the arrows point the same way, 0 when they are at right angles, −1 when they point opposite ways. Here is why the formula holds, step by step.</p>
-<ol>
-<li>Expand the squared length of the third side of the triangle, \(\mathbf{a} - \mathbf{b}\), in components:
-$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = (a_1 - b_1)^2 + (a_2 - b_2)^2 = a_1^2 - 2a_1b_1 + b_1^2 + a_2^2 - 2a_2b_2 + b_2^2. $$</li>
-<li>Regroup: \(= (a_1^2 + a_2^2) + (b_1^2 + b_2^2) - 2(a_1b_1 + a_2b_2) = \lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2 - 2\,\mathbf{a}\cdot\mathbf{b}.\)</li>
-<li>School geometry (the law of cosines) says the same side satisfies \(\lVert \mathbf{a} - \mathbf{b}\rVert^2 = \lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2 - 2\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta\).</li>
-<li>The two right-hand sides are equal. Cancel the matching terms: \(\mathbf{a}\cdot\mathbf{b} = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta\).</li>
-</ol>
+<p>Here \(\cos\theta\) is the cosine of the angle: 1 when the arrows point the same way, 0 when they are at right angles, −1 when they point opposite ways. Here is why the formula holds, step by step. The worked numbers use \(\mathbf{a} = (3, 1)\) and \(\mathbf{b} = (1, 2)\), whose angle is 45° (checked in the worked example below).</p>
+<p><b>Step 1: write the third side of the triangle.</b> The arrows \(\mathbf{a}\) and \(\mathbf{b}\) start at the origin. The side joining their tips is \(\mathbf{a} - \mathbf{b} = (a_1 - b_1,\ a_2 - b_2)\). Example: \((3 - 1,\ 1 - 2) = (2, -1)\).</p>
+<p><b>Step 2: its squared length, by Pythagoras.</b></p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = (a_1 - b_1)^2 + (a_2 - b_2)^2 . $$
+<p>Example: \(2^2 + (-1)^2 = 4 + 1 = 5\).</p>
+<p><b>Step 3: expand each square.</b> \((a_1 - b_1)^2 = (a_1 - b_1)(a_1 - b_1) = a_1^2 - a_1b_1 - b_1a_1 + b_1^2 = a_1^2 - 2a_1b_1 + b_1^2\). The second square works the same way:</p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = a_1^2 - 2a_1b_1 + b_1^2 + a_2^2 - 2a_2b_2 + b_2^2 . $$
+<p>Example: \((3 - 1)^2 = 4\) and \(9 - 6 + 1 = 4\).</p>
+<p><b>Step 4: regroup into lengths and a dot product.</b> Collect the \(a\) squares, the \(b\) squares and the cross terms:</p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = (a_1^2 + a_2^2) + (b_1^2 + b_2^2) - 2(a_1b_1 + a_2b_2) = \lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2 - 2\,\mathbf{a}\cdot\mathbf{b}. $$
+<p>Example: \(10 + 5 - 2\times5 = 5\), the same 5 as Step 2.</p>
+<p><b>Step 5: the law of cosines.</b> School geometry says the same side satisfies</p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = \lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2 - 2\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta . $$
+<p><b>Step 6: set the two right-hand sides equal and cancel.</b> Both contain \(\lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2\). Subtract it from both sides: \(-2\,\mathbf{a}\cdot\mathbf{b} = -2\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta\).</p>
+<p><b>Step 7: divide both sides by \(-2\).</b></p>
+$$ \mathbf{a}\cdot\mathbf{b} = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta . $$
+<p>Example: \(\sqrt{10}\times\sqrt5\times\cos 45^\circ = 7.0711\times0.7071 = 5.000\), and \(\mathbf{a}\cdot\mathbf{b} = 3\times1 + 1\times2 = 5\).</p>
 <h3>Worked example</h3>
 <p>Let \(\mathbf{a} = (3, 1)\) and \(\mathbf{b} = (1, 2)\).</p>
 $$ \mathbf{a}\cdot\mathbf{b} = 3\times1 + 1\times2 = 5, \quad \lVert\mathbf{a}\rVert = \sqrt{10} \approx 3.1623, \quad \lVert\mathbf{b}\rVert = \sqrt{5} \approx 2.2361. $$
@@ -220,9 +235,9 @@ Column 1 is where the arrow \((1, 0)\) lands. Column 2 is where \((0, 1)\) lands
 <h2>7.6 Composition, the identity and the transpose</h2>
 <h3>Doing two machines in a row</h3>
 <p>Let \(Q = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}\) (a quarter turn anticlockwise: it sends \((1,0)\) to \((0,1)\)) and \(D = \begin{pmatrix} 2 & 0 \\ 0 & 1 \end{pmatrix}\) (stretch horizontally by 2). Apply \(Q\) first, then \(D\), to \(\mathbf{e}_1 = (1, 0)\):</p>
-$$ Q\mathbf{e}_1 = (0, 1), \qquad D(0, 1) = (2\times0 + 0\times1,\ 0\times0 + 1\times1) = (0, 1). $$
+$$ Q\mathbf{e}_1 = (0\times1 + (-1)\times0,\ 1\times1 + 0\times0) = (0, 1), \qquad D(0, 1) = (2\times0 + 0\times1,\ 0\times0 + 1\times1) = (0, 1). $$
 <p>Now the other order, \(D\) first, then \(Q\):</p>
-$$ D\mathbf{e}_1 = (2, 0), \qquad Q(2, 0) = (0\times2 + (-1)\times0,\ 1\times2 + 0\times0) = (0, 2). $$
+$$ D\mathbf{e}_1 = (2\times1 + 0\times0,\ 0\times1 + 1\times0) = (2, 0), \qquad Q(2, 0) = (0\times2 + (-1)\times0,\ 1\times2 + 0\times0) = (0, 2). $$
 <p>Different answers. Order matters. Doing \(B\) first and then \(A\) is itself one linear map, the composition, and its matrix is the product \(AB\) (read right to left, like \(A(B\mathbf{v})\)). Its entries are row-of-\(A\) dot column-of-\(B\):</p>
 $$ (AB)_{ij} = \sum_m A_{im} B_{mj}. $$
 <p>Here \(m\) is just a counter that runs over the middle index. Worked example with \(A = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}\) and \(B = \begin{pmatrix} 1 & 2 \\ 0 & 3 \end{pmatrix}\):</p>
@@ -235,14 +250,27 @@ $$ AB = \begin{pmatrix} 2\cdot1 + 1\cdot0 & 2\cdot2 + 1\cdot3 \\ 1\cdot1 + 1\cdo
 <h3>The transpose</h3>
 <p>The transpose \(A^\top\) swaps rows and columns: \((A^\top)_{ij} = A_{ji}\). For a vector, we treat \(\mathbf{v}\) as a column (a column vector), and \(\mathbf{v}^\top\) is the same numbers written as a row (a row vector). Then a row times a column is exactly the dot product:</p>
 $$ \mathbf{a}^\top\mathbf{b} = \begin{pmatrix} a_1 & a_2 \end{pmatrix} \begin{pmatrix} b_1 \\ b_2 \end{pmatrix} = a_1b_1 + a_2b_2 = \mathbf{a}\cdot\mathbf{b}. $$
-<p>One rule you will need at Level 10: \((AB)^\top = B^\top A^\top\). Check with the matrices above: \((AB)^\top = \begin{pmatrix} 2 & 1 \\ 7 & 5 \end{pmatrix}\), and \(B^\top A^\top = \begin{pmatrix} 1 & 0 \\ 2 & 3 \end{pmatrix}\begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 4+3 & 2+3 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 7 & 5 \end{pmatrix}\). Equal. A matrix with \(A^\top = A\) is called symmetric; every Hessian at <a href="09.html">Level 9</a> is one.</p>
+<p>One rule you will need at Level 10: \((AB)^\top = B^\top A^\top\). Check it with the matrices above, one operation at a time.</p>
+<p><b>Step 1: transpose \(AB\).</b> Row 1 of \(AB\), \((2, 7)\), becomes column 1; row 2, \((1, 5)\), becomes column 2:</p>
+$$ (AB)^\top = \begin{pmatrix} 2 & 7 \\ 1 & 5 \end{pmatrix}^{\!\top} = \begin{pmatrix} 2 & 1 \\ 7 & 5 \end{pmatrix}. $$
+<p><b>Step 2: transpose \(A\) and \(B\) separately.</b> \(A = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}\) is unchanged by the swap, so \(A^\top = A\). For \(B\), row \((1, 2)\) becomes column 1 and row \((0, 3)\) becomes column 2: \(B^\top = \begin{pmatrix} 1 & 0 \\ 2 & 3 \end{pmatrix}\).</p>
+<p><b>Step 3: multiply \(B^\top A^\top\), row of the left dotted with column of the right.</b> Row 1 of \(B^\top\) is \((1, 0)\); row 2 is \((2, 3)\). Column 1 of \(A^\top\) is \((2, 1)\); column 2 is \((1, 1)\):</p>
+$$ B^\top A^\top = \begin{pmatrix} 1\cdot2 + 0\cdot1 & 1\cdot1 + 0\cdot1 \\ 2\cdot2 + 3\cdot1 & 2\cdot1 + 3\cdot1 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 4 + 3 & 2 + 3 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 7 & 5 \end{pmatrix}. $$
+<p><b>Step 4: compare.</b> Step 1 and Step 3 give the same matrix. A matrix with \(A^\top = A\) is called symmetric; every Hessian at <a href="09.html">Level 9</a> is one.</p>
 
 <h2>7.7 The determinant: signed area scaling</h2>
 <p>A linear map sends the unit square (area 1) to a parallelogram. Every other shape gets its area multiplied by the same factor, because any shape can be tiled by tiny squares and each tiny square is scaled the same way. That factor, with a sign attached, is the determinant.</p>
 <h3>Deriving \(ad - bc\)</h3>
-<p>Take \(A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\) with all four numbers positive and \(ad \gt bc\). Its columns are \((a, c)\) and \((b, d)\). The parallelogram they span sits inside a rectangle of width \(a + b\) and height \(c + d\). The rectangle's area minus the pieces around the parallelogram is:</p>
+<p>Take \(A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\) with all four numbers positive and \(ad \gt bc\). Its columns are \((a, c)\) and \((b, d)\). The parallelogram they span sits inside a rectangle of width \(a + b\) and height \(c + d\). The worked numbers use \(a = 2\), \(b = 1\), \(c = 1\), \(d = 3\), so the columns are \((2, 1)\) and \((1, 3)\).</p>
+<p><b>Step 1: the parallelogram is the rectangle minus the pieces around it.</b></p>
 $$ \underbrace{(a+b)(c+d)}_{\text{rectangle}} - \underbrace{2\cdot\tfrac12 ac}_{\text{two triangles}} - \underbrace{2\cdot\tfrac12 bd}_{\text{two triangles}} - \underbrace{2\,bc}_{\text{two small rectangles}} $$
-$$ = ac + ad + bc + bd - ac - bd - 2bc = ad - bc. $$
+<p>Example: rectangle \(3\times4 = 12\); two triangles of \(\tfrac12\times2\times1 = 1\) each; two triangles of \(\tfrac12\times1\times3 = 1.5\) each; two small rectangles of \(1\times1 = 1\) each.</p>
+<p><b>Step 2: simplify the pieces.</b> \(2\cdot\tfrac12 ac = ac\) and \(2\cdot\tfrac12 bd = bd\). The area is \((a+b)(c+d) - ac - bd - 2bc\). Example: \(12 - 2 - 3 - 2\).</p>
+<p><b>Step 3: expand the rectangle.</b> Multiply every term of the first bracket by every term of the second: \((a+b)(c+d) = ac + ad + bc + bd\). Example: \(2 + 6 + 1 + 3 = 12\).</p>
+$$ ac + ad + bc + bd - ac - bd - 2bc . $$
+<p><b>Step 4: cancel.</b> \(+ac\) and \(-ac\) cancel. \(+bd\) and \(-bd\) cancel. \(+bc - 2bc = -bc\). What is left:</p>
+$$ ad - bc . $$
+<p>Example: \(12 - 2 - 3 - 2 = 5\), and \(ad - bc = 2\times3 - 1\times1 = 5\).</p>
 <div class="box key">
 <span class="boxtitle">The determinant of a 2×2 matrix</span>
 $$ \det \begin{pmatrix} a & b \\ c & d \end{pmatrix} = ad - bc. $$
@@ -265,8 +293,14 @@ Its size is the factor by which areas are multiplied. Its sign says whether orie
 $$ A^{-1} = \frac{1}{ad - bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}. $$
 <p>Check it by multiplying, every entry:</p>
 $$ \begin{pmatrix} a & b \\ c & d \end{pmatrix}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix} = \begin{pmatrix} ad - bc & -ab + ba \\ cd - dc & -cb + da \end{pmatrix} = (ad - bc)\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}. $$
-<p>Dividing by \(ad - bc\) leaves \(I\). For the bakery, \(\det R = 2\), so</p>
-$$ R^{-1} = \frac12\begin{pmatrix} 4 & -0.3 \\ 0 & 0.5 \end{pmatrix} = \begin{pmatrix} 2 & -0.15 \\ 0 & 0.25 \end{pmatrix}, \qquad R^{-1}\begin{pmatrix} 5.9 \\ 12 \end{pmatrix} = \begin{pmatrix} 2\times5.9 - 0.15\times12 \\ 0\times5.9 + 0.25\times12 \end{pmatrix} = \begin{pmatrix} 10 \\ 3 \end{pmatrix}. $$
+<p>Dividing by \(ad - bc\) leaves \(I\). Now apply the recipe to the bakery, one operation at a time. Here \(a = 0.5\), \(b = 0.3\), \(c = 0\), \(d = 4\).</p>
+<p><b>Step 1: the determinant.</b> \(\det R = ad - bc = 0.5\times4 - 0.3\times0 = 2\).</p>
+<p><b>Step 2: swap \(a\) and \(d\).</b> The 0.5 and the 4 trade places on the diagonal: \(\begin{pmatrix} 4 & 0.3 \\ 0 & 0.5 \end{pmatrix}\).</p>
+<p><b>Step 3: negate \(b\) and \(c\).</b> 0.3 becomes −0.3, and 0 stays 0: \(\begin{pmatrix} 4 & -0.3 \\ 0 & 0.5 \end{pmatrix}\).</p>
+<p><b>Step 4: divide every entry by the determinant, 2.</b></p>
+$$ R^{-1} = \frac12\begin{pmatrix} 4 & -0.3 \\ 0 & 0.5 \end{pmatrix} = \begin{pmatrix} 2 & -0.15 \\ 0 & 0.25 \end{pmatrix}. $$
+<p><b>Step 5: apply it to the shopping list, row by row.</b></p>
+$$ R^{-1}\begin{pmatrix} 5.9 \\ 12 \end{pmatrix} = \begin{pmatrix} 2\times5.9 - 0.15\times12 \\ 0\times5.9 + 0.25\times12 \end{pmatrix} = \begin{pmatrix} 11.8 - 1.8 \\ 0 + 3 \end{pmatrix} = \begin{pmatrix} 10 \\ 3 \end{pmatrix}. $$
 <p>10 loaves and 3 cakes, as ordered. The units of \(R^{-1}\) are flipped: \(R^{-1}_{22} = 0.25\) cakes per egg (each egg “accounts for” a quarter of a cake), and \(R^{-1}_{11} = 2\) loaves per kg of flour.</p>
 <div class="box warn">
 <span class="boxtitle">When there is no inverse</span>
@@ -275,16 +309,27 @@ If \(\det A = 0\) the formula divides by zero. Geometrically, the plane was squa
 
 <h2>7.9 Basis, span, subspace and rank</h2>
 <h3>Basis and coordinates</h3>
-<p>The arrows \(\mathbf{e}_1, \mathbf{e}_2\) are not the only way to build every vector. Take \(\mathbf{f}_1 = (1, 1)\) and \(\mathbf{f}_2 = (1, -1)\). To write \(\mathbf{v} = (3, 1)\) as \(c_1\mathbf{f}_1 + c_2\mathbf{f}_2\), solve:</p>
-$$ c_1 + c_2 = 3, \quad c_1 - c_2 = 1 \quad\Rightarrow\quad 2c_1 = 4,\ c_1 = 2,\ c_2 = 1. $$
-<p>Check: \(2(1,1) + 1(1,-1) = (3, 1)\). A set of directions that can build every vector, each in exactly one way, is a basis. The recipe numbers \((c_1, c_2) = (2, 1)\) are the coordinates of \(\mathbf{v}\) in that basis. Same arrow, different description, like giving a street address versus GPS numbers.</p>
-<p>Because \(\mathbf{f}_1\) and \(\mathbf{f}_2\) are perpendicular, there is a shortcut: \(c_1 = \mathbf{v}\cdot\mathbf{f}_1 / \lVert\mathbf{f}_1\rVert^2 = 4/2 = 2\), and \(c_2 = \mathbf{v}\cdot\mathbf{f}_2/\lVert\mathbf{f}_2\rVert^2 = 2/2 = 1\). If the basis arrows are perpendicular <i>and</i> of length 1 (an orthonormal basis), each coordinate is one dot product. Changing to a basis that suits the problem is the key move of <a href="09.html">Level 9</a>.</p>
+<p>The arrows \(\mathbf{e}_1, \mathbf{e}_2\) are not the only way to build every vector. Take \(\mathbf{f}_1 = (1, 1)\) and \(\mathbf{f}_2 = (1, -1)\). To write \(\mathbf{v} = (3, 1)\) as \(c_1\mathbf{f}_1 + c_2\mathbf{f}_2\), solve one operation at a time.</p>
+<p><b>Step 1: write the recipe component by component.</b> Scale and add: \(c_1(1, 1) + c_2(1, -1) = (c_1 + c_2,\ c_1 - c_2)\). This must equal \((3, 1)\), so</p>
+$$ c_1 + c_2 = 3, \qquad c_1 - c_2 = 1. $$
+<p><b>Step 2: add the two equations.</b> Left sides: \(c_1 + c_2 + c_1 - c_2 = 2c_1\) (the \(c_2\) terms cancel). Right sides: \(3 + 1 = 4\). So \(2c_1 = 4\).</p>
+<p><b>Step 3: divide by 2.</b> \(c_1 = 2\).</p>
+<p><b>Step 4: put \(c_1\) back into the first equation.</b> \(2 + c_2 = 3\), so \(c_2 = 1\).</p>
+<p>Check: \(2(1,1) + 1(1,-1) = (2 + 1,\ 2 - 1) = (3, 1)\). A set of directions that can build every vector, each in exactly one way, is a basis. The recipe numbers \((c_1, c_2) = (2, 1)\) are the coordinates of \(\mathbf{v}\) in that basis. Same arrow, different description, like giving a street address versus GPS numbers.</p>
+<p>Because \(\mathbf{f}_1\) and \(\mathbf{f}_2\) are perpendicular, there is a shortcut: \(c_1 = \mathbf{v}\cdot\mathbf{f}_1 / \lVert\mathbf{f}_1\rVert^2\), with \(\mathbf{v}\cdot\mathbf{f}_1 = 3\times1 + 1\times1 = 4\) and \(\lVert\mathbf{f}_1\rVert^2 = 1^2 + 1^2 = 2\), so \(c_1 = 4/2 = 2\). Likewise \(c_2 = \mathbf{v}\cdot\mathbf{f}_2/\lVert\mathbf{f}_2\rVert^2\), with \(\mathbf{v}\cdot\mathbf{f}_2 = 3\times1 + 1\times(-1) = 2\) and \(\lVert\mathbf{f}_2\rVert^2 = 1^2 + (-1)^2 = 2\), so \(c_2 = 2/2 = 1\). If the basis arrows are perpendicular <i>and</i> of length 1 (an orthonormal basis), each coordinate is one dot product. Changing to a basis that suits the problem is the key move of <a href="09.html">Level 9</a>.</p>
 <h3>Span and subspace</h3>
 <p>The span of some vectors is everything you can build from them by scaling and adding. The span of \((1, 2)\) alone is the line through the origin in that direction. The span of \((1, 0, 0)\) and \((0, 1, 0)\) is the flat floor (the \(xy\)-plane) inside 3-D. A line or plane through the origin, closed under adding and scaling, is a subspace. Lines and planes that miss the origin are not subspaces, because scaling by 0 must give \(\mathbf{0}\).</p>
 <h3>Rank: how many directions survive</h3>
-<p>The outputs \(A\mathbf{v}\) of a matrix are linear combinations of its columns (column view), so they fill the span of the columns. The dimension of that span is the rank. Example:</p>
-$$ M = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}, \qquad M\mathbf{v} = v_1\begin{pmatrix} 1 \\ 2 \end{pmatrix} + v_2\begin{pmatrix} 2 \\ 4 \end{pmatrix} = (v_1 + 2v_2)\begin{pmatrix} 1 \\ 2 \end{pmatrix}. $$
-<p>Every output lies on one line, so \(M\) has rank 1. Its determinant is \(1\cdot4 - 2\cdot2 = 0\), as it must be. In 2×2, rank 2 means \(\det \ne 0\); rank 1 or 0 means \(\det = 0\). A 3×3 matrix whose third column is the sum of the first two, like \(\begin{pmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{pmatrix}\), has rank 2: all outputs lie in the floor plane.</p>
+<p>The outputs \(A\mathbf{v}\) of a matrix are linear combinations of its columns (column view), so they fill the span of the columns. The dimension of that span is the rank. Example: \(M = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}\). The worked numbers use \(\mathbf{v} = (1, 1)\).</p>
+<p><b>Step 1: the column view.</b> \(M\mathbf{v}\) is \(v_1\) times column 1 plus \(v_2\) times column 2:</p>
+$$ M\mathbf{v} = v_1\begin{pmatrix} 1 \\ 2 \end{pmatrix} + v_2\begin{pmatrix} 2 \\ 4 \end{pmatrix}. $$
+<p>Example: \((1, 2) + (2, 4) = (3, 6)\).</p>
+<p><b>Step 2: notice that column 2 is twice column 1.</b> \((2, 4) = 2\,(1, 2)\). Replace it:</p>
+$$ M\mathbf{v} = v_1\begin{pmatrix} 1 \\ 2 \end{pmatrix} + 2v_2\begin{pmatrix} 1 \\ 2 \end{pmatrix}. $$
+<p><b>Step 3: take out the common arrow \((1, 2)\).</b></p>
+$$ M\mathbf{v} = (v_1 + 2v_2)\begin{pmatrix} 1 \\ 2 \end{pmatrix}. $$
+<p>Example: \((1 + 2\times1)\,(1, 2) = 3\,(1, 2) = (3, 6)\), as in Step 1.</p>
+<p>Every output is some number times \((1, 2)\), so every output lies on one line, and \(M\) has rank 1. Its determinant is \(1\cdot4 - 2\cdot2 = 0\), as it must be. In 2×2, rank 2 means \(\det \ne 0\); rank 1 or 0 means \(\det = 0\). A 3×3 matrix whose third column is the sum of the first two, like \(\begin{pmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{pmatrix}\), has rank 2: all outputs lie in the floor plane.</p>
 <p><b>Mechanics.</b> Change one entry of \(M\): set \(M_{22} = 4.1\). The columns are now \((1, 2)\) and \((2, 4.1)\), not parallel. The determinant becomes \(4.1 - 4 = 0.1\) and the rank jumps to 2. Rank does not change smoothly; it jumps.</p>
 
 <h2>7.10 Projection onto a line and onto a subspace</h2>
@@ -296,7 +341,16 @@ $$ \operatorname{proj}_{\mathbf{u}}\mathbf{v} = (\mathbf{v}\cdot\hat{\mathbf{u}}
 $$ \hat{\mathbf{u}} = \tfrac{1}{\sqrt2}(1, 1) \approx (0.7071, 0.7071), \qquad \mathbf{v}\cdot\hat{\mathbf{u}} = \tfrac{3 + 1}{\sqrt2} = \tfrac{4}{\sqrt 2} \approx 2.8284, $$
 $$ \operatorname{proj}_{\mathbf{u}}\mathbf{v} = 2.8284 \times (0.7071, 0.7071) = (2, 2). $$
 <p>The residual is \(\mathbf{r} = \mathbf{v} - \operatorname{proj}_{\mathbf{u}}\mathbf{v} = (1, -1)\). It is perpendicular to the line: \((1, -1)\cdot(1, 1) = 0\). That is what makes this the closest point on the line to \(\mathbf{v}\), by Pythagoras: any other point on the line adds a second perpendicular leg and so is further away.</p>
-<p><b>As a matrix.</b> Write \((\mathbf{v}\cdot\hat{\mathbf{u}})\hat{\mathbf{u}} = \hat{\mathbf{u}}(\hat{\mathbf{u}}^\top\mathbf{v}) = (\hat{\mathbf{u}}\hat{\mathbf{u}}^\top)\mathbf{v}\). So the projection matrix is \(P = \hat{\mathbf{u}}\hat{\mathbf{u}}^\top\). For \(\mathbf{u} = (1,1)\), \(P = \begin{pmatrix} 0.5 & 0.5 \\ 0.5 & 0.5 \end{pmatrix}\). Check: \(P(3, 1) = (1.5 + 0.5, 1.5 + 0.5) = (2, 2)\). Projecting twice changes nothing more, so \(PP = P\). Its rank is 1 and its determinant is \(0.25 - 0.25 = 0\).</p>
+<p><b>As a matrix.</b> Turn the projection into a matrix, one operation at a time.</p>
+<p><b>Step 1: write the dot product as a row times a column.</b> By 7.6, \(\mathbf{v}\cdot\hat{\mathbf{u}} = \hat{\mathbf{u}}^\top\mathbf{v}\). It is one number, and a number can be written on either side of the vector it scales:</p>
+$$ (\mathbf{v}\cdot\hat{\mathbf{u}})\,\hat{\mathbf{u}} = \hat{\mathbf{u}}\,(\hat{\mathbf{u}}^\top\mathbf{v}). $$
+<p><b>Step 2: move the brackets.</b> The three factors stay in the same order; only the brackets move. For products of matrices and vectors this is always allowed (it is called associativity):</p>
+$$ \hat{\mathbf{u}}\,(\hat{\mathbf{u}}^\top\mathbf{v}) = (\hat{\mathbf{u}}\hat{\mathbf{u}}^\top)\,\mathbf{v}. $$
+<p>So the projection matrix is \(P = \hat{\mathbf{u}}\hat{\mathbf{u}}^\top\).</p>
+<p><b>Step 3: compute \(P\) for \(\mathbf{u} = (1, 1)\).</b> A column times a row puts (component \(i\) of \(\hat{\mathbf{u}}\)) × (component \(j\) of \(\hat{\mathbf{u}}\)) in row \(i\), column \(j\). Here both components are 0.7071, and \(0.7071\times0.7071 = 0.5\) (exactly \(\tfrac1{\sqrt2}\times\tfrac1{\sqrt2} = \tfrac12\)):</p>
+$$ P = \begin{pmatrix} 0.5 & 0.5 \\ 0.5 & 0.5 \end{pmatrix}. $$
+<p><b>Step 4: check on \(\mathbf{v} = (3, 1)\), row by row.</b> \(P(3, 1) = (0.5\times3 + 0.5\times1,\ 0.5\times3 + 0.5\times1) = (1.5 + 0.5, 1.5 + 0.5) = (2, 2)\), the same shadow as before.</p>
+<p>Projecting twice changes nothing more, so \(PP = P\). Its rank is 1 and its determinant is \(0.25 - 0.25 = 0\).</p>
 <figure class="sim" id="sim-proj">
 <figcaption><b>Figure 7.3.</b> Drag the tip of \(\mathbf{v}\) (blue) and the handle that sets the line's direction \(\mathbf{u}\) (grey). The red arrow is the shadow \(\operatorname{proj}_{\mathbf{u}}\mathbf{v} = (\mathbf{v}\cdot\hat{\mathbf{u}})\hat{\mathbf{u}}\). The dashed segment is the residual \(\mathbf{r}\), and the small square marks the right angle. Notice the readout's last line: \(\mathbf{r}\cdot\hat{\mathbf{u}}\) stays at 0 however you drag. Point \(\mathbf{v}\) more than 90° away from \(\mathbf{u}\) and the shadow points backwards (negative amount).</figcaption>
 </figure>
@@ -311,8 +365,12 @@ $$ \operatorname{proj}\mathbf{v} = 1\cdot(1, 0, 0) + \tfrac{5}{\sqrt2}\cdot\tfra
 <h2>7.11 The outer product: read along b, write along a</h2>
 <p>The dot product \(\mathbf{b}^\top\mathbf{v}\) (row times column) gives one number. Flip the order to column times row and you get a whole matrix, the outer product:</p>
 $$ \mathbf{a}\mathbf{b}^\top = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}\begin{pmatrix} b_1 & b_2 \end{pmatrix} = \begin{pmatrix} a_1b_1 & a_1b_2 \\ a_2b_1 & a_2b_2 \end{pmatrix}. $$
-<p>What does this machine do to a vector \(\mathbf{v}\)? Group the brackets differently:</p>
-$$ (\mathbf{a}\mathbf{b}^\top)\mathbf{v} = \mathbf{a}\,(\mathbf{b}^\top\mathbf{v}) = s\,\mathbf{a}, \qquad s = \mathbf{b}^\top\mathbf{v} = b_1v_1 + b_2v_2. $$
+<p>What does this machine do to a vector \(\mathbf{v}\)?</p>
+<p><b>Step 1: move the brackets.</b> As in 7.10, the factors keep their order and only the brackets move (associativity):</p>
+$$ (\mathbf{a}\mathbf{b}^\top)\mathbf{v} = \mathbf{a}\,(\mathbf{b}^\top\mathbf{v}). $$
+<p><b>Step 2: the bracket is one number.</b> \(\mathbf{b}^\top\mathbf{v}\) is a row times a column, a dot product. Call it \(s\):</p>
+$$ s = \mathbf{b}^\top\mathbf{v} = b_1v_1 + b_2v_2, \qquad (\mathbf{a}\mathbf{b}^\top)\mathbf{v} = s\,\mathbf{a}. $$
+<p>The worked example below puts numbers through both sides.</p>
 <div class="box key">
 <span class="boxtitle">Read along b, write along a</span>
 The outer product \(\mathbf{a}\mathbf{b}^\top\) <i>reads</i> one number from its input, \(s = \mathbf{b}\cdot\mathbf{v}\), and <i>writes</i> that many copies of \(\mathbf{a}\). Every output lies on the line through \(\mathbf{a}\), so the rank is 1. Every input perpendicular to \(\mathbf{b}\) gives \(s = 0\): those inputs are invisible to the machine (they form its null space).
@@ -371,7 +429,7 @@ In 2-D, two arrows pointing in random directions often make a small angle. In 5,
 </div>
 
 <div class="ex" data-answer="4" data-tol="0.001" data-unit="cakes">
-<p><b>Exercise 7.5.</b> <span class="small">(The bakery: \(R = \begin{pmatrix} 0.5 & 0.3 \ 0 & 4 \end{pmatrix}\) turns (loaves, cakes) into (kg of flour, eggs), and \(R^{-1} = \begin{pmatrix} 2 & -0.15 \ 0 & 0.25 \end{pmatrix}\).)</span> Using the bakery matrix \(R\) and its inverse from 7.8, the bakery used 4.6 kg of flour and 16 eggs. How many cakes did it bake? Then find the number of loaves, and check by multiplying back.</p>
+<p><b>Exercise 7.5.</b> <span class="small">(The bakery: \(R = \begin{pmatrix} 0.5 & 0.3 \\ 0 & 4 \end{pmatrix}\) turns (loaves, cakes) into (kg of flour, eggs), and \(R^{-1} = \begin{pmatrix} 2 & -0.15 \\ 0 & 0.25 \end{pmatrix}\).)</span> Using the bakery matrix \(R\) and its inverse from 7.8, the bakery used 4.6 kg of flour and 16 eggs. How many cakes did it bake? Then find the number of loaves, and check by multiplying back.</p>
 <details><summary>Show answer</summary>
 <p>\(R^{-1}(4.6, 16) = (2\times4.6 - 0.15\times16,\ 0\times4.6 + 0.25\times16) = (9.2 - 2.4,\ 4) = (6.8, 4)\). So 4 cakes and 6.8 loaves. (A real bakery would not bake 0.8 of a loaf; the numbers are made up to be clean.) Check: \(R(6.8, 4) = (0.5\times6.8 + 0.3\times4,\ 4\times4) = (3.4 + 1.2, 16) = (4.6, 16)\).</p>
 </details>
@@ -387,7 +445,7 @@ In 2-D, two arrows pointing in random directions often make a small angle. In 5,
 <div class="ex" data-answer="3.2" data-tol="0.001" data-unit="(first component)">
 <p><b>Exercise 7.7.</b> First project \(\mathbf{v} = (4, 2)\) onto the line through \(\mathbf{u} = (2, 1)\). What is special about the answer? Then project \(\mathbf{v} = (4, 0)\) onto the same line. Give the first component of the second projection.</p>
 <details><summary>Show answer</summary>
-<p>First: \((4, 2) = 2(2, 1)\) is already on the line, so the projection is \((4, 2)\) itself and the residual is \(\mathbf{0}\). Second: \(\hat{\mathbf{u}} = (2, 1)/\sqrt5\), \(\mathbf{v}\cdot\hat{\mathbf{u}} = 8/\sqrt5\), projection \(= (8/\sqrt5)(2,1)/\sqrt5 = (8/5)(2, 1) = (3.2, 1.6)\). Residual \((0.8, -1.6)\); check \((0.8, -1.6)\cdot(2,1) = 1.6 - 1.6 = 0\).</p>
+<p>First: \((4, 2) = 2(2, 1)\) is already on the line, so the projection is \((4, 2)\) itself and the residual is \(\mathbf{0}\). Second, step by step. <b>Step 1:</b> \(\lVert\mathbf{u}\rVert = \sqrt{2^2 + 1^2} = \sqrt5\), so \(\hat{\mathbf{u}} = (2, 1)/\sqrt5\). <b>Step 2:</b> \(\mathbf{v}\cdot\hat{\mathbf{u}} = (4\times2 + 0\times1)/\sqrt5 = 8/\sqrt5\). <b>Step 3:</b> projection \(= (8/\sqrt5)\times(2,1)/\sqrt5\). The two \(\sqrt5\) multiply to \(\sqrt5\times\sqrt5 = 5\), so this is \((8/5)(2, 1) = 1.6\times(2, 1) = (3.2, 1.6)\). Residual \((0.8, -1.6)\); check \((0.8, -1.6)\cdot(2,1) = 1.6 - 1.6 = 0\).</p>
 </details>
 </div>
 

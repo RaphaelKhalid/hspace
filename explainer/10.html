@@ -188,8 +188,14 @@ $$ \big(J_g J_f\big)_{ij} = \sum_{l=1}^{k} \frac{\partial y_i}{\partial s_l}\,\f
 <p><b>The product rule.</b> SiLU is a product of two functions of \(z\), so we need the rule for products. If \(P(z) = F(z)\,G(z)\) (here \(F\) and \(G\) are any two functions), then</p>
 $$ P'(z) = F'(z)\,G(z) + F(z)\,G'(z). $$
 <p>Picture a rectangle with sides \(F\) and \(G\). Grow both sides a little. The area grows by a strip along one side (\(\Delta F \times G\)) plus a strip along the other (\(F \times \Delta G\)), plus a tiny corner \(\Delta F\,\Delta G\) that vanishes faster than the strips as the change shrinks. Divide by \(\Delta z\) and shrink: that is the product rule.</p>
-<p><b>The SiLU's slope.</b> With \(F(z) = z\) and \(G(z) = \sigma(z)\):</p>
-$$ \operatorname{silu}'(z) = 1\cdot\sigma(z) + z\,\sigma(z)\big(1-\sigma(z)\big) = \sigma(z)\Big(1 + z\big(1 - \sigma(z)\big)\Big). $$
+<p><b>The SiLU's slope.</b> Use the product rule with \(F(z) = z\) and \(G(z) = \sigma(z)\), one step at a time. The worked numbers use \(z = 1.5\), where \(\sigma(1.5) = 0.8176\).</p>
+<p><b>Step 1: the four pieces.</b> \(F(z) = z\), so \(F'(z) = 1\). \(G(z) = \sigma(z)\), so \(G'(z) = \sigma(z)\big(1 - \sigma(z)\big)\) (from the sigmoid's slope above). Example: \(F = 1.5\), \(F' = 1\), \(G = 0.8176\), \(G' = 0.8176\times0.1824 = 0.1491\).</p>
+<p><b>Step 2: put them into \(F'G + FG'\).</b></p>
+$$ \operatorname{silu}'(z) = 1\cdot\sigma(z) + z\,\sigma(z)\big(1-\sigma(z)\big). $$
+<p>Example: \(0.8176 + 1.5\times0.1491 = 0.8176 + 0.2237 = 1.0413\).</p>
+<p><b>Step 3: take out the common factor \(\sigma(z)\).</b> Both terms contain \(\sigma(z)\). What is left of the first is 1; what is left of the second is \(z\,(1 - \sigma(z))\):</p>
+$$ \operatorname{silu}'(z) = \sigma(z)\Big(1 + z\big(1 - \sigma(z)\big)\Big). $$
+<p>Example: \(0.8176\times(1 + 1.5\times0.1824) = 0.8176\times1.2736 = 1.0413\), the same as Step 2.</p>
 <p>At \(z = 0\): \(\sigma = 0.5\), so \(\operatorname{silu}'(0) = 0.5\,(1 + 0) = 0.5\).</p>
 
 <figure class="sim" id="sim-act">
@@ -211,7 +217,7 @@ The base input used in every worked example is \(\mathbf{x} = (x_1, x_2) = (1, 2
 <ol>
 <li>Pre-activations:
 $$ z_1 = 1.0(1) + (-1.0)(2) + 0.5 = -0.5, \qquad z_2 = 0.5(1) + 1.0(2) + (-1.0) = 1.5 . $$</li>
-<li>Sigmoids: \(\sigma(-0.5) = 1/(1 + e^{0.5}) = 1/2.6487 = 0.3775\) and \(\sigma(1.5) = 1/(1 + e^{-1.5}) = 1/1.2231 = 0.8176\).</li>
+<li>Sigmoids. Put each \(z\) into \(\sigma(z) = 1/(1 + e^{-z})\). For \(z_1 = -0.5\), \(-z_1 = 0.5\) and \(e^{0.5} = 1.6487\), so \(\sigma(-0.5) = 1/(1 + 1.6487) = 1/2.6487 = 0.3775\). For \(z_2 = 1.5\), \(-z_2 = -1.5\) and \(e^{-1.5} = 0.2231\), so \(\sigma(1.5) = 1/(1 + 0.2231) = 1/1.2231 = 0.8176\).</li>
 <li>Activations:
 $$ a_1 = -0.5 \times 0.3775 = -0.1888, \qquad a_2 = 1.5 \times 0.8176 = 1.2264 . $$</li>
 <li>Output:
@@ -299,12 +305,20 @@ Training and interpretability usually need the gradient of <i>one</i> number (a 
 <li>\(\mathbf{a} = \operatorname{silu}(\mathbf{z})\), entry by entry: Jacobian \(D = \operatorname{diag}\big(\operatorname{silu}'(z_1), \operatorname{silu}'(z_2)\big)\) (2×2, zero off the diagonal because \(a_1\) does not depend on \(z_2\)).</li>
 <li>\(y = \mathbf{c}^\top\mathbf{a}\): Jacobian \(\mathbf{c}^\top\) (1×2, one row).</li>
 </ul>
-<p>By the chain rule of 10.4, the Jacobian of the whole network is the product, outermost on the left:</p>
+<p>At \(\mathbf{x} = (1, 2)\) these are \(W = \begin{pmatrix} 1.0 &amp; -1.0 \\ 0.5 &amp; 1.0 \end{pmatrix}\), \(D = \begin{pmatrix} 0.2600 &amp; 0 \\ 0 &amp; 1.0413 \end{pmatrix}\) (the slopes from 10.7) and \(\mathbf{c}^\top = (1.5,\ -1.0)\). Now combine them one operation at a time.</p>
+<p><b>Step 1: multiply the Jacobians.</b> By the chain rule of 10.4, the Jacobian of the whole network is the product, outermost on the left:</p>
 $$ J_y = \mathbf{c}^\top D\, W \qquad (1\times2)(2\times2)(2\times2) = (1\times2). $$
-<p>The gradient is this row written as a column, so take the transpose. Transposing a product reverses the order: \((\mathbf{c}^\top D W)^\top = W^\top D^\top \mathbf{c}\). (Shapes check: a 1×2 row becomes a 2×1 column.) Also \(D^\top = D\) because it is diagonal. So</p>
-$$ \nabla y = W^\top D\,\mathbf{c} = W^\top\big(\mathbf{c} \odot \operatorname{silu}'(\mathbf{z})\big). $$
-<p>Read it right to left and you have the backward pass of 10.7: \(\bar{\mathbf{a}} = \mathbf{c}\), then \(\bar{\mathbf{z}} = D\bar{\mathbf{a}} = \mathbf{c}\odot\operatorname{silu}'(\mathbf{z}) = (0.3901, -1.0413)\), then \(\bar{\mathbf{x}} = W^\top\bar{\mathbf{z}}\):</p>
-$$ W^\top\bar{\mathbf{z}} = \begin{pmatrix} 1.0 &amp; 0.5 \\ -1.0 &amp; 1.0 \end{pmatrix}\begin{pmatrix} 0.3901 \\ -1.0413 \end{pmatrix} = \begin{pmatrix} 0.3901 - 0.5206 \\ -0.3901 - 1.0413 \end{pmatrix} = \begin{pmatrix} -0.1306 \\ -1.4314 \end{pmatrix}. $$
+<p>Example, left to right: \(\mathbf{c}^\top D = (1.5\times0.2600,\ -1.0\times1.0413) = (0.3901, -1.0413)\). Then multiply by \(W\), the row dotted with each column of \(W\): \((0.3901\times1.0 + (-1.0413)\times0.5,\ \ 0.3901\times(-1.0) + (-1.0413)\times1.0) = (-0.1306, -1.4314)\).</p>
+<p><b>Step 2: transpose.</b> The gradient is this row written as a column. Transposing a product reverses the order (Level 7, 7.6): \((\mathbf{c}^\top D W)^\top = W^\top D^\top (\mathbf{c}^\top)^\top = W^\top D^\top \mathbf{c}\). (Shapes check: a 1×2 row becomes a 2×1 column.)</p>
+<p><b>Step 3: \(D^\top = D\).</b> \(D\) is diagonal, and swapping rows and columns leaves a diagonal matrix unchanged. So</p>
+$$ \nabla y = W^\top D\,\mathbf{c}. $$
+<p><b>Step 4: a diagonal matrix times a vector multiplies entry by entry.</b> Row 1 of \(D\) is \((\operatorname{silu}'(z_1), 0)\), so row 1 of \(D\mathbf{c}\) is \(\operatorname{silu}'(z_1)\,c_1\); row 2 likewise. So \(D\mathbf{c} = \mathbf{c}\odot\operatorname{silu}'(\mathbf{z})\):</p>
+$$ \nabla y = W^\top\big(\mathbf{c} \odot \operatorname{silu}'(\mathbf{z})\big). $$
+<p>Example: \(D\mathbf{c} = (0.2600\times1.5,\ 1.0413\times(-1.0)) = (0.3901, -1.0413)\).</p>
+<p><b>Step 5: read it right to left.</b> This is the backward pass of 10.7: \(\bar{\mathbf{a}} = \mathbf{c}\), then \(\bar{\mathbf{z}} = D\bar{\mathbf{a}} = (0.3901, -1.0413)\), then \(\bar{\mathbf{x}} = W^\top\bar{\mathbf{z}}\).</p>
+<p><b>Step 6: transpose \(W\) and multiply, row by row.</b> Row 1 of \(W\), \((1.0, -1.0)\), becomes column 1 of \(W^\top\); row 2, \((0.5, 1.0)\), becomes column 2:</p>
+$$ W^\top\bar{\mathbf{z}} = \begin{pmatrix} 1.0 &amp; 0.5 \\ -1.0 &amp; 1.0 \end{pmatrix}\begin{pmatrix} 0.3901 \\ -1.0413 \end{pmatrix} = \begin{pmatrix} 1.0\times0.3901 + 0.5\times(-1.0413) \\ -1.0\times0.3901 + 1.0\times(-1.0413) \end{pmatrix} = \begin{pmatrix} 0.3901 - 0.5206 \\ -0.3901 - 1.0413 \end{pmatrix} = \begin{pmatrix} -0.1306 \\ -1.4314 \end{pmatrix}. $$
+<p>The same numbers as Step 1, now as a column.</p>
 <div class="box key">
 <span class="boxtitle">Backpropagation in one line</span>
 Backpropagation multiplies the transposed Jacobians of the layers onto a vector, starting from the output end: \(\bar{\mathbf{x}} = J_1^\top J_2^\top \cdots J_K^\top \bar{\mathbf{y}}\), evaluated right to left. At every step it multiplies a matrix by a vector, never a matrix by a matrix.
@@ -322,12 +336,17 @@ Backpropagation multiplies the transposed Jacobians of the layers onto a vector,
 <p>Training changes the weights so the output gets closer to a target. A loss function measures how wrong the output is. A common one is the squared error</p>
 $$ \mathcal{L} = \tfrac12\,(y - y^\ast)^2, $$
 <p>where \(y^\ast\) is the target. With \(y = -1.5095\) and \(y^\ast = 0\): \(\mathcal{L} = \tfrac12(1.5095)^2 = 1.1393\).</p>
-<p>The same backward pass gives the gradient with respect to the weights, with one more application of the chain rule. Start from \(\partial\mathcal{L}/\partial y = y - y^\ast = -1.5095\). Then:</p>
+<p>The same backward pass gives the gradient with respect to the weights, with one more application of the chain rule. Do it one step at a time.</p>
+<p><b>Step 1: the loss's slope in \(y\).</b> \(\mathcal{L}\) is a chain: the inner machine computes \(y - y^\ast\) (rate 1 per unit of \(y\)); the outer machine takes half the square of its input (rate: \(\tfrac12\times2\times\text{input} = \text{input}\), by the power rule). Multiply the two rates:</p>
+$$ \frac{\partial\mathcal{L}}{\partial y} = (y - y^\ast)\times1 = y - y^\ast . $$
+<p>Example: \(-1.5095 - 0 = -1.5095\).</p>
+<p><b>Step 2: the output's slope in each weight.</b></p>
 <ul>
-<li>\(\partial y/\partial c_i = a_i\) (the output is \(c_1a_1 + c_2a_2\)), so \(\partial\mathcal{L}/\partial c_1 = -1.5095 \times (-0.1888) = 0.2850\);</li>
-<li>\(\partial y/\partial b_i = \bar{z}_i\), because \(b_i\) enters \(z_i\) with rate 1;</li>
-<li>\(\partial y/\partial W_{ij} = \bar{z}_i\,x_j\), because \(W_{ij}\) enters \(z_i\) with rate \(x_j\).</li>
+<li>\(\partial y/\partial c_i = a_i\), because the output is \(c_1a_1 + c_2a_2\) and \(c_i\) multiplies \(a_i\). Example: \(\partial y/\partial c_1 = a_1 = -0.1888\).</li>
+<li>\(\partial y/\partial b_i = \bar{z}_i\), because \(b_i\) enters \(z_i\) with rate 1, and \(z_i\) moves \(y\) at rate \(\bar{z}_i\). Example: \(\partial y/\partial b_1 = 0.3901\).</li>
+<li>\(\partial y/\partial W_{ij} = \bar{z}_i\,x_j\), because \(W_{ij}\) enters \(z_i\) with rate \(x_j\) (it multiplies \(x_j\)). Example: \(\partial y/\partial W_{12} = 0.3901\times2 = 0.7802\).</li>
 </ul>
+<p><b>Step 3: chain the two.</b> Each weight's effect on the loss is (loss per unit of \(y\)) × (\(y\) per unit of that weight). Example: \(\partial\mathcal{L}/\partial c_1 = -1.5095 \times (-0.1888) = 0.2850\).</p>
 <p>Gradient descent then takes a small step downhill: each weight moves by minus the learning rate \(\eta\) times its partial derivative. With \(\eta = 0.1\): \(c_1 \leftarrow 1.5 - 0.1 \times 0.2850 = 1.4715\). Repeat over many examples and the loss falls. That is all of training, at this level of detail. (Gradient descent is the downhill version of the steepest ascent of <a href="05.html">Level 5</a>.)</p>
 <p>H-space does not train anything. It reuses the same machinery for a different purpose: differentiate a fixed model's output with respect to its internal state.</p>
 
@@ -370,7 +389,7 @@ $$ \mathcal{L} = \tfrac12\,(y - y^\ast)^2, $$
 </div>
 
 <div class="ex" data-answer="0.7358" data-tol="0.002" data-unit="">
-<p><b>Exercise 10.5.</b> <span class="small">(The tiny network: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(a_i = \operatorname{silu}(z_i) = z_i\,\sigma(z_i)\), \(y = c_1a_1 + c_2a_2\), with \(W = \begin{pmatrix} 1 & -1 \ 0.5 & 1 \end{pmatrix}\), \(\mathbf{b} = (0.5, -1)\), \(\mathbf{c} = (1.5, -1)\).)</span> Run the tiny network's forward pass at \(\mathbf{x} = (0, 0)\). What is \(y\)? (Use \(\sigma(0.5) = 0.6225\) and \(\sigma(-1) = 0.2689\).)</p>
+<p><b>Exercise 10.5.</b> <span class="small">(The tiny network: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(a_i = \operatorname{silu}(z_i) = z_i\,\sigma(z_i)\), \(y = c_1a_1 + c_2a_2\), with \(W = \begin{pmatrix} 1 & -1 \\ 0.5 & 1 \end{pmatrix}\), \(\mathbf{b} = (0.5, -1)\), \(\mathbf{c} = (1.5, -1)\).)</span> Run the tiny network's forward pass at \(\mathbf{x} = (0, 0)\). What is \(y\)? (Use \(\sigma(0.5) = 0.6225\) and \(\sigma(-1) = 0.2689\).)</p>
 <details><summary>Show answer</summary>
 <p>\(z_1 = 1(0) - 1(0) + 0.5 = 0.5\); \(z_2 = 0.5(0) + 1(0) - 1 = -1\). \(a_1 = 0.5\times0.6225 = 0.3112\); \(a_2 = -1\times0.2689 = -0.2689\). \(y = 1.5\times0.3112 + (-1)(-0.2689) = 0.4668 + 0.2689 = 0.7358\). You can confirm it in Figure 10.3 by setting both sliders to 0.</p>
 </details>
@@ -400,7 +419,7 @@ $$ \mathcal{L} = \tfrac12\,(y - y^\ast)^2, $$
 <div class="ex" data-answer="-0.8149" data-tol="0.002" data-unit="">
 <p><b>Exercise 10.9.</b> With the loss \(\mathcal{L} = \tfrac12(y - y^\ast)^2\), target \(y^\ast = 0\), at \(\mathbf{x} = (1,2)\), take one gradient-descent step on \(c_2\) with \(\eta = 0.1\). What is the new \(c_2\)?</p>
 <details><summary>Show answer</summary>
-<p>\(\partial\mathcal{L}/\partial y = y - y^\ast = -1.5095\). \(\partial y/\partial c_2 = a_2 = 1.2264\). So \(\partial\mathcal{L}/\partial c_2 = -1.5095\times1.2264 = -1.8512\). Step: \(c_2 \leftarrow -1.0 - 0.1\times(-1.8512) = -1.0 + 0.1851 = -0.8149\). The weight moves towards zero, which shrinks the negative contribution of neuron 2 and pushes \(y\) up towards the target.</p>
+<p><b>Step 1:</b> \(\partial\mathcal{L}/\partial y = y - y^\ast = -1.5095 - 0 = -1.5095\) (10.10, Step 1). <b>Step 2:</b> \(\partial y/\partial c_2 = a_2 = 1.2264\). <b>Step 3:</b> chain rule, multiply the two: \(\partial\mathcal{L}/\partial c_2 = -1.5095\times1.2264 = -1.8512\). <b>Step 4:</b> the update. Step: \(c_2 \leftarrow -1.0 - 0.1\times(-1.8512) = -1.0 + 0.1851 = -0.8149\). The weight moves towards zero, which shrinks the negative contribution of neuron 2 and pushes \(y\) up towards the target.</p>
 </details>
 </div>
 

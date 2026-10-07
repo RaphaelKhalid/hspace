@@ -68,11 +68,12 @@
 <tr><td>\(s_{ij}\), \(a_{ij}\)</td><td>“s i j”, “a i j”</td><td>attention score of \(j\) as seen from \(i\), and the attention weight after softmax</td><td>\(s\): none; \(a\): none, between 0 and 1</td><td>\(a_{31} = 0.665\)</td></tr>
 <tr><td>\(o_i\)</td><td>“o i”</td><td>attention output written at position \(i\)</td><td>a.u.</td><td>14.25 in the toy</td></tr>
 <tr><td>\(\operatorname{sigmoid}(z)\)</td><td>“sigmoid”</td><td>\(1/(1 + e^{-z})\), a smooth switch from 0 to 1 (<a href="10.html">Level 10</a>)</td><td>none</td><td>\(\operatorname{sigmoid}(0) = 0.5\)</td></tr>
+<tr><td>\(\sigma\), \(\sigma'\)</td><td>“sigma”, “sigma prime”</td><td>short names for \(\operatorname{sigmoid}\) and its derivative \(\sigma(1-\sigma)\) (<a href="10.html">Level 10</a>)</td><td>none</td><td>\(\sigma(2) = 0.8808\)</td></tr>
 <tr><td>\(\operatorname{silu}(z)\)</td><td>“silu”</td><td>\(z \cdot \operatorname{sigmoid}(z)\) (<a href="10.html">Level 10</a>)</td><td>same as \(z\)</td><td>\(\operatorname{silu}(2) = 1.76\)</td></tr>
 <tr><td>\(\tilde x\)</td><td>“x tilde”</td><td>the normalised input that the MLP reads</td><td>none</td><td>\(\tilde x = N(y)\)</td></tr>
 <tr><td>\(w_{g,i}, w_{u,i}, w_{\text{down},i}\)</td><td>“w gate”, “w up”, “w down”</td><td>neuron \(i\)'s gate read direction, up read direction and write direction</td><td>none</td><td>learned</td></tr>
 <tr><td>\(z_i\), \(m_i\)</td><td>“z i”, “m i”</td><td>neuron \(i\)'s gate read \(w_{g,i}\cdot\tilde x\) and up read \(w_{u,i}\cdot\tilde x\) (theory-v2 calls the up read \(u_i\); renamed here to avoid a clash with \(u_t\))</td><td>none</td><td>\(z_i = 2\), \(m_i = 1\)</td></tr>
-<tr><td>\(a\), \(b\)</td><td>“a”, “b”</td><td>in the SwiGLU toy: the gate and up read directions of one neuron</td><td>none</td><td>\(a = (1, 0)\)</td></tr>
+<tr><td>\(a\), \(b\)</td><td>“a”, “b”</td><td>in the SwiGLU toy: the gate and up read directions of one neuron; entries \(a_k, b_k\)</td><td>none</td><td>\(a = (1, 0)\)</td></tr>
 <tr><td>\(x\) (in 14.7)</td><td>“x”</td><td>the 2-D input of the toy neuron (in 14.10 \(x\) means a context instead)</td><td>none</td><td>\(x = (2, 1)\)</td></tr>
 <tr><td>\(f\), \(\nabla f\), \(\nabla^2 f\)</td><td>“f”, “grad f”, “Hessian of f”</td><td>a toy function, its gradient and its Hessian (Levels 5 and 9)</td><td>as stated per example</td><td>\(f = \operatorname{silu}(x_1)x_2\)</td></tr>
 <tr><td>\(\operatorname{silu}'\), \(\operatorname{silu}''\)</td><td>“silu prime”, “silu double prime”</td><td>first and second derivatives of silu</td><td>none</td><td>\(\operatorname{silu}'(0) = 0.5\)</td></tr>
@@ -82,6 +83,7 @@
 <tr><td>\(\operatorname{logit}_t\)</td><td>“logit of t”</td><td>the model's raw score for token \(t\) being next</td><td>nats (only differences matter)</td><td>0.267</td></tr>
 <tr><td>\(N_{\text{final}}\)</td><td>“N final”</td><td>the final RMSNorm, with gain \(1 + w_{\text{final}}\)</td><td>none (normalised)</td><td>14.8</td></tr>
 <tr><td>\(u_t\)</td><td>“u t”</td><td>token \(t\)'s read vector before the final norm: \((1 + w_{\text{final}}) \odot W_U[t]\)</td><td>none</td><td>toy \((1, 3, 0, 0.5)\)</td></tr>
+<tr><td>\(Z\)</td><td>“Z”</td><td>in 14.6: the softmax total \(\sum_{t'} e^{\operatorname{logit}_{t'}}\)</td><td>none</td><td>9.389 for logits (2, 0, 0)</td></tr>
 <tr><td>\(e\), \(\ln\)</td><td>“e”, “natural log”</td><td>Euler's number 2.71828…, and the logarithm to base \(e\) (<a href="01.html">Level 1</a>)</td><td>none</td><td>\(\ln 0.25 = -1.386\)</td></tr>
 <tr><td>\(P(t)\)</td><td>“P of t”</td><td>probability the model gives to token \(t\) being next</td><td>none, between 0 and 1</td><td>0.665</td></tr>
 <tr><td>\(\tau\)</td><td>“tau”</td><td>softmax temperature (used only in Figure 14.3)</td><td>none</td><td>\(\tau = 1\)</td></tr>
@@ -197,9 +199,18 @@ $$ P(t) = \frac{e^{\operatorname{logit}_t}}{\sum_{t'} e^{\operatorname{logit}_{t
 <h3>The mechanics</h3>
 <ul>
 <li><b>Add the same number to every score.</b> Each \(e^{\operatorname{logit}}\) is multiplied by the same factor, which cancels between top and bottom. Nothing changes. Only differences between scores matter.</li>
-<li><b>Raise one score.</b> Its probability rises and all others fall, in proportion. For small changes, \(\partial P(t)/\partial \operatorname{logit}_t = P(t)(1 - P(t))\) and \(\partial P(t)/\partial\operatorname{logit}_{t'} = -P(t)P(t')\) for \(t' \ne t\). Softmax is curved too: these derivatives themselves change as the probabilities change.</li>
+<li><b>Raise one score.</b> Its probability rises and all others fall, in proportion. For small changes, \(\partial P(t)/\partial \operatorname{logit}_t = P(t)(1 - P(t))\) and \(\partial P(t)/\partial\operatorname{logit}_{t'} = -P(t)P(t')\) for \(t' \ne t\). Softmax is curved too: these derivatives themselves change as the probabilities change. The derivation is just below.</li>
 <li><b>Temperature.</b> Dividing every score by a temperature \(\tau\) before the softmax makes the result sharper (\(\tau \lt 1\)) or flatter (\(\tau \gt 1\)). Temperature is a sampling setting; it plays no part in the J-lens and is here only so you can feel what the exponential does.</li>
 </ul>
+
+<h3>The two softmax derivatives, step by step</h3>
+<p>Let \(Z = \sum_{t'} e^{\operatorname{logit}_{t'}}\) be the total on the bottom, so \(P(t) = e^{\operatorname{logit}_t}/Z\).</p>
+<p><b>Step 1: how the total moves.</b> Only one term of \(Z\) contains \(\operatorname{logit}_{t'}\), and the derivative of \(e^{x}\) is \(e^{x}\). So \(\partial Z/\partial\operatorname{logit}_{t'} = e^{\operatorname{logit}_{t'}}\).</p>
+<p><b>Step 2: raise a different score \(t' \ne t\).</b> The top \(e^{\operatorname{logit}_t}\) does not move. The bottom moves by Step 1. The derivative of \(1/Z\) is \(-1/Z^2\) times the rate of \(Z\) (chain rule). So</p>
+$$ \frac{\partial P(t)}{\partial\operatorname{logit}_{t'}} = e^{\operatorname{logit}_t}\cdot\Big(-\frac{e^{\operatorname{logit}_{t'}}}{Z^2}\Big) = -\frac{e^{\operatorname{logit}_t}}{Z}\cdot\frac{e^{\operatorname{logit}_{t'}}}{Z} = -P(t)\,P(t'). $$
+<p><b>Step 3: raise its own score.</b> Now both top and bottom move. The product rule on \(e^{\operatorname{logit}_t}\cdot(1/Z)\) gives (rate of the top) × \(1/Z\) + top × (rate of \(1/Z\)):</p>
+$$ \frac{\partial P(t)}{\partial\operatorname{logit}_t} = \frac{e^{\operatorname{logit}_t}}{Z} - \frac{e^{\operatorname{logit}_t}\,e^{\operatorname{logit}_t}}{Z^2} = P(t) - P(t)^2 = P(t)\big(1 - P(t)\big). $$
+<p><b>Step 4: a number.</b> Exercise 14.3's logits (2, 0, 0) give \(P = (0.787, 0.107, 0.107)\). Raising the first logit by 0.01 raises \(P(1)\) by about \(0.787\times0.213\times0.01 = 0.0017\), and lowers each other probability by about \(0.787\times0.107\times0.01 = 0.0008\). The two falls add to the rise, so the total stays 1.</p>
 
 <figure class="sim" id="sim-softmax">
 <figcaption><b>Figure 14.3.</b> Softmax over four toy tokens. Move the logit sliders and the temperature. The bars show \(P(t)\); the readout shows every step: \(e^{\operatorname{logit}/\tau}\), the total, the shares, and \(\ln P(t)\) in nats. Press “add 1 to every logit”. Look for: the probabilities do not change. Then set two logits 2 apart and note that the ratio of their probabilities is \(e^2 \approx 7.4\) at \(\tau = 1\).</figcaption>
@@ -218,19 +229,32 @@ $$ \varphi_{\text{MLP}}(y) = \sum_i \operatorname{silu}(w_{g,i}\cdot\tilde x)\,(
 <h3>The mechanics: why a product of reads means curvature</h3>
 <p>Strip one neuron down to two inputs. Let \(a\) and \(b\) be its gate and up directions and \(x\) a 2-D input:</p>
 $$ f(x) = \operatorname{silu}(a\cdot x)\,(b\cdot x). $$
-<p>First derivatives, by the product rule and the chain rule (with \(z = a\cdot x\) and \(m = b\cdot x\), so \(\nabla z = a\) and \(\nabla m = b\)):</p>
-$$ \nabla f = \operatorname{silu}'(z)\, m\, a + \operatorname{silu}(z)\, b. $$
-<p>Differentiate again. The first term gives \(\operatorname{silu}''(z)\,m\,aa^\top + \operatorname{silu}'(z)\,a b^\top\); the second gives \(\operatorname{silu}'(z)\,b a^\top\). So</p>
-$$ \nabla^2 f = \operatorname{silu}''(z)\, m\; aa^\top + \operatorname{silu}'(z)\, \operatorname{sym}(ab^\top), \qquad \operatorname{sym}(ab^\top) = ab^\top + ba^\top. $$
+<p>Write \(z = a\cdot x\) and \(m = b\cdot x\). These are straight reads, so \(\partial z/\partial x_k = a_k\) and \(\partial m/\partial x_k = b_k\) (entry \(k\) of \(a\) and of \(b\)).</p>
+<p><b>Step 1: first derivative, by the product rule.</b> \(f = \operatorname{silu}(z)\cdot m\), so \(\partial f/\partial x_k = \big[\partial\operatorname{silu}(z)/\partial x_k\big]\,m + \operatorname{silu}(z)\,b_k\).</p>
+<p><b>Step 2: the chain rule on the bracket.</b> \(\partial\operatorname{silu}(z)/\partial x_k = \operatorname{silu}'(z)\,a_k\). So</p>
+$$ \frac{\partial f}{\partial x_k} = \operatorname{silu}'(z)\,m\,a_k + \operatorname{silu}(z)\,b_k, \qquad\text{that is}\qquad \nabla f = \operatorname{silu}'(z)\, m\, a + \operatorname{silu}(z)\, b. $$
+<p><b>Step 3: differentiate the first term with respect to \(x_{k'}\).</b> \(a_k\) is fixed. \(\operatorname{silu}'(z)\,m\) is a product, so the product rule gives \(\operatorname{silu}''(z)\,a_{k'}\,m + \operatorname{silu}'(z)\,b_{k'}\). Times \(a_k\): \(\operatorname{silu}''(z)\,m\,a_ka_{k'} + \operatorname{silu}'(z)\,a_kb_{k'}\).</p>
+<p><b>Step 4: differentiate the second term with respect to \(x_{k'}\).</b> \(b_k\) is fixed and \(\operatorname{silu}(z)\) changes at rate \(\operatorname{silu}'(z)\,a_{k'}\). So it gives \(\operatorname{silu}'(z)\,b_ka_{k'}\).</p>
+<p><b>Step 5: write the entries as matrices.</b> The numbers \(a_ka_{k'}\), over all \(k, k'\), form \(aa^\top\); \(a_kb_{k'}\) form \(ab^\top\); \(b_ka_{k'}\) form \(ba^\top\). Add Steps 3 and 4:</p>
+$$ \nabla^2 f = \operatorname{silu}''(z)\, m\; aa^\top + \operatorname{silu}'(z)\,\big(ab^\top + ba^\top\big) = \operatorname{silu}''(z)\, m\; aa^\top + \operatorname{silu}'(z)\, \operatorname{sym}(ab^\top). $$
 <p>This is theory-v2 §2.1's formula for one neuron. It has two parts. The <b>gate×up</b> part \(\operatorname{silu}'(z)\operatorname{sym}(ab^\top)\) is present even if silu were a straight line: it comes purely from multiplying two reads. The <b>gate×gate</b> part is rank 1, along \(a\), and its size depends on the up read \(m\). Both coefficients depend on the input; only the directions \(a\) and \(b\) are fixed by the weights.</p>
 
 <h3>Worked example</h3>
-<p>Take \(a = (1, 0)\) and \(b = (0, 1)\), so \(f = \operatorname{silu}(x_1)\,x_2\). At the origin, \(z = 0\) and \(m = 0\). Using \(\operatorname{silu}'(0) = 0.5\):</p>
-$$ \nabla^2 f(0, 0) = 0 \cdot aa^\top + 0.5\,\big(ab^\top + ba^\top\big) = \begin{pmatrix}0 & 0.5\\ 0.5 & 0\end{pmatrix}. $$
-<p>A saddle with eigenvalues \(\pm 0.5\) along \((1, 1)/\sqrt2\) and \((1, -1)/\sqrt2\) (<a href="09.html">Level 9</a>). Check with a 2×2 mixed difference using moves of 0.1 on each axis: \(f(0.1, 0.1) - f(0.1, 0) - f(0, 0.1) + f(0, 0) = 0.1\cdot\operatorname{silu}(0.1) = 0.00525\), and \(0.00525/(0.1 \times 0.1) = 0.525\), close to the mixed partial 0.5 (<a href="06.html">Level 6</a>). Note that the first derivative at the origin is \(\nabla f = 0.5 \cdot 0 \cdot a + 0 \cdot b = (0, 0)\): to first order, this neuron does nothing at the origin, yet the two directions interact.</p>
-<p>At \(x = (2, 1)\): \(z = 2\), \(m = 1\), \(\operatorname{silu}'(2) \approx 1.091\) and \(\operatorname{silu}''(2) \approx 0.050\), so</p>
-$$ \nabla^2 f(2, 1) \approx \begin{pmatrix}0.050 & 1.091\\ 1.091 & 0\end{pmatrix}, $$
-<p>with eigenvalues about \(+1.12\) and \(-1.07\). Same directions \(a\), \(b\); different numbers, because the coefficients depend on where you stand.</p>
+<p>Take \(a = (1, 0)\) and \(b = (0, 1)\), so \(z = x_1\), \(m = x_2\) and \(f = \operatorname{silu}(x_1)\,x_2\).</p>
+<p><b>Step 1: the reads at the origin.</b> \(z = 0\) and \(m = 0\).</p>
+<p><b>Step 2: the coefficients.</b> \(\operatorname{silu}''(0)\,m = 0.5\times0 = 0\), and \(\operatorname{silu}'(0) = \sigma(0) + 0 = 0.5\).</p>
+<p><b>Step 3: the outer products.</b> \(ab^\top = \begin{pmatrix}0 & 1\\ 0 & 0\end{pmatrix}\) (row 1 is \(a_1 b = (0, 1)\), row 2 is \(a_2 b = (0, 0)\)), and \(ba^\top\) is its transpose, \(\begin{pmatrix}0 & 0\\ 1 & 0\end{pmatrix}\).</p>
+<p><b>Step 4: put them in the formula.</b></p>
+$$ \nabla^2 f(0, 0) = 0 \cdot aa^\top + 0.5\,\big(ab^\top + ba^\top\big) = 0.5\begin{pmatrix}0 & 1\\ 1 & 0\end{pmatrix} = \begin{pmatrix}0 & 0.5\\ 0.5 & 0\end{pmatrix}. $$
+<p>A saddle with eigenvalues \(\pm 0.5\) along \((1, 1)/\sqrt2\) and \((1, -1)/\sqrt2\) (<a href="09.html">Level 9</a>).</p>
+<p><b>Step 5: check with a 2×2 mixed difference</b> (<a href="06.html">Level 6</a>), moves of 0.1 on each axis. \(f(0.1, 0.1) = \operatorname{silu}(0.1)\times0.1\), with \(\operatorname{silu}(0.1) = 0.1\times\sigma(0.1) = 0.1\times0.5250 = 0.05250\), so \(f(0.1, 0.1) = 0.005250\). \(f(0.1, 0) = \operatorname{silu}(0.1)\times0 = 0\). \(f(0, 0.1) = \operatorname{silu}(0)\times0.1 = 0\). \(f(0, 0) = 0\). So the interaction is \(0.005250 - 0 - 0 + 0 = 0.005250\). Divide by the two move sizes: \(0.005250/(0.1\times0.1) = 0.525\), close to the mixed partial 0.5.</p>
+<p><b>Step 6: the first derivative there.</b> \(\nabla f = \operatorname{silu}'(0)\cdot m\cdot a + \operatorname{silu}(0)\cdot b = 0.5\times0\times a + 0\times b = (0, 0)\). To first order this neuron does nothing at the origin, yet the two directions interact.</p>
+<p>Now at \(x = (2, 1)\).</p>
+<p><b>Step 1: the reads.</b> \(z = a\cdot x = 2\) and \(m = b\cdot x = 1\).</p>
+<p><b>Step 2: the derivatives of silu at 2</b> (formulas from <a href="11.html">Level 11</a>). \(\sigma(2) = 0.8808\) and \(\sigma'(2) = 0.8808\times0.1192 = 0.1050\). \(\operatorname{silu}'(2) = \sigma + z\sigma' = 0.8808 + 2\times0.1050 = 1.091\). \(\operatorname{silu}''(2) = \sigma'\big(2 + z(1 - 2\sigma)\big) = 0.1050\times\big(2 + 2\times(-0.7616)\big) = 0.1050\times0.4768 = 0.050\).</p>
+<p><b>Step 3: the coefficients.</b> \(\operatorname{silu}''(2)\,m = 0.050\times1 = 0.050\) in front of \(aa^\top = \begin{pmatrix}1 & 0\\ 0 & 0\end{pmatrix}\), and \(\operatorname{silu}'(2) = 1.091\) in front of \(ab^\top + ba^\top = \begin{pmatrix}0 & 1\\ 1 & 0\end{pmatrix}\). Add:</p>
+$$ \nabla^2 f(2, 1) \approx \begin{pmatrix}0.050 & 1.091\\ 1.091 & 0\end{pmatrix}. $$
+<p><b>Step 4: eigenvalues.</b> Trace 0.050, determinant \(0.050\times0 - 1.091^2 = -1.190\). So the eigenvalues are \(\big(0.050 \pm \sqrt{0.050^2 + 4\times1.190}\big)/2 = (0.050 \pm 2.182)/2\): about \(+1.12\) and \(-1.07\). Same directions \(a\), \(b\); different numbers, because the coefficients depend on where you stand.</p>
 
 <figure class="sim" id="sim-swiglu">
 <figcaption><b>Figure 14.4.</b> One toy SwiGLU neuron, \(f(x) = \operatorname{silu}(a\cdot x)\,(b\cdot x)\), over a 2-D input (no unit). Red is positive output, blue negative; gray lines are contours. The black arrow is the gate direction \(a\), the gray arrow the up direction \(b\); set their angles with the sliders (0° and 90° give the worked example above). Drag the black dot: at that point the Hessian is computed from the formula above, and its eigenvectors are drawn (red: positive curvature, blue: negative). Look for: the saddle shape wherever both reads matter. Tick “bilinear” to replace silu by the identity: then the Hessian is the constant \(\operatorname{sym}(ab^\top)\), the same at every point. Compare \(a \perp b\) (a pure saddle, eigenvalues +1 and −1) with \(a \parallel b\) (eigenvalues 2 and 0: the product becomes a square).</figcaption>
@@ -242,8 +266,12 @@ $$ \operatorname{logit}_t = W_U[t]\cdot N_{\text{final}}\big(h_{L^*}[p]\big), \q
 <p>A softmax over all tokens turns the logits into \(P(t)\), the predicted probability that token \(t\) comes next. <b>Intuition pump: a scoreboard of templates.</b> Each token has a template vector \(W_U[t]\). Its logit is how well the normalised notepad matches that template.</p>
 
 <h3>The pre-norm proxy: why the J-lens reads \(u_t\cdot h\)</h3>
-<p>Define \(u_t = (1 + w_{\text{final}}) \odot W_U[t]\): the template with the final gain folded in. Then, coordinate by coordinate,</p>
-$$ u_t\cdot h = \sum_k (1 + w_{\text{final},k})\,W_U[t]_k\, h_k = \operatorname{rms}(h)\sum_k W_U[t]_k\,\frac{(1 + w_{\text{final},k})\,h_k}{\operatorname{rms}(h)} = \operatorname{rms}(h)\cdot\operatorname{logit}_t. $$
+<p>Define \(u_t = (1 + w_{\text{final}}) \odot W_U[t]\): the template with the final gain folded in. Then, in steps:</p>
+<p><b>Step 1: write the dot product coordinate by coordinate.</b> Entry \(k\) of \(u_t\) is \((1 + w_{\text{final},k})\,W_U[t]_k\), so \(u_t\cdot h = \sum_k (1 + w_{\text{final},k})\,W_U[t]_k\, h_k\).</p>
+<p><b>Step 2: multiply and divide by \(\operatorname{rms}(h)\).</b> This changes nothing (it is multiplying by 1), and \(\operatorname{rms}(h)\) is the same number for every \(k\), so it can sit outside the sum:</p>
+$$ u_t\cdot h = \operatorname{rms}(h)\sum_k W_U[t]_k\,\frac{(1 + w_{\text{final},k})\,h_k}{\operatorname{rms}(h)} . $$
+<p><b>Step 3: recognise the norm.</b> The fraction is entry \(k\) of \(N_{\text{final}}(h)\). So the sum is \(W_U[t]\cdot N_{\text{final}}(h) = \operatorname{logit}_t\), and</p>
+$$ u_t\cdot h = \operatorname{rms}(h)\cdot\operatorname{logit}_t. $$
 <p>So \(u_t\cdot h_{L^*}\) is the logit times the rms of the final state. theory-v2 §0 stresses that the J-lens targets this pre-norm proxy, \(u_t\cdot h_{L^*} = \operatorname{rms}(h_{L^*})\cdot\operatorname{logit}_t\), not \(\operatorname{logit}_t\) itself. The proxy is linear in \(h_{L^*}\); the true logit has the curved division by rms in it. At one position the rms is the same for every token and positive, so the proxy ranks tokens in exactly the same order as the logits. What it changes is the scale, and the curvature: the final norm's own curvature is left out by construction.</p>
 <p><b>Worked example</b> with \(d = 4\): \(h = (2, -1, 0, 3)\) a.u., \(w_{\text{final}} = (0, 0.5, 0, -0.5)\), \(W_U[t] = (1, 2, 0, 1)\).</p>
 $$ \operatorname{rms}(h) = \sqrt{\tfrac14(4 + 1 + 0 + 9)} = \sqrt{3.5} \approx 1.871\ \text{a.u.}, \qquad N_{\text{final}}(h) = \frac{(1\cdot 2,\ 1.5\cdot(-1),\ 0,\ 0.5\cdot 3)}{1.871} = (1.069, -0.802, 0, 0.802). $$
@@ -258,7 +286,7 @@ $$ \operatorname{KL}(P \,\Vert\, P') = \sum_t P(t)\,\ln\frac{P(t)}{P'(t)}. $$
 <p><b>Intuition pump: a weather forecaster.</b> If the truth is \(P\) and you plan with forecast \(P'\), KL is the average extra surprise you suffer, in nats per day. It is 0 only when \(P' = P\), and it is never negative.</p>
 <p>Worked: \(P = (0.7, 0.2, 0.1)\), \(P' = (0.5, 0.3, 0.2)\):</p>
 $$ 0.7\ln\tfrac{0.7}{0.5} + 0.2\ln\tfrac{0.2}{0.3} + 0.1\ln\tfrac{0.1}{0.2} = 0.7(0.3365) + 0.2(-0.4055) + 0.1(-0.6931) = 0.2355 - 0.0811 - 0.0693 = 0.085\ \text{nats}. $$
-<p>Swap the roles and you get 0.092 nats: KL is not symmetric. In this project KL measures damage: delete a subspace from the residual stream and compare the model's next-token distribution before (\(P\)) and after (\(P'\)). Run 1's criterion C5 asked whether deleting the candidate H-space raised KL at least 3 times more than deleting random subspaces (README).</p>
+<p>Swap the roles: \(0.5\ln\tfrac{0.5}{0.7} + 0.3\ln\tfrac{0.3}{0.2} + 0.2\ln\tfrac{0.2}{0.1} = 0.5(-0.3365) + 0.3(0.4055) + 0.2(0.6931) = -0.1682 + 0.1216 + 0.1386 = 0.092\) nats. KL is not symmetric. In this project KL measures damage: delete a subspace from the residual stream and compare the model's next-token distribution before (\(P\)) and after (\(P'\)). Run 1's criterion C5 asked whether deleting the candidate H-space raised KL at least 3 times more than deleting random subspaces (README).</p>
 
 <h2>14.9 The two models, in numbers</h2>
 <p>All facts in this table are from theory-v2 §0.</p>
@@ -311,10 +339,17 @@ $$ S = 2h[1] + h[2] + 0.5\,h[1] + h[3] + 0.5\,h[2] = 2.5\,h[1] + 1.5\,h[2] + 1\,
 <p>The J-lens decodes a layer-\(\ell\) state \(h\) by carrying it to the output linearly and reading it with the token vectors:</p>
 $$ \text{score}_t(h) = u_t^\top J_\ell\, h. $$
 <p>Read it in two steps. \(J_\ell h\) is “where this state would push the summed final residual, on average”. Then \(u_t\cdot(\cdot)\) is the pre-norm proxy for token \(t\) from 14.8. The code writes the same thing as <code>lens_l(h) = unembed( J_l @ h )</code>. The tokens with the highest scores are the lens's reading of \(h\).</p>
-<p>Group the product the other way and each token gets a fixed direction at layer \(\ell\):</p>
+<p>Group the product the other way and each token gets a fixed direction at layer \(\ell\).</p>
+<p><b>Step 1: regroup.</b> Matrix products can be grouped either way: \(u_t^\top(J_\ell h) = (u_t^\top J_\ell)\,h\).</p>
+<p><b>Step 2: turn the row into a column.</b> \(u_t^\top J_\ell\) is a row. The transpose of a product is the product of the transposes in reverse order, so \((u_t^\top J_\ell)^\top = J_\ell^\top u_t\). A row times a column is the dot product of the matching column with that column, so \((u_t^\top J_\ell)\,h = (J_\ell^\top u_t)\cdot h\).</p>
+<p><b>Step 3: name it.</b></p>
 $$ \text{score}_t(h) = (J_\ell^\top u_t)\cdot h = r_t\cdot h, \qquad r_t = J_\ell^\top u_t. $$
 <p>\(r_t\) is token \(t\)'s read direction at layer \(\ell\): the direction in the layer-\(\ell\) residual stream that, on average, pushes the output towards \(t\). This is a vector-Jacobian product (<a href="10.html">Level 10</a>).</p>
-<p><b>Worked example.</b> Take \(d = 2\), \(J_\ell = \begin{pmatrix}1 & 0.5\\ 0 & 2\end{pmatrix}\), state \(h = (1, 1)\), and two tokens with \(u_A = (1, 0)\), \(u_B = (0, 1)\). Then \(J_\ell h = (1.5, 2)\), so \(\text{score}_A = 1.5\) and \(\text{score}_B = 2\): the lens reads B. The read directions are \(r_A = J_\ell^\top u_A = (1, 0.5)\) and \(r_B = (0, 2)\), and indeed \(r_A\cdot h = 1.5\), \(r_B\cdot h = 2\).</p>
+<p><b>Worked example.</b> Take \(d = 2\), \(J_\ell = \begin{pmatrix}1 & 0.5\\ 0 & 2\end{pmatrix}\), state \(h = (1, 1)\), and two tokens with \(u_A = (1, 0)\), \(u_B = (0, 1)\). </p>
+<p><b>Step 1: carry the state.</b> Row by row, \(J_\ell h = (1\times1 + 0.5\times1,\ 0\times1 + 2\times1) = (1.5, 2)\).</p>
+<p><b>Step 2: read it.</b> \(\text{score}_A = u_A\cdot(1.5, 2) = 1.5\) and \(\text{score}_B = u_B\cdot(1.5, 2) = 2\). The lens reads B.</p>
+<p><b>Step 3: the read directions.</b> \(J_\ell^\top = \begin{pmatrix}1 & 0\\ 0.5 & 2\end{pmatrix}\) (rows and columns swapped). \(r_A = J_\ell^\top u_A = (1\times1 + 0\times0,\ 0.5\times1 + 2\times0) = (1, 0.5)\) and \(r_B = J_\ell^\top u_B = (0, 2)\).</p>
+<p><b>Step 4: check.</b> \(r_A\cdot h = 1 + 0.5 = 1.5\) and \(r_B\cdot h = 0 + 2 = 2\). The same scores.</p>
 
 <figure class="sim" id="sim-jlens">
 <figcaption><b>Figure 14.5.</b> A toy averaged-Jacobian lens. The “model” is a made-up 2-D residual map \(F(h) = h + W_2\,\operatorname{silu}(W_1 h + b_1)\) with fixed toy weights. Left: input space, with the inputs used for averaging (gray) and a state \(h\) you can drag (black). Right: output space, with three toy token vectors \(u_A, u_B, u_C\) (coloured lines). The lens matrix \(\bar J\) is the average of the exact Jacobian of \(F\) over the gray inputs; the blue arrow is \(\bar J h\), and the gray arrow is the true output \(F(h)\). The coloured arrows on the left are the read directions \(r_t = \bar J^\top u_t\). Look for: with 1 input the lens is just one point's Jacobian; as the slider adds inputs, \(\bar J\) settles down (Monte Carlo, Level 13). Move \(h\) and compare the lens's top token with the true top token: they mostly agree, and disagree where the toy is most curved. Tick “local Jacobian” to use the Jacobian at \(h\) itself instead of the average.</figcaption>

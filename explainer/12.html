@@ -70,15 +70,20 @@
 <tr><td>\(\langle\cdot, \cdot\rangle\)</td><td>“dot product of”</td><td>dot product of two vectors: \(\langle\mathbf{g}, \varphi\rangle = \mathbf{g}^\top\varphi\)</td><td>product of units</td><td>\(\langle(1,2),(3,4)\rangle = 11\)</td></tr>
 <tr><td>\(\mathbf{v}\); \(\dot{\mathbf{y}}_k\), \(\dot{\mathbf{g}}_k\)</td><td>“v”, “y k dot”, “g k dot”</td><td>a direction; the tangent values of the state and of the adjoint along it (Levels 10, 11)</td><td>as the state; as the adjoint</td><td>\(\dot{y}_1 = 2\)</td></tr>
 <tr><td>\(n\); \(\theta_n\), \(z_n\), \(\bar{g}_n\)</td><td>“n”, “theta n”</td><td>a node of a computational graph; a one-input node's function, its input value, and the adjoint at its output. theory-v2 writes \(\sigma_n\) for \(\theta_n\)</td><td>depends</td><td>\(\theta = \operatorname{silu}\)</td></tr>
-<tr><td>\(\mathbf{a}_n, \mathbf{b}_n\)</td><td>“a n”, “b n”</td><td>reads: the gradients of a node's inputs with respect to the sublayer input</td><td>per input</td><td>\(\mathbf{a}_n = \mathbf{w}_1\)</td></tr>
+<tr><td>\(\mathbf{a}_n, \mathbf{b}_n\)</td><td>“a n”, “b n”</td><td>reads: the gradients of a node's inputs with respect to the sublayer input; their entries are \(a_{n,j}\), \(b_{n,j}\)</td><td>per input</td><td>\(\mathbf{a}_n = \mathbf{w}_1\)</td></tr>
+<tr><td>\(\zeta_n\)</td><td>“zeta n”</td><td>the second input value of a product node (its first is \(z_n\))</td><td>depends</td><td>\(\zeta_n = \mathbf{b}_n\cdot\mathbf{y} + \text{const}\)</td></tr>
+<tr><td>\(\omega\)</td><td>“omega”</td><td>in 12.5 only: an unknown eigenvalue while we solve for it</td><td>as the matrix</td><td>\(\omega = 1 + \sqrt2\)</td></tr>
 <tr><td>\(\operatorname{sym}(M)\)</td><td>“sym of M”</td><td>\(M + M^\top\) (theory-v2's convention: no factor ½)</td><td>as \(M\)</td><td>\(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top) = \mathbf{a}\mathbf{b}^\top + \mathbf{b}\mathbf{a}^\top\)</td></tr>
 <tr><td>\(\mathbf{a}, \mathbf{b}\)</td><td>“bold a, bold b”</td><td>from 12.6 on: the two moves of an interaction test (no subscript)</td><td>input units</td><td>\(\mathbf{a} = (1, -1)\)</td></tr>
 <tr><td>\(I(\mathbf{a}, \mathbf{b})\)</td><td>“I of a, b”</td><td>four-corner interaction: \(f(\mathbf{h}) - f(\mathbf{h}-\mathbf{a}) - f(\mathbf{h}-\mathbf{b}) + f(\mathbf{h}-\mathbf{a}-\mathbf{b})\)</td><td>output unit</td><td>\(-0.7606\)</td></tr>
 <tr><td>\(P\)</td><td>“P”</td><td>the parallelogram with corners \(\mathbf{h}, \mathbf{h}-\mathbf{a}, \mathbf{h}-\mathbf{b}, \mathbf{h}-\mathbf{a}-\mathbf{b}\) (theory-v2 calls it the rectangle)</td><td>a region</td><td></td></tr>
 <tr><td>\(s,\ t\)</td><td>“s, t”</td><td>coordinates inside \(P\): the point \(\mathbf{h} - \mathbf{a} - \mathbf{b} + s\mathbf{a} + t\mathbf{b}\), with \(0\le s,t\le 1\)</td><td>none (fractions)</td><td>\(s = t = 0.5\) is the centre</td></tr>
 <tr><td>\(\psi(s,t)\)</td><td>“psi”</td><td>\(f\) at that point. theory-v2 writes \(\varphi(s,t)\)</td><td>output unit</td><td>\(\psi(1,1) = f(\mathbf{h})\)</td></tr>
-<tr><td>\(q\), \(q'\); \(\Delta s\)</td><td>“q”, “delta s”</td><td>in 12.7 only: any smooth function of one variable and its derivative; a small width of interval</td><td>depends</td><td>\(q(s) = s^2\)</td></tr>
+<tr><td>\(q\), \(q'\), \(q''\); \(\Delta s\)</td><td>“q”, “delta s”</td><td>in 12.4 (the direct check) and 12.7 only: a smooth function of one variable, its derivatives \(q'\), \(q''\); a small width of interval</td><td>depends</td><td>\(q(s) = s^2\)</td></tr>
 <tr><td>\(\mu,\ \nu\)</td><td>“mu”, “nu”</td><td>in 12.8 only: how much of \(\mathbf{a}\) and of \(\mathbf{b}\) has been removed, in \(f(\mathbf{h} - \mu\mathbf{a} - \nu\mathbf{b})\)</td><td>none (pure numbers)</td><td>\(\mu = \nu = 1\): far corner</td></tr>
+<tr><td>\(\chi(\mu,\nu)\)</td><td>“chi of mu, nu”</td><td>in 12.8 only: \(f(\mathbf{h} - \mu\mathbf{a} - \nu\mathbf{b})\)</td><td>output unit</td><td>\(\chi(1,1) = f(\mathbf{h}-\mathbf{a}-\mathbf{b})\)</td></tr>
+<tr><td>\(\boldsymbol{\delta}\)</td><td>“bold delta”</td><td>in 12.8 only: a move away from the expansion point</td><td>input units</td><td>\(-\mu\mathbf{a} - \nu\mathbf{b}\)</td></tr>
+<tr><td>\(\epsilon_a,\ \epsilon_b\)</td><td>“epsilon a”, “epsilon b”</td><td>in 12.8 only: signs (+1 or −1) naming a corner \(\mathbf{m} + \tfrac12\epsilon_a\mathbf{a} + \tfrac12\epsilon_b\mathbf{b}\)</td><td>none (pure numbers)</td><td>\((+1, +1)\) is \(\mathbf{h}\)</td></tr>
 <tr><td>\(\operatorname{gap}(t)\)</td><td>“gap of t”</td><td>\(\psi(1,t) - \psi(0,t)\), used in the proof</td><td>output unit</td><td></td></tr>
 <tr><td>\(\partial_s\), \(\partial_t\)</td><td>“d by d s”</td><td>partial derivative with respect to \(s\), to \(t\)</td><td>per unit of \(s\), \(t\)</td><td></td></tr>
 <tr><td>\(\displaystyle\int_0^1 \ldots\,ds\)</td><td>“integral from 0 to 1, d s”</td><td>the continuous sum over \(s\) from 0 to 1; over a length-1 interval it is the average</td><td>unit of the integrand</td><td>\(\int_0^1 2s\,ds = 1\)</td></tr>
@@ -118,13 +123,14 @@ $$ \big(f(g(x))\big)'' = \big[f'(g(x))\big]'\cdot g'(x) + f'(g(x))\cdot g''(x). 
 
 <h3>Worked example: an accelerating balloon, every unit</h3>
 <p>Let the radius grow faster and faster: \(R(\tau) = 2 + 0.25\,\tau^2\) cm, at time \(\tau\) in seconds. The volume is \(V(R) = \tfrac43\pi R^3\) cm³. Take \(\tau = 2\) s.</p>
-<ol>
-<li>Inner value and rates: \(R = 2 + 0.25\times4 = 3\) cm; \(R' = 0.5\tau = 1\) cm/s; \(R'' = 0.5\) cm/s².</li>
-<li>Outer rates at \(R = 3\) cm: \(V'(R) = 4\pi R^2 = 36\pi = 113.10\) cm³/cm; \(V''(R) = 8\pi R = 24\pi = 75.40\) cm³/cm².</li>
-<li>First term: \(V''\cdot R'^2 = 75.40\ \tfrac{\text{cm}^3}{\text{cm}^2}\times\big(1\ \tfrac{\text{cm}}{\text{s}}\big)^2 = 75.40\ \tfrac{\text{cm}^3}{\text{s}^2}\). The cm² on the bottom cancels the cm² from squaring the rate.</li>
-<li>Second term: \(V'\cdot R'' = 113.10\ \tfrac{\text{cm}^3}{\text{cm}}\times0.5\ \tfrac{\text{cm}}{\text{s}^2} = 56.55\ \tfrac{\text{cm}^3}{\text{s}^2}\).</li>
-<li>Sum: \(\dfrac{d^2V}{d\tau^2} = 75.40 + 56.55 = 131.95\) cm³/s² (that is \(42\pi\)).</li>
-</ol>
+<p><b>Step 1: the inner value.</b> Put \(\tau = 2\) into \(R(\tau)\): \(R = 2 + 0.25\times2^2 = 2 + 0.25\times4 = 3\) cm.</p>
+<p><b>Step 2: the inner slope.</b> Differentiate \(R(\tau) = 2 + 0.25\,\tau^2\). The constant 2 gives 0. The power rule gives \(0.25\times2\tau = 0.5\,\tau\). So \(R' = 0.5\,\tau\), and at \(\tau = 2\) s, \(R' = 1\) cm/s.</p>
+<p><b>Step 3: the inner curvature.</b> Differentiate \(R' = 0.5\,\tau\) once more: \(R'' = 0.5\) cm/s², the same at every time.</p>
+<p><b>Step 4: the outer slope.</b> Differentiate \(V(R) = \tfrac43\pi R^3\) by the power rule: \(V'(R) = \tfrac43\pi\times3R^2 = 4\pi R^2\). At \(R = 3\) cm: \(4\pi\times9 = 36\pi = 113.10\) cm³/cm.</p>
+<p><b>Step 5: the outer curvature.</b> Differentiate \(4\pi R^2\): \(V''(R) = 8\pi R\). At \(R = 3\) cm: \(24\pi = 75.40\) cm³/cm².</p>
+<p><b>Step 6: the first term.</b> \(V''\cdot R'^2 = 75.40\ \tfrac{\text{cm}^3}{\text{cm}^2}\times\big(1\ \tfrac{\text{cm}}{\text{s}}\big)^2 = 75.40\ \tfrac{\text{cm}^3}{\text{s}^2}\). The cm² on the bottom cancels the cm² from squaring the rate.</p>
+<p><b>Step 7: the second term.</b> \(V'\cdot R'' = 113.10\ \tfrac{\text{cm}^3}{\text{cm}}\times0.5\ \tfrac{\text{cm}}{\text{s}^2} = 56.55\ \tfrac{\text{cm}^3}{\text{s}^2}\).</p>
+<p><b>Step 8: add.</b> \(\dfrac{d^2V}{d\tau^2} = 75.40 + 56.55 = 131.95\) cm³/s². In exact form: \(24\pi + 18\pi = 42\pi\).</p>
 <p><b>Mechanics check.</b> The second difference \(\big(V(\tau{+}0.001) - 2V(\tau) + V(\tau{-}0.001)\big)/0.001^2\) at \(\tau = 2\) s is 131.95 cm³/s². Both units agree: a rate of change of a filling rate, “cm³ per second, per second”.</p>
 <div class="box warn">
 <span class="boxtitle">The common mistake</span>
@@ -148,25 +154,40 @@ The same two sources: the outer curvature, transported by the inner Jacobian on 
 <li>Differentiate with respect to \(x_k\). Each term is a product, so use the product rule:
 $$ \frac{\partial^2 (G\circ\mathbf{p})}{\partial x_j\,\partial x_k} = \sum_i \Big[\frac{\partial}{\partial x_k}\frac{\partial G}{\partial p_i}\Big]\frac{\partial p_i}{\partial x_j} + \sum_i \frac{\partial G}{\partial p_i}\,\frac{\partial^2 p_i}{\partial x_j\,\partial x_k}. $$</li>
 <li>The bracket is a chain again: \(\frac{\partial}{\partial x_k}\frac{\partial G}{\partial p_i} = \sum_l \frac{\partial^2 G}{\partial p_i\,\partial p_l}\frac{\partial p_l}{\partial x_k}\).</li>
-<li>So the first sum is \(\sum_{i,l} J_{ij}\,(\nabla^2G)_{il}\,J_{lk}\), which is entry \((j,k)\) of \(J^\top\nabla^2G\,J\). The second sum is entry \((j,k)\) of \(\sum_i \frac{\partial G}{\partial p_i}\nabla^2p_i\). Done.</li>
+<li>Substitute step 3 into the first sum of step 2. Rename the slopes as Jacobian entries, \(\partial p_i/\partial x_j = J_{ij}\) and \(\partial p_l/\partial x_k = J_{lk}\) (row = output, column = input), and the outer second derivatives as \((\nabla^2G)_{il}\). The first sum becomes \(\sum_{i,l} J_{ij}\,(\nabla^2G)_{il}\,J_{lk}\).</li>
+<li>Use the transpose to put the indices in matrix-product order: \(J_{ij} = (J^\top)_{ji}\). So the first sum is \(\sum_{i,l} (J^\top)_{ji}\,(\nabla^2G)_{il}\,J_{lk}\). A product of three matrices has entry \((j,k)\) equal to exactly this double sum (row \(j\) of the first, through the middle, to column \(k\) of the last). So the first sum is entry \((j,k)\) of \(J^\top\nabla^2G\,J\).</li>
+<li>The second sum of step 2 is, entry by entry, \(\sum_i \frac{\partial G}{\partial p_i}(\nabla^2p_i)_{jk}\): entry \((j,k)\) of the matrix \(\sum_i \frac{\partial G}{\partial p_i}\nabla^2p_i\). Done.</li>
 </ol>
+<p><b>Toy check of the transport term.</b> Let \(\mathbf{p}(\mathbf{x}) = (2x_1,\ x_2)\) and \(G(\mathbf{p}) = p_1p_2\). Then \(J = \operatorname{diag}(2, 1)\), \(\nabla^2G = \begin{pmatrix}0 &amp; 1\\ 1 &amp; 0\end{pmatrix}\), and every \(\nabla^2p_i = 0\). The rule gives \(J^\top\nabla^2G\,J = \begin{pmatrix}0 &amp; 2\\ 2 &amp; 0\end{pmatrix}\). Directly: \(G(\mathbf{p}(\mathbf{x})) = 2x_1x_2\), whose mixed partial is 2. Same.</p>
 <p>Units check: (output per \(p_i\) per \(p_l\)) × (\(p_i\) per \(x_j\)) × (\(p_l\) per \(x_k\)) = output per \(x_j\) per \(x_k\), the unit of a Hessian entry.</p>
 
 <h3>Worked example: the tiny network's Hessian, a third way</h3>
 <p>Take \(p_i = \operatorname{silu}(z_i)\) with \(z_1 = x_1 - x_2 + 0.5\) and \(z_2 = 0.5x_1 + x_2 - 1\), and \(G(\mathbf{p}) = c_1p_1 + c_2p_2\) with \(\mathbf{c} = (1.5, -1)\).</p>
-<ul>
-<li>\(G\) is linear, so \(\nabla^2G = 0\): the first term vanishes.</li>
-<li>\(\partial G/\partial p_i = c_i\).</li>
-<li>\(\nabla^2 p_i\): \(\partial p_i/\partial x_j = \operatorname{silu}'(z_i)\,W_{ij}\), and once more \(\partial^2p_i/\partial x_j\partial x_k = \operatorname{silu}''(z_i)\,W_{ij}W_{ik}\). In matrix form \(\nabla^2p_i = \operatorname{silu}''(z_i)\,\mathbf{w}_i\mathbf{w}_i^\top\), where \(\mathbf{w}_1 = (1, -1)\) and \(\mathbf{w}_2 = (0.5, 1)\) are the rows of \(W\).</li>
-</ul>
-<p>At \(\mathbf{x} = (1,2)\): \(c_1\operatorname{silu}''(z_1) = 1.5\times0.4412 = 0.6618\) and \(c_2\operatorname{silu}''(z_2) = -1\times0.1562 = -0.1562\). So</p>
+<p><b>Step 1: the outer curvature.</b> \(G\) is linear, so all its second derivatives are 0: \(\nabla^2G = 0\), and the first term of the rule vanishes.</p>
+<p><b>Step 2: the outer slopes.</b> \(\partial G/\partial p_i = c_i\).</p>
+<p><b>Step 3: first derivative of \(p_i\).</b> \(z_i = W_{i1}x_1 + W_{i2}x_2 + \text{a fixed bias}\) (for example \(z_1 = x_1 - x_2 + 0.5\)), so \(\partial z_i/\partial x_j = W_{ij}\). By the chain rule, \(\partial p_i/\partial x_j = \operatorname{silu}'(z_i)\,W_{ij}\).</p>
+<p><b>Step 4: second derivative of \(p_i\).</b> Differentiate step 3 with respect to \(x_k\). \(W_{ij}\) is a fixed number. \(\operatorname{silu}'(z_i)\) changes at rate \(\operatorname{silu}''(z_i)\,W_{ik}\) (chain rule again). So \(\partial^2p_i/\partial x_j\partial x_k = \operatorname{silu}''(z_i)\,W_{ij}W_{ik}\).</p>
+<p><b>Step 5: matrix form.</b> The numbers \(W_{ij}W_{ik}\), over all \(j, k\), are the entries of the outer product \(\mathbf{w}_i\mathbf{w}_i^\top\), where \(\mathbf{w}_1 = (1, -1)\) and \(\mathbf{w}_2 = (0.5, 1)\) are the rows of \(W\). So \(\nabla^2p_i = \operatorname{silu}''(z_i)\,\mathbf{w}_i\mathbf{w}_i^\top\), and the rule gives \(H = \sum_i c_i\operatorname{silu}''(z_i)\,\mathbf{w}_i\mathbf{w}_i^\top\).</p>
+<p><b>Step 6: the two outer products.</b></p>
+$$ \mathbf{w}_1\mathbf{w}_1^\top = \begin{pmatrix}1\cdot1 &amp; 1\cdot(-1)\\ (-1)\cdot1 &amp; (-1)(-1)\end{pmatrix} = \begin{pmatrix}1 &amp; -1\\ -1 &amp; 1\end{pmatrix}, \qquad \mathbf{w}_2\mathbf{w}_2^\top = \begin{pmatrix}0.5\cdot0.5 &amp; 0.5\cdot1\\ 1\cdot0.5 &amp; 1\cdot1\end{pmatrix} = \begin{pmatrix}0.25 &amp; 0.5\\ 0.5 &amp; 1\end{pmatrix}. $$
+<p><b>Step 7: the weights.</b> At \(\mathbf{x} = (1,2)\): \(c_1\operatorname{silu}''(z_1) = 1.5\times0.4412 = 0.6618\) and \(c_2\operatorname{silu}''(z_2) = -1\times0.1562 = -0.1562\).</p>
+<p><b>Step 8: scale and add.</b> Entry (1,1): \(0.6618\times1 - 0.1562\times0.25 = 0.6618 - 0.0390 = 0.6228\). Entry (1,2): \(0.6618\times(-1) - 0.1562\times0.5 = -0.6618 - 0.0781 = -0.7399\). Entry (2,2): \(0.6618\times1 - 0.1562\times1 = 0.5056\). So</p>
 $$ H = 0.6618\begin{pmatrix}1 &amp; -1\\ -1 &amp; 1\end{pmatrix} - 0.1562\begin{pmatrix}0.25 &amp; 0.5\\ 0.5 &amp; 1\end{pmatrix} = \begin{pmatrix}0.6228 &amp; -0.7399\\ -0.7399 &amp; 0.5056\end{pmatrix}, $$
 <p>the same matrix Level 11 got by double backward. Each piece is rank 1: neuron 1 adds upward curvature along \(\mathbf{w}_1\), neuron 2 adds downward curvature along \(\mathbf{w}_2\).</p>
 
 <h3>Worked example: when the outer function curves too</h3>
-<p>Train against a target \(y^\ast = 0\) with \(\mathcal{L} = \tfrac12(y - y^\ast)^2\). The outer function is \(G(y) = \tfrac12(y-y^\ast)^2\), with \(G' = y - y^\ast = -1.5095\) and \(G'' = 1\). The inner function is the network, Jacobian \(\nabla y^\top = (-0.1306, -1.4314)\). The rule gives</p>
-$$ \nabla^2\mathcal{L} = \nabla y\,\nabla y^\top + (y - y^\ast)\,H = \begin{pmatrix}0.0171 &amp; 0.1869\\ 0.1869 &amp; 2.0488\end{pmatrix} + \begin{pmatrix}-0.9401 &amp; 1.1170\\ 1.1170 &amp; -0.7633\end{pmatrix} = \begin{pmatrix}-0.9231 &amp; 1.3039\\ 1.3039 &amp; 1.2855\end{pmatrix}. $$
-<p>The first piece is the Gauss–Newton term (outer curvature carried through the Jacobian; it is never negative along any direction). The second is the network's own curvature, weighted by how far off the output is. Here the two pieces are about the same size (Frobenius norms 2.07 and 1.99). The second one decides the shape: the Gauss–Newton piece alone has eigenvalues 2.07 and 0, but the sum has eigenvalues 1.89 and −1.53, a saddle.</p>
+<p>Train against a target \(y^\ast = 0\) with \(\mathcal{L} = \tfrac12(y - y^\ast)^2\). At \(\mathbf{x} = (1, 2)\) the network gives \(y = -1.5095\).</p>
+<p><b>Step 1: the outer function and its derivatives.</b> The outer function is \(G(y) = \tfrac12(y-y^\ast)^2\), a function of one number. By the chain rule, \(G' = y - y^\ast = -1.5095 - 0 = -1.5095\). Differentiating again, \(G'' = 1\).</p>
+<p><b>Step 2: the inner Jacobian.</b> The inner function is the network, with one output and two inputs. Its Jacobian is one row: the gradient laid flat, \(J = \nabla y^\top = (-0.1306, -1.4314)\).</p>
+<p><b>Step 3: substitute into the rule.</b> \(J^\top\,\nabla^2G\,J = \nabla y\cdot1\cdot\nabla y^\top = \nabla y\,\nabla y^\top\) (a column times a row). The second term has one inner output, so the sum has one term: \(G'\,\nabla^2y = (y - y^\ast)\,H\). So</p>
+$$ \nabla^2\mathcal{L} = \nabla y\,\nabla y^\top + (y - y^\ast)\,H . $$
+<p><b>Step 4: the outer product.</b> Entry \((j,k)\) of \(\nabla y\,\nabla y^\top\) is \((\partial y/\partial x_j)(\partial y/\partial x_k)\): \((-0.1306)^2 = 0.0171\), \((-0.1306)(-1.4314) = 0.1869\), \((-1.4314)^2 = 2.0488\).</p>
+<p><b>Step 5: scale \(H\).</b> Multiply each entry of \(H\) by \(-1.5095\): \(-1.5095\times0.6228 = -0.9401\), \(-1.5095\times(-0.7399) = 1.1170\), \(-1.5095\times0.5056 = -0.7633\).</p>
+<p><b>Step 6: add entry by entry.</b> \(0.0171 - 0.9401 = -0.9231\) (to four digits from unrounded inputs), \(0.1869 + 1.1170 = 1.3039\), \(2.0488 - 0.7633 = 1.2855\):</p>
+$$ \nabla^2\mathcal{L} = \begin{pmatrix}0.0171 &amp; 0.1869\\ 0.1869 &amp; 2.0488\end{pmatrix} + \begin{pmatrix}-0.9401 &amp; 1.1170\\ 1.1170 &amp; -0.7633\end{pmatrix} = \begin{pmatrix}-0.9231 &amp; 1.3039\\ 1.3039 &amp; 1.2855\end{pmatrix}. $$
+<p>The first piece is the Gauss–Newton term (outer curvature carried through the Jacobian). It is never negative along any direction: \(\mathbf{v}^\top\nabla y\,\nabla y^\top\mathbf{v} = (\nabla y\cdot\mathbf{v})^2 \ge 0\) for any direction \(\mathbf{v}\). The second is the network's own curvature, weighted by how far off the output is.</p>
+<p><b>Step 7: compare sizes.</b> Frobenius norm (Level 9) of the first piece: \(\sqrt{0.0171^2 + 2\times0.1869^2 + 2.0488^2} = \sqrt{4.2677} = 2.07\). Of the second: \(\sqrt{0.9401^2 + 2\times1.1170^2 + 0.7633^2} = \sqrt{3.9616} = 1.99\). About the same size.</p>
+<p><b>Step 8: eigenvalues</b> (from trace and determinant, Level 9). Gauss–Newton piece: trace \(0.0171 + 2.0488 = 2.0659\), determinant \(0.0171\times2.0488 - 0.1869^2 = 0.0350 - 0.0349 \approx 0\); it is exactly 0, because a column times a row has rank 1, so the eigenvalues are 2.07 and 0. Sum: trace \(-0.9231 + 1.2855 = 0.3624\), determinant \(-0.9231\times1.2855 - 1.3039^2 = -1.1866 - 1.7002 = -2.8868\), so the eigenvalues are \(\big(0.3624 \pm \sqrt{0.3624^2 + 4\times2.8868}\big)/2 = (0.3624 \pm 3.4173)/2\): 1.89 and −1.53. One up, one down: a saddle. The second piece decides the shape.</p>
 
 <h2>12.3 Residual sublayers, and why the identity adds no curvature</h2>
 <p>A transformer (<a href="14.html">Level 14</a>) is a chain of residual sublayers. Each one keeps its input and adds a correction computed from it:</p>
@@ -191,8 +212,15 @@ The identity path copies the state forward and contributes to every Jacobian, bu
 </ul>
 <p>Let \(G_k(y)\) be the objective as a function of the state after \(k\) sublayers. Then \(G_k(y) = G_{k+1}\big(y + \varphi_k(y)\big)\): a chain with outer \(G_{k+1}\) and inner \(y + \varphi_k(y)\). Apply the 1-D second-order chain rule of 12.1. The inner slope is \(A_k\), the inner curvature is \(\varphi_k''\) (the \(y\) part adds none), and the outer slope is \(G_{k+1}' = g_{k+1}\):</p>
 $$ G_k'' = G_{k+1}''\,A_k^2 + g_{k+1}\,\varphi_k'' = A_k^2\,G_{k+1}'' + C_k . $$
-<p>Start at the end: \(G_K'' = 0\), because \(F\) is linear in \(y_K\). Unroll one step at a time: \(G_{K-1}'' = C_{K-1}\); \(G_{K-2}'' = A_{K-2}^2C_{K-1} + C_{K-2}\); and so on. Each \(C_k\) collects one factor \(A^2\) for every sublayer between it and the start. At the start:</p>
+<p>Now unroll this from the end, one sublayer at a time.</p>
+<p><b>Step 1: the end.</b> \(G_K(y) = y\), because \(F = y_K\). A straight line has no curvature: \(G_K'' = 0\).</p>
+<p><b>Step 2: one sublayer back.</b> Put \(k = K-1\) into the recursion and use Step 1: \(G_{K-1}'' = A_{K-1}^2\times0 + C_{K-1} = C_{K-1}\).</p>
+<p><b>Step 3: two sublayers back.</b> Put \(k = K-2\) and use Step 2: \(G_{K-2}'' = A_{K-2}^2\,C_{K-1} + C_{K-2}\).</p>
+<p><b>Step 4: three sublayers back.</b> Put \(k = K-3\) and use Step 3, then multiply out the bracket:</p>
+$$ G_{K-3}'' = A_{K-3}^2\big(A_{K-2}^2C_{K-1} + C_{K-2}\big) + C_{K-3} = (A_{K-2}A_{K-3})^2\,C_{K-1} + A_{K-3}^2\,C_{K-2} + C_{K-3} . $$
+<p><b>Step 5: read the pattern.</b> Each \(C_k\) picks up one factor \(A^2\) for every sublayer between it and the point where we stand. When we reach the start, the factor in front of \(C_k\) is \((A_{k-1}\cdots A_0)^2 = J_k^2\). (For \(k = 0\) there is nothing in between, and \(J_0 = 1\).) So</p>
 $$ F''(h) = G_0'' = \sum_{k=0}^{K-1} J_k^2\,C_k . $$
+<p>Toy check with \(K = 2\): Step 3 with \(K = 2\) reads \(G_0'' = A_0^2\,C_1 + C_0 = J_1^2C_1 + J_0^2C_0\). The worked example below puts numbers in.</p>
 
 <h3>Worked example by hand</h3>
 <p>Two sublayers, \(\varphi_0(y) = 0.5\,y^2\) and \(\varphi_1(y) = 0.25\,y^2\) (so \(\kappa_0 = 0.5\), \(\kappa_1 = 0.25\)), starting at \(h = y_0 = 1\).</p>
@@ -204,7 +232,12 @@ $$ F''(h) = G_0'' = \sum_{k=0}^{K-1} J_k^2\,C_k . $$
 <li>Transports: \(J_0 = 1\); \(J_1 = A_0 = 2\).</li>
 <li>Sum: \(F''(h) = J_0^2C_0 + J_1^2C_1 = 1\times1.75 + 4\times0.5 = 1.75 + 2 = 3.75\).</li>
 </ol>
-<p><b>Check directly.</b> \(F(y) = y + 0.5y^2 + 0.25(y + 0.5y^2)^2\). Then \(F' = 1 + y + 0.5(y + 0.5y^2)(1 + y)\), which is 3.5 at \(y = 1\). And \(F'' = 1 + 0.5\big[(1+y)^2 + (y + 0.5y^2)\big]\), which at \(y = 1\) is \(1 + 0.5(4 + 1.5) = 3.75\). Same.</p>
+<p><b>Check directly.</b></p>
+<p><b>Step 1: write \(F\) as one formula.</b> After sublayer 0 the state is \(q = y + 0.5y^2\) (\(q\) is just a short name here). Sublayer 1 adds \(0.25q^2\). So \(F(y) = q + 0.25q^2 = y + 0.5y^2 + 0.25(y + 0.5y^2)^2\).</p>
+<p><b>Step 2: slope of \(q\).</b> \(q' = 1 + y\) (power rule on \(0.5y^2\)). At \(y = 1\): \(q = 1.5\) and \(q' = 2\).</p>
+<p><b>Step 3: first derivative of \(F\).</b> \(F = q + 0.25q^2\). Chain rule on \(0.25q^2\): its derivative is \(0.25\times2q\times q' = 0.5\,q\,q'\). So \(F' = q' + 0.5\,q\,q' = 1 + y + 0.5(y + 0.5y^2)(1 + y)\). At \(y = 1\): \(2 + 0.5\times1.5\times2 = 2 + 1.5 = 3.5\). It matches \(g_0\).</p>
+<p><b>Step 4: second derivative of \(F\).</b> Differentiate \(q'\) to get \(q'' = 1\). The term \(0.5\,q\,q'\) is a product, so the product rule gives \(0.5(q'\cdot q' + q\cdot q'') = 0.5\big((1+y)^2 + (y + 0.5y^2)\big)\). So \(F'' = 1 + 0.5\big[(1+y)^2 + (y + 0.5y^2)\big]\).</p>
+<p><b>Step 5: put in \(y = 1\).</b> \((1+1)^2 = 4\) and \(1 + 0.5 = 1.5\), so \(F'' = 1 + 0.5\times(4 + 1.5) = 1 + 2.75 = 3.75\). Same as Lemma 1.</p>
 <p><b>Reading the numbers.</b> Sublayer 1 creates less curvature (\(C_1 = 0.5\)) than sublayer 0 (\(C_0 = 1.75\)), yet contributes more (2 against 1.75). It sits after sublayer 0, so a nudge at the start reaches it doubled (\(J_1 = 2\)), and curvature is per unit², so the doubling counts twice. Meanwhile sublayer 0's curvature is weighted by \(g_1 = 1.75\): how much the rest of the chain amplifies its output.</p>
 
 <figure class="sim" id="sim-adj">
@@ -214,7 +247,12 @@ $$ F''(h) = G_0'' = \sum_{k=0}^{K-1} J_k^2\,C_k . $$
 <h3>The statement in theory-v2 (vector form)</h3>
 <p>With vectors the squares become transposes on both sides (12.2). In this page's letters (theory-v2 uses \(s, S, I\) for \(k, K, \mathrm{Id}\)): sublayers \(\mathbf{y}_{k+1} = \mathbf{y}_k + \varphi_k(\mathbf{y}_k)\) from \(\mathbf{y}_0 = \mathbf{h}\); \(A_k = \mathrm{Id} + D\varphi_k(\mathbf{y}_k)\); \(J_k = A_{k-1}\cdots A_0\); \(\mathbf{g}_K = \partial F/\partial\mathbf{y}_K\), \(\mathbf{g}_k = A_k^\top\mathbf{g}_{k+1}\); \(C_k = \nabla^2_{\mathbf{y}}\langle\mathbf{g}_{k+1}, \varphi_k(\mathbf{y})\rangle\) at \(\mathbf{y} = \mathbf{y}_k\), with \(\mathbf{g}_{k+1}\) held at its value on the actual run. Then, for every input,</p>
 $$ \nabla^2_{\mathbf{h}}F = \sum_{k=0}^{K-1} J_k^\top\,C_k\,J_k . $$
-<p>The proof is the 1-D one with the vector rule: \(\nabla^2G_k = A_k^\top\,\nabla^2G_{k+1}\,A_k + C_k\), because the identity has no curvature and \(\sum_i (\partial G_{k+1}/\partial y_i)\nabla^2\varphi_{k,i} = \nabla^2\langle\mathbf{g}_{k+1},\varphi_k\rangle = C_k\). Unroll from \(\nabla^2G_K = 0\).</p>
+<p>The proof is the 1-D one with the vector rule of 12.2, in four steps.</p>
+<p><b>Step 1: one sublayer as a chain.</b> \(G_k(\mathbf{y}) = G_{k+1}\big(\mathbf{p}(\mathbf{y})\big)\) with inner function \(\mathbf{p}(\mathbf{y}) = \mathbf{y} + \varphi_k(\mathbf{y})\). Its Jacobian is \(J = A_k\).</p>
+<p><b>Step 2: apply the vector rule.</b> \(\nabla^2G_k = A_k^\top\,\nabla^2G_{k+1}\,A_k + \sum_i \frac{\partial G_{k+1}}{\partial y_i}\,\nabla^2p_i\).</p>
+<p><b>Step 3: simplify the second term.</b> Output \(i\) of the inner function is \(y_i + \varphi_{k,i}(\mathbf{y})\). The \(y_i\) part is linear, so \(\nabla^2p_i = \nabla^2\varphi_{k,i}\) (12.3). The outer slopes \(\partial G_{k+1}/\partial y_i\) are the entries of \(\mathbf{g}_{k+1}\), fixed numbers on this run. A fixed weight can move inside a second derivative, so \(\sum_i g_{k+1,i}\nabla^2\varphi_{k,i} = \nabla^2\langle\mathbf{g}_{k+1},\varphi_k\rangle = C_k\). Hence</p>
+$$ \nabla^2G_k = A_k^\top\,\nabla^2G_{k+1}\,A_k + C_k . $$
+<p><b>Step 4: unroll from \(\nabla^2G_K = 0\)</b> (\(F\) is linear in \(\mathbf{y}_K\)), exactly as in 1-D. Each \(C_k\) collects \(A_j^\top\) on its left and \(A_j\) on its right for every sublayer \(j\) before it. On the left they stack up as \(A_0^\top A_1^\top\cdots A_{k-1}^\top\), on the right as \(A_{k-1}\cdots A_1A_0 = J_k\). The transpose of a product is the product of the transposes in reverse order (for example \((A_1A_0)^\top = A_0^\top A_1^\top\)), so the left stack is \(J_k^\top\). That gives \(\nabla^2_{\mathbf{h}}F = \sum_k J_k^\top C_kJ_k\).</p>
 <p><b>As an HVP.</b> theory-v2 also gives the forward-over-reverse form (Level 11) for a direction \(\mathbf{v}\): forward \(\dot{\mathbf{y}}_0 = \mathbf{v}\), \(\dot{\mathbf{y}}_{k+1} = A_k\dot{\mathbf{y}}_k\); backward \(\dot{\mathbf{g}}_K = \mathbf{0}\), \(\dot{\mathbf{g}}_k = A_k^\top\dot{\mathbf{g}}_{k+1} + C_k\dot{\mathbf{y}}_k\); output \(\nabla^2F\,\mathbf{v} = \dot{\mathbf{g}}_0\). In the 1-D example with \(v = 1\): \(\dot{y}_0 = 1\), \(\dot{y}_1 = A_0 = 2\); \(\dot{g}_2 = 0\), \(\dot{g}_1 = 1.75\times0 + C_1\dot{y}_1 = 0.5\times2 = 1\), \(\dot{g}_0 = A_0\dot{g}_1 + C_0\dot{y}_0 = 2 + 1.75 = 3.75\). Same 3.75.</p>
 <p>If the readout passes through the final RMSNorm (a true logit, <a href="14.html">Level 14</a>), theory-v2 adds one more term for that norm's own curvature. The H-space objective \(F_c\) is linear in the last state, so it does not need it.</p>
 
@@ -237,13 +275,25 @@ $$ \nabla^2_{\mathbf{h}}F = \sum_{k=0}^{K-1} J_k^\top\,C_k\,J_k . $$
 </ul>
 <p>Here \(\bar{g}_n\) is the adjoint at the node's output (how much the objective cares about it), and \(\mathbf{a}_n\), \(\mathbf{b}_n\) are the reads: the gradients of the node's inputs with respect to the sublayer input. Exactly:</p>
 $$ \nabla^2_{\mathbf{y}}\big[\mathbf{g}\cdot\varphi(\mathbf{y})\big] = \sum_{\text{one-input } n}\bar{g}_n\,\theta_n''(z_n)\,\mathbf{a}_n\mathbf{a}_n^\top + \sum_{\text{product } n}\bar{g}_n\,\operatorname{sym}(\mathbf{a}_n\mathbf{b}_n^\top). $$
-<p><b>Why these forms.</b> Near the current point, a one-input node computes \(\theta_n(\mathbf{a}_n\cdot\mathbf{y} + \text{const})\); by the chain rule twice its Hessian is \(\theta_n''\,\mathbf{a}_n\mathbf{a}_n^\top\) (curvature of the input itself belongs to the nodes upstream). A product node computes \((\mathbf{a}_n\cdot\mathbf{y} + \text{const})(\mathbf{b}_n\cdot\mathbf{y} + \text{const})\); by the product rule twice its Hessian is \(\mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top\).</p>
+<p><b>Why these forms.</b> Near the current point, treat each node's input as a straight read of \(\mathbf{y}\) (any curvature of the input itself belongs to the nodes upstream and is counted there).</p>
+<p><b>Step 1: a one-input node.</b> It computes \(\theta_n(z_n)\) with \(z_n = \mathbf{a}_n\cdot\mathbf{y} + \text{const}\), so \(\partial z_n/\partial y_j = a_{n,j}\) (entry \(j\) of \(\mathbf{a}_n\)).</p>
+<p><b>Step 2: its first derivative</b> (chain rule): \(\partial\theta_n/\partial y_j = \theta_n'(z_n)\,a_{n,j}\).</p>
+<p><b>Step 3: its second derivative</b> (chain rule again; \(a_{n,j}\) is fixed): \(\partial^2\theta_n/\partial y_j\partial y_k = \theta_n''(z_n)\,a_{n,j}a_{n,k}\). Over all \(j, k\) that is the matrix \(\theta_n''\,\mathbf{a}_n\mathbf{a}_n^\top\).</p>
+<p><b>Step 4: a product node.</b> It computes \(z_n \zeta_n\) with \(z_n = \mathbf{a}_n\cdot\mathbf{y} + \text{const}\) and \(\zeta_n = \mathbf{b}_n\cdot\mathbf{y} + \text{const}\). By the product rule, \(\partial(z_n\zeta_n)/\partial y_j = a_{n,j}\,\zeta_n + z_n\,b_{n,j}\).</p>
+<p><b>Step 5: differentiate with respect to \(y_k\).</b> \(a_{n,j}\) and \(b_{n,j}\) are fixed; \(\zeta_n\) changes at rate \(b_{n,k}\) and \(z_n\) at rate \(a_{n,k}\). So \(\partial^2(z_n\zeta_n)/\partial y_j\partial y_k = a_{n,j}b_{n,k} + b_{n,j}a_{n,k}\). Over all \(j, k\) that is \(\mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top\).</p>
+<p><b>Step 6: weight by the adjoint.</b> The objective sees each node through \(\bar g_n\), a fixed number on this run, which multiplies the node's Hessian. That gives the two terms of the formula.</p>
 
 <h3>The tiny network is two threshold sites</h3>
 <p>The network's nodes are: a linear map (\(W\)), two SiLUs, and a linear readout (\(\mathbf{c}\)). The SiLUs are the only threshold sites. For SiLU \(i\): the adjoint at its output is \(c_i\), its read is \(\mathbf{w}_i\). So \(H = \sum_i c_i\operatorname{silu}''(z_i)\,\mathbf{w}_i\mathbf{w}_i^\top\): exactly the two rank-1 pieces of 12.2.</p>
 
 <h3>A product site, with numbers</h3>
-<p>Let the reads be \(\mathbf{a}_n = (1, 0)\) and \(\mathbf{b}_n = (1, 1)\), with adjoint \(\bar{g}_n = 1\). The site computes \((\mathbf{a}_n\cdot\mathbf{x})(\mathbf{b}_n\cdot\mathbf{x}) = x_1(x_1 + x_2) = x_1^2 + x_1x_2\). Its Hessian is \(\begin{pmatrix}2 &amp; 1\\ 1 &amp; 0\end{pmatrix} = \mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top\). Its eigenvalues are \(\mathbf{a}_n\cdot\mathbf{b}_n \pm \lVert\mathbf{a}_n\rVert\lVert\mathbf{b}_n\rVert = 1 \pm \sqrt2\), that is 2.414 and −0.414 (check: trace 2, determinant −1). One up, one down: a saddle.</p>
+<p>Let the reads be \(\mathbf{a}_n = (1, 0)\) and \(\mathbf{b}_n = (1, 1)\), with adjoint \(\bar{g}_n = 1\).</p>
+<p><b>Step 1: write out the site.</b> \(\mathbf{a}_n\cdot\mathbf{x} = x_1\) and \(\mathbf{b}_n\cdot\mathbf{x} = x_1 + x_2\). So the site computes \(x_1(x_1 + x_2) = x_1^2 + x_1x_2\).</p>
+<p><b>Step 2: its Hessian, directly.</b> \(\partial^2/\partial x_1^2\) of \(x_1^2\) is 2. \(\partial^2/\partial x_1\partial x_2\) of \(x_1x_2\) is 1. Nothing has \(x_2^2\), so the (2,2) entry is 0. The Hessian is \(\begin{pmatrix}2 &amp; 1\\ 1 &amp; 0\end{pmatrix}\).</p>
+<p><b>Step 3: the same from the formula.</b> \(\mathbf{a}_n\mathbf{b}_n^\top = \begin{pmatrix}1\cdot1 &amp; 1\cdot1\\ 0\cdot1 &amp; 0\cdot1\end{pmatrix} = \begin{pmatrix}1 &amp; 1\\ 0 &amp; 0\end{pmatrix}\), and \(\mathbf{b}_n\mathbf{a}_n^\top\) is its transpose, \(\begin{pmatrix}1 &amp; 0\\ 1 &amp; 0\end{pmatrix}\). The sum is \(\begin{pmatrix}2 &amp; 1\\ 1 &amp; 0\end{pmatrix}\). Same.</p>
+<p><b>Step 4: trace and determinant.</b> Trace \(2 + 0 = 2\). Determinant \(2\times0 - 1\times1 = -1\).</p>
+<p><b>Step 5: eigenvalues.</b> Two numbers that add to the trace and multiply to the determinant solve \(\omega^2 - 2\omega - 1 = 0\), where \(\omega\) stands for the unknown eigenvalue. So \(\omega = \big(2 \pm \sqrt{4 + 4}\big)/2 = 1 \pm \sqrt2\): 2.414 and −0.414. One up, one down: a saddle.</p>
+<p><b>Step 6: the general pattern.</b> For any two reads in a plane, the trace of \(\mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top\) is \(2\,\mathbf{a}_n\cdot\mathbf{b}_n\), and its determinant is \((\mathbf{a}_n\cdot\mathbf{b}_n)^2 - \lVert\mathbf{a}_n\rVert^2\lVert\mathbf{b}_n\rVert^2\). The same quadratic then gives eigenvalues \(\mathbf{a}_n\cdot\mathbf{b}_n \pm \lVert\mathbf{a}_n\rVert\lVert\mathbf{b}_n\rVert\). Here \(\mathbf{a}_n\cdot\mathbf{b}_n = 1\), \(\lVert\mathbf{a}_n\rVert = 1\), \(\lVert\mathbf{b}_n\rVert = \sqrt2\): \(1 \pm \sqrt2\) again. The determinant is never positive (a dot product is at most the product of the lengths), so one eigenvalue is \(\ge 0\) and the other \(\le 0\).</p>
 
 <h3>What is fixed and what is a convention (theory-v2 Remark 2.1)</h3>
 <ul>
@@ -255,7 +305,10 @@ $$ \nabla^2_{\mathbf{y}}\big[\mathbf{g}\cdot\varphi(\mathbf{y})\big] = \sum_{\te
 <h2>12.6 Interactions at finite size: the four corners</h2>
 <p>Level 6 measured an interaction with four corners. theory-v2 §3 writes it with the “both moves applied” point as the corner \(\mathbf{h}\), and the moves \(\mathbf{a}\), \(\mathbf{b}\) taken away from it:</p>
 $$ I(\mathbf{a}, \mathbf{b}) = f(\mathbf{h}) - f(\mathbf{h}-\mathbf{a}) - f(\mathbf{h}-\mathbf{b}) + f(\mathbf{h}-\mathbf{a}-\mathbf{b}). $$
-<p>Read it as: (effect of \(\mathbf{a}\) when \(\mathbf{b}\) is present) minus (effect of \(\mathbf{a}\) when \(\mathbf{b}\) is absent). <b>Farm check</b> (Level 6): \(\mathbf{h} = (5\ \text{buckets}, 3\ \text{bags})\), \(\mathbf{a} = (1\ \text{bucket}, 0)\), \(\mathbf{b} = (0, 1\ \text{bag})\) gives \(Y(5,3) - Y(4,3) - Y(5,2) + Y(4,2) = 0.5\) bushels, the same as Level 6, because the four corners are the same.</p>
+<p>Read it as: (effect of \(\mathbf{a}\) when \(\mathbf{b}\) is present) minus (effect of \(\mathbf{a}\) when \(\mathbf{b}\) is absent). <b>Farm check</b> (Level 6): \(\mathbf{h} = (5\ \text{buckets}, 3\ \text{bags})\), \(\mathbf{a} = (1\ \text{bucket}, 0)\), \(\mathbf{b} = (0, 1\ \text{bag})\).</p>
+<p><b>Step 1: the corners.</b> \(\mathbf{h} - \mathbf{a} = (4, 3)\), \(\mathbf{h} - \mathbf{b} = (5, 2)\), \(\mathbf{h} - \mathbf{a} - \mathbf{b} = (4, 2)\).</p>
+<p><b>Step 2: the yields</b>, from \(Y = 2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\). \(Y(5,3) = 10 + 9 + 7.5 - 6.25 - 4.5 = 15.75\). \(Y(4,3) = 8 + 9 + 6 - 4 - 4.5 = 14.5\). \(Y(5,2) = 10 + 6 + 5 - 6.25 - 2 = 12.75\). \(Y(4,2) = 8 + 6 + 4 - 4 - 2 = 12\).</p>
+<p><b>Step 3: combine with signs \(+, -, -, +\).</b> \(15.75 - 14.5 - 12.75 + 12 = 0.5\) bushels. The same as Level 6, because the four corners are the same.</p>
 <p>For a quadratic function, \(I = \mathbf{a}^\top H\mathbf{b}\) exactly. For anything else, which Hessian? At \(\mathbf{h}\)? At the far corner? In the middle? Lemma 3 answers: none of them; the average over the whole parallelogram.</p>
 
 <h2>12.7 The rectangle identity (theory-v2 Lemma 3)</h2>
@@ -287,15 +340,17 @@ $$ I = \big[\psi(1,1) - \psi(0,1)\big] - \big[\psi(1,0) - \psi(0,0)\big]. $$</li
 
 <h3>Worked example on the tiny network</h3>
 <p>Let \(f\) be the tiny network's output, with corner \(\mathbf{h} = (1, 2)\), \(\mathbf{a} = (1, -1)\), \(\mathbf{b} = (0, 1)\). These are large moves for this network.</p>
-<ol>
-<li>The corners: \(\mathbf{h} = (1,2)\), \(\mathbf{h}-\mathbf{a} = (0,3)\), \(\mathbf{h}-\mathbf{b} = (1,1)\), \(\mathbf{h}-\mathbf{a}-\mathbf{b} = (0,2)\). Forward passes (Level 10) give \(f = -1.5095,\ -2.0461,\ 0.1556,\ -1.1415\).</li>
-<li>Interaction: \(I = -1.5095 - (-2.0461) - 0.1556 + (-1.1415) = -0.7606\).</li>
-<li>The reads: \(\mathbf{w}_1\cdot\mathbf{a} = 1 + 1 = 2\), \(\mathbf{w}_1\cdot\mathbf{b} = -1\), \(\mathbf{w}_2\cdot\mathbf{a} = 0.5 - 1 = -0.5\), \(\mathbf{w}_2\cdot\mathbf{b} = 1\). With \(H = \sum_i c_i\operatorname{silu}''(z_i)\mathbf{w}_i\mathbf{w}_i^\top\):
-$$ \mathbf{a}^\top H(\mathbf{x})\,\mathbf{b} = 1.5\operatorname{silu}''(z_1)(2)(-1) + (-1)\operatorname{silu}''(z_2)(-0.5)(1) = -3\operatorname{silu}''(z_1) + 0.5\operatorname{silu}''(z_2). $$</li>
-<li>Hessian at the corner \(\mathbf{h}\) (\(z = (-0.5, 1.5)\)): \(-3(0.4412) + 0.5(0.1562) = -1.3237 + 0.0781 = -1.2456\). It misses \(I\) by 64%.</li>
-<li>Hessian at the centre \(\mathbf{m} = \mathbf{h} - (\mathbf{a}+\mathbf{b})/2 = (0.5, 2)\) (\(z = (-1, 1.25)\), \(\operatorname{silu}''(-1) = 0.3024\), \(\operatorname{silu}''(1.25) = 0.2262\)): \(-0.9071 + 0.1131 = -0.7940\). It misses by 4%.</li>
-<li>Average over \(P\): along \(P\), \(z_1 = -1.5 + 2s - t\) and \(z_2 = 1 - 0.5s + t\). A 5×5 Gauss–Legendre rule (below) gives \(-0.760585\), against \(I = -0.760586\). Equal to the rule's accuracy.</li>
-</ol>
+<p><b>Step 1: the corners.</b> \(\mathbf{h} = (1,2)\). \(\mathbf{h}-\mathbf{a} = (1-1,\ 2+1) = (0,3)\). \(\mathbf{h}-\mathbf{b} = (1,\ 2-1) = (1,1)\). \(\mathbf{h}-\mathbf{a}-\mathbf{b} = (0,\ 3-1) = (0,2)\).</p>
+<p><b>Step 2: forward passes</b> (Level 10), with \(z_1 = x_1 - x_2 + 0.5\) and \(z_2 = 0.5x_1 + x_2 - 1\). At \((1,2)\): \(z = (-0.5, 1.5)\), \(f = -1.5095\). At \((0,3)\): \(z = (-2.5, 2)\), \(f = -2.0461\). At \((1,1)\): \(z = (0.5, 0.5)\), \(f = 0.1556\). At \((0,2)\): \(z = (-1.5, 1)\), \(f = -1.1415\).</p>
+<p><b>Step 3: the interaction.</b> Signs \(+, -, -, +\): \(I = -1.5095 - (-2.0461) - 0.1556 + (-1.1415) = -1.5095 + 2.0461 - 0.1556 - 1.1415 = -0.7605\), which is \(-0.7606\) from unrounded values.</p>
+<p><b>Step 4: the reads.</b> \(\mathbf{w}_1\cdot\mathbf{a} = 1\times1 + (-1)(-1) = 2\). \(\mathbf{w}_1\cdot\mathbf{b} = 1\times0 + (-1)\times1 = -1\). \(\mathbf{w}_2\cdot\mathbf{a} = 0.5\times1 + 1\times(-1) = -0.5\). \(\mathbf{w}_2\cdot\mathbf{b} = 0.5\times0 + 1\times1 = 1\).</p>
+<p><b>Step 5: the Hessian read along \(\mathbf{a}\) and \(\mathbf{b}\), at any point \(\mathbf{x}\).</b> From 12.2, \(H = \sum_i c_i\operatorname{silu}''(z_i)\,\mathbf{w}_i\mathbf{w}_i^\top\). Sandwiching an outer product gives a product of dot products: \(\mathbf{a}^\top\mathbf{w}_i\mathbf{w}_i^\top\mathbf{b} = (\mathbf{w}_i\cdot\mathbf{a})(\mathbf{w}_i\cdot\mathbf{b})\). Put in Step 4:</p>
+$$ \mathbf{a}^\top H(\mathbf{x})\,\mathbf{b} = 1.5\operatorname{silu}''(z_1)(2)(-1) + (-1)\operatorname{silu}''(z_2)(-0.5)(1) = -3\operatorname{silu}''(z_1) + 0.5\operatorname{silu}''(z_2). $$
+<p><b>Step 6: at the corner \(\mathbf{h}\)</b> (\(z = (-0.5, 1.5)\), \(\operatorname{silu}'' = 0.4412\) and \(0.1562\)): \(-3\times0.44123 + 0.5\times0.15620 = -1.3237 + 0.0781 = -1.2456\). It misses \(I\) by \((1.2456 - 0.7606)/0.7606 = 64\%\).</p>
+<p><b>Step 7: at the centre.</b> \(\mathbf{m} = \mathbf{h} - (\mathbf{a}+\mathbf{b})/2 = (1,2) - (0.5, 0) = (0.5, 2)\). There \(z_1 = 0.5 - 2 + 0.5 = -1\) and \(z_2 = 0.25 + 2 - 1 = 1.25\), with \(\operatorname{silu}''(-1) = 0.3024\) and \(\operatorname{silu}''(1.25) = 0.2262\). So \(-3\times0.30237 + 0.5\times0.22620 = -0.9071 + 0.1131 = -0.7940\). It misses by \((0.7940 - 0.7606)/0.7606 = 4\%\).</p>
+<p><b>Step 8: the point inside \(P\) at \((s, t)\).</b> \(\mathbf{h} - \mathbf{a} - \mathbf{b} + s\mathbf{a} + t\mathbf{b} = (0, 2) + s(1, -1) + t(0, 1) = (s,\ 2 - s + t)\).</p>
+<p><b>Step 9: the pre-activations there.</b> \(z_1 = s - (2 - s + t) + 0.5 = -1.5 + 2s - t\). \(z_2 = 0.5s + (2 - s + t) - 1 = 1 - 0.5s + t\). Check at the centre \(s = t = 0.5\): \(z = (-1, 1.25)\), as in Step 7.</p>
+<p><b>Step 10: average Step 5 over \(P\).</b> A 5×5 Gauss–Legendre rule (below) gives \(-0.760585\), against \(I = -0.760586\). Equal to the rule's accuracy.</p>
 
 <h3>Computing the average: Gauss–Legendre quadrature</h3>
 <p>The average over \(P\) is an integral, and a computer approximates it with a weighted sum at a few points. Gauss–Legendre places \(n_q\) nodes per side at special positions with special weights, chosen so that the sum is exact whenever the integrand is a polynomial of degree up to \(2n_q - 1\) in each variable. On \([0,1]\): one node sits at 0.5 (weight 1); two nodes sit at 0.2113 and 0.7887 (weights 0.5 each); three at 0.1127, 0.5 and 0.8873 (weights 5/18, 8/18, 5/18). The rectangle rule uses the \(n_q\times n_q\) grid of node pairs and multiplies the weights. Each point costs one Hessian evaluation along \(\mathbf{a}\) and \(\mathbf{b}\), which in a real model means an HVP. <b>Real-world example:</b> estimating a field's average height from a few stakes placed where they tell you the most.</p>
@@ -310,10 +365,24 @@ $$ \mathbf{a}^\top H(\mathbf{x})\,\mathbf{b} = 1.5\operatorname{silu}''(z_1)(2)(
 <ul>
 <li><b>Corner expansion:</b>
 $$ I = \mathbf{a}^\top\nabla^2f(\mathbf{h})\,\mathbf{b} - \tfrac12\Big(D^3f(\mathbf{h})[\mathbf{a},\mathbf{a},\mathbf{b}] + D^3f(\mathbf{h})[\mathbf{a},\mathbf{b},\mathbf{b}]\Big) + O\big(\lVert(\mathbf{a},\mathbf{b})\rVert^4\big). $$
-Where it comes from: Taylor-expand \(f(\mathbf{h} - \mu\mathbf{a} - \nu\mathbf{b})\) around \(\mathbf{h}\) in the two numbers \(\mu\) and \(\nu\) (Level 4). The four corners are \((\mu,\nu) = (0,0), (1,0), (0,1), (1,1)\) with signs \(+, -, -, +\). Every term that lacks \(\mu\) or lacks \(\nu\) cancels, because it takes the same value on two corners with opposite signs. The surviving \(\mu\nu\) term gives \(\mathbf{a}^\top\nabla^2f\,\mathbf{b}\) (the two minus signs inside \((-\mu\mathbf{a}-\nu\mathbf{b})^2\) cancel). The cubic terms \(\mu^2\nu\) and \(\mu\nu^2\) survive too, each with coefficient \(-\tfrac16\times3\) (the cube keeps the minus sign), giving the \(-\tfrac12\) bracket.</li>
+Where it comes from, step by step.
+<p><b>Step 1: name the function on the parallelogram.</b> Let \(\chi(\mu,\nu) = f(\mathbf{h} - \mu\mathbf{a} - \nu\mathbf{b})\). The corners are \(\chi(0,0) = f(\mathbf{h})\), \(\chi(1,0) = f(\mathbf{h}-\mathbf{a})\), \(\chi(0,1) = f(\mathbf{h}-\mathbf{b})\), \(\chi(1,1) = f(\mathbf{h}-\mathbf{a}-\mathbf{b})\). So \(I = \chi(0,0) - \chi(1,0) - \chi(0,1) + \chi(1,1)\).</p>
+<p><b>Step 2: Taylor-expand around \(\mathbf{h}\)</b> (Level 4) with the move \(\boldsymbol{\delta} = -\mu\mathbf{a} - \nu\mathbf{b}\):</p>
+$$ \chi(\mu,\nu) = f(\mathbf{h}) + \nabla f\cdot\boldsymbol{\delta} + \tfrac12\,\boldsymbol{\delta}^\top\nabla^2f\,\boldsymbol{\delta} + \tfrac16 D^3f[\boldsymbol{\delta},\boldsymbol{\delta},\boldsymbol{\delta}] + O(\lVert\boldsymbol{\delta}\rVert^4), $$
+<p>with every derivative taken at \(\mathbf{h}\). Each term is a sum of pieces of the form (number) × \(\mu^i\nu^j\).</p>
+<p><b>Step 3: which pieces survive the four corners.</b> Put a piece \(\mu^i\nu^j\) through \(+\chi(0,0) - \chi(1,0) - \chi(0,1) + \chi(1,1)\). If \(j = 0\) (no \(\nu\)), the piece has the same value at \((0,0)\) and \((0,1)\), and at \((1,0)\) and \((1,1)\); those pairs carry opposite signs, so it cancels. Likewise if \(i = 0\). If \(i, j \ge 1\), the piece is 0 at every corner except \((1,1)\), where it is 1. So \(I\) is the sum of the numbers in front of all pieces that contain both \(\mu\) and \(\nu\). The constant and the first-order term \(\nabla f\cdot\boldsymbol{\delta} = -\mu\,\nabla f\cdot\mathbf{a} - \nu\,\nabla f\cdot\mathbf{b}\) have no such piece.</p>
+<p><b>Step 4: the second-order term.</b> Multiply out, using \(\mathbf{a}^\top\nabla^2f\,\mathbf{b} = \mathbf{b}^\top\nabla^2f\,\mathbf{a}\) (symmetry): \(\boldsymbol{\delta}^\top\nabla^2f\,\boldsymbol{\delta} = \mu^2\,\mathbf{a}^\top\nabla^2f\,\mathbf{a} + 2\mu\nu\,\mathbf{a}^\top\nabla^2f\,\mathbf{b} + \nu^2\,\mathbf{b}^\top\nabla^2f\,\mathbf{b}\). The two minus signs in \(\boldsymbol{\delta}\) multiply to a plus. Times \(\tfrac12\), the \(\mu\nu\) piece has number \(\mathbf{a}^\top\nabla^2f\,\mathbf{b}\).</p>
+<p><b>Step 5: the third-order term.</b> \(D^3f\) is linear in each slot and does not care about slot order. Pull out \((-1)^3 = -1\) and multiply out like \((\mu + \nu)^3\): \(D^3f[\boldsymbol{\delta},\boldsymbol{\delta},\boldsymbol{\delta}] = -\big(\mu^3D^3f[\mathbf{a},\mathbf{a},\mathbf{a}] + 3\mu^2\nu\,D^3f[\mathbf{a},\mathbf{a},\mathbf{b}] + 3\mu\nu^2\,D^3f[\mathbf{a},\mathbf{b},\mathbf{b}] + \nu^3D^3f[\mathbf{b},\mathbf{b},\mathbf{b}]\big)\). Times \(\tfrac16\), the \(\mu^2\nu\) and \(\mu\nu^2\) pieces have numbers \(-\tfrac12D^3f[\mathbf{a},\mathbf{a},\mathbf{b}]\) and \(-\tfrac12D^3f[\mathbf{a},\mathbf{b},\mathbf{b}]\).</p>
+<p><b>Step 6: add the survivors.</b> That gives the corner expansion, with everything from fourth order on in the \(O(\cdot)\). Toy check (Exercise 12.8): \(f = x_1^2x_2\), \(\mathbf{h} = (0,0)\), \(\mathbf{a} = (1,0)\), \(\mathbf{b} = (0,1)\). The Hessian at \(\mathbf{h}\) is 0, \(D^3f[\mathbf{a},\mathbf{a},\mathbf{b}] = \partial^3f/\partial x_1^2\partial x_2 = 2\), \(D^3f[\mathbf{a},\mathbf{b},\mathbf{b}] = 0\). So \(I = 0 - \tfrac12(2 + 0) = -1\), which is the true value.</p></li>
 <li><b>Centre expansion:</b>
 $$ I = \mathbf{a}^\top\nabla^2 f(\mathbf{m})\,\mathbf{b} + O\big(\lVert(\mathbf{a},\mathbf{b})\rVert^4\big). $$
-Why the cubic terms vanish: written around \(\mathbf{m}\), the corners are \(\mathbf{m} \pm \tfrac12\mathbf{a} \pm \tfrac12\mathbf{b}\). Replacing \((\mathbf{a},\mathbf{b})\) by \((-\mathbf{a},-\mathbf{b})\) only swaps corners with equal signs, so \(I\) is unchanged. Every odd-order term changes sign under that swap, so it must be zero.</li>
+Why the cubic terms vanish, step by step.
+<p><b>Step 1: write the corners around \(\mathbf{m}\).</b> Since \(\mathbf{m} = \mathbf{h} - \tfrac12\mathbf{a} - \tfrac12\mathbf{b}\), we have \(\mathbf{h} = \mathbf{m} + \tfrac12\mathbf{a} + \tfrac12\mathbf{b}\), \(\mathbf{h} - \mathbf{a} = \mathbf{m} - \tfrac12\mathbf{a} + \tfrac12\mathbf{b}\), \(\mathbf{h} - \mathbf{b} = \mathbf{m} + \tfrac12\mathbf{a} - \tfrac12\mathbf{b}\), \(\mathbf{h} - \mathbf{a} - \mathbf{b} = \mathbf{m} - \tfrac12\mathbf{a} - \tfrac12\mathbf{b}\). Label each corner by two signs: it is \(\mathbf{m} + \tfrac12\epsilon_a\mathbf{a} + \tfrac12\epsilon_b\mathbf{b}\) with \(\epsilon_a, \epsilon_b = \pm1\). Its sign in \(I\) is then \(\epsilon_a\epsilon_b\): \((+)(+) = +\) for \(\mathbf{h}\), \((-)(+) = -\) for \(\mathbf{h}-\mathbf{a}\), and so on.</p>
+<p><b>Step 2: flip both moves.</b> Replace \((\mathbf{a},\mathbf{b})\) by \((-\mathbf{a},-\mathbf{b})\), keeping \(\mathbf{m}\). Corner \((\epsilon_a, \epsilon_b)\) becomes corner \((-\epsilon_a, -\epsilon_b)\), and \((-\epsilon_a)(-\epsilon_b) = \epsilon_a\epsilon_b\): its sign is unchanged. The same four values with the same signs: \(I\) is unchanged.</p>
+<p><b>Step 3: Taylor-expand every corner around \(\mathbf{m}\).</b> The order-\(n\) part is built from \(n\) copies of the move \(\tfrac12\epsilon_a\mathbf{a} + \tfrac12\epsilon_b\mathbf{b}\), so flipping \((\mathbf{a},\mathbf{b})\) multiplies it by \((-1)^n\). By Step 2 the total cannot change. For odd \(n\) the order-\(n\) total must equal its own negative, so it is 0. That removes the first-order and third-order (cubic) terms.</p>
+<p><b>Step 4: order 0.</b> \(f(\mathbf{m})\times(1 - 1 - 1 + 1) = 0\).</p>
+<p><b>Step 5: order 2.</b> With the move \(\boldsymbol{\delta} = \tfrac12\epsilon_a\mathbf{a} + \tfrac12\epsilon_b\mathbf{b}\) and \(\epsilon^2 = 1\): \(\tfrac12\boldsymbol{\delta}^\top\nabla^2f(\mathbf{m})\,\boldsymbol{\delta} = \tfrac18\mathbf{a}^\top\nabla^2f\,\mathbf{a} + \tfrac18\mathbf{b}^\top\nabla^2f\,\mathbf{b} + \tfrac14\epsilon_a\epsilon_b\,\mathbf{a}^\top\nabla^2f\,\mathbf{b}\). Multiply by the corner's sign \(\epsilon_a\epsilon_b\) and add the four corners. The first two pieces get \(1 - 1 - 1 + 1 = 0\). The last gets \((\epsilon_a\epsilon_b)^2 = 1\) at every corner, so \(4\times\tfrac14 = 1\) copy of \(\mathbf{a}^\top\nabla^2f(\mathbf{m})\,\mathbf{b}\).</p>
+<p><b>Step 6: collect.</b> \(I = \mathbf{a}^\top\nabla^2f(\mathbf{m})\,\mathbf{b}\) plus terms of order 4 and higher. Toy check: for \(f = x_1^2x_2\) with the corner and moves of the toy check above, \(\mathbf{m} = (-0.5, -0.5)\) and the mixed partial there is \(2x_1 = -1\): exactly \(I\), because \(f\) is cubic and has no fourth-order part.</p></li>
 </ul>
 <p>So the gap between the corner Hessian and the true interaction is exactly the third- and higher-order content of \(f\) over \(P\) (theory-v2: “the gap between \(\nabla^2f(h)\) and \(\bar{H}_P\) is exactly the third- and higher-order content”). <b>Smallest example</b> (Exercise 12.8): for \(f = x_1^2x_2\), corner \(\mathbf{h} = (0,0)\), \(\mathbf{a} = (1,0)\), \(\mathbf{b} = (0,1)\), the true \(I\) is −1, the corner Hessian says 0, and the centre Hessian says −1 exactly, because \(f\) is cubic.</p>
 <div class="box plain">
@@ -400,7 +469,11 @@ You want the average tilt-change over a field. Standing in one corner and measur
 <div class="ex" data-answer="6" data-tol="0.001" data-unit="">
 <p><b>Exercise 12.7.</b> Let \(f(x_1, x_2) = 3x_1x_2 + x_1^2\), \(\mathbf{h} = (0,0)\), \(\mathbf{a} = (1, 0)\), \(\mathbf{b} = (0, 2)\). Compute \(I(\mathbf{a},\mathbf{b})\) from the four corners, and compare with \(\mathbf{a}^\top H\mathbf{b}\).</p>
 <details><summary>Show answer</summary>
-<p>\(f(0,0) = 0\); \(f(-1,0) = 1\); \(f(0,-2) = 0\); \(f(-1,-2) = 6 + 1 = 7\). \(I = 0 - 1 - 0 + 7 = 6\). \(H = \begin{pmatrix}2 &amp; 3\\ 3 &amp; 0\end{pmatrix}\), so \(\mathbf{a}^\top H\mathbf{b} = (1,0)\cdot(6, 0) = 6\). Equal, because \(f\) is quadratic: its Hessian is the same everywhere in \(P\).</p>
+<p><b>Step 1: the corners.</b> \(\mathbf{h} = (0,0)\), \(\mathbf{h}-\mathbf{a} = (-1,0)\), \(\mathbf{h}-\mathbf{b} = (0,-2)\), \(\mathbf{h}-\mathbf{a}-\mathbf{b} = (-1,-2)\).</p>
+<p><b>Step 2: the values.</b> \(f(0,0) = 0\). \(f(-1,0) = 0 + (-1)^2 = 1\). \(f(0,-2) = 0 + 0 = 0\). \(f(-1,-2) = 3(-1)(-2) + (-1)^2 = 6 + 1 = 7\).</p>
+<p><b>Step 3: the interaction.</b> \(I = 0 - 1 - 0 + 7 = 6\).</p>
+<p><b>Step 4: the Hessian.</b> \(\partial^2f/\partial x_1^2 = 2\) (from \(x_1^2\)), \(\partial^2f/\partial x_1\partial x_2 = 3\) (from \(3x_1x_2\)), \(\partial^2f/\partial x_2^2 = 0\). So \(H = \begin{pmatrix}2 &amp; 3\\ 3 &amp; 0\end{pmatrix}\), the same at every point.</p>
+<p><b>Step 5: read it along \(\mathbf{a}\) and \(\mathbf{b}\).</b> \(H\mathbf{b} = (2\times0 + 3\times2,\ 3\times0 + 0\times2) = (6, 0)\). Then \(\mathbf{a}^\top H\mathbf{b} = (1,0)\cdot(6, 0) = 6\). Equal, because \(f\) is quadratic: its Hessian is the same everywhere in \(P\), so its average is that same matrix.</p>
 </details>
 </div>
 

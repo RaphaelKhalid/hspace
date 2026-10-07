@@ -110,7 +110,11 @@ $$ \mathbf{F}(1.1, 2) = (1.1 + 0.3\times4,\ 2 + 0.2\times1.1\times2) = (1.1 + 1.
 $$ \mathbf{F}(1, 2.1) = (1 + 0.3\times4.41,\ 2.1 + 0.2\times1\times2.1) = (1 + 1.323,\ 2.1 + 0.42) = (2.323,\ 2.52). $$
 <p>Changes: \(\Delta F_1 = 0.123\) cm and \(\Delta F_2 = 0.12\) cm. Rates: \(1.23\) and \(1.2\).</p>
 <h3>The exact partial derivatives</h3>
-<p>Differentiate each output with respect to each input, treating the other input as a constant:</p>
+<p>Differentiate each output with respect to each input, treating the other input as a constant. Four partials, one step each. Two rules do all the work: a term that does not contain the moving input gives 0, and the power rule (Level 2) turns \(y^2\) into \(2y\).</p>
+<p><b>Step 1: \(F_1 = x + 0.3y^2\) in \(x\).</b> \(x\) gives 1. \(0.3y^2\) does not contain \(x\), so it gives 0. So \(\partial F_1/\partial x = 1\).</p>
+<p><b>Step 2: \(F_1 = x + 0.3y^2\) in \(y\).</b> \(x\) gives 0. \(0.3y^2\) gives \(0.3\times2y = 0.6y\). So \(\partial F_1/\partial y = 0.6y\). At \(y = 2\): \(1.2\).</p>
+<p><b>Step 3: \(F_2 = y + 0.2xy\) in \(x\).</b> \(y\) gives 0. \(0.2xy\) is the fixed number \(0.2y\) times \(x\), so it gives \(0.2y\). So \(\partial F_2/\partial x = 0.2y\). At \(y = 2\): \(0.4\).</p>
+<p><b>Step 4: \(F_2 = y + 0.2xy\) in \(y\).</b> \(y\) gives 1. \(0.2xy\) is the fixed number \(0.2x\) times \(y\), so it gives \(0.2x\). So \(\partial F_2/\partial y = 1 + 0.2x\). At \(x = 1\): \(1.2\).</p>
 $$ \frac{\partial F_1}{\partial x} = 1, \qquad \frac{\partial F_1}{\partial y} = 0.6\,y, \qquad \frac{\partial F_2}{\partial x} = 0.2\,y, \qquad \frac{\partial F_2}{\partial y} = 1 + 0.2\,x. $$
 <p>At \((1, 2)\): \(1\), \(1.2\), \(0.4\), \(1.2\). Compare with the finite rates: \(1, 1.23, 0.4, 1.2\). Three match exactly, because those outputs are straight-line functions of the input being moved. The fourth, \(\partial F_1/\partial y\), is off by 0.03: \(F_1\) bends as \(y\) changes (it contains \(y^2\)), and the finite step picks up some of that bend. Shrink \(\Delta y\) to 0.01 and the finite rate becomes \(1.203\); the gap shrinks with the step, as at <a href="02.html">Level 2</a>.</p>
 
@@ -127,9 +131,11 @@ For a map with \(n\) inputs and \(m\) outputs, the Jacobian is the \(m \times n\
 <li><b>Column \(j\) is where a step in input \(j\) sends you.</b> Column 1, \((1, 0.4)\), says a 1 cm nudge in \(x\) moves the output about 1 cm across and 0.4 cm up. In Figure 8.1 it is the red arrow, tangent to the image of the red line.</li>
 </ul>
 <h3>Units, with a map whose inputs and outputs differ</h3>
-<p>On the rubber sheet every entry is “cm per cm”, a pure number. Units become informative when inputs and outputs differ. Extend the farm from <a href="05.html">Level 5</a>. Let \(W\) be buckets of water and \(F\) bags of fertiliser. The outputs are the yield \(Y(W, F) = 2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\) bushels and a toy cost \(C(W, F) = 0.2W + 5F\) dollars (0.2 $ per bucket, 5 $ per bag; made-up prices). The farm map is \(\mathbf{G}(W, F) = (Y, C)\). Its Jacobian is</p>
+<p>On the rubber sheet every entry is “cm per cm”, a pure number. Units become informative when inputs and outputs differ. Extend the farm from <a href="05.html">Level 5</a>. Let \(W\) be buckets of water and \(F\) bags of fertiliser. The outputs are the yield \(Y(W, F) = 2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\) bushels and a toy cost \(C(W, F) = 0.2W + 5F\) dollars (0.2 $ per bucket, 5 $ per bag; made-up prices). The farm map is \(\mathbf{G}(W, F) = (Y, C)\). Build its Jacobian one row at a time.</p>
+<p><b>Step 1: row 1 is the gradient of \(Y\).</b> From Level 5, \(\partial Y/\partial W = 2 + 0.5F - 0.5W\) and \(\partial Y/\partial F = 3 + 0.5W - F\).</p>
+<p><b>Step 2: row 2 is the gradient of \(C = 0.2W + 5F\).</b> In \(W\): \(0.2W\) gives 0.2 and \(5F\) gives 0, so \(\partial C/\partial W = 0.2\). In \(F\): \(0.2W\) gives 0 and \(5F\) gives 5, so \(\partial C/\partial F = 5\).</p>
 $$ J_{\mathbf{G}} = \begin{pmatrix} \partial Y/\partial W & \partial Y/\partial F \\ \partial C/\partial W & \partial C/\partial F \end{pmatrix} = \begin{pmatrix} 2 + 0.5F - 0.5W & 3 + 0.5W - F \\ 0.2 & 5 \end{pmatrix}. $$
-<p>At the plan \((W, F) = (4, 2)\): \(\partial Y/\partial W = 2 + 1 - 2 = 1\) and \(\partial Y/\partial F = 3 + 2 - 2 = 3\), so</p>
+<p><b>Step 3: put in the plan \((W, F) = (4, 2)\).</b> \(\partial Y/\partial W = 2 + 0.5\times2 - 0.5\times4 = 2 + 1 - 2 = 1\) and \(\partial Y/\partial F = 3 + 0.5\times4 - 2 = 3 + 2 - 2 = 3\). Row 2 has no \(W\) or \(F\) in it, so it stays \((0.2, 5)\):</p>
 $$ J_{\mathbf{G}}(4, 2) = \begin{pmatrix} 1 & 3 \\ 0.2 & 5 \end{pmatrix}. $$
 <div class="tablewrap">
 <table>
@@ -140,7 +146,7 @@ $$ J_{\mathbf{G}}(4, 2) = \begin{pmatrix} 1 & 3 \\ 0.2 & 5 \end{pmatrix}. $$
 <tr><td>\(J_{22} = \partial C/\partial F\)</td><td>5</td><td>dollars per bag</td><td>one more bag costs 5 $</td></tr>
 </table>
 </div>
-<p><b>Mechanics.</b> Add one whole bag: \(F\) goes 2 → 3, \(W\) stays 4. Then \(Y(4, 2) = 8 + 6 + 4 - 4 - 2 = 12\) and \(Y(4, 3) = 8 + 9 + 6 - 4 - 4.5 = 14.5\) bushels, a change of 2.5, not the predicted 3. Cost goes from 10.8 $ to 15.8 $, exactly the predicted 5 $. The yield misses because \(Y\) is curved in \(F\) (\(\partial^2 Y/\partial F^2 = -1\) bushel per bag², from <a href="06.html">Level 6</a>): the Jacobian only knows the slope at the starting point. The cost is a straight-line function, so its row of the Jacobian is exact for any step.</p>
+<p><b>Mechanics.</b> Add one whole bag: \(F\) goes 2 → 3, \(W\) stays 4. Then \(Y(4, 2) = 2(4) + 3(2) + 0.5(4)(2) - 0.25(16) - 0.5(4) = 8 + 6 + 4 - 4 - 2 = 12\) and \(Y(4, 3) = 2(4) + 3(3) + 0.5(4)(3) - 0.25(16) - 0.5(9) = 8 + 9 + 6 - 4 - 4.5 = 14.5\) bushels, a change of 2.5, not the predicted 3. Cost goes from \(C(4, 2) = 0.2\times4 + 5\times2 = 10.8\) $ to \(C(4, 3) = 0.2\times4 + 5\times3 = 15.8\) $, exactly the predicted 5 $. The yield misses because \(Y\) is curved in \(F\) (\(\partial^2 Y/\partial F^2 = -1\) bushel per bag², from <a href="06.html">Level 6</a>): the Jacobian only knows the slope at the starting point. The cost is a straight-line function, so its row of the Jacobian is exact for any step.</p>
 <p>Notice row 1 of \(J_{\mathbf{G}}(4, 2)\) is the farm gradient at that plan, \(\nabla Y = (1, 3)\), from Level 5. A Jacobian is a stack of gradients, one per output.</p>
 <div class="box plain">
 <span class="boxtitle">Intuition pump: the mixing desk</span>
@@ -150,10 +156,26 @@ A sound engineer's desk has input sliders (microphones) and output meters (speak
 <h2>8.4 Zoom in: local linearity</h2>
 <p>The Jacobian gives a straight-line copy of \(\mathbf{F}\) near \(\mathbf{p}\). For a small input move \(\Delta\mathbf{p} = (\Delta x, \Delta y)\),</p>
 $$ \mathbf{F}(\mathbf{p} + \Delta\mathbf{p}) \approx \mathbf{F}(\mathbf{p}) + J(\mathbf{p})\,\Delta\mathbf{p}. $$
-<p>This is the linear approximation of <a href="04.html">Level 4</a>, with the slope replaced by a matrix. How good is it? For our \(\mathbf{F}\) we can compute the error exactly. Expand each output at \((x + \Delta x, y + \Delta y)\):</p>
-$$ F_1 = x + \Delta x + 0.3(y + \Delta y)^2 = \underbrace{x + 0.3y^2}_{F_1(\mathbf{p})} + \underbrace{\Delta x + 0.6y\,\Delta y}_{\text{row 1 of } J\Delta\mathbf{p}} + 0.3\,\Delta y^2, $$
-$$ F_2 = y + \Delta y + 0.2(x + \Delta x)(y + \Delta y) = \underbrace{y + 0.2xy}_{F_2(\mathbf{p})} + \underbrace{0.2y\,\Delta x + (1 + 0.2x)\Delta y}_{\text{row 2 of } J\Delta\mathbf{p}} + 0.2\,\Delta x\,\Delta y. $$
-<p>So the error of the straight-line copy is exactly</p>
+<p>This is the linear approximation of <a href="04.html">Level 4</a>, with the slope replaced by a matrix. How good is it? For our \(\mathbf{F}\) we can compute the error exactly, one operation at a time. The worked numbers use \(\mathbf{p} = (1, 2)\) and \(\Delta x = \Delta y = 0.1\).</p>
+<p><b>Step 1: write out output 1 at the moved point.</b> The rule for \(F_1\) is “\(x\) plus 0.3 times \(y\) squared”. At \((x + \Delta x, y + \Delta y)\):</p>
+$$ F_1(\mathbf{p} + \Delta\mathbf{p}) = x + \Delta x + 0.3\,(y + \Delta y)^2 . $$
+<p>Example: \(1.1 + 0.3\times2.1^2 = 1.1 + 0.3\times4.41 = 1.1 + 1.323 = 2.423\).</p>
+<p><b>Step 2: expand the square.</b> \((y + \Delta y)^2 = (y + \Delta y)(y + \Delta y) = y^2 + 2y\,\Delta y + \Delta y^2\). Multiply each term by 0.3:</p>
+$$ 0.3\,(y + \Delta y)^2 = 0.3y^2 + 0.6y\,\Delta y + 0.3\,\Delta y^2 . $$
+<p>Example: \(4 + 0.4 + 0.01 = 4.41\), and \(1.2 + 0.12 + 0.003 = 1.323\).</p>
+<p><b>Step 3: sort the terms by how many small moves they contain.</b> No small move: \(x + 0.3y^2\), which is \(F_1(\mathbf{p})\). One small move: \(\Delta x + 0.6y\,\Delta y\), which is row 1 of \(J\) (that is, \((1,\ 0.6y)\)) times \(\Delta\mathbf{p}\). Two small moves: \(0.3\,\Delta y^2\).</p>
+$$ F_1(\mathbf{p} + \Delta\mathbf{p}) = \underbrace{x + 0.3y^2}_{F_1(\mathbf{p})} + \underbrace{\Delta x + 0.6y\,\Delta y}_{\text{row 1 of } J\Delta\mathbf{p}} + 0.3\,\Delta y^2 . $$
+<p>Example: \(2.2 + (0.1 + 0.12) + 0.003 = 2.2 + 0.22 + 0.003 = 2.423\).</p>
+<p><b>Step 4: write out output 2 at the moved point.</b> The rule for \(F_2\) is “\(y\) plus 0.2 times \(x\) times \(y\)”:</p>
+$$ F_2(\mathbf{p} + \Delta\mathbf{p}) = y + \Delta y + 0.2\,(x + \Delta x)(y + \Delta y) . $$
+<p>Example: \(2.1 + 0.2\times1.1\times2.1 = 2.1 + 0.462 = 2.562\).</p>
+<p><b>Step 5: expand the product.</b> Multiply every term of the first bracket by every term of the second: \((x + \Delta x)(y + \Delta y) = xy + x\,\Delta y + \Delta x\,y + \Delta x\,\Delta y\). Multiply each term by 0.2:</p>
+$$ 0.2\,(x + \Delta x)(y + \Delta y) = 0.2xy + 0.2x\,\Delta y + 0.2y\,\Delta x + 0.2\,\Delta x\,\Delta y . $$
+<p>Example: \(2 + 0.1 + 0.2 + 0.01 = 2.31\), and \(0.4 + 0.02 + 0.04 + 0.002 = 0.462\).</p>
+<p><b>Step 6: sort the terms again.</b> No small move: \(y + 0.2xy = F_2(\mathbf{p})\). One small move: \(\Delta y + 0.2x\,\Delta y + 0.2y\,\Delta x = 0.2y\,\Delta x + (1 + 0.2x)\,\Delta y\), which is row 2 of \(J\), \((0.2y,\ 1 + 0.2x)\), times \(\Delta\mathbf{p}\). Two small moves: \(0.2\,\Delta x\,\Delta y\).</p>
+$$ F_2(\mathbf{p} + \Delta\mathbf{p}) = \underbrace{y + 0.2xy}_{F_2(\mathbf{p})} + \underbrace{0.2y\,\Delta x + (1 + 0.2x)\Delta y}_{\text{row 2 of } J\Delta\mathbf{p}} + 0.2\,\Delta x\,\Delta y . $$
+<p>Example: \(2.4 + (0.04 + 0.12) + 0.002 = 2.4 + 0.16 + 0.002 = 2.562\).</p>
+<p><b>Step 7: subtract the straight-line copy.</b> Take away \(\mathbf{F}(\mathbf{p})\) and \(J(\mathbf{p})\Delta\mathbf{p}\) from both outputs. Only the two-small-move terms are left. So the error of the straight-line copy is exactly</p>
 $$ \mathbf{F}(\mathbf{p} + \Delta\mathbf{p}) - \mathbf{F}(\mathbf{p}) - J(\mathbf{p})\Delta\mathbf{p} = \big(0.3\,\Delta y^2,\ \ 0.2\,\Delta x\,\Delta y\big). $$
 <p>Every term is a product of two small moves. Check it at \(\mathbf{p} = (1, 2)\) with numbers:</p>
 <div class="tablewrap">
@@ -193,9 +215,21 @@ $$ \mathbf{F}(1.1, 1.9) = (1.1 + 0.3\times3.61,\ 1.9 + 0.2\times1.1\times1.9) = 
 <p>At Level 7 the determinant of a matrix was the factor by which it scales area. Apply that to the Jacobian. A tiny square of inputs near \(\mathbf{p}\) is mapped, almost exactly, by the linear map \(J(\mathbf{p})\). So its image is almost a parallelogram, with area multiplied by \(\det J(\mathbf{p})\).</p>
 $$ \det J(x, y) = \underbrace{1 \times (1 + 0.2x)}_{\text{top-left} \times \text{bottom-right}} - \underbrace{0.6y \times 0.2y}_{\text{top-right} \times \text{bottom-left}} = 1 + 0.2x - 0.12\,y^2. $$
 <p>At \((1, 2)\): \(1 + 0.2 - 0.12\times4 = 1.2 - 0.48 = 0.72\). Check against the matrix directly: \(1\times1.2 - 1.2\times0.4 = 1.2 - 0.48 = 0.72\). So near \((1, 2)\) the sheet is <i>compressed</i> to 72% of its area. The unit is output area per input area, here cm² per cm².</p>
-<p><b>Mechanics: an actual square.</b> Take the square of side \(s = 0.1\) cm centred at \((1, 2)\) (area 0.01 cm²). Its exact image has area 0.007199 cm², a ratio of 0.7199. The tiny difference from 0.72 is because \(\det J\) varies across the square; the exact area is the average of \(\det J\) over the square (the change-of-variables rule), which here works out as \(0.72 - 0.01\,s^2\). Make the square smaller and the ratio closes on \(\det J(\mathbf{p})\).</p>
+<p><b>Mechanics: an actual square.</b> Take the square of side \(s = 0.1\) cm centred at \((1, 2)\) (area 0.01 cm²). Its exact image has area 0.007199 cm², a ratio of 0.7199. The tiny difference from 0.72 is because \(\det J\) varies across the square. The exact area ratio is the average of \(\det J\) over the square (the change-of-variables rule). Work that average out one term at a time.</p>
+<p><b>Step 1: split the average.</b> \(\det J = 1 + 0.2x - 0.12y^2\). The average of a sum is the sum of the averages, and a constant factor comes outside: average of \(\det J\) = \(1 + 0.2\times(\text{average of } x) - 0.12\times(\text{average of } y^2)\).</p>
+<p><b>Step 2: the average of \(x\).</b> \(x\) runs evenly from \(1 - s/2\) to \(1 + s/2\), so its average is the centre, 1. Example: from 0.95 to 1.05, average 1.</p>
+<p><b>Step 3: the rule for the average of \(y^2\).</b> \(y\) runs evenly from \(2 - s/2\) to \(2 + s/2\). Use the rule from the hint of Exercise 8.8: the average of \(y^2\) for \(y\) spread evenly from a low end to a high end is (high³ − low³) / (3 × (high − low)). Here high − low \(= s\). Example with \(s = 0.1\): \((2.05^3 - 1.95^3)/(3\times0.1) = (8.615125 - 7.414875)/0.3 = 1.20025/0.3 = 4.000833\).</p>
+<p><b>Step 4: expand the two cubes.</b> First square: \((2 + s/2)(2 + s/2) = 4 + s + s + s^2/4 = 4 + 2s + s^2/4\). Then multiply by \((2 + s/2)\) once more, every term by every term. Times 2 gives \(8 + 4s + s^2/2\); times \(s/2\) gives \(2s + s^2 + s^3/8\). Together: \(8 + 4s + s^2/2 + 2s + s^2 + s^3/8\). Collect: \(8 + 6s + 1.5\,s^2 + s^3/8\). For \(2 - s/2\) the same steps run with \(-s\) in place of \(s\), which flips the sign of the \(s\) and \(s^3\) terms:</p>
+$$ \Big(2 + \frac s2\Big)^3 = 8 + 6s + 1.5\,s^2 + \frac{s^3}{8}, \qquad \Big(2 - \frac s2\Big)^3 = 8 - 6s + 1.5\,s^2 - \frac{s^3}{8} . $$
+<p>Example: \(8 + 0.6 + 0.015 + 0.000125 = 8.615125\) and \(8 - 0.6 + 0.015 - 0.000125 = 7.414875\).</p>
+<p><b>Step 5: subtract and divide.</b> In high³ − low³ the 8s cancel and the \(1.5s^2\) cancel, leaving \(12s + s^3/4\). Divide by \(3s\):</p>
+$$ \text{average of } y^2 = \frac{12s + s^3/4}{3s} = 4 + \frac{s^2}{12} . $$
+<p>Example: \(4 + 0.01/12 = 4.000833\), the same as Step 3.</p>
+<p><b>Step 6: put the two averages back.</b></p>
+$$ 1 + 0.2\times1 - 0.12\times\Big(4 + \frac{s^2}{12}\Big) = 1 + 0.2 - 0.48 - 0.01\,s^2 = 0.72 - 0.01\,s^2 . $$
+<p>Example: \(0.72 - 0.01\times0.01 = 0.7199\), the measured ratio. Make the square smaller and the ratio closes on \(\det J(\mathbf{p})\).</p>
 <h3>Sign and folds</h3>
-<p>\(\det J\) is negative where \(1 + 0.2x - 0.12y^2 \lt 0\), that is where \(x \lt 0.6y^2 - 5\). On that side of the curve \(x = 0.6y^2 - 5\) the sheet has been folded over onto itself: a small square comes out mirrored, its corners running clockwise. Along the curve itself, \(\det J = 0\): small squares are squashed flat, as at a crease in paper. Example: at \((-3, 2.5)\), \(\det J = 1 - 0.6 - 0.12\times6.25 = -0.35\).</p>
+<p>\(\det J\) is negative where \(1 + 0.2x - 0.12y^2 \lt 0\). Solve for \(x\) in two steps. <b>Step 1:</b> subtract \(1 - 0.12y^2\) from both sides: \(0.2x \lt 0.12y^2 - 1\). <b>Step 2:</b> divide both sides by 0.2 (a positive number, so the \(\lt\) stays the same way round): \(x \lt 0.6y^2 - 5\). Example at \(y = 2.5\): \(0.6\times6.25 - 5 = -1.25\), so the sheet is folded wherever \(x \lt -1.25\). On that side of the curve \(x = 0.6y^2 - 5\) the sheet has been folded over onto itself: a small square comes out mirrored, its corners running clockwise. Along the curve itself, \(\det J = 0\): small squares are squashed flat, as at a crease in paper. Example: at \((-3, 2.5)\), \(\det J = 1 - 0.6 - 0.12\times6.25 = -0.35\).</p>
 <figure class="sim" id="sim-area">
 <figcaption><b>Figure 8.4.</b> Left: the flat sheet. The pink region is where \(\det J \lt 0\); the dashed curve is the crease \(\det J = 0\). Drag \(\mathbf{p}\) and set the square's side \(s\). Right: the square's image under \(\mathbf{F}\), with its corners numbered. The readout compares the image's area with the square's area. Notice the ratio tracks \(\det J(\mathbf{p})\), and that the corner order turns clockwise when you drag \(\mathbf{p}\) into the pink region.</figcaption>
 </figure>
@@ -212,8 +246,14 @@ Let \(\mathbf{F}\) have continuous partial derivatives near \(\mathbf{p}\), and 
 It promises nothing about what happens far from \(\mathbf{p}\).
 </div>
 <h3>Mechanics: steering the output</h3>
-<p>At \(\mathbf{p} = (1, 2)\), suppose we want the output to move 0.01 cm across and not at all up. Which input move does that? Use the 2×2 inverse from Level 7 with \(\det J = 0.72\):</p>
-$$ J^{-1} = \frac{1}{0.72}\begin{pmatrix} 1.2 & -1.2 \\ -0.4 & 1 \end{pmatrix} = \begin{pmatrix} 1.6667 & -1.6667 \\ -0.5556 & 1.3889 \end{pmatrix}, \qquad J^{-1}\begin{pmatrix} 0.01 \\ 0 \end{pmatrix} = \begin{pmatrix} 0.016667 \\ -0.005556 \end{pmatrix}. $$
+<p>At \(\mathbf{p} = (1, 2)\), suppose we want the output to move 0.01 cm across and not at all up. Which input move does that? Use the 2×2 inverse recipe from Level 7 on \(J(1, 2) = \begin{pmatrix} 1 & 1.2 \\ 0.4 & 1.2 \end{pmatrix}\), one operation at a time.</p>
+<p><b>Step 1: the determinant.</b> \(1\times1.2 - 1.2\times0.4 = 1.2 - 0.48 = 0.72\) (section 8.6).</p>
+<p><b>Step 2: swap the two diagonal entries.</b> The 1 and the 1.2 trade places: \(\begin{pmatrix} 1.2 & 1.2 \\ 0.4 & 1 \end{pmatrix}\).</p>
+<p><b>Step 3: negate the two off-diagonal entries.</b> \(\begin{pmatrix} 1.2 & -1.2 \\ -0.4 & 1 \end{pmatrix}\).</p>
+<p><b>Step 4: divide every entry by 0.72.</b> \(1.2/0.72 = 1.6667\), \(0.4/0.72 = 0.5556\), \(1/0.72 = 1.3889\):</p>
+$$ J^{-1} = \frac{1}{0.72}\begin{pmatrix} 1.2 & -1.2 \\ -0.4 & 1 \end{pmatrix} = \begin{pmatrix} 1.6667 & -1.6667 \\ -0.5556 & 1.3889 \end{pmatrix}. $$
+<p><b>Step 5: apply it to the wanted output move, row by row.</b></p>
+$$ J^{-1}\begin{pmatrix} 0.01 \\ 0 \end{pmatrix} = \begin{pmatrix} 1.6667\times0.01 - 1.6667\times0 \\ -0.5556\times0.01 + 1.3889\times0 \end{pmatrix} = \begin{pmatrix} 0.016667 \\ -0.005556 \end{pmatrix}. $$
 <p>Check with the real map: \(\mathbf{F}(1.016667, 1.994444) \approx (2.210009, 2.399981)\). The target was \((2.21, 2.4)\). The error is about 0.00002 cm: a second-order leftover, as in 8.4. To steer across, you must move the input right and slightly down; the inverse Jacobian found that for you. Its entries are in “input cm per output cm”.</p>
 <p>Where \(\det J = 0\) (the crease in Figure 8.4), the theorem does not apply. There, two nearby inputs on either side of the fold land on the same output, and no local inverse exists.</p>
 
@@ -224,9 +264,19 @@ $$ \mathbf{E}(x, y) = \big(e^x\cos y,\ \ e^x\sin y\big). $$
 <h3>The Jacobian, every step</h3>
 <p>The derivative of \(e^x\) is \(e^x\); the derivative of \(\cos y\) is \(-\sin y\); the derivative of \(\sin y\) is \(\cos y\). So</p>
 $$ J_{\mathbf{E}}(x, y) = \begin{pmatrix} \partial_x(e^x\cos y) & \partial_y(e^x\cos y) \\ \partial_x(e^x\sin y) & \partial_y(e^x\sin y) \end{pmatrix} = \begin{pmatrix} e^x\cos y & -e^x\sin y \\ e^x\sin y & e^x\cos y \end{pmatrix}. $$
-<p>Here \(\partial_x\) is short for \(\partial/\partial x\). The determinant:</p>
-$$ \det J_{\mathbf{E}} = e^x\cos y \cdot e^x\cos y - (-e^x\sin y)\cdot e^x\sin y = e^{2x}(\cos^2 y + \sin^2 y) = e^{2x}. $$
-<p>The last step uses \(\cos^2 y + \sin^2 y = 1\) (Pythagoras on the unit circle). Since \(e^{2x} \gt 0\) for every \(x\), the determinant is never zero. By the inverse function theorem, every point has a neighbourhood on which \(\mathbf{E}\) can be undone.</p>
+<p>Here \(\partial_x\) is short for \(\partial/\partial x\). In each entry, the input not being moved is a constant multiplier: for \(\partial_x(e^x\cos y)\), \(\cos y\) is fixed and \(e^x\) gives \(e^x\); for \(\partial_y(e^x\cos y)\), \(e^x\) is fixed and \(\cos y\) gives \(-\sin y\).</p>
+<p>Now the determinant, one operation at a time. The worked numbers use \((x, y) = (0, \pi/6)\), where \(e^0 = 1\), \(\cos(\pi/6) = 0.8660\) and \(\sin(\pi/6) = 0.5\), so \(J_{\mathbf{E}} = \begin{pmatrix} 0.8660 & -0.5 \\ 0.5 & 0.8660 \end{pmatrix}\).</p>
+<p><b>Step 1: apply \(ad - bc\).</b> Top-left times bottom-right, minus top-right times bottom-left:</p>
+$$ \det J_{\mathbf{E}} = e^x\cos y \cdot e^x\cos y - (-e^x\sin y)\cdot e^x\sin y . $$
+<p>Example: \(0.8660\times0.8660 - (-0.5)\times0.5\).</p>
+<p><b>Step 2: multiply out each product.</b> \(e^x\cdot e^x = e^{2x}\) (exponents add). Minus a negative is a plus:</p>
+$$ \det J_{\mathbf{E}} = e^{2x}\cos^2 y + e^{2x}\sin^2 y . $$
+<p>Example: \(0.75 + 0.25\).</p>
+<p><b>Step 3: take out the common factor \(e^{2x}\).</b></p>
+$$ \det J_{\mathbf{E}} = e^{2x}\,(\cos^2 y + \sin^2 y) . $$
+<p><b>Step 4: use \(\cos^2 y + \sin^2 y = 1\)</b> (Pythagoras on the unit circle: the point \((\cos y, \sin y)\) is at distance 1 from the origin).</p>
+$$ \det J_{\mathbf{E}} = e^{2x} . $$
+<p>Example: \(0.75 + 0.25 = 1 = e^{2\times0}\).</p> Since \(e^{2x} \gt 0\) for every \(x\), the determinant is never zero. By the inverse function theorem, every point has a neighbourhood on which \(\mathbf{E}\) can be undone.</p>
 <h3>The collision</h3>
 <p>Now compare two inputs that differ by a full turn in \(y\):</p>
 $$ \mathbf{E}(0, 0) = (e^0\cos 0,\ e^0\sin 0) = (1, 0), \qquad \mathbf{E}(0, 2\pi) = (e^0 \cos 2\pi,\ e^0\sin 2\pi) = (1, 0). $$
@@ -316,7 +366,12 @@ $$ \bar J = \begin{pmatrix} 1 & 0.6\times0 \\ 0.2\times0 & 1 + 0.2\times0 \end{p
 <div class="ex" data-answer="2" data-tol="0.001" data-unit="m per radian">
 <p><b>Exercise 8.5.</b> Polar coordinates: \(\mathbf{P}(r, \alpha) = (r\cos\alpha,\ r\sin\alpha)\), with \(r\) in metres and the angle \(\alpha\) in radians. Find the Jacobian, its determinant, the unit of each entry, and the determinant at \(r = 2\) m. Where does the inverse function theorem fail?</p>
 <details><summary>Show answer</summary>
-<p>\(J = \begin{pmatrix} \cos\alpha & -r\sin\alpha \\ \sin\alpha & r\cos\alpha \end{pmatrix}\). Units: column 1 is metres of output per metre of \(r\) (pure number); column 2 is metres per radian. \(\det = r\cos^2\alpha + r\sin^2\alpha = r\), so 2 m per radian at \(r = 2\): a small patch of size \(\Delta r \times \Delta\alpha\) covers about \(r\,\Delta r\,\Delta\alpha\) square metres. It fails at \(r = 0\), where every angle gives the origin. (Here \(\mathbf{P}\) and \(\alpha\) are used only in this exercise.)</p>
+<p><b>Step 1: column 1, move \(r\) with \(\alpha\) fixed.</b> \(\cos\alpha\) and \(\sin\alpha\) are constant multipliers, and \(r\) gives 1: \(\partial(r\cos\alpha)/\partial r = \cos\alpha\), \(\partial(r\sin\alpha)/\partial r = \sin\alpha\).</p>
+<p><b>Step 2: column 2, move \(\alpha\) with \(r\) fixed.</b> \(r\) is a constant multiplier. \(\cos\alpha\) gives \(-\sin\alpha\) and \(\sin\alpha\) gives \(\cos\alpha\) (as in 8.8): \(\partial(r\cos\alpha)/\partial\alpha = -r\sin\alpha\), \(\partial(r\sin\alpha)/\partial\alpha = r\cos\alpha\).</p>
+$$ J = \begin{pmatrix} \cos\alpha & -r\sin\alpha \\ \sin\alpha & r\cos\alpha \end{pmatrix}. $$
+<p>Units: column 1 is metres of output per metre of \(r\) (pure number); column 2 is metres per radian.</p>
+<p><b>Step 3: \(ad - bc\).</b> \(\cos\alpha\cdot r\cos\alpha - (-r\sin\alpha)\cdot\sin\alpha = r\cos^2\alpha + r\sin^2\alpha\).</p>
+<p><b>Step 4: take out \(r\) and use \(\cos^2\alpha + \sin^2\alpha = 1\).</b> \(\det = r\,(\cos^2\alpha + \sin^2\alpha) = r\), so 2 m per radian at \(r = 2\): a small patch of size \(\Delta r \times \Delta\alpha\) covers about \(r\,\Delta r\,\Delta\alpha\) square metres. It fails at \(r = 0\), where every angle gives the origin. (Here \(\mathbf{P}\) and \(\alpha\) are used only in this exercise.)</p>
 </details>
 </div>
 

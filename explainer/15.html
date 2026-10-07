@@ -97,12 +97,24 @@
 <tr><td>\(y_p\)</td><td>“y p”</td><td>one probe sample (“row”): \(y_p = \Sigma^{1/2}s_pg_p = s_p\sum_q s_q\tilde H_{pq}\xi\)</td><td>pu</td><td>a \(d\)-vector</td></tr>
 <tr><td>\(\hat y_p\)</td><td>“y hat”</td><td>the spatial sign \(y_p/\lVert y_p\rVert\)</td><td>none (unit vector)</td><td></td></tr>
 <tr><td>\(B,\ N_{\text{probe}}\)</td><td>“B”, “N probe”</td><td>windows per probe; probes per layer</td><td>none (counts)</td><td>\(B = 4\), \(N_{\text{probe}} = 256\)</td></tr>
+<tr><td>\(\delta_{pq}\)</td><td>“delta p q”</td><td>1 if \(p = q\), 0 otherwise</td><td>none (pure number)</td><td>\(\delta_{40,40} = 1\)</td></tr>
+<tr><td>\(w\)</td><td>“w”</td><td>any fixed test direction, or (15.4) an eigenvector in whitened coordinates</td><td>as stated</td><td>\(w = (2,1)/\sqrt5\)</td></tr>
+<tr><td>\(A\)</td><td>“A”</td><td>a matrix named inside one proof or exercise (each says what it is), for example the random block \(\tilde H_{pp}\) in Prop. 0</td><td>as stated</td><td>\(A = \operatorname{mean}_p\tilde H_{pp}\) in Prop. 6f</td></tr>
+<tr><td>\(\beta,\ A_\beta,\ \bar A\)</td><td>“beta”, “A beta”, “A bar”</td><td>in Prop. 6f: a window of a probe (1 to \(B\)); that window's \(\operatorname{mean}_p\tilde H_{pp}\); their average over the \(B\) windows</td><td>none; pu; pu</td><td>\(B = 4\) windows</td></tr>
+<tr><td>\(\bar y,\ \Omega\)</td><td>“y bar”, “capital omega”</td><td>in Prop. 6f: rows averaged over a probe's windows and positions; the sign-dependent part of that average</td><td>pu; pu</td><td></td></tr>
 <tr><td>\(S_{pq}\)</td><td>“S p q”</td><td>\(\tilde H_{pq} + \tilde H_{qp}\) (only in Prop. 6f)</td><td>pu</td><td></td></tr>
 <tr><td>\(D\)</td><td>“D”</td><td>one sign-flip matrix \(P\operatorname{diag}(\pm1)P^\top\)</td><td>none (orthogonal matrix)</td><td>flips PCA axes 2 and 5</td></tr>
 <tr><td>\(\mathcal D\)</td><td>“script D”</td><td>the group of all \(2^d\) such matrices</td><td>none (a set)</td><td>\(2^{6} = 64\) elements at \(d = 6\)</td></tr>
 <tr><td>\(R\)</td><td>“R”</td><td>the diagonal-normalised operator \(\operatorname{diag}(M)^{-1/2}M\operatorname{diag}(M)^{-1/2}\), in PCA coordinates</td><td>none (pure number)</td><td>\(R\approx I_d\) under the null</td></tr>
 <tr><td>\(\tau_0,\ \tau_r,\ N\)</td><td>“tau nought”, “tau r”, “N”</td><td>a test statistic on the real data; on flipped replicate \(r\); number of replicates</td><td>as the statistic</td><td>\(N = 200\)</td></tr>
 <tr><td>\(Q\)</td><td>“Q”</td><td>a fixed \(d\times m\) orthonormal set of directions removed by projection</td><td>none</td><td>the massive-activation span</td></tr>
+<tr><td>\(\pi_Q\)</td><td>“pi Q”</td><td>the fixed projection \(y\mapsto(I_d - QQ^\top)y\) that removes the span of \(Q\)</td><td>none (a map)</td><td>\(\pi_Q(y)\) has no part along \(Q\)</td></tr>
+<tr><td>\(K\)</td><td>“K”</td><td>an axis-aligned mask \(P\operatorname{diag}(0\text{ or }1)P^\top\)</td><td>none</td><td>drops PCA axes 1 to 5</td></tr>
+<tr><td>\(\Lambda\)</td><td>“capital lambda”</td><td>\(M\) with its off-diagonal entries in PCA coordinates set to 0</td><td>as \(M\)</td><td>\(P\operatorname{diag}(5, 3)P^\top\)</td></tr>
+<tr><td>\(\Gamma\)</td><td>“capital gamma”</td><td>\(\mathbb{E}[M]\) written in PCA coordinates, \(P^\top\mathbb{E}[M]P\) (proof of Prop. 8)</td><td>as \(M\)</td><td>\(\begin{pmatrix}5&amp;2\\2&amp;3\end{pmatrix}\)</td></tr>
+<tr><td>\(Y,\ Y'\)</td><td>“Y”, “Y prime”</td><td>all the real rows of all probes; a flipped copy of them (proof of Cor. 8.1)</td><td>pu</td><td></td></tr>
+<tr><td>\(\mathbf D,\ \mathbf D_0,\ \mathbf D_r\)</td><td>“bold D”</td><td>one flip \(D\in\mathcal D\) per probe, applied together; the hidden one; the one for replicate \(r\)</td><td>none</td><td></td></tr>
+<tr><td>\(m\), rank</td><td>“m”, “rank”</td><td>a whole number from 1 to \(N+1\); the position \(1 + \#\{r:\tau_r\ge\tau_0\}\) of the real statistic from the top</td><td>none (counts)</td><td>rank 1 gives \(p = 1/201\)</td></tr>
 <tr><td>EX</td><td>“E X”</td><td>the 5-dimensional punctuation-conditional H-subspace (top-5 patterns from v8), a \(d\times 5\) matrix in whitened PCA coordinates</td><td>none (unit vectors)</td><td></td></tr>
 <tr><td>\(Q_j\)</td><td>“Q j”</td><td>Σ-orbit twin \(j\) of EX: \(D_j\,\mathrm{EX}\) for a random \(D_j\in\mathcal D\)</td><td>none</td><td>8 twins, \(j = 1,\dots,8\)</td></tr>
 <tr><td>\(a,\ b\)</td><td>“a”, “b”</td><td>two moves of the residual state at one position (v9 prereg writes \(u, w\))</td><td>whitened units (raw move \(\Sigma^{1/2}a\), in a.u.)</td><td>a 1σ move along an EX direction</td></tr>
@@ -159,7 +171,9 @@ $$ F = 3\,h[1]_1\,h[2]_1 + 2\,h[1]_1\,h[1]_2 + h[2]_2^2 \quad\text{(pu; coeffici
 $$ T_\ell[c] = \mathbb{E}_x \operatorname*{mean}_{p\in V} H_x[c]_{pp}\qquad(\text{pu per a.u.}^2). $$
 For each \(c\) it is one symmetric \(d\times d\) matrix. It is linear in \(c\), because \(F_c\) is linear in \(c\). So as a whole, \(T_\ell\) is a tensor in \(\mathbb{R}^d\otimes\operatorname{Sym}(d)\): give it a readout, get back a curvature matrix.
 </div>
-<p>This is the J-lens recipe one derivative higher: average a derivative over contexts and positions. The perturbation sits at a <b>single source position</b> \(p\), so only the diagonal blocks \(H_{pp}\) enter. In the toy above, with one context, \(T = \tfrac12(H_{11}+H_{22}) = \begin{pmatrix}0&1\\1&1\end{pmatrix}\) pu per a.u.². The large \(H_{12}\) does not appear.</p>
+<p>This is the J-lens recipe one derivative higher: average a derivative over contexts and positions. The perturbation sits at a <b>single source position</b> \(p\), so only the diagonal blocks \(H_{pp}\) enter. In the toy above, with one context, \(\mathbb{E}_x\) does nothing and \(\operatorname{mean}_{p\in V}\) averages the two diagonal blocks, entry by entry:</p>
+$$ T = \tfrac12(H_{11}+H_{22}) = \tfrac12\left(\begin{pmatrix}0&2\\2&0\end{pmatrix} + \begin{pmatrix}0&0\\0&2\end{pmatrix}\right) = \tfrac12\begin{pmatrix}0&2\\2&2\end{pmatrix} = \begin{pmatrix}0&1\\1&1\end{pmatrix}\ \text{pu per a.u.}^2 . $$
+<p>The large \(H_{12}\) does not appear.</p>
 
 <h2>15.4 Whitening, and random covectors</h2>
 <p>Raw units are arbitrary. A direction where activations barely vary can have a huge raw curvature and still never matter, because the data never move along it. So theory-v2 measures curvature per unit of natural spread.</p>
@@ -178,7 +192,7 @@ $$ \tilde H = \begin{pmatrix}2&0\\0&1\end{pmatrix}\begin{pmatrix}1&1\\1&1\end{pm
 <li>Raw: \(H\) has eigenvalues 2 and 0. Its top eigenvector is \((1,1)/\sqrt2\), at 45°.</li>
 <li>Whitened: \(\operatorname{tr}\tilde H = 5\) and \(\det\tilde H = 4 - 4 = 0\), so the eigenvalues are 5 and 0. The top eigenvector solves \((\tilde H - 5I_2)w = 0\): \(-w_1 + 2w_2 = 0\), so \(w = (2,1)/\sqrt5\) in whitened coordinates.</li>
 </ul>
-<p>Mapped back to raw coordinates, \(\Sigma^{1/2}w \propto (4,1)\): the top direction has tilted from 45° toward the high-variance axis. Whitening is, in theory-v2's words, “a choice, not a consequence”. Hold this thought: in 15.10 it becomes the Σ prior.</p>
+<p>Mapped back to raw coordinates (a whitened direction \(w\) is the raw move \(\Sigma^{1/2}w\)): \(\operatorname{diag}(2,1)\,(2,1) = (2\times2,\ 1\times1) = (4, 1)\), up to the factor \(1/\sqrt5\). That is about 14° from the first axis, against 45° before: the top direction has tilted toward the high-variance axis. Whitening is, in theory-v2's words, “a choice, not a consequence”. Hold this thought: in 15.10 it becomes the Σ prior.</p>
 <h3>Random covectors</h3>
 <p>One readout \(c\) asks about one token mixture. To ask about all tokens at once, theory-v2 draws \(c\sim\mathcal N(0,\Sigma_U)\) with \(\Sigma_U = \frac{1}{|\text{vocab}|}\sum_t u_tu_t^\top\). Any quantity quadratic in \(c\) then averages as if every vocabulary token were weighted equally: \(\mathbb{E}[cc^\top] = \Sigma_U\).</p>
 
@@ -190,7 +204,10 @@ $$ M^{\text{lens}}_\ell = \mathbb{E}_c\big[\tilde T_\ell[c]^2\big] \qquad\text{(
 $$ M^{\text{diag}}_\ell = \mathbb{E}_{x,c}\operatorname*{mean}_{p\in V}\tilde H_{pp}^2 \qquad\text{(average the squares of diagonal blocks)} $$
 $$ M^{\text{row}}_\ell = \mathbb{E}_{x,c}\operatorname*{mean}_{p\in V}\sum_{q\in V}\tilde H_{pq}\tilde H_{pq}^\top \qquad\text{(whole row of blocks, cross-position included)} $$
 </div>
-<p>Each is positive semidefinite: each is an average of matrices of the form \(AA^\top\), and \(w^\top AA^\top w = \lVert A^\top w\rVert^2\ge 0\). (For symmetric \(\tilde H_{pp}\), \(\tilde H_{pp}^2 = \tilde H_{pp}\tilde H_{pp}^\top\).)</p>
+<p>Each is positive semidefinite. Why, in steps:</p>
+<p><b>Step 1: every piece has the form \(AA^\top\).</b> \(\tilde H_{pq}\tilde H_{pq}^\top\) is already of that form. For the symmetric \(\tilde H_{pp}\) and \(\tilde T[c]\), \(\tilde H_{pp}^\top = \tilde H_{pp}\), so \(\tilde H_{pp}^2 = \tilde H_{pp}\tilde H_{pp}^\top\), and likewise for \(\tilde T[c]^2\).</p>
+<p><b>Step 2: such a piece is never negative along any \(w\).</b> \(w^\top AA^\top w = (A^\top w)^\top(A^\top w)\), because \((A^\top w)^\top = w^\top A\) (transpose of a product, reversed). That is the squared length \(\lVert A^\top w\rVert^2 \ge 0\).</p>
+<p><b>Step 3: averages keep the sign.</b> By linearity, \(w^\top(\text{average of pieces})\,w\) is the average of the numbers \(w^\top(\text{piece})\,w\), each \(\ge 0\). Toy: \(A = \begin{pmatrix}1&2\\0&0\end{pmatrix}\), \(w = (1, -1)\): \(A^\top w = (1, 2)\), so \(w^\top AA^\top w = 1 + 4 = 5 \ge 0\).</p>
 
 <h3>Proposition 0 (ordering)</h3>
 <p><b>In words.</b> Adding the cross-position blocks can only add energy. Squaring before averaging can only give more energy than averaging before squaring. So row energy dominates diagonal energy, which dominates lens energy, in every direction and for every sorted eigenvalue. But the three top-\(k\) subspaces can still point in different directions.</p>
@@ -202,7 +219,7 @@ $$ \text{hence}\quad M^{\text{row}}\succeq M^{\text{diag}}\succeq M^{\text{lens}
 <li><b>First gap.</b> In \(M^{\text{row}}\) split the sum over \(q\) into \(q = p\) and \(q\ne p\). The \(q = p\) term is \(\tilde H_{pp}\tilde H_{pp}^\top = \tilde H_{pp}^2\), whose average is \(M^{\text{diag}}\). What remains is the stated difference. Each \(\tilde H_{pq}\tilde H_{pq}^\top\) is positive semidefinite, and sums and averages of positive semidefinite matrices are positive semidefinite.</li>
 <li><b>Second gap: fix \(c\).</b> Let \(A = \tilde H_{pp}\) where \((x, p)\) is random: \(x\) from the corpus, \(p\) uniform on \(V\). Its mean is \(\mathbb{E}A = \mathbb{E}_x\operatorname{mean}_p\Sigma^{1/2}H_{pp}\Sigma^{1/2} = \Sigma^{1/2}T_\ell[c]\Sigma^{1/2} = \tilde T[c]\), because whitening is linear and passes through averages.</li>
 <li>Expand \((A - \mathbb{E}A)^2 = A^2 - A\,\mathbb{E}A - \mathbb{E}A\,A + (\mathbb{E}A)^2\). (Matrices need not commute, so keep the order.)</li>
-<li>Take the expectation: \(\mathbb{E}[(A-\mathbb{E}A)^2] = \mathbb{E}[A^2] - (\mathbb{E}A)^2 - (\mathbb{E}A)^2 + (\mathbb{E}A)^2 = \mathbb{E}[A^2] - (\mathbb{E}A)^2\).</li>
+<li>Take the expectation of each of the four terms (linearity). \(\mathbb{E}A\) is a fixed matrix, so it comes outside: \(\mathbb{E}[A\,\mathbb{E}A] = (\mathbb{E}A)(\mathbb{E}A) = (\mathbb{E}A)^2\), and the same for \(\mathbb{E}[\mathbb{E}A\,A]\). The last term is fixed already. So \(\mathbb{E}[(A-\mathbb{E}A)^2] = \mathbb{E}[A^2] - (\mathbb{E}A)^2 - (\mathbb{E}A)^2 + (\mathbb{E}A)^2 = \mathbb{E}[A^2] - (\mathbb{E}A)^2\). Toy with \(d = 1\): \(A = 1\) or \(3\), equally likely. \(\mathbb{E}A = 2\), \(\mathbb{E}[A^2] = (1 + 9)/2 = 5\), and \(\mathbb{E}[(A - 2)^2] = (1 + 1)/2 = 1 = 5 - 4\).</li>
 <li>\(A - \mathbb{E}A\) is symmetric, so \((A-\mathbb{E}A)^2 = (A-\mathbb{E}A)(A-\mathbb{E}A)^\top\succeq 0\), and so is its expectation.</li>
 <li>So \(\mathbb{E}_{x,p}[\tilde H_{pp}^2] - \tilde T[c]^2\succeq 0\). Average over \(c\): \(M^{\text{diag}} - M^{\text{lens}}\succeq 0\).</li>
 <li><b>Eigenvalues (Weyl monotonicity).</b> By the Courant–Fischer theorem, \(\lambda_i(A) = \max_{\dim U = i}\ \min_{w\in U,\lVert w\rVert = 1} w^\top Aw\). If \(A\succeq B\) then \(w^\top Aw\ge w^\top Bw\) for every \(w\), so every inner minimum, and hence every maximum, is at least as large for \(A\). So \(\lambda_i(A)\ge\lambda_i(B)\). ∎</li>
@@ -236,8 +253,14 @@ H-space\(_k(M)\) is the span of the top-\(k\) eigenvectors of a chosen energy op
 <li>Draw Rademacher signs \(s_p\) for every valid position of every window.</li>
 <li>Compute one HVP, \(g = H(s\otimes v)\) (theory-v2 writes \(h\); here \(h\) is kept for the residual state), where \(s\otimes v\) puts \(s_pv\) at position \(p\). The Hessian is block-diagonal over windows, because windows are separate forward passes.</li>
 </ol>
-<p>Position \(p\) of the HVP output is \(g_p = \sum_q H_{pq}(s_qv) = \sum_q s_q H_{pq}\Sigma^{1/2}\xi\) (pu per a.u.). The stored sample (“row”) is</p>
-$$ y_p = \Sigma^{1/2}s_p g_p = s_p\sum_{q\in V}s_q\,\Sigma^{1/2}H_{pq}\Sigma^{1/2}\xi = s_p\sum_{q\in V}s_q\,\tilde H_{pq}\,\xi\qquad(\text{pu}). $$
+<p>The HVP output and the stored sample (“row”), one step at a time.</p>
+<p><b>Step 1: block multiplication.</b> The tangent has block \(s_qv\) at position \(q\). Block \(p\) of \(H\) times it is the sum over \(q\) of block \((p,q)\) times block \(q\): \(g_p = \sum_q H_{pq}(s_qv)\) (pu per a.u.).</p>
+<p><b>Step 2: move the sign out and substitute \(v\).</b> \(s_q\) is a number, so it can move to the front. With \(v = \Sigma^{1/2}\xi\): \(g_p = \sum_q s_q H_{pq}\Sigma^{1/2}\xi\).</p>
+<p><b>Step 3: the stored row.</b> The code stores \(y_p = \Sigma^{1/2}s_pg_p\). Put in Step 2, and move the numbers \(s_p\), \(s_q\) to the front:</p>
+$$ y_p = \Sigma^{1/2}s_p g_p = s_p\sum_{q\in V}s_q\,\Sigma^{1/2}H_{pq}\Sigma^{1/2}\xi . $$
+<p><b>Step 4: recognise the whitened block.</b> \(\Sigma^{1/2}H_{pq}\Sigma^{1/2} = \tilde H_{pq}\), so</p>
+$$ y_p = s_p\sum_{q\in V}s_q\,\tilde H_{pq}\,\xi\qquad(\text{pu}). $$
+<p>Toy with \(d = 1\) (blocks are numbers) and two positions: \(\tilde H_{11} = 1\), \(\tilde H_{12} = 2\), \(\xi = 1\), \(s = (+1, -1)\). Then \(y_1 = (+1)\big((+1)\times1 + (-1)\times2\big)\times1 = -1\).</p>
 <p>One HVP gives \(|V|\) rows per window. Run 1 used 256 probes × \(B = 4\) windows per layer, \(T = 128\), \(|V| = 111\) (theory-v2 §6A). Everything below is conditional on the plug-in \(\mu\) and \(\Sigma\).</p>
 
 <h3>Proposition 6 (simplified)</h3>
@@ -253,23 +276,38 @@ $$ y_p = \Sigma^{1/2}s_p g_p = s_p\sum_{q\in V}s_q\,\Sigma^{1/2}H_{pq}\Sigma^{1/
 </ul>
 <p><b>Proof of (a), line by line.</b> Fix \(x\), \(c\) and \(p\). The randomness is in \(s\) and \(\xi\), which are independent.</p>
 <ol>
-<li>\(y_py_p^\top = s_p^2\sum_q\sum_{q'}s_qs_{q'}\,\tilde H_{pq}\,\xi\xi^\top\,\tilde H_{pq'}^\top\).</li>
+<li>Transpose the row. The transpose of a product is the product of the transposes in reverse order, and numbers are unchanged: \(y_p^\top = s_p\sum_{q'}s_{q'}\,\xi^\top\tilde H_{pq'}^\top\). (A second index name \(q'\) keeps the two sums apart.)</li>
+<li>Multiply the column \(y_p\) by the row \(y_p^\top\). Every term of the first sum meets every term of the second: \(y_py_p^\top = s_p^2\sum_q\sum_{q'}s_qs_{q'}\,\tilde H_{pq}\,\xi\xi^\top\,\tilde H_{pq'}^\top\).</li>
 <li>\(s_p^2 = 1\), because \(s_p = \pm1\).</li>
-<li>\(\mathbb{E}[s_qs_{q'}] = 1\) if \(q = q'\) and \(0\) otherwise (independent signs with mean 0). This holds also when \(q\) or \(q'\) equals \(p\).</li>
-<li>\(\mathbb{E}[\xi\xi^\top] = I_d\), independent of the signs.</li>
+<li>Take the expectation term by term (linearity). In each term the random parts are \(s_qs_{q'}\) and \(\xi\xi^\top\), which are independent, so the mean of their product is the product of their means: \(\mathbb{E}[s_qs_{q'}]\,\tilde H_{pq}\,\mathbb{E}[\xi\xi^\top]\,\tilde H_{pq'}^\top\).</li>
+<li>\(\mathbb{E}[s_qs_{q'}] = 1\) if \(q = q'\) (because \(s_q^2 = 1\)) and \(0\) otherwise (independent signs with mean 0, <a href="13.html">Level 13</a>). This holds also when \(q\) or \(q'\) equals \(p\). So only the terms with \(q' = q\) survive.</li>
+<li>\(\mathbb{E}[\xi\xi^\top] = I_d\): the covariance of \(\mathcal N(0, I_d)\).</li>
 <li>So \(\mathbb{E}[y_py_p^\top] = \sum_q\tilde H_{pq}I_d\tilde H_{pq}^\top = \sum_q\tilde H_{pq}\tilde H_{pq}^\top\). Average over \(x, c, p\): \(M^{\text{row}}\). ∎</li>
 </ol>
+<p>Toy check with the \(d = 1\) toy above (\(\tilde H_{11} = 1\), \(\tilde H_{12} = 2\), \(\xi = 1\) fixed): the four sign patterns give \(y_1 = s_1(s_1 + 2s_2) = 1 + 2s_1s_2\), that is 3, −1, −1, 3. Their squares 9, 1, 1, 9 average 5, which is \(1^2 + 2^2\).</p>
 <p><b>Proof of (b).</b></p>
 <ol>
-<li>\(\mathbb{E}[y^1_p\mid\xi] = \sum_q\mathbb{E}[s^1_ps^1_q]\,\tilde H_{pq}\xi = \sum_q\delta_{pq}\tilde H_{pq}\xi = \tilde H_{pp}\xi\), where \(\delta_{pq}\) is 1 if \(p = q\) and 0 otherwise.</li>
-<li>Given \(\xi\), \(y^1_p\) and \(y^2_p\) are independent (different sign vectors). So \(\mathbb{E}[y^1_py^{2\top}_p\mid\xi] = \mathbb{E}[y^1_p\mid\xi]\,\mathbb{E}[y^2_p\mid\xi]^\top = \tilde H_{pp}\xi\xi^\top\tilde H_{pp}^\top\).</li>
-<li>Average over \(\xi\): \(\tilde H_{pp}I_d\tilde H_{pp}^\top = \tilde H_{pp}^2\). The symmetrised version has the same mean. Average over \(x, c, p\): \(M^{\text{diag}}\). ∎</li>
+<li>Hold \(\xi\) fixed and average over the signs \(s^1\) only (written \(\mathbb{E}[\,\cdot\mid\xi]\)). By linearity, \(\mathbb{E}[y^1_p\mid\xi] = \sum_q\mathbb{E}[s^1_ps^1_q]\,\tilde H_{pq}\xi\).</li>
+<li>\(\mathbb{E}[s^1_ps^1_q] = \delta_{pq}\), where \(\delta_{pq}\) is 1 if \(p = q\) and 0 otherwise (Level 13). Only the \(q = p\) term survives: \(\mathbb{E}[y^1_p\mid\xi] = \tilde H_{pp}\xi\). The same holds for \(y^2_p\).</li>
+<li>Given \(\xi\), \(y^1_p\) and \(y^2_p\) are independent (different sign vectors). For independent quantities, the mean of a product is the product of the means: \(\mathbb{E}[y^1_py^{2\top}_p\mid\xi] = \mathbb{E}[y^1_p\mid\xi]\,\mathbb{E}[y^2_p\mid\xi]^\top = \tilde H_{pp}\xi\,(\tilde H_{pp}\xi)^\top\).</li>
+<li>Transpose the product, reversed: \((\tilde H_{pp}\xi)^\top = \xi^\top\tilde H_{pp}^\top\). So the conditional mean is \(\tilde H_{pp}\xi\xi^\top\tilde H_{pp}^\top\).</li>
+<li>Average over \(\xi\), using \(\mathbb{E}[\xi\xi^\top] = I_d\): \(\tilde H_{pp}I_d\tilde H_{pp}^\top = \tilde H_{pp}\tilde H_{pp}^\top\). Since \(\tilde H_{pp}\) is symmetric, that is \(\tilde H_{pp}^2\).</li>
+<li>The symmetrised version \(\tfrac12(y^1_py^{2\top}_p + y^2_py^{1\top}_p)\): its second term is the transpose of the first, so its mean is \((\tilde H_{pp}^2)^\top = \tilde H_{pp}^2\). The average of the two is \(\tilde H_{pp}^2\). Average over \(x, c, p\): \(M^{\text{diag}}\). ∎</li>
 </ol>
 <div class="box plain">
 <span class="boxtitle">Proof of (f), for completeness</span>
-<p>In one window, \(\sum_py_p = \sum_p\sum_qs_ps_q\tilde H_{pq}\xi\). The terms with \(q = p\) give \(\sum_p\tilde H_{pp}\xi = |V|\,A\,\xi\), with \(A = \operatorname{mean}_p\tilde H_{pp}\). Each unordered pair \(p\lt q\) appears twice and gives \(s_ps_qS_{pq}\xi\). So \(\frac{1}{|V|}\sum_py_p = A\xi + \frac{1}{|V|}\sum_{p\lt q}s_ps_qS_{pq}\xi\).</p>
-<p>Average over the \(B\) windows of the probe (same \(c\), same \(\xi\), own signs): \(\bar y = \bar A\xi + \frac{1}{B|V|}\sum_b\sum_{p\lt q}s^{(b)}_ps^{(b)}_qS^{(b)}_{pq}\xi\), with \(\bar A = \frac1B\sum_bA_b\).</p>
-<p>Square and take expectations. Cross terms between \(\bar A\xi\) and sign terms vanish, because \(\mathbb{E}[s_ps_q] = 0\) for \(p\ne q\). Two sign terms survive only for the same window and the same pair, and \(\mathbb{E}[\xi\xi^\top] = I_d\). This gives \(\mathbb{E}[\bar A^2] + \frac{1}{B^2|V|^2}\cdot B\cdot\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top\). For \(B\) independent windows, \(\mathbb{E}[\bar A^2] = (\mathbb{E}A)^2 + \frac1B\operatorname{Cov}_x(A)\), and \((\mathbb{E}A)^2 = \tilde T[c]^2\). Average over \(c\). ∎</p>
+<p><b>Step 1: sum one window's rows.</b> From the row formula, \(\sum_py_p = \sum_p\sum_qs_ps_q\tilde H_{pq}\xi\).</p>
+<p><b>Step 2: the terms with \(q = p\).</b> \(s_p^2 = 1\), so they give \(\sum_p\tilde H_{pp}\xi = |V|\,A\,\xi\), with \(A = \operatorname{mean}_p\tilde H_{pp}\) (a sum is \(|V|\) times the mean).</p>
+<p><b>Step 3: the terms with \(q \ne p\).</b> Each unordered pair \(p\lt q\) appears twice, as \((p,q)\) and \((q,p)\), with the same sign product \(s_ps_q\). Together they give \(s_ps_q(\tilde H_{pq} + \tilde H_{qp})\xi = s_ps_qS_{pq}\xi\).</p>
+<p><b>Step 4: divide by \(|V|\).</b> \(\frac{1}{|V|}\sum_py_p = A\xi + \frac{1}{|V|}\sum_{p\lt q}s_ps_qS_{pq}\xi\).</p>
+<p><b>Step 5: average over the \(B\) windows of the probe</b> (same \(c\), same \(\xi\), each window \(\beta = 1,\dots,B\) with its own signs and blocks, marked by a superscript \((\beta)\)):</p>
+$$ \bar y = \bar A\xi + \Omega\xi, \qquad \bar A = \frac1B\sum_\beta A_\beta, \qquad \Omega = \frac{1}{B|V|}\sum_\beta\sum_{p\lt q}s^{(\beta)}_ps^{(\beta)}_qS^{(\beta)}_{pq} . $$
+<p><b>Step 6: square.</b> \(\bar y\bar y^\top = \bar A\xi\xi^\top\bar A^\top + \bar A\xi\xi^\top \Omega^\top + \Omega\xi\xi^\top\bar A^\top + \Omega\xi\xi^\top \Omega^\top\) (transpose of a product, reversed).</p>
+<p><b>Step 7: the two mixed terms vanish.</b> Each is linear in sign products \(s_ps_q\) with \(p \ne q\), which average 0 and are independent of everything else.</p>
+<p><b>Step 8: the last term.</b> It is a double sum over pairs of (window, pair) of \(s^{(\beta)}_ps^{(\beta)}_q\,s^{(\beta')}_{p'}s^{(\beta')}_{q'}\) times matrices. The four-sign product averages 1 when it is the same window and the same pair (every sign then appears squared), and 0 otherwise (some sign appears once, and its mean is 0). With \(\mathbb{E}[\xi\xi^\top] = I_d\), the survivors give \(\frac{1}{B^2|V|^2}\sum_\beta\sum_{p\lt q}S^{(\beta)}_{pq}S^{(\beta)\top}_{pq}\). The \(B\) windows have the same law, so the average is \(\frac{B}{B^2|V|^2}\,\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top = \frac{1}{B|V|^2}\,\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top\).</p>
+<p><b>Step 9: the first term.</b> With \(\mathbb{E}[\xi\xi^\top] = I_d\) and \(\bar A\) symmetric, it averages \(\mathbb{E}[\bar A^2]\). Write \(\bar A = \mathbb{E}A + (\bar A - \mathbb{E}A)\) and square. The mixed terms average 0, because \(\bar A - \mathbb{E}A\) averages 0. So \(\mathbb{E}[\bar A^2] = (\mathbb{E}A)^2 + \mathbb{E}[(\bar A - \mathbb{E}A)^2]\).</p>
+<p><b>Step 10: the variance of a mean of \(B\) independent windows.</b> \(\bar A - \mathbb{E}A = \frac1B\sum_\beta(A_\beta - \mathbb{E}A)\). Squaring gives \(B^2\) terms over \(B^2\); the \(\beta \ne \beta'\) ones average 0 by independence, and the \(B\) others average \(\operatorname{Cov}_x(A)\) each. So \(\mathbb{E}[(\bar A - \mathbb{E}A)^2] = \frac{B}{B^2}\operatorname{Cov}_x(A) = \frac1B\operatorname{Cov}_x(A)\). This is the matrix version of \(\sigma^2/n\) (Level 13).</p>
+<p><b>Step 11: collect.</b> \((\mathbb{E}A)^2 = \tilde T[c]^2\) (Proposition 0, step 2). Adding Steps 8 to 10 and averaging over \(c\) gives \(M^{\text{lens}} + \tfrac1B\mathbb{E}_c\operatorname{Cov}_x(A) + \tfrac{1}{B|V|^2}\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top\). ∎</p>
 </div>
 <p><b>The toy check in theory-v2.</b> An fp64 toy with \(T = 5\), \(d = 3\), a cubic \(F\) (so the rectangle average is exact) and \(4\times10^5\) probes. Relative Frobenius error of each estimator against its stated target and against the nearest wrong target:</p>
 <div class="tablewrap">
@@ -377,8 +415,10 @@ $$ \mathcal D = \{P\operatorname{diag}(\pm1,\dots,\pm1)P^\top\}\quad(2^d\ \text{
 <li>Replace every block by \(D\tilde H_{pq}D\) and \(z\) by \(Dz\). A row becomes \(\sum_qs_ps_qD\tilde H_{pq}D\,Dz = D\sum_qs_ps_q\tilde H_{pq}z = Dy_p\), because \(D^2 = I_d\). By the hypothesis and step 1 (blocks and \(z\) are independent), the replaced inputs have the same joint law as the originals. So the rows \(\{Dy_p\}\) of a probe have the same joint law as \(\{y_p\}\).</li>
 <li>Each estimator is equivariant: \(M(Dy) = DM(y)D\). Raw: \((Dy)(Dy)^\top = Dyy^\top D\). Spatial sign: \(\lVert Dy\rVert = \lVert y\rVert\) because \(D\) is orthogonal, so \(Dy/\lVert Dy\rVert = D(y/\lVert y\rVert)\). Cross-moments: \(Dy^1(Dy^2)^\top = D\,y^1y^{2\top}D\).</li>
 <li>Steps 2 and 3 give \(\mathbb{E}[M] = \mathbb{E}[M(Dy)] = D\,\mathbb{E}[M]\,D\) for every \(D\in\mathcal D\).</li>
-<li>Write \(\mathbb{E}[M]\) in PCA coordinates: \(N = P^\top\mathbb{E}[M]P\). Choose \(D\) that flips only axis \(i\). Then \(P^\top DP = \operatorname{diag}(1,\dots,-1,\dots,1)\), and step 4 says \(N_{ij} = (-1)(+1)N_{ij} = -N_{ij}\) for every \(j\ne i\).</li>
-<li>A number equal to its own negative is 0. So every off-diagonal entry of \(N\) is 0: \(\mathbb{E}[M]\) is diagonal in \(P\). ∎</li>
+<li>Write \(\mathbb{E}[M]\) in PCA coordinates: \(\Gamma = P^\top\mathbb{E}[M]P\). Choose \(D\) that flips only axis \(i\). Then \(P^\top DP = P^\top P\operatorname{diag}(\pm1)P^\top P = \operatorname{diag}(1,\dots,-1,\dots,1)\), with the \(-1\) in place \(i\), because \(P^\top P = I_d\).</li>
+<li>Sandwich step 4 between \(P^\top\) and \(P\), and insert \(PP^\top = I_d\) on both sides of \(\mathbb{E}[M]\): \(\Gamma = P^\top D\,\mathbb{E}[M]\,DP = (P^\top DP)(P^\top\mathbb{E}[M]P)(P^\top DP) = \operatorname{diag}(\ldots)\,\Gamma\,\operatorname{diag}(\ldots)\).</li>
+<li>A diagonal matrix on the left multiplies row \(i\) by its \(i\)-th entry; on the right it multiplies column \(j\) by its \(j\)-th entry. So entry \((i,j)\) becomes \((-1)\,\Gamma_{ij}\,(+1)\) for every \(j\ne i\): \(\Gamma_{ij} = -\Gamma_{ij}\). Toy with \(d = 2\), \(i = 1\): \(\begin{pmatrix}-1&0\\0&1\end{pmatrix}\begin{pmatrix}5&2\\2&3\end{pmatrix}\begin{pmatrix}-1&0\\0&1\end{pmatrix} = \begin{pmatrix}5&-2\\-2&3\end{pmatrix}\). The diagonal survives, the off-diagonal flips, so the two can only be equal if the off-diagonal entry is 0.</li>
+<li>A number equal to its own negative is 0. So every off-diagonal entry of \(\Gamma\) is 0: \(\mathbb{E}[M]\) is diagonal in \(P\). ∎</li>
 </ol>
 <p><b>Laws that satisfy the hypothesis</b> (theory-v2 §6B), with the one-line reason:</p>
 <ul>
@@ -418,7 +458,8 @@ $$ p = \frac{1 + \#\{r : \tau_r\ge\tau_0\}}{N+1} $$
 <li>Draw \(\mathbf D_0\) uniformly and set \(Y' = \mathbf D_0Y\). By step 2, \(Y'\) has the law of \(Y\); and because each \(\mathbf D\) is its own inverse, \(Y = \mathbf D_0Y'\).</li>
 <li>The real statistic is \(\tau(\mathbf D_0Y')\) and replicate \(r\) is \(\tau(\mathbf D_r\mathbf D_0Y')\). The group elements \(\mathbf D_0, \mathbf D_1\mathbf D_0,\dots,\mathbf D_N\mathbf D_0\) are independent and uniform (multiplying a uniform group element by a fixed one gives a uniform one), and independent of \(Y'\).</li>
 <li>So \((\tau_0,\tau_1,\dots,\tau_N)\) are exchangeable: \(N + 1\) values made the same way from the same \(Y'\). The rank of \(\tau_0\) among them is uniform (ties counted against \(\tau_0\), which is what the “≥” does).</li>
-<li>Hence \(\Pr(1 + \#\{\tau_r\ge\tau_0\}\le m)\le m/(N+1)\), which is \(\Pr(p\le\alpha)\le\alpha\) with \(\alpha = m/(N+1)\). ∎</li>
+<li>Name the rank. \(1 + \#\{r : \tau_r\ge\tau_0\}\) is the position of \(\tau_0\) when the \(N + 1\) values are sorted from the top, ties counted against \(\tau_0\). With no ties it is equally likely to be any of \(1, 2, \dots, N+1\). Ties can only push it down the list. So for any whole number \(m\) from 1 to \(N+1\), \(\Pr(\text{rank}\le m)\le m/(N+1)\). Toy: \(N = 3\), four exchangeable values, no ties: the real one is top with probability \(\tfrac14\), in the top two with probability \(\tfrac24\).</li>
+<li>Translate to \(p\). By definition \(p = \text{rank}/(N+1)\). So \(p\le\alpha\) means \(\text{rank}\le\alpha(N+1)\), that is \(\text{rank}\le m\) with \(m\) the largest whole number not above \(\alpha(N+1)\). Step 6 gives \(\Pr(p\le\alpha)\le m/(N+1)\le\alpha\). ∎</li>
 </ol>
 <p>The “+1” in numerator and denominator counts the real data as one of the draws. With \(N = 200\), the smallest possible p-value is \(1/201\approx\) <span class="hs" data-k="f5p:40:norm">...</span>, which is exactly what every v5 test returned.</p>
 
@@ -430,8 +471,8 @@ $$ R = \operatorname{diag}(M)^{-1/2}\,M\,\operatorname{diag}(M)^{-1/2}. $$
 <h3>Which preprocessing keeps the test useful</h3>
 <p>Before estimating, the run removes confounds such as the massive-activation span. How you remove them matters.</p>
 <ul>
-<li><b>Axis-aligned removal</b> (mask some PCA axes, normalise rows, keep some PCA coordinates). A mask \(K = P\operatorname{diag}(0\text{ or }1)P^\top\) commutes with every \(D\): \(KDy = DKy\). So preprocessing the flipped data equals flipping the preprocessed data. The test stays exact, and the null adds no structure.</li>
-<li><b>A fixed projection that is not axis-aligned,</b> \(g(y) = (I_d - QQ^\top)y\). The test is still exact, because \(g\) is fixed. But \(g(Dy) = Dy - QQ^\top Dy\): the second term always lies in the same fixed span of \(Q\), whatever \(D\) is. For the raw estimator, every replicate's \(M\) is \((I_d - QQ^\top)DMD(I_d - QQ^\top)\), whose average \((I_d - QQ^\top)\Lambda(I_d - QQ^\top)\) (\(\Lambda\) diagonal) is not diagonal and is the same in every replicate. So the null patterns themselves reproduce, and split-half loses all power.</li>
+<li><b>Axis-aligned removal</b> (mask some PCA axes, normalise rows, keep some PCA coordinates). A mask \(K = P\operatorname{diag}(0\text{ or }1)P^\top\) commutes with every \(D\). <b>Step 1:</b> multiply, using \(P^\top P = I_d\) in the middle: \(KD = P\operatorname{diag}(0\text{ or }1)\operatorname{diag}(\pm1)P^\top\) and \(DK = P\operatorname{diag}(\pm1)\operatorname{diag}(0\text{ or }1)P^\top\). <b>Step 2:</b> diagonal matrices commute (their product just multiplies matching diagonal entries, and \(0\times(-1) = (-1)\times0\), \(1\times(-1) = (-1)\times1\)), so \(KD = DK\), and \(KDy = DKy\). So preprocessing the flipped data equals flipping the preprocessed data. The test stays exact, and the null adds no structure.</li>
+<li><b>A fixed projection that is not axis-aligned,</b> \(\pi_Q(y) = (I_d - QQ^\top)y\). The test is still exact, because \(\pi_Q\) is fixed. But \(\pi_Q(Dy) = Dy - QQ^\top Dy\): the second term always lies in the same fixed span of \(Q\), whatever \(D\) is. For the raw estimator, in steps. <b>Step 1:</b> a replicate's rows are \(\pi_Q(Dy) = (I_d - QQ^\top)Dy\), so its \(M\) is the average of \((I_d - QQ^\top)Dyy^\top D(I_d - QQ^\top)\) (transpose of a product, reversed, with \(D^\top = D\) and \((I_d - QQ^\top)^\top = I_d - QQ^\top\)), which is \((I_d - QQ^\top)DMD(I_d - QQ^\top)\). <b>Step 2:</b> average over the random flips. In PCA coordinates \(DMD\) keeps each diagonal entry and multiplies entry \((i,j)\) by the product of two independent random signs, which averages 0. So the flip average of \(DMD\) is \(\Lambda\), the diagonal part of \(M\) in PCA coordinates. <b>Step 3:</b> the replicates therefore centre on \((I_d - QQ^\top)\Lambda(I_d - QQ^\top)\). Unless \(Q\) lies along PCA axes, this is not diagonal in PCA coordinates, and it is the same fixed matrix for every replicate. So the null patterns themselves reproduce, and split-half loses all power.</li>
 </ul>
 <p>This happened. The first flip test (variant b, frozen rule, L16 and L28) projected out the massive span. \(\lambda_1\) beat all 200 flips for every estimator (1.4 to 2.1× the flip maximum), but the null split@3 maximum was 0.95 to 0.98, so the split condition could not pass. <b>Verdict: FAIL</b> (paper §4b; theory-v2 §6B).</p>
 
@@ -467,8 +508,8 @@ $$ R = \operatorname{diag}(M)^{-1/2}\,M\,\operatorname{diag}(M)^{-1/2}. $$
 <span class="boxtitle">Σ-orbit twins, and why they are exactly matched</span>
 <p>In whitened PCA coordinates, twin \(j\) is \(Q_j = D_j\,\mathrm{EX}\) with \(D_j\in\mathcal D\) random; the v9 prereg writes this as \(Q_j = P(s_j\odot P^\top\mathrm{EX})\). Claim: a twin has exactly the raw variance and the per-PCA-axis profile of EX.</p>
 <ol>
-<li>Raw directions are \(\Sigma^{1/2}\mathrm{EX}\) and \(\Sigma^{1/2}Q_j\). Their Gram matrices: \((\Sigma^{1/2}Q_j)^\top(\Sigma^{1/2}Q_j) = \mathrm{EX}^\top D_j\Sigma D_j\mathrm{EX} = \mathrm{EX}^\top\Sigma\,\mathrm{EX}\), using \(D_j\Sigma D_j = \Sigma\) (15.10). So every variance and covariance the subspace carries in raw units is identical.</li>
-<li>Profile: \(P^\top Q_j = P^\top D_j\mathrm{EX} = \operatorname{diag}(s_j)P^\top\mathrm{EX}\). The PCA coordinates differ only in sign, so their squares (the energy on each PCA axis) are identical.</li>
+<li>Raw directions are \(\Sigma^{1/2}\mathrm{EX}\) and \(\Sigma^{1/2}Q_j\). Compare their Gram matrices (all dot products between the columns), in steps. <b>Substitute</b> \(Q_j = D_j\mathrm{EX}\): \((\Sigma^{1/2}D_j\mathrm{EX})^\top(\Sigma^{1/2}D_j\mathrm{EX})\). <b>Transpose the product</b>, reversing the order: \(\mathrm{EX}^\top D_j^\top(\Sigma^{1/2})^\top\,\Sigma^{1/2}D_j\mathrm{EX}\). <b>Use symmetry</b>: \(D_j^\top = D_j\) and \((\Sigma^{1/2})^\top = \Sigma^{1/2}\), and \(\Sigma^{1/2}\Sigma^{1/2} = \Sigma\): \(\mathrm{EX}^\top D_j\Sigma D_j\mathrm{EX}\). <b>Use</b> \(D_j\Sigma D_j = \Sigma\) (15.10): \(\mathrm{EX}^\top\Sigma\,\mathrm{EX}\), which is the Gram matrix of \(\Sigma^{1/2}\mathrm{EX}\) by the same steps without \(D_j\). So every variance and covariance the subspace carries in raw units is identical.</li>
+<li>Profile: \(P^\top Q_j = P^\top D_j\mathrm{EX} = P^\top P\operatorname{diag}(s_j)P^\top\mathrm{EX} = \operatorname{diag}(s_j)P^\top\mathrm{EX}\), writing \(D_j = P\operatorname{diag}(s_j)P^\top\) with \(s_j\) its list of ±1 and using \(P^\top P = I_d\). The PCA coordinates differ only in sign, so their squares (the energy on each PCA axis) are identical.</li>
 <li>Yet the twins point elsewhere: their overlap with EX was 0.01 to 0.03 (v9 prereg).</li>
 </ol>
 <p>So anything that depends only on \(\Sigma\) cannot tell EX from its twins. If EX beats them, the difference is not explained by the covariance (global covariance, in the estimated basis).</p>
@@ -643,15 +684,20 @@ v9 is a <b>perturbation test</b>. It shows that natural-scale, same-position pai
 <p><b>Exercise 15.8.</b> Prove that a Σ-orbit twin \(Q = D\,\mathrm{EX}\) (\(D\in\mathcal D\)) removes exactly the same raw variance as EX from data with covariance \(\Sigma\).</p>
 <details><summary>Show answer</summary>
 <p>Work in whitened coordinates, where the centred data \(z = \Sigma^{-1/2}(h - \mu)\) have covariance \(I_d\). Removing the subspace spanned by the orthonormal columns of EX takes away \(\mathrm{EX}\,\mathrm{EX}^\top z\), which in raw units is \(\Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top z\) (a.u.).</p>
-<p>Its mean squared size is \(\mathbb{E}\lVert\Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top z\rVert^2 = \operatorname{tr}(\Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top\,\mathbb{E}[zz^\top]\,\mathrm{EX}\,\mathrm{EX}^\top\Sigma^{1/2}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma\,\mathrm{EX})\) a.u.², using \(\mathbb{E}[zz^\top] = I_d\), \(\mathrm{EX}^\top\mathrm{EX} = I_5\) and the cyclic property of the trace.</p>
-<p>For the twin, replace EX by \(Q = D\,\mathrm{EX}\): \(Q^\top Q = \mathrm{EX}^\top D^2\mathrm{EX} = I_5\), and \(\operatorname{tr}(Q^\top\Sigma Q) = \operatorname{tr}(\mathrm{EX}^\top D\Sigma D\,\mathrm{EX}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma\,\mathrm{EX})\), because \(D\Sigma D = \Sigma\). The removed raw variance is identical.</p>
+<p>Write \(A = \Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top\), so the removed part is \(Az\). Its mean squared size, step by step.</p>
+<p><b>Step 1: squared length as a trace.</b> For any vector, \(\lVert Az\rVert^2 = (Az)^\top(Az)\), a single number. A single number is its own trace, and the trace of a product of two matrices does not change if their order is swapped (the cyclic property; check with a column \((1,2)^\top\) and a row \((3,4)\): the 2×2 product has trace \(3 + 8 = 11\), the 1×1 product is \(3 + 8 = 11\)). So \(\lVert Az\rVert^2 = \operatorname{tr}\big((Az)(Az)^\top\big) = \operatorname{tr}(Azz^\top A^\top)\).</p>
+<p><b>Step 2: average.</b> The trace is a sum of entries, so it passes through the average (linearity), and \(A\) is fixed: \(\mathbb{E}\lVert Az\rVert^2 = \operatorname{tr}(A\,\mathbb{E}[zz^\top]\,A^\top) = \operatorname{tr}(AA^\top)\), because \(\mathbb{E}[zz^\top] = I_d\).</p>
+<p><b>Step 3: multiply out.</b> \(A^\top = \mathrm{EX}\,\mathrm{EX}^\top\Sigma^{1/2}\) (transpose of a product, reversed; both \(\mathrm{EX}\,\mathrm{EX}^\top\) and \(\Sigma^{1/2}\) are symmetric). So \(AA^\top = \Sigma^{1/2}\mathrm{EX}\,(\mathrm{EX}^\top\mathrm{EX})\,\mathrm{EX}^\top\Sigma^{1/2} = \Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top\Sigma^{1/2}\), because the columns of EX are orthonormal: \(\mathrm{EX}^\top\mathrm{EX} = I_5\).</p>
+<p><b>Step 4: cycle the trace.</b> Move \(\Sigma^{1/2}\mathrm{EX}\) from the front to the back: \(\operatorname{tr}(\Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top\Sigma^{1/2}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma^{1/2}\Sigma^{1/2}\mathrm{EX}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma\,\mathrm{EX})\) a.u.².</p>
+<p><b>Step 5: the twin.</b> Replace EX by \(Q = D\,\mathrm{EX}\). Its columns are still orthonormal: \(Q^\top Q = \mathrm{EX}^\top D^\top D\,\mathrm{EX} = \mathrm{EX}^\top D^2\mathrm{EX} = I_5\), since \(D^\top = D\) and \(D^2 = I_d\). So Steps 1 to 4 apply and give \(\operatorname{tr}(Q^\top\Sigma Q) = \operatorname{tr}(\mathrm{EX}^\top D\Sigma D\,\mathrm{EX}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma\,\mathrm{EX})\), because \(D\Sigma D = \Sigma\). The removed raw variance is identical.</p>
+<p><b>Toy check</b> with \(d = 2\), one direction: \(\Sigma = \operatorname{diag}(4, 1)\), \(\mathrm{EX} = (0.6, 0.8)\), and \(D\) flipping axis 2 so \(Q = (0.6, -0.8)\). Then \(\mathrm{EX}^\top\Sigma\,\mathrm{EX} = 4\times0.36 + 1\times0.64 = 2.08\), and \(Q^\top\Sigma Q = 4\times0.36 + 1\times0.64 = 2.08\). Same.</p>
 </details>
 </div>
 
 <div class="ex">
 <p><b>Exercise 15.9.</b> The first flip test (variant b) projected out a fixed, non-axis-aligned span \(Q\). Explain why the test was still exact but its split-half condition had no power, and why v5's axis-aligned drop avoids this.</p>
 <details><summary>Show answer</summary>
-<p>Exact: \(g\) is a fixed function, so the flipped-then-projected replicates are still exchangeable with the projected real data. No power: each replicate's operator is \((I_d - QQ^\top)DMD(I_d - QQ^\top)\). Averaged over flips this is \((I_d - QQ^\top)\Lambda(I_d - QQ^\top)\), the same non-diagonal matrix for every replicate. Its patterns are reproducible, so the null split@3 is high (0.95 to 0.98 measured) and the observed split cannot beat it. An axis-aligned mask \(K\) commutes with every \(D\), so masking adds no fixed off-diagonal structure: \(KDMDK = DKMKD\), whose flip average is diagonal.</p>
+<p>Exact: \(\pi_Q\) is a fixed function, so the flipped-then-projected replicates are still exchangeable with the projected real data. No power: each replicate's operator is \((I_d - QQ^\top)DMD(I_d - QQ^\top)\). Averaged over flips this is \((I_d - QQ^\top)\Lambda(I_d - QQ^\top)\), the same non-diagonal matrix for every replicate. Its patterns are reproducible, so the null split@3 is high (0.95 to 0.98 measured) and the observed split cannot beat it. An axis-aligned mask \(K\) commutes with every \(D\), so masking adds no fixed off-diagonal structure: \(KDMDK = DKMKD\), whose flip average is diagonal.</p>
 </details>
 </div>
 

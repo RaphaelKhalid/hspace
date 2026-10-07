@@ -107,7 +107,7 @@ H-space is a search for directions inside a language model that behave like the 
 
 <h2>6.2 Main effects and the interaction, with the farm</h2>
 <p>Take the farm from Level 5, \(Y(W, F) = 2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\) bushels. Start at the plan \((4, 2)\). Consider two moves: one more bucket (\(\Delta W = 1\)) and one more bag (\(\Delta F = 1\)). There are four plans to compare. Compute each one term by term.</p>
-<p><b>No move,</b> \((4, 2)\): \(8 + 6 + 4 - 4 - 2 = 12\) bushels.</p>
+<p><b>No move,</b> \((4, 2)\): \(2(4) + 3(2) + 0.5(4)(2) - 0.25(16) - 0.5(4) = 8 + 6 + 4 - 4 - 2 = 12\) bushels.</p>
 <p><b>Water only,</b> \((5, 2)\): \(2(5) + 3(2) + 0.5(5)(2) - 0.25(25) - 0.5(4) = 10 + 6 + 5 - 6.25 - 2 = 12.75\) bushels.</p>
 <p><b>Fertiliser only,</b> \((4, 3)\): \(2(4) + 3(3) + 0.5(4)(3) - 0.25(16) - 0.5(9) = 8 + 9 + 6 - 4 - 4.5 = 14.5\) bushels.</p>
 <p><b>Both,</b> \((5, 3)\): \(2(5) + 3(3) + 0.5(5)(3) - 0.25(25) - 0.5(9) = 10 + 9 + 7.5 - 6.25 - 4.5 = 15.75\) bushels.</p>
@@ -130,7 +130,17 @@ $$ I = (f_{11} - f_{00}) - M_W - M_F = 3.75 - 0.75 - 2.5 = 0.5\ \text{bushels}. 
 $$ 1.25 - 0.75 = 0.5\ \text{bushels}. $$
 <p><b>Reading 2: what did the bucket do to the bag?</b> With the extra bucket, the bag adds \(f_{11} - f_{10} = 15.75 - 12.75 = 3\) bushels. Without it, the bag adds \(f_{01} - f_{00} = 14.5 - 12 = 2.5\). The bucket raised the bag's value by</p>
 $$ 3 - 2.5 = 0.5\ \text{bushels}. $$
-<p>All three readings give 0.5. That is not a coincidence. Expand each one and you get the same four corners with the same signs:</p>
+<p>All three readings give 0.5. That is not a coincidence. Open the brackets of each reading, one at a time. The rule: a minus sign in front of a bracket flips the sign of everything inside it.</p>
+<p><b>Step 1: open the brackets of Reading 1.</b> The first bracket has a plus in front, so it stays as it is. The second has a minus, so \(+f_{10}\) becomes \(-f_{10}\) and \(-f_{00}\) becomes \(+f_{00}\):</p>
+$$ (f_{11} - f_{01}) - (f_{10} - f_{00}) = f_{11} - f_{01} - f_{10} + f_{00}. $$
+<p>Farm: \(15.75 - 14.5 - 12.75 + 12 = 0.5\).</p>
+<p><b>Step 2: open the brackets of Reading 2.</b> Same rule:</p>
+$$ (f_{11} - f_{10}) - (f_{01} - f_{00}) = f_{11} - f_{10} - f_{01} + f_{00}. $$
+<p>Farm: \(15.75 - 12.75 - 14.5 + 12 = 0.5\).</p>
+<p><b>Step 3: open the brackets of the original definition.</b> Before the two readings, \(I\) was the joint effect minus the two main effects: \(I = (f_{11} - f_{00}) - (f_{10} - f_{00}) - (f_{01} - f_{00})\). Flip the signs inside the last two brackets:</p>
+$$ I = f_{11} - f_{00} - f_{10} + f_{00} - f_{01} + f_{00}. $$
+<p><b>Step 4: collect the \(f_{00}\) terms.</b> There is one \(-f_{00}\) and two \(+f_{00}\). One pair cancels, so one \(+f_{00}\) is left: \(I = f_{11} - f_{10} - f_{01} + f_{00}\). Farm: \(15.75 - 12 - 12.75 + 12 - 14.5 + 12 = 0.5\).</p>
+<p><b>Step 5: compare.</b> All three readings are the same four corners with the same signs. Only the order of the terms differs, and the order of adding does not change a sum:</p>
 $$ (f_{11} - f_{01}) - (f_{10} - f_{00}) \;=\; (f_{11} - f_{10}) - (f_{01} - f_{00}) \;=\; f_{11} - f_{10} - f_{01} + f_{00}. $$
 <p>It is a difference of differences. Social scientists know it as the difference-in-differences estimate of a policy effect: (treated place after − treated place before) − (comparison place after − comparison place before). The two “inputs” there are time and treatment, and the policy effect is their interaction.</p>
 
@@ -176,13 +186,20 @@ $$ q\text{ terms: } q(y + \Delta y) - q(y) - q(y + \Delta y) + q(y) = 0. $$
 
 <h3>The farm, split into an additive part and an interaction part</h3>
 $$ Y(W, F) = \underbrace{(2W - 0.25W^2)}_{p(W)} + \underbrace{(3F - 0.5F^2)}_{q(F)} + \underbrace{0.5\,WF}_{\text{interaction part}}. $$
-<p>The first two brackets are additive, so they contribute zero to \(I\). Only \(0.5\,WF\) is left. Compute its four corners and expand every product:</p>
-$$ 0.5(W + \Delta W)(F + \Delta F) = 0.5\,(WF + W\Delta F + \Delta W F + \Delta W\Delta F) $$
-$$ 0.5(W + \Delta W)F = 0.5\,(WF + \Delta W F) $$
-$$ 0.5\,W(F + \Delta F) = 0.5\,(WF + W\Delta F) $$
-$$ 0.5\,WF = 0.5\,(WF) $$
-<p>Take the first, subtract the second and third, add the fourth. Inside the brackets: \(WF\) appears \(+1 - 1 - 1 + 1 = 0\) times; \(W\Delta F\) appears \(+1 - 1 = 0\) times; \(\Delta W F\) appears \(+1 - 1 = 0\) times; \(\Delta W \Delta F\) appears once. So</p>
+<p>The first two brackets are additive, so they contribute zero to \(I\). Only \(0.5\,WF\) is left. Work out its interaction one operation at a time. The worked numbers use the start \((4, 2)\) with \(\Delta W = \Delta F = 1\).</p>
+<p><b>Step 1: write out the four corners.</b> The rule is “multiply the water by the fertiliser, then by 0.5”. At each corner, put in that corner's water and fertiliser:</p>
+$$ \text{both: } 0.5(W + \Delta W)(F + \Delta F), \quad \text{water only: } 0.5(W + \Delta W)F, \quad \text{fertiliser only: } 0.5\,W(F + \Delta F), \quad \text{none: } 0.5\,WF. $$
+<p>Example: \(0.5\times5\times3 = 7.5\), \(0.5\times5\times2 = 5\), \(0.5\times4\times3 = 6\), \(0.5\times4\times2 = 4\).</p>
+<p><b>Step 2: expand the “both” corner.</b> Multiply every term of the first bracket by every term of the second:</p>
+$$ (W + \Delta W)(F + \Delta F) = WF + W\Delta F + \Delta W F + \Delta W\Delta F. $$
+<p>Example: \(5\times3 = 15\), and \(8 + 4 + 2 + 1 = 15\).</p>
+<p><b>Step 3: expand the two single-move corners.</b> Each has one bracket times one letter, so multiply each term in the bracket by that letter:</p>
+$$ (W + \Delta W)F = WF + \Delta W F, \qquad W(F + \Delta F) = WF + W\Delta F. $$
+<p>Example: \(5\times2 = 10 = 8 + 2\) and \(4\times3 = 12 = 8 + 4\).</p>
+<p><b>Step 4: combine with the signs \(+\,-\,-\,+\).</b> Take the first expansion, subtract the second and third, add the fourth (\(WF\)). Count each kind of term: \(WF\) appears \(+1 - 1 - 1 + 1 = 0\) times; \(W\Delta F\) appears \(+1 - 1 = 0\) times (in “both” and in “fertiliser only”); \(\Delta W F\) appears \(+1 - 1 = 0\) times (in “both” and in “water only”); \(\Delta W \Delta F\) appears once, in “both” only. Example: \(15 - 10 - 12 + 8 = 1\), which is \(\Delta W\Delta F = 1\times1\).</p>
+<p><b>Step 5: put the 0.5 back.</b> Every corner carried the factor 0.5, so the result does too:</p>
 $$ I = 0.5\,\Delta W\,\Delta F. $$
+<p>Example: \(7.5 - 5 - 6 + 4 = 0.5\), and \(0.5\times1\times1 = 0.5\).</p>
 <p>Units: \(0.5\ \tfrac{\text{bushels}}{\text{bucket}\cdot\text{bag}} \times \text{buckets} \times \text{bags} = \text{bushels}\). The start \((W, F)\) has cancelled out completely, which is why Figure 6.1 never changed when you moved the start.</p>
 
 <h3>The picture: parallel slices</h3>
@@ -219,11 +236,30 @@ $$ I = f_{11} - f_{10} - f_{01} + f_{00} = 100 - 100 - 100 + 0 = -100\ \text{kW}
 <h3>Mechanics: how the interaction moves the best plan</h3>
 <p>Replace the farm's 0.5 by an adjustable number \(c\) (bushels per bucket per bag):</p>
 $$ Y_c(W, F) = 2W + 3F + c\,WF - 0.25\,W^2 - 0.5\,F^2. $$
-<p>By section 6.4, \(I = c\,\Delta W\,\Delta F\). The best plan is where both partials are zero (Level 5):</p>
-$$ \frac{\partial Y_c}{\partial W} = 2 + cF - 0.5W = 0 \;\Rightarrow\; W = 4 + 2cF, $$
-$$ \frac{\partial Y_c}{\partial F} = 3 + cW - F = 0 \;\Rightarrow\; F = 3 + cW. $$
-<p>Put the second into the first: \(W = 4 + 2c(3 + cW) = 4 + 6c + 2c^2 W\). Move the \(W\) terms to the left: \(W(1 - 2c^2) = 4 + 6c\). So</p>
+<p>By section 6.4, \(I = c\,\Delta W\,\Delta F\). The best plan is where both partials are zero (Level 5). Find it one operation at a time. The worked numbers use the real farm, \(c = 0.5\).</p>
+<p><b>Step 1: the partial in \(W\).</b> Hold \(F\) fixed and differentiate \(Y_c\) term by term. \(2W\) gives 2. \(3F\) gives 0 (it does not change with \(W\)). \(c\,WF\) is the fixed number \(cF\) times \(W\), so it gives \(cF\). \(-0.25W^2\) gives \(-0.25\times2W = -0.5W\) (power rule, Level 2). \(-0.5F^2\) gives 0. So</p>
+$$ \frac{\partial Y_c}{\partial W} = 2 + cF - 0.5W. $$
+<p>Example at \((4, 2)\): \(2 + 0.5\times2 - 0.5\times4 = 2 + 1 - 2 = 1\) bushel per bucket, the Level 5 value.</p>
+<p><b>Step 2: the partial in \(F\).</b> Hold \(W\) fixed. \(2W\) gives 0. \(3F\) gives 3. \(c\,WF\) gives \(cW\). \(-0.25W^2\) gives 0. \(-0.5F^2\) gives \(-0.5\times2F = -F\). So</p>
+$$ \frac{\partial Y_c}{\partial F} = 3 + cW - F. $$
+<p>Example at \((4, 2)\): \(3 + 0.5\times4 - 2 = 3\) bushels per bag.</p>
+<p><b>Step 3: set the first partial to zero and solve for \(W\).</b> From \(2 + cF - 0.5W = 0\), add \(0.5W\) to both sides: \(0.5W = 2 + cF\). Multiply both sides by 2:</p>
+$$ W = 4 + 2cF. $$
+<p>Example: with \(c = 0.5\) and \(F = 10\), \(W = 4 + 2\times0.5\times10 = 14\).</p>
+<p><b>Step 4: set the second partial to zero and solve for \(F\).</b> From \(3 + cW - F = 0\), add \(F\) to both sides:</p>
+$$ F = 3 + cW. $$
+<p>Example: with \(W = 14\), \(F = 3 + 0.5\times14 = 10\).</p>
+<p><b>Step 5: put Step 4 into Step 3.</b> Replace \(F\) in \(W = 4 + 2cF\) by \(3 + cW\):</p>
+$$ W = 4 + 2c\,(3 + cW). $$
+<p><b>Step 6: multiply out the bracket.</b> \(2c\times3 = 6c\) and \(2c\times cW = 2c^2W\):</p>
+$$ W = 4 + 6c + 2c^2\,W. $$
+<p>Example: \(6c = 3\) and \(2c^2 = 0.5\), so \(W = 7 + 0.5W\).</p>
+<p><b>Step 7: move the \(W\) terms to the left.</b> Subtract \(2c^2W\) from both sides, then take \(W\) out as a common factor:</p>
+$$ W - 2c^2W = 4 + 6c \;\Rightarrow\; W(1 - 2c^2) = 4 + 6c. $$
+<p>Example: \(0.5W = 7\).</p>
+<p><b>Step 8: divide by \(1 - 2c^2\).</b> This is allowed only when \(1 - 2c^2\) is not zero. Then use Step 4 for \(F\):</p>
 $$ W^* = \frac{4 + 6c}{1 - 2c^2}, \qquad F^* = 3 + c\,W^*. $$
+<p>Example: \(W^* = 7/0.5 = 14\) buckets and \(F^* = 3 + 0.5\times14 = 10\) bags, the best plan of Level 5.</p>
 <div class="tablewrap">
 <table>
 <tr><th>\(c\) (bushels per bucket per bag)</th><th>kind</th><th>\(W^*\) (buckets)</th><th>\(F^*\) (bags)</th><th>best yield (bushels)</th></tr>
@@ -245,11 +281,18 @@ Unit: unit of \(f\) per unit of \(x\) per unit of \(y\). It is the interaction p
 </div>
 
 <h3>Why this is “the derivative of a derivative”</h3>
-<p>Regroup the four corners into two slopes. Divide by \(\Delta x\) inside and by \(\Delta y\) outside:</p>
+<p>Regroup the four corners into two slopes, one operation at a time. The worked numbers are the farm from \((4, 2)\) with \(\Delta W = \Delta F = 1\) (corners 12, 12.75, 14.5, 15.75).</p>
+<p><b>Step 1: pair the corners by height.</b> Put the two corners at height \(y + \Delta y\) together, and the two at height \(y\) together. The four terms and their signs \(+\,-\,-\,+\) are unchanged:</p>
+$$ I = \big[f(x + \Delta x, y + \Delta y) - f(x, y + \Delta y)\big] - \big[f(x + \Delta x, y) - f(x, y)\big]. $$
+<p>Farm: \([15.75 - 14.5] - [12.75 - 12] = 1.25 - 0.75 = 0.5\).</p>
+<p><b>Step 2: divide by \(\Delta x\,\Delta y\).</b> Divide each bracket by \(\Delta x\), and the whole difference by \(\Delta y\):</p>
 $$ \frac{I}{\Delta x\,\Delta y} = \frac{1}{\Delta y}\left[ \frac{f(x + \Delta x, y + \Delta y) - f(x, y + \Delta y)}{\Delta x} - \frac{f(x + \Delta x, y) - f(x, y)}{\Delta x} \right]. $$
-<p>Look at the two fractions inside the bracket. The first is the slope in \(x\) measured at height \(y + \Delta y\). The second is the slope in \(x\) at height \(y\). Shrink \(\Delta x\) first. They become partial derivatives:</p>
+<p>Farm: \(\tfrac11\,[1.25/1 - 0.75/1] = 0.5\).</p>
+<p><b>Step 3: read the two fractions.</b> The first is the slope in \(x\) measured at height \(y + \Delta y\). The second is the slope in \(x\) at height \(y\). Farm: one bucket adds 1.25 bushels when there are 3 bags, and 0.75 when there are 2.</p>
+<p><b>Step 4: shrink \(\Delta x\).</b> Each fraction becomes a partial derivative (Level 5):</p>
 $$ \frac{I}{\Delta x\,\Delta y} \;\to\; \frac{1}{\Delta y}\left[ \frac{\partial f}{\partial x}(x, y + \Delta y) - \frac{\partial f}{\partial x}(x, y) \right]. $$
-<p>That is “change in the x-slope, divided by the change in \(y\)”. Now shrink \(\Delta y\). It becomes the derivative in \(y\) of the slope in \(x\):</p>
+<p>Farm: \(\partial Y/\partial W = 2 + 0.5F - 0.5W\) is \(2 + 1.5 - 2 = 1.5\) at \((4, 3)\) and \(2 + 1 - 2 = 1\) at \((4, 2)\). So the bracket is \(1.5 - 1 = 0.5\), divided by \(\Delta F = 1\).</p>
+<p><b>Step 5: shrink \(\Delta y\).</b> What is left is “change in the x-slope, divided by the change in \(y\)”. As \(\Delta y \to 0\) it becomes the derivative in \(y\) of the slope in \(x\):</p>
 $$ \frac{\partial}{\partial y}\left( \frac{\partial f}{\partial x} \right). $$
 <p>So the mixed partial answers: how much does the slope in \(x\) change when you nudge \(y\)? For the farm, how much is a bucket's value raised by one more bag?</p>
 
@@ -259,7 +302,13 @@ $$ \frac{\partial^2 Y}{\partial W\,\partial F} = 0.5\ \text{bushels per bucket p
 <p>Check with real numbers: \(\partial Y/\partial W\) at \((4, 3)\) is \(2 + 1.5 - 2 = 1.5\); at \((4, 2)\) it is 1. One more bag raised the bucket's value by \(1.5 - 1 = 0.5\) bushels per bucket. For the farm, \(I/(\Delta W\Delta F) = 0.5\) for every move size, so the limit is 0.5 too. For a quadratic the finite interaction and the mixed partial agree exactly. Section 6.8 shows a function where they do not.</p>
 
 <h3>Worked example: a cubic term</h3>
-<p>Let \(f(x, y) = x^2 y^3\), with pure-number inputs. Treat \(y\) as a number: \(\partial f/\partial x = 2x\,y^3\). Now treat \(x\) as a number and differentiate in \(y\): \(\partial/\partial y\,(2x\,y^3) = 6x\,y^2\). At \((1, 2)\): \(6 \times 1 \times 4 = 24\). Check with the four corners, \(\Delta x = \Delta y = \Delta\):</p>
+<p>Let \(f(x, y) = x^2 y^3\), with pure-number inputs. Work at the point \((1, 2)\), where \(f = 1\times8 = 8\).</p>
+<p><b>Step 1: differentiate in \(x\).</b> Hold \(y\) fixed, so \(y^3\) is just a constant multiplier. The power rule (Level 2) turns \(x^2\) into \(2x\):</p>
+$$ \frac{\partial f}{\partial x} = 2x \cdot y^3 . $$
+<p>Example at \((1, 2)\): \(2\times1\times2^3 = 2\times8 = 16\).</p>
+<p><b>Step 2: differentiate that in \(y\).</b> Now hold \(x\) fixed, so \(2x\) is the constant multiplier. The power rule turns \(y^3\) into \(3y^2\):</p>
+$$ \frac{\partial}{\partial y}\big(2x\,y^3\big) = 2x \cdot 3y^2 = 6x\,y^2 . $$
+<p><b>Step 3: put in the point.</b> At \((1, 2)\): \(6\times1\times2^2 = 6\times1\times4 = 24\). Check with the four corners, \(\Delta x = \Delta y = \Delta\):</p>
 <div class="tablewrap">
 <table>
 <tr><th>\(\Delta\)</th><th>0.1</th><th>0.01</th><th>0.001</th></tr>
@@ -276,7 +325,11 @@ The cross term has no ½: it appears twice (once as “x then y”, once as “y
 </div>
 
 <h2>6.7 The order does not matter</h2>
-<p>We differentiated in \(W\) first, then in \(F\). Try the other order. From Level 5, \(\partial Y/\partial F = 3 + 0.5W - F\). Differentiate in \(W\): \(0.5\). The same 0.5. For \(x^2 y^3\): \(\partial f/\partial y = 3x^2 y^2\), then \(\partial/\partial x\) gives \(6x\,y^2\). The same as before.</p>
+<p>We differentiated in \(W\) first, then in \(F\). Try the other order.</p>
+<p><b>Step 1: the farm, \(F\) first.</b> From Level 5, \(\partial Y/\partial F = 3 + 0.5W - F\).</p>
+<p><b>Step 2: differentiate that in \(W\).</b> Hold \(F\) fixed and go term by term: 3 gives 0, \(0.5W\) gives 0.5, \(-F\) gives 0. The result is 0.5, the same as the other order.</p>
+<p><b>Step 3: the cubic, \(y\) first.</b> For \(x^2 y^3\), hold \(x\) fixed, so \(x^2\) is a constant multiplier. The power rule turns \(y^3\) into \(3y^2\): \(\partial f/\partial y = 3x^2 y^2\). At \((1, 2)\): \(3\times1\times4 = 12\).</p>
+<p><b>Step 4: differentiate that in \(x\).</b> Hold \(y\) fixed, so \(3y^2\) is the constant multiplier. The power rule turns \(x^2\) into \(2x\): \(\partial/\partial x\,(3x^2y^2) = 3y^2\cdot 2x = 6x\,y^2\). At \((1, 2)\): \(6\times1\times4 = 24\). The same as before.</p>
 <p>Why must it be so? Look at the four-corner formula. It treats the two moves identically: swap the roles of \(x\) and \(y\), and you get the same four corners with the same signs. Reading 1 and Reading 2 of section 6.2 were exactly the two orders, done with finite moves, and they agreed. Each order of differentiation is the same \(I/(\Delta x\Delta y)\), taken to zero in a different sequence. For smooth functions the sequence does not matter, so</p>
 $$ \frac{\partial}{\partial y}\left(\frac{\partial f}{\partial x}\right) = \frac{\partial}{\partial x}\left(\frac{\partial f}{\partial y}\right). $$
 <p>This is the symmetry of mixed partials (also called Schwarz's or Clairaut's theorem). In words: <i>the effect of fertiliser on the value of water equals the effect of water on the value of fertiliser</i>, both in bushels per bucket per bag. Interaction is mutual. It is also why a Hessian matrix is symmetric (<a href="09.html">Level 9</a>).</p>
@@ -292,11 +345,23 @@ There are functions where the two orders give different answers at a point. A st
 <p>Make the vault soft. Let \(x\) be how far Alice turns her key and \(y\) how far Bob turns his (pure numbers in this toy). Each lock is a gate (a sigmoid, Level 4): \(g(z) = 1/(1 + e^{-z})\), which goes smoothly from 0 (locked) to 1 (open). The door opens only if both locks open, so</p>
 $$ f(x, y) = g(x)\,g(y), $$
 <p>the probability the door opens (a pure number). This is a toy, not a model of anything specific.</p>
-<p><b>Its mixed partial.</b> Treat \(y\) as a number: \(\partial f/\partial x = g'(x)\,g(y)\). Differentiate in \(y\): \(\partial^2 f/\partial x\,\partial y = g'(x)\,g'(y)\), where \(g'(z) = g(z)(1 - g(z))\). At \((0, 0)\): \(g(0) = 0.5\), \(g'(0) = 0.5 \times 0.5 = 0.25\), so the mixed partial is \(0.25 \times 0.25 = 0.0625\).</p>
-<p><b>Its finite interaction factorises.</b> Write out the four corners and group:</p>
-$$ I = g(x{+}\Delta x)\,g(y{+}\Delta y) - g(x{+}\Delta x)\,g(y) - g(x)\,g(y{+}\Delta y) + g(x)\,g(y) $$
-$$ = g(x{+}\Delta x)\,\big[g(y{+}\Delta y) - g(y)\big] - g(x)\,\big[g(y{+}\Delta y) - g(y)\big] $$
-$$ = \big[g(x{+}\Delta x) - g(x)\big]\,\big[g(y{+}\Delta y) - g(y)\big]. $$
+<p><b>Its mixed partial, step by step.</b> Work at \((0, 0)\).</p>
+<p><b>Step 1: differentiate in \(x\).</b> Hold \(y\) fixed, so \(g(y)\) is a constant multiplier. The slope of \(g(x)\) is \(g'(x)\):</p>
+$$ \frac{\partial f}{\partial x} = g'(x)\,g(y). $$
+<p><b>Step 2: differentiate that in \(y\).</b> Now hold \(x\) fixed, so \(g'(x)\) is the constant multiplier, and \(g(y)\) turns into \(g'(y)\):</p>
+$$ \frac{\partial^2 f}{\partial x\,\partial y} = g'(x)\,g'(y). $$
+<p><b>Step 3: the gate's value and slope at 0.</b> \(g(0) = 1/(1 + e^{0}) = 1/(1 + 1) = 0.5\). The gate's slope rule from Level 4 (with width 1) is \(g'(z) = g(z)\,(1 - g(z))\), so \(g'(0) = 0.5\times(1 - 0.5) = 0.25\).</p>
+<p><b>Step 4: multiply.</b> At \((0, 0)\) the mixed partial is \(g'(0)\,g'(0) = 0.25\times0.25 = 0.0625\).</p>
+<p><b>Its finite interaction factorises.</b> Group the four corners one operation at a time. The worked numbers use the start \((0, 0)\) with \(\Delta x = \Delta y = 1\), where \(g(0) = 0.5\) and \(g(1) = 0.731059\).</p>
+<p><b>Step 1: write out the four corners.</b> The rule is “gate of the first input times gate of the second”. Put each corner's inputs in:</p>
+$$ I = g(x{+}\Delta x)\,g(y{+}\Delta y) - g(x{+}\Delta x)\,g(y) - g(x)\,g(y{+}\Delta y) + g(x)\,g(y). $$
+<p>Example: \(0.534447 - 0.365529 - 0.365529 + 0.25 = 0.053388\).</p>
+<p><b>Step 2: take out a common factor from each pair.</b> The first two terms share the factor \(g(x{+}\Delta x)\). The last two share \(g(x)\) (with a minus sign in front of the pair, so the \(+g(x)g(y)\) becomes \(-g(y)\) inside the bracket):</p>
+$$ I = g(x{+}\Delta x)\,\big[g(y{+}\Delta y) - g(y)\big] - g(x)\,\big[g(y{+}\Delta y) - g(y)\big]. $$
+<p>Example: \(0.731059\times0.231059 - 0.5\times0.231059 = 0.168917 - 0.115529 = 0.053388\).</p>
+<p><b>Step 3: take out the shared bracket.</b> Both pieces now contain the same bracket \(\big[g(y{+}\Delta y) - g(y)\big]\). Take it out:</p>
+$$ I = \big[g(x{+}\Delta x) - g(x)\big]\,\big[g(y{+}\Delta y) - g(y)\big]. $$
+<p>Example: \((0.731059 - 0.5)\times(0.731059 - 0.5) = 0.231059\times0.231059 = 0.053388\).</p>
 <p>The interaction is (how much Alice's lock changed) × (how much Bob's lock changed). Both always have the same sign as their moves, so for moves in the same direction \(I \gt 0\): the locks are complements.</p>
 
 <h3>Mechanics 1: shrink the moves at a fixed start</h3>
@@ -337,11 +402,27 @@ $$ \frac{\partial^2 f}{\partial x^2} = 0, \qquad \frac{\partial^2 f}{\partial y^
 <h3>Which pair you test matters</h3>
 <p>Now turn the pair of test directions by an angle \(\theta\). Let the two moves be arrows of length \(m\):</p>
 $$ \mathbf{a} = m\,(\cos\theta,\ \sin\theta), \qquad \mathbf{b} = m\,(-\sin\theta,\ \cos\theta). $$
-<p>They are at right angles to each other. Start at \((0, 0)\) and compute the four corners of \(f = xy\) (multiply the two coordinates of each point):</p>
-$$ f(\mathbf{0}) = 0, \quad f(\mathbf{a}) = m^2\cos\theta\sin\theta, \quad f(\mathbf{b}) = -m^2\sin\theta\cos\theta, $$
-$$ f(\mathbf{a} + \mathbf{b}) = m^2(\cos\theta - \sin\theta)(\sin\theta + \cos\theta) = m^2(\cos^2\theta - \sin^2\theta). $$
-$$ I(\mathbf{a}, \mathbf{b}) = m^2(\cos^2\theta - \sin^2\theta) - m^2\cos\theta\sin\theta + m^2\sin\theta\cos\theta - 0 = m^2(\cos^2\theta - \sin^2\theta). $$
-<p>At \(\theta = 0°\) (the two keys): \(I = m^2\). At \(\theta = 45°\): \(\cos 45° = \sin 45°\), so \(I = 0\). The same function, tested along a different pair of directions, shows no interaction at all. Instead, the single directions now bend. Walk a distance \(s\) along \(\mathbf{a}\) at 45°: \(f(s\cos 45°,\ s\sin 45°) = s \times 0.7071 \times s \times 0.7071 = s^2/2\). Its second derivative in \(s\) is 1: a curvature of +1 per unit². Along \(\mathbf{b}\) the same calculation gives −1. The interaction has turned into curvature along single directions.</p>
+<p>They are at right angles to each other. Start at \((0, 0)\) and compute the four corners of \(f = xy\), one operation at a time. The worked numbers use \(m = 1\) and \(\theta = 30°\), where \(\cos 30° = 0.8660\) and \(\sin 30° = 0.5\).</p>
+<p><b>Step 1: write out the four corner points.</b> The start is \(\mathbf{0} = (0, 0)\). The single moves land at \(\mathbf{a}\) and \(\mathbf{b}\). For \(\mathbf{a} + \mathbf{b}\), add the across parts together and the up parts together:</p>
+$$ \mathbf{a} + \mathbf{b} = (m\cos\theta - m\sin\theta,\ \ m\sin\theta + m\cos\theta) = m\,(\cos\theta - \sin\theta,\ \ \sin\theta + \cos\theta). $$
+<p>Example: \(\mathbf{a} = (0.8660, 0.5)\), \(\mathbf{b} = (-0.5, 0.8660)\), \(\mathbf{a} + \mathbf{b} = (0.3660, 1.3660)\).</p>
+<p><b>Step 2: apply the rule “multiply the two coordinates” to the start and the single moves.</b></p>
+$$ f(\mathbf{0}) = 0\times0 = 0, \quad f(\mathbf{a}) = (m\cos\theta)(m\sin\theta) = m^2\cos\theta\sin\theta, \quad f(\mathbf{b}) = (-m\sin\theta)(m\cos\theta) = -m^2\sin\theta\cos\theta. $$
+<p>Example: \(f(\mathbf{a}) = 0.8660\times0.5 = 0.4330\) and \(f(\mathbf{b}) = -0.5\times0.8660 = -0.4330\).</p>
+<p><b>Step 3: apply the same rule to \(\mathbf{a} + \mathbf{b}\).</b> The two factors of \(m\) multiply to \(m^2\):</p>
+$$ f(\mathbf{a} + \mathbf{b}) = m^2(\cos\theta - \sin\theta)(\sin\theta + \cos\theta). $$
+<p><b>Step 4: expand the bracket product.</b> Multiply every term of the first bracket by every term of the second:</p>
+$$ (\cos\theta - \sin\theta)(\sin\theta + \cos\theta) = \cos\theta\sin\theta + \cos^2\theta - \sin^2\theta - \sin\theta\cos\theta = \cos^2\theta - \sin^2\theta, $$
+<p>because the first and last terms cancel. So \(f(\mathbf{a} + \mathbf{b}) = m^2(\cos^2\theta - \sin^2\theta)\). Example: \(0.3660\times1.3660 \approx 0.5\), and \(0.8660^2 - 0.5^2 = 0.75 - 0.25 = 0.5\).</p>
+<p><b>Step 5: combine the corners with signs \(+\,-\,-\,+\).</b> Subtracting \(f(\mathbf{b})\), which is negative, adds \(m^2\sin\theta\cos\theta\). That cancels the \(-m^2\cos\theta\sin\theta\) from \(f(\mathbf{a})\):</p>
+$$ I(\mathbf{a}, \mathbf{b}) = m^2(\cos^2\theta - \sin^2\theta) - m^2\cos\theta\sin\theta + m^2\sin\theta\cos\theta + 0 = m^2(\cos^2\theta - \sin^2\theta). $$
+<p>Example: \(0.5 - 0.4330 + 0.4330 + 0 = 0.5\).</p>
+<p>At \(\theta = 0°\) (the two keys): \(\cos 0° = 1\) and \(\sin 0° = 0\), so \(I = m^2\). At \(\theta = 45°\): \(\cos 45° = \sin 45°\), so \(I = 0\). The same function, tested along a different pair of directions, shows no interaction at all.</p>
+<p>Instead, the single directions now bend. Check it in three steps.</p>
+<p><b>Step 1: walk along \(\mathbf{a}\) at 45°.</b> After a distance \(s\) you are at \((s\cos 45°,\ s\sin 45°) = (0.7071\,s,\ 0.7071\,s)\). Multiply the coordinates: \(f = 0.7071\,s\times0.7071\,s = 0.5\,s^2\). Example: at \(s = 1\), \(f = 0.5\).</p>
+<p><b>Step 2: differentiate twice in \(s\).</b> The power rule turns \(0.5\,s^2\) into \(0.5\times2s = s\). Differentiate again: \(s\) turns into 1. So the curvature along \(\mathbf{a}\) is \(+1\) per unit².</p>
+<p><b>Step 3: walk along \(\mathbf{b}\) at 45°.</b> Now you are at \((-s\sin 45°,\ s\cos 45°) = (-0.7071\,s,\ 0.7071\,s)\), so \(f = -0.5\,s^2\). Its first derivative is \(-s\) and its second is \(-1\).</p>
+<p>The interaction has turned into curvature along single directions.</p>
 <div class="box key">
 <span class="boxtitle">Interaction belongs to a pair of directions</span>
 Whether you see interaction or curvature depends on the axes you test along. Level 9 shows that every smooth function has, at each point and for small moves, special axes along which all interaction vanishes (the eigenvectors of the Hessian). For H-space the lesson is the other way round: the effect you care about may be visible only for the right <i>pairs</i> of directions. You have to find them.
@@ -390,7 +471,11 @@ Whether you see interaction or curvature depends on the axes you test along. Lev
 <div class="ex" data-answer="1" data-tol="0.001" data-unit="bushels">
 <p><b>Exercise 6.1.</b> <span class="small">(The farm: yield \(Y(W, F) = 2W + 3F + 0.5\,WF - 0.25\,W^2 - 0.5\,F^2\) bushels, with \(W\) = water in buckets of 10 litres and \(F\) = fertiliser in bags.)</span> On the farm, start at \((2, 6)\) and use \(\Delta W = 2\), \(\Delta F = 1\). Compute all four corners and the interaction. Check against \(I = 0.5\,\Delta W\,\Delta F\).</p>
 <details><summary>Show answer</summary>
-<p>\(f_{00} = Y(2, 6) = 4 + 18 + 6 - 1 - 18 = 9\). \(f_{10} = Y(4, 6) = 8 + 18 + 12 - 4 - 18 = 16\). \(f_{01} = Y(2, 7) = 4 + 21 + 7 - 1 - 24.5 = 6.5\). \(f_{11} = Y(4, 7) = 8 + 21 + 14 - 4 - 24.5 = 14.5\).</p>
+<p>Put each corner's water and fertiliser into the five terms of \(Y\), as in section 6.2.</p>
+<p>\(f_{00} = Y(2, 6) = 2(2) + 3(6) + 0.5(2)(6) - 0.25(4) - 0.5(36) = 4 + 18 + 6 - 1 - 18 = 9\).</p>
+<p>\(f_{10} = Y(4, 6) = 2(4) + 3(6) + 0.5(4)(6) - 0.25(16) - 0.5(36) = 8 + 18 + 12 - 4 - 18 = 16\).</p>
+<p>\(f_{01} = Y(2, 7) = 2(2) + 3(7) + 0.5(2)(7) - 0.25(4) - 0.5(49) = 4 + 21 + 7 - 1 - 24.5 = 6.5\).</p>
+<p>\(f_{11} = Y(4, 7) = 2(4) + 3(7) + 0.5(4)(7) - 0.25(16) - 0.5(49) = 8 + 21 + 14 - 4 - 24.5 = 14.5\).</p>
 <p>\(I = 14.5 - 16 - 6.5 + 9 = 1\) bushel. Formula: \(0.5 \times 2 \times 1 = 1\). They agree.</p>
 </details>
 </div>
@@ -420,6 +505,7 @@ Whether you see interaction or curvature depends on the axes you test along. Lev
 <p><b>Exercise 6.5.</b> Let \(f(x, y) = x^2 y^2\). Start at \((1, 1)\) with \(\Delta x = \Delta y = 1\). Compute \(I\). Then compute the mixed partial \(4xy\) at the starting corner and at the centre of the rectangle, \((1.5, 1.5)\), each times \(\Delta x\,\Delta y\). Which predicts \(I\)?</p>
 <details><summary>Show answer</summary>
 <p>Corners: \(f(1, 1) = 1\), \(f(2, 1) = 4\), \(f(1, 2) = 4\), \(f(2, 2) = 16\). \(I = 16 - 4 - 4 + 1 = 9\).</p>
+<p>Where \(4xy\) comes from. <b>Step 1:</b> differentiate in \(x\), holding \(y\) fixed: the power rule turns \(x^2\) into \(2x\), so \(\partial f/\partial x = 2x\,y^2\). <b>Step 2:</b> differentiate that in \(y\), holding \(x\) fixed: \(y^2\) turns into \(2y\), so the mixed partial is \(2x\cdot2y = 4xy\).</p>
 <p>Corner: \(4 \times 1 \times 1 \times 1 = 4\), less than half. Centre: \(4 \times 1.5 \times 1.5 \times 1 = 9\), exact. (It is exact here because the mixed partial \(4xy\) averaged over the square equals its value at the centre. Level 12 explains the general rule.)</p>
 </details>
 </div>
@@ -434,7 +520,7 @@ Whether you see interaction or curvature depends on the axes you test along. Lev
 <div class="ex" data-answer="0.053388" data-tol="0.002">
 <p><b>Exercise 6.7.</b> <span class="small">(The soft vault: \(g(z) = 1/(1 + e^{-z})\) is one lock, and \(f(x, y) = g(x)\,g(y)\) is the chance the door opens when Alice turns her key by \(x\) and Bob by \(y\).)</span> For the soft vault \(f = g(x)\,g(y)\), start at \((0, 0)\) with \(\Delta x = \Delta y = 1\). You are given \(g(0) = 0.5\) and \(g(1) = 0.731059\). Compute \(I\), and compare it with the mixed partial at the start, 0.0625.</p>
 <details><summary>Show answer</summary>
-<p>\(I = [g(1) - g(0)]\,[g(1) - g(0)] = 0.231059^2 = 0.053388\). That is about 15% below the corner's 0.0625 × 1 × 1. With \(\Delta = 0.1\) the two would agree to within 0.2%.</p>
+<p>Use the factorised form from section 6.8, \(I = [g(x{+}\Delta x) - g(x)]\,[g(y{+}\Delta y) - g(y)]\), with \(x = y = 0\) and \(\Delta x = \Delta y = 1\). Both brackets are \(g(1) - g(0) = 0.731059 - 0.5 = 0.231059\). So \(I = 0.231059\times0.231059 = 0.053388\). That is about 15% below the corner's 0.0625 × 1 × 1. With \(\Delta = 0.1\) the two would agree to within 0.2%.</p>
 </details>
 </div>
 

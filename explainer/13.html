@@ -58,7 +58,7 @@
 <tr><td>\(d\)</td><td>“d”</td><td>number of components (the dimension)</td><td>none (pure number)</td><td>\(d = 2\); in the 27B model \(d = 5{,}120\)</td></tr>
 <tr><td>\(\boldsymbol{\mu}\)</td><td>“bold mu”</td><td>mean vector \(\mathbb{E}[\mathbf{x}]\)</td><td>unit of the components</td><td>(170, 170) cm</td></tr>
 <tr><td>\(\Sigma\), \(\Sigma_{ij}\), \(\Sigma_{\text{shrunk}}\)</td><td>“capital sigma”</td><td>covariance matrix, \(d \times d\); its entry \(\Sigma_{ij} = \operatorname{Cov}(x_i, x_j)\) (here \(x_i\) is component \(i\)); the shrunk version of 13.6</td><td>products of component units</td><td>\(\begin{pmatrix}50 & 52\\ 52 & 56.8\end{pmatrix}\ \text{cm}^2\)</td></tr>
-<tr><td>\(\mathbf{u}\)</td><td>“bold u”</td><td>a unit direction, \(\lVert \mathbf{u} \rVert = 1\)</td><td>none (pure number)</td><td>\((1, 1)/\sqrt2\)</td></tr>
+<tr><td>\(\mathbf{u}\)</td><td>“bold u”</td><td>a unit direction, \(\lVert \mathbf{u} \rVert = 1\), with components \(u_1, u_2\)</td><td>none (pure number)</td><td>\((1, 1)/\sqrt2\)</td></tr>
 <tr><td>\(\mathbf{v}_i\), \(\lambda_i\)</td><td>“v i”, “lambda i”</td><td>\(i\)-th eigenvector of \(\Sigma\) (the \(i\)-th PCA axis) and its eigenvalue (variance along that axis), sorted \(\lambda_1 \ge \lambda_2 \ge \dots\)</td><td>\(\mathbf{v}_i\): none; \(\lambda_i\): same as \(\Sigma\)</td><td>\(\lambda_1 = 105.5\ \text{cm}^2\)</td></tr>
 <tr><td>\(c_1, c_2\)</td><td>“c one”, “c two”</td><td>components of an eigenvector while we solve for it</td><td>none</td><td>\(c_2/c_1 = 1.0675\)</td></tr>
 <tr><td>\(\det\), \(\operatorname{diag}(\dots)\)</td><td>“determinant”, “diagonal matrix of”</td><td>determinant (<a href="07.html">Level 7</a>); a matrix with the listed numbers on its diagonal and zeros elsewhere</td><td>none</td><td>\(\operatorname{diag}(1, 2)\)</td></tr>
@@ -185,17 +185,20 @@ $$ \begin{pmatrix}-10\\-12\end{pmatrix}\begin{pmatrix}-10 & -12\end{pmatrix} = \
 
 <h3>Variance along a direction: \(\mathbf{u}^\top \Sigma \mathbf{u}\)</h3>
 <p>Pick any unit direction \(\mathbf{u}\) and measure every student along it: the number \(\mathbf{u}\cdot\mathbf{x}\). What is the variance of that number? Step by step:</p>
-<ol>
-<li>Its mean is \(\mathbf{u}\cdot\boldsymbol{\mu}\) (linearity of the mean).</li>
-<li>Its deviation is \(\mathbf{u}\cdot\mathbf{x} - \mathbf{u}\cdot\boldsymbol{\mu} = \mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu})\).</li>
-<li>The squared deviation is \(\mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu})(\mathbf{x} - \boldsymbol{\mu})^\top\mathbf{u}\), a number written as row × matrix × column.</li>
-<li>Average it. \(\mathbf{u}\) is fixed, so it comes outside the average, and the average of the outer products is \(\Sigma\).</li>
-</ol>
+<p><b>Step 1: its mean.</b> \(\mathbf{u}\cdot\mathbf{x} = u_1x_1 + u_2x_2\), a sum of fixed numbers times random components. By linearity of the mean (13.1), \(\mathbb{E}[u_1x_1 + u_2x_2] = u_1\mathbb{E}[x_1] + u_2\mathbb{E}[x_2] = \mathbf{u}\cdot\boldsymbol{\mu}\).</p>
+<p><b>Step 2: its deviation.</b> Subtract the mean: \(\mathbf{u}\cdot\mathbf{x} - \mathbf{u}\cdot\boldsymbol{\mu} = \mathbf{u}\cdot(\mathbf{x} - \boldsymbol{\mu})\), because a dot product distributes over subtraction. Write it as \(\mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu})\).</p>
+<p><b>Step 3: square it.</b> A number times itself. Write the second copy the other way round: a single number equals its own transpose, so \(\mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu}) = (\mathbf{x} - \boldsymbol{\mu})^\top\mathbf{u}\). Then</p>
+$$ \big(\mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu})\big)^2 = \mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu})\,(\mathbf{x} - \boldsymbol{\mu})^\top\mathbf{u}, $$
+<p>row × (column × row) × column, with an outer product in the middle.</p>
+<p><b>Step 4: average it.</b> \(\mathbf{u}\) is fixed, so by linearity it comes outside the average. The average of the outer products in the middle is \(\Sigma\). So</p>
 $$ \operatorname{Var}(\mathbf{u}\cdot\mathbf{x}) = \mathbf{u}^\top \Sigma\, \mathbf{u}. $$
 <p>This is the same kind of quadratic form as the curvature along a direction at <a href="09.html">Level 9</a>, with \(\Sigma\) in place of the Hessian. There it measured curvature. Here it measures spread along \(\mathbf{u}\). Because a variance is never negative, \(\mathbf{u}^\top\Sigma\mathbf{u} \ge 0\) for every \(\mathbf{u}\): a covariance matrix is always positive semidefinite.</p>
-<p>Two directions for the class:</p>
-$$ \mathbf{u} = \tfrac{1}{\sqrt2}(1, 1):\quad \mathbf{u}^\top\Sigma\mathbf{u} = \tfrac12(50 + 52 + 52 + 56.8) = \tfrac{210.8}{2} = 105.4\ \text{cm}^2, $$
-$$ \mathbf{u} = \tfrac{1}{\sqrt2}(1, -1):\quad \mathbf{u}^\top\Sigma\mathbf{u} = \tfrac12(50 - 52 - 52 + 56.8) = \tfrac{2.8}{2} = 1.4\ \text{cm}^2. $$
+<p>Two directions for the class. Take \(\mathbf{u} = \tfrac{1}{\sqrt2}(1, 1)\) first.</p>
+<p><b>Step 1: pull out the scale.</b> \(\mathbf{u}\) appears twice, so the factor \(\tfrac{1}{\sqrt2}\) appears twice: \(\mathbf{u}^\top\Sigma\mathbf{u} = \tfrac{1}{\sqrt2}\cdot\tfrac{1}{\sqrt2}\,(1,1)\,\Sigma\,(1,1)^\top = \tfrac12\,(1,1)\,\Sigma\,(1,1)^\top\).</p>
+<p><b>Step 2: multiply \(\Sigma\) by the column.</b> \(\Sigma\,(1,1)^\top = (50 + 52,\ 52 + 56.8) = (102,\ 108.8)\).</p>
+<p><b>Step 3: dot with the row.</b> \((1,1)\cdot(102, 108.8) = 102 + 108.8 = 210.8\). (This is the sum of all four entries of \(\Sigma\).)</p>
+<p><b>Step 4: put the scale back.</b> \(\tfrac12\times210.8 = 105.4\ \text{cm}^2\).</p>
+<p>The same steps for \(\mathbf{u} = \tfrac{1}{\sqrt2}(1, -1)\): \(\Sigma\,(1,-1)^\top = (50 - 52,\ 52 - 56.8) = (-2,\ -4.8)\); dot with \((1, -1)\): \(-2 + 4.8 = 2.8\); times \(\tfrac12\): \(1.4\ \text{cm}^2\).</p>
 <p>The first direction reads “overall size” (height plus span). Students differ along it by about \(\sqrt{105.4} \approx 10.3\) cm. The second reads “arm span minus height”. Students differ along it by only about \(\sqrt{1.4} \approx 1.2\) cm. Same data, same units, a 75-fold difference in variance, purely from the choice of direction.</p>
 
 <figure class="sim" id="sim-cov">
@@ -214,10 +217,14 @@ If heights were in metres and arm spans in centimetres, the height variance woul
 <p><b>Question:</b> which unit direction \(\mathbf{u}\) makes \(\mathbf{u}^\top\Sigma\mathbf{u}\) as large as possible? <a href="09.html">Level 9</a> answered this for any symmetric matrix: the top eigenvector, and the largest value is the top eigenvalue. For a covariance matrix this has a name: principal component analysis (PCA). The eigenvectors \(\mathbf{v}_1, \mathbf{v}_2, \dots\) of \(\Sigma\) are the PCA axes, sorted so that \(\lambda_1 \ge \lambda_2 \ge \dots\). Each \(\lambda_i\) is the variance along its axis.</p>
 
 <h3>Worked example: the class</h3>
-<p>The eigenvalues solve \(\det(\Sigma - \lambda I) = 0\):</p>
-$$ (50 - \lambda)(56.8 - \lambda) - 52^2 = 0 \;\Longrightarrow\; \lambda^2 - 106.8\,\lambda + (2840 - 2704) = 0 \;\Longrightarrow\; \lambda^2 - 106.8\,\lambda + 136 = 0. $$
-$$ \lambda = \frac{106.8 \pm \sqrt{106.8^2 - 4 \times 136}}{2} = \frac{106.8 \pm \sqrt{10862.24}}{2} = \frac{106.8 \pm 104.222}{2}. $$
-<p>So \(\lambda_1 \approx 105.51\ \text{cm}^2\) and \(\lambda_2 \approx 1.289\ \text{cm}^2\). Check: they add to 106.8, the trace. The total variance is shared out between the axes, and PC1 takes \(105.51/106.8 \approx 98.8\%\) of it.</p>
+<p><b>Step 1: the equation.</b> The eigenvalues solve \(\det(\Sigma - \lambda I) = 0\). Subtracting \(\lambda I\) takes \(\lambda\) off each diagonal entry, and a 2×2 determinant is (top left × bottom right) − (top right × bottom left):</p>
+$$ (50 - \lambda)(56.8 - \lambda) - 52\times52 = 0 . $$
+<p><b>Step 2: multiply out the bracket.</b> \((50 - \lambda)(56.8 - \lambda) = 50\times56.8 - 50\lambda - 56.8\lambda + \lambda^2 = 2840 - 106.8\,\lambda + \lambda^2\).</p>
+<p><b>Step 3: subtract \(52^2 = 2704\) and tidy.</b></p>
+$$ \lambda^2 - 106.8\,\lambda + (2840 - 2704) = \lambda^2 - 106.8\,\lambda + 136 = 0. $$
+<p><b>Step 4: quadratic formula.</b> A quadratic \(\lambda^2 - 106.8\,\lambda + 136 = 0\) has roots (106.8 plus or minus the square root of \(106.8^2 - 4\times136\)), all divided by 2. Inside the root: \(106.8^2 - 4\times136 = 11406.24 - 544 = 10862.24\), whose square root is 104.222.</p>
+$$ \lambda = \frac{106.8 \pm \sqrt{10862.24}}{2} = \frac{106.8 \pm 104.222}{2}. $$
+<p><b>Step 5: the two roots.</b> \(\lambda_1 = 211.022/2 \approx 105.51\ \text{cm}^2\) and \(\lambda_2 = 2.578/2 \approx 1.289\ \text{cm}^2\). Check: they add to 106.8, the trace. The total variance is shared out between the axes, and PC1 takes \(105.51/106.8 \approx 98.8\%\) of it.</p>
 <p>For the eigenvector, write the unknown direction as \((c_1, c_2)\) and solve \((\Sigma - \lambda_1 I)(c_1, c_2)^\top = \mathbf{0}\). The first row says \((50 - 105.51)\,c_1 + 52\,c_2 = 0\), so \(c_2 / c_1 = 55.51/52 \approx 1.0675\). Normalise \((1, 1.0675)\) by its length \(\sqrt{1 + 1.0675^2} \approx 1.4627\):</p>
 $$ \mathbf{v}_1 \approx (0.684,\ 0.730), \qquad \mathbf{v}_2 \approx (-0.730,\ 0.684). $$
 <p>\(\mathbf{v}_1\) points at about 46.9° (between height and span: “overall size”). \(\mathbf{v}_2\) is perpendicular to it (“arm span relative to height”). The variance along \(\mathbf{v}_1\) is 105.51 cm², a touch more than the 105.4 cm² we found along the 45° direction. That is the maximum.</p>
@@ -255,7 +262,12 @@ $$ \operatorname{PR} = \frac{\big(\sum_i \lambda_i\big)^2}{\sum_i \lambda_i^2}. 
 <h3>The matrix square root</h3>
 <p>Because \(\Sigma = P\Lambda P^\top\) with \(P\) a rotation, we can take square roots axis by axis:</p>
 $$ \Sigma^{1/2} = P\,\Lambda^{1/2}P^\top, \qquad \Sigma^{-1/2} = P\,\Lambda^{-1/2}P^\top, $$
-<p>where \(\Lambda^{1/2} = \operatorname{diag}(\sqrt{\lambda_1}, \sqrt{\lambda_2}, \dots)\) and \(\Lambda^{-1/2} = \operatorname{diag}(1/\sqrt{\lambda_1}, 1/\sqrt{\lambda_2}, \dots)\). Check: \(\Sigma^{1/2}\Sigma^{1/2} = P\Lambda^{1/2}P^\top P\Lambda^{1/2}P^\top = P\Lambda P^\top = \Sigma\), because \(P^\top P = I\). For the class:</p>
+<p>where \(\Lambda^{1/2} = \operatorname{diag}(\sqrt{\lambda_1}, \sqrt{\lambda_2}, \dots)\) and \(\Lambda^{-1/2} = \operatorname{diag}(1/\sqrt{\lambda_1}, 1/\sqrt{\lambda_2}, \dots)\). Check: \(\Sigma^{1/2}\Sigma^{1/2} = P\Lambda^{1/2}P^\top P\Lambda^{1/2}P^\top = P\Lambda P^\top = \Sigma\), because \(P^\top P = I\). For the class, in steps.</p>
+<p><b>Step 1: write the product as a sum.</b> \(P\Lambda^{1/2}P^\top\) multiplies column \(i\) of \(P\) by \(\sqrt{\lambda_i}\) and then by row \(i\) of \(P^\top\). So \(\Sigma^{1/2} = \sqrt{\lambda_1}\,\mathbf{v}_1\mathbf{v}_1^\top + \sqrt{\lambda_2}\,\mathbf{v}_2\mathbf{v}_2^\top\), and \(\Sigma^{-1/2}\) is the same with \(1/\sqrt{\lambda_i}\).</p>
+<p><b>Step 2: the outer products</b> from \(\mathbf{v}_1 = (0.6837, 0.7298)\) and \(\mathbf{v}_2 = (-0.7298, 0.6837)\) (13.5, one more digit):</p>
+$$ \mathbf{v}_1\mathbf{v}_1^\top = \begin{pmatrix}0.4674 & 0.4989\\ 0.4989 & 0.5326\end{pmatrix}, \qquad \mathbf{v}_2\mathbf{v}_2^\top = \begin{pmatrix}0.5326 & -0.4989\\ -0.4989 & 0.4674\end{pmatrix}. $$
+<p><b>Step 3: the scales.</b> \(\sqrt{105.51} = 10.272\) cm and \(\sqrt{1.289} = 1.1353\) cm. Their reciprocals are \(0.09735\) and \(0.8808\) cm⁻¹.</p>
+<p><b>Step 4: scale and add, entry by entry.</b> Top left of \(\Sigma^{1/2}\): \(10.272\times0.4674 + 1.1353\times0.5326 = 4.801 + 0.605 = 5.406\). Off-diagonal (the two outer products have opposite off-diagonal signs): \((10.2719 - 1.1353)\times0.49893 = 9.1366\times0.49893 = 4.5585\), which rounds to 4.559. Bottom right: \(10.272\times0.5326 + 1.1353\times0.4674 = 5.471 + 0.531 = 6.002\). The same with the reciprocals gives \(\Sigma^{-1/2}\), for example top left \(0.09735\times0.4674 + 0.8808\times0.5326 = 0.0455 + 0.4691 = 0.5146\).</p>
 $$ \Sigma^{1/2} \approx \begin{pmatrix}5.406 & 4.559\\ 4.559 & 6.002\end{pmatrix}\ \text{cm}, \qquad \Sigma^{-1/2} \approx \begin{pmatrix}0.5146 & -0.3909\\ -0.3909 & 0.4635\end{pmatrix}\ \text{cm}^{-1}. $$
 <p>Read \(\Sigma^{-1/2}\) as three moves: rotate into PCA axes (\(P^\top\)), divide each PCA coordinate by its own standard deviation (\(\Lambda^{-1/2}\)), rotate back (\(P\)).</p>
 
@@ -267,15 +279,20 @@ $$ \mathbf{z}_1 = \begin{pmatrix}0.5146 & -0.3909\\ -0.3909 & 0.4635\end{pmatrix
 <h3>The mechanics: the natural size of a move</h3>
 <p>The natural size of a move \(\Delta\mathbf{x}\) is the length of its whitened version, \(\lVert \Sigma^{-1/2}\Delta\mathbf{x} \rVert\). (This is called the Mahalanobis distance.) Three moves of similar raw size:</p>
 <ul>
-<li>\(\Delta\mathbf{x} = (5, 5)\) cm (both grow): natural size \(\approx 0.72\). An ordinary move.</li>
-<li>\(\Delta\mathbf{x} = (0, 5)\) cm (span grows, height fixed): natural size \(\approx 3.03\). Unusual.</li>
-<li>\(\Delta\mathbf{x} = (5, -5)\) cm (span shrinks as height grows): natural size \(\approx 6.22\). Almost never seen.</li>
+<li>\(\Delta\mathbf{x} = (5, 5)\) cm (both grow). Multiply by \(\Sigma^{-1/2}\), row by row: \((0.5146\times5 - 0.3909\times5,\ -0.3909\times5 + 0.4635\times5) = (2.573 - 1.9545,\ -1.9545 + 2.3175) = (0.6185, 0.363)\). Length: \(\sqrt{0.6185^2 + 0.363^2} = \sqrt{0.3825 + 0.1318} = \sqrt{0.5143} \approx 0.72\). An ordinary move.</li>
+<li>\(\Delta\mathbf{x} = (0, 5)\) cm (span grows, height fixed). Only the second column of \(\Sigma^{-1/2}\) is used: \((-0.3909\times5,\ 0.4635\times5) = (-1.9545, 2.3175)\). Length: \(\sqrt{3.820 + 5.371} = \sqrt{9.191} \approx 3.03\). Unusual.</li>
+<li>\(\Delta\mathbf{x} = (5, -5)\) cm (span shrinks as height grows). \((0.5146\times5 + 0.3909\times5,\ -0.3909\times5 - 0.4635\times5) = (4.528, -4.272)\). Length \(\approx 6.22\) (worked in full in Exercise 13.6). Almost never seen.</li>
 </ul>
 <p>Going the other way, \(\Sigma^{1/2}\) turns a whitened unit move into a raw <b>1σ move</b>. The whitened unit move along \(\mathbf{v}_2\) becomes the raw move \(\Sigma^{1/2}\mathbf{v}_2 = \sqrt{\lambda_2}\,\mathbf{v}_2\): 1.135 cm along PC2. The same recipe gives the 1σ moves along any direction in many dimensions.</p>
 
 <div class="box key">
 <span class="boxtitle">Why the H-lens whitens</span>
-A curvature measured in raw units mixes up two things: how sharply the model's output bends, and how far activations naturally move. theory-v2 §0 measures curvature per unit of natural activation scale, \(\tilde H = \Sigma^{1/2} H \Sigma^{1/2}\), and states that this “is a choice, not a consequence”. The reason for the sandwich is one line: a whitened move \(\mathbf{z}\) is the raw move \(\Sigma^{1/2}\mathbf{z}\), and \((\Sigma^{1/2}\mathbf{z})^\top H (\Sigma^{1/2}\mathbf{z}) = \mathbf{z}^\top (\Sigma^{1/2} H \Sigma^{1/2})\mathbf{z}\). <a href="15.html">Level 15</a> uses it.
+A curvature measured in raw units mixes up two things: how sharply the model's output bends, and how far activations naturally move. theory-v2 §0 measures curvature per unit of natural activation scale, \(\tilde H = \Sigma^{1/2} H \Sigma^{1/2}\), and states that this “is a choice, not a consequence”. The reason for the sandwich, in three steps.
+<p><b>Step 1: substitute.</b> A whitened move \(\mathbf{z}\) is the raw move \(\Sigma^{1/2}\mathbf{z}\). The curvature along a raw move \(\Delta\mathbf{x}\) is \(\Delta\mathbf{x}^\top H\,\Delta\mathbf{x}\) (Level 9), so along this one it is \((\Sigma^{1/2}\mathbf{z})^\top H\,(\Sigma^{1/2}\mathbf{z})\).</p>
+<p><b>Step 2: transpose the product.</b> The transpose of a product is the product of the transposes in reverse order: \((\Sigma^{1/2}\mathbf{z})^\top = \mathbf{z}^\top(\Sigma^{1/2})^\top\).</p>
+<p><b>Step 3: use symmetry.</b> \(\Sigma^{1/2} = P\Lambda^{1/2}P^\top\) is symmetric, so \((\Sigma^{1/2})^\top = \Sigma^{1/2}\). Regroup:</p>
+$$ (\Sigma^{1/2}\mathbf{z})^\top H\,(\Sigma^{1/2}\mathbf{z}) = \mathbf{z}^\top\,\Sigma^{1/2}H\Sigma^{1/2}\,\mathbf{z} = \mathbf{z}^\top\tilde H\,\mathbf{z}. $$
+<p>Toy check with \(\Sigma = \operatorname{diag}(4, 1)\), so \(\Sigma^{1/2} = \operatorname{diag}(2, 1)\), \(H = I\) and \(\mathbf{z} = (1, 0)\): the raw move is \((2, 0)\) and \((2,0)\cdot(2,0) = 4\); and \(\tilde H = \operatorname{diag}(4, 1)\), so \(\mathbf{z}^\top\tilde H\mathbf{z} = 4\). Same. <a href="15.html">Level 15</a> uses it.</p>
 </div>
 
 <h3>Shrinkage: a floor under small eigenvalues</h3>
@@ -283,7 +300,10 @@ A curvature measured in raw units mixes up two things: how sharply the model's o
 $$ \Sigma_{\text{shrunk}} = 0.95\,\Sigma + 0.05\,\frac{\operatorname{tr}\Sigma}{d}\, I. $$
 <p>For the class, \(\operatorname{tr}\Sigma/d = 106.8/2 = 53.4\ \text{cm}^2\), so we add \(0.05 \times 53.4 = 2.67\ \text{cm}^2\) to the diagonal of \(0.95\,\Sigma\):</p>
 $$ \Sigma_{\text{shrunk}} = \begin{pmatrix}47.5 + 2.67 & 49.4\\ 49.4 & 53.96 + 2.67\end{pmatrix} = \begin{pmatrix}50.17 & 49.4\\ 49.4 & 56.63\end{pmatrix}\ \text{cm}^2. $$
-<p>The eigenvectors do not move. Each eigenvalue becomes \(0.95\,\lambda + 2.67\): \(\lambda_1\) goes from 105.51 to 102.91, and \(\lambda_2\) goes from 1.29 to 3.89. The small one tripled, so whitening no longer amplifies that direction as violently.</p>
+<p>What happens to the eigenvectors and eigenvalues, in steps.</p>
+<p><b>Step 1: apply the shrunk matrix to an eigenvector.</b> Take \(\mathbf{v}_i\) with \(\Sigma\mathbf{v}_i = \lambda_i\mathbf{v}_i\). Multiplying a sum of matrices by a vector multiplies each part: \(\Sigma_{\text{shrunk}}\mathbf{v}_i = 0.95\,\Sigma\mathbf{v}_i + 2.67\,I\mathbf{v}_i\).</p>
+<p><b>Step 2: use the eigenvector property and \(I\mathbf{v}_i = \mathbf{v}_i\).</b> \(\Sigma_{\text{shrunk}}\mathbf{v}_i = 0.95\,\lambda_i\mathbf{v}_i + 2.67\,\mathbf{v}_i = (0.95\,\lambda_i + 2.67)\,\mathbf{v}_i\).</p>
+<p><b>Step 3: read it.</b> \(\mathbf{v}_i\) is still an eigenvector: the eigenvectors do not move. Its eigenvalue is now \(0.95\,\lambda_i + 2.67\). For \(\lambda_1\): \(0.95\times105.511 + 2.67 = 100.236 + 2.67 = 102.91\). For \(\lambda_2\): \(0.95\times1.289 + 2.67 = 1.22 + 2.67 = 3.89\). The small one tripled, so whitening no longer amplifies that direction as violently.</p>
 
 <div class="box warn">
 <span class="boxtitle">Whitening amplifies quiet directions</span>
@@ -304,7 +324,12 @@ $$ Q^\top Q' = \begin{pmatrix} \mathbf{e}_1\cdot\mathbf{e}_1 & \mathbf{e}_1\cdot
 <p>One direction is shared fully; the other is half in, half out.</p>
 
 <h3>The random baseline k/d</h3>
-<p>What overlap would two unrelated subspaces have? Take a random unit vector in \(d\) dimensions. Its \(d\) squared components add to 1, and by symmetry no component is special, so each averages \(1/d\). Its squared projection onto a fixed \(k\)-dimensional subspace is a sum of \(k\) such squared components (in a basis that starts with that subspace), so it averages \(k/d\). Averaging over the \(k\) basis vectors keeps that value:</p>
+<p>What overlap would two unrelated subspaces have? Work it out for one random unit vector first.</p>
+<p><b>Step 1: the squares add to 1.</b> A unit vector in \(d\) dimensions has squared components that add to its squared length, 1.</p>
+<p><b>Step 2: each square averages \(1/d\).</b> Take expectations of Step 1. By linearity the \(d\) averages add to 1. A random direction has no favourite coordinate, so the \(d\) averages are equal. So each is \(1/d\).</p>
+<p><b>Step 3: project onto a fixed \(k\)-dimensional subspace.</b> Choose coordinates whose first \(k\) axes span that subspace. The squared length of the projection is the sum of the first \(k\) squared components. By Step 2 and linearity it averages \(k\times\tfrac1d = k/d\).</p>
+<p><b>Step 4: average over the basis.</b> The overlap is the mean of this squared projection over the \(k\) basis vectors \(\mathbf{q}_i\). Each one averages \(k/d\), so their mean does too.</p>
+<p>Toy check: \(d = 2\), \(k = 1\). A random line at angle \(\theta\) to a fixed line has overlap \(\cos^2\theta\), and \(\cos^2\theta\) averages \(\tfrac12\) over all angles, which is \(k/d\).</p>
 $$ \mathbb{E}[\operatorname{ov}] \approx \frac{k}{d}. $$
 <p>At \(k = 25\), \(d = 5{,}120\): \(25/5120 \approx 0.0049\). This is the “random 0.005” baseline quoted in run 1 (theory-v2 §6A). In 5,120 dimensions there is so much room that two random 25-dimensional subspaces barely touch. An overlap of 0.15 is therefore 30 times chance. Whether chance is the right comparison is another matter, which <a href="15.html">Level 15</a> takes up (the Σ prior).</p>
 
@@ -316,8 +341,13 @@ $$ \mathbb{E}[\operatorname{ov}] \approx \frac{k}{d}. $$
 </ul>
 
 <h3>The standard error of a mean: σ/√n</h3>
-<p>For independent samples, variances of a sum add (the cross terms have zero mean). So \(\operatorname{Var}(\sum_i x_i) = n\sigma^2\), and dividing the sum by \(n\) divides the variance by \(n^2\):</p>
-$$ \operatorname{Var}(\bar{x}) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}, \qquad \operatorname{SE} = \frac{\sigma}{\sqrt{n}}. $$
+<p>Let \(x_1, \dots, x_n\) be independent samples, each with mean \(\mu\) and variance \(\sigma^2\).</p>
+<p><b>Step 1: the deviation of the sum.</b> The sum has mean \(n\mu\) (linearity), so its deviation is \(\sum_i x_i - n\mu = \sum_i (x_i - \mu)\).</p>
+<p><b>Step 2: square it.</b> Multiplying a sum by itself gives every pair: \(\big(\sum_i (x_i - \mu)\big)^2 = \sum_i\sum_j (x_i - \mu)(x_j - \mu)\). With \(n = 2\): \(\big((x_1 - \mu) + (x_2 - \mu)\big)^2 = (x_1 - \mu)^2 + 2(x_1 - \mu)(x_2 - \mu) + (x_2 - \mu)^2\), where the middle term counts the pairs \((1,2)\) and \((2,1)\).</p>
+<p><b>Step 3: average, term by term</b> (linearity). Terms with \(i = j\) average \(\sigma^2\), by the definition of variance. There are \(n\) of them.</p>
+<p><b>Step 4: the cross terms.</b> For \(i \ne j\), independence lets the mean of a product split into the product of means: \(\mathbb{E}[(x_i - \mu)(x_j - \mu)] = \mathbb{E}[x_i - \mu]\cdot\mathbb{E}[x_j - \mu] = 0\times0 = 0\). So \(\operatorname{Var}(\sum_i x_i) = n\sigma^2\).</p>
+<p><b>Step 5: divide by \(n\).</b> \(\bar{x}\) is the sum times \(1/n\). Multiplying a quantity by a number \(c\) multiplies its deviations by \(c\) and its squared deviations by \(c^2\), so \(\operatorname{Var}(cX) = c^2\operatorname{Var}(X)\). With \(c = 1/n\):</p>
+$$ \operatorname{Var}(\bar{x}) = \frac{1}{n^2}\times n\sigma^2 = \frac{\sigma^2}{n}, \qquad \operatorname{SE} = \sqrt{\frac{\sigma^2}{n}} = \frac{\sigma}{\sqrt{n}}. $$
 <p>For the class, \(\sigma = 7.07\) cm and \(n = 5\) give \(\operatorname{SE} \approx 3.2\) cm. With 500 students it would be about 0.32 cm. To halve the error you need four times the data. Estimating a quantity by averaging random samples like this is called Monte Carlo. The \(\mathbb{E}_x\) “average over texts” in the J-lens (<a href="14.html">Level 14</a>) is a Monte Carlo average.</p>
 
 <h3>Noise floors: pure noise has a spectrum too</h3>
@@ -334,8 +364,11 @@ $$ \operatorname{Var}(\bar{x}) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}, \qq
 <p>If the true structure is strong and the sample is big enough, both halves find it and the overlap is near 1. If the estimate is mostly noise, each half finds its own noise and the overlap falls towards \(k/d\). Run 1 required split-half ≥ 0.7 (criterion C1 in the README).</p>
 
 <h3>The mechanics: why the choice of k matters</h3>
-<p>Suppose the truth has exactly 3 strong directions, and both halves find them perfectly. At \(k = 25\), each half also keeps 22 further directions that are pure noise. Each noise direction lies about \(22/5117\) inside the other half's subspace (chance level, in the room left over). So</p>
-$$ \operatorname{ov} \approx \frac{3 \times 1 + 22 \times \tfrac{22}{5117}}{25} = \frac{3 + 0.095}{25} \approx 0.12. $$
+<p>Suppose the truth has exactly 3 strong directions, and both halves find them perfectly. At \(k = 25\), each half also keeps 22 further directions that are pure noise.</p>
+<p><b>Step 1: the 3 signal directions.</b> Each lies fully inside the other half's subspace, so each contributes a squared projection of 1. Total 3.</p>
+<p><b>Step 2: the 22 noise directions.</b> Both halves already share the 3 signal directions, so the noise lives in the room left over: \(5{,}120 - 3 = 5{,}117\) dimensions. There the other half's noise spans 22 dimensions. By the random baseline (13.7) with \(k = 22\) and \(d = 5{,}117\), each noise direction lies about \(22/5117 = 0.0043\) inside it. Total \(22\times0.0043 = 0.095\).</p>
+<p><b>Step 3: average over the 25 basis vectors.</b></p>
+$$ \operatorname{ov} \approx \frac{3 \times 1 + 22 \times \tfrac{22}{5117}}{25} = \frac{3 + 0.095}{25} = \frac{3.095}{25} \approx 0.12. $$
 <p>A perfect 3-dimensional signal scores 0.12 at \(k = 25\), far below 0.7. This is half of the README's diagnosis of the run-1 failure: “C1 was measured at k = 25. But the participation ratio is 1.3–8.5.” The other half is heavy tails, next.</p>
 
 <div class="box warn">
@@ -376,16 +409,25 @@ A trimmed estimator answers a different question: “what does the bulk of the r
 </ul>
 
 <h3>The mechanics with a 2×2 matrix</h3>
-<p>Let \(A = \begin{pmatrix}3 & 2\\ -1 & 5\end{pmatrix}\), so \(\operatorname{tr}A = 8\). Draw a sign vector \(\mathbf{s} = (s_1, s_2)\) and compute the number \(\mathbf{s}^\top A\mathbf{s}\) (one product \(A\mathbf{s}\), then one dot product). Expand it:</p>
-$$ \mathbf{s}^\top A\,\mathbf{s} = A_{11}s_1^2 + A_{22}s_2^2 + (A_{12} + A_{21})\,s_1s_2 = 3 + 5 + (2 - 1)\,s_1 s_2 = 8 + s_1 s_2. $$
-<p>The diagonal part is 8 on every draw, because \(s_i^2 = 1\). The cross term is \(+1\) or \(-1\). All four sign patterns:</p>
+<p>Let \(A = \begin{pmatrix}3 & 2\\ -1 & 5\end{pmatrix}\), so \(\operatorname{tr}A = 8\). Draw a sign vector \(\mathbf{s} = (s_1, s_2)\) and compute the number \(\mathbf{s}^\top A\mathbf{s}\) (one product \(A\mathbf{s}\), then one dot product).</p>
+<p><b>Step 1: the product \(A\mathbf{s}\), row by row.</b> \(A\mathbf{s} = (A_{11}s_1 + A_{12}s_2,\ A_{21}s_1 + A_{22}s_2)\).</p>
+<p><b>Step 2: dot with \(\mathbf{s}\).</b> \(\mathbf{s}^\top A\mathbf{s} = s_1(A_{11}s_1 + A_{12}s_2) + s_2(A_{21}s_1 + A_{22}s_2)\).</p>
+<p><b>Step 3: multiply out and group.</b> \(= A_{11}s_1^2 + A_{22}s_2^2 + (A_{12} + A_{21})\,s_1s_2\).</p>
+<p><b>Step 4: use \(s_i^2 = 1\) and put in the numbers.</b></p>
+$$ \mathbf{s}^\top A\,\mathbf{s} = 3\times1 + 5\times1 + (2 + (-1))\,s_1 s_2 = 8 + s_1 s_2. $$
+<p>The diagonal part is 8 on every draw. The cross term is \(+1\) or \(-1\).</p>
+<p><b>Step 5: average.</b> By linearity, \(\mathbb{E}[8 + s_1s_2] = 8 + \mathbb{E}[s_1s_2] = 8 + 0 = 8 = \operatorname{tr}A\). All four sign patterns:</p>
 <div class="tablewrap">
 <table>
 <tr><th>\(\mathbf{s}\)</th><th>(+1, +1)</th><th>(+1, −1)</th><th>(−1, +1)</th><th>(−1, −1)</th><th>average</th></tr>
 <tr><td>\(\mathbf{s}^\top A\mathbf{s}\)</td><td>9</td><td>7</td><td>7</td><td>9</td><td>8 = tr A</td></tr>
 </table>
 </div>
-<p>Every single draw is wrong (9 or 7). The average is exactly right. The estimator is unbiased but noisy, and its noise comes entirely from the off-diagonal entries. For the diagonal itself, use \(s_i\,(A\mathbf{s})_i = A_{ii} + \sum_{j \ne i} A_{ij}s_is_j\), which averages to \(A_{ii}\) for the same reason. This is the Hutchinson estimator (Hutchinson 1990, cited in theory-v2 Lemma 7).</p>
+<p>Every single draw is wrong (9 or 7). The average is exactly right. The estimator is unbiased but noisy, and its noise comes entirely from the off-diagonal entries. For the diagonal itself, use \(s_i\,(A\mathbf{s})_i\), in steps.</p>
+<p><b>Step 1: entry \(i\) of \(A\mathbf{s}\).</b> \((A\mathbf{s})_i = \sum_j A_{ij}s_j\).</p>
+<p><b>Step 2: multiply by \(s_i\) and split off \(j = i\).</b> \(s_i(A\mathbf{s})_i = A_{ii}s_i^2 + \sum_{j \ne i} A_{ij}s_is_j = A_{ii} + \sum_{j \ne i} A_{ij}s_is_j\), using \(s_i^2 = 1\).</p>
+<p><b>Step 3: average.</b> By linearity, and \(\mathbb{E}[s_is_j] = 0\) for \(j \ne i\): \(\mathbb{E}[s_i(A\mathbf{s})_i] = A_{ii}\). Example with \(\mathbf{s} = (+1, -1)\): \(A\mathbf{s} = (1, -6)\), so \(s_1(A\mathbf{s})_1 = 1\) and \(s_2(A\mathbf{s})_2 = 6\); with \(\mathbf{s} = (+1, +1)\): \(A\mathbf{s} = (5, 4)\), giving 5 and 4. The averages are \((1 + 5)/2 = 3 = A_{11}\) and \((6 + 4)/2 = 5 = A_{22}\) (the other two patterns repeat these values).</p>
+<p>This is the Hutchinson estimator (Hutchinson 1990, cited in theory-v2 Lemma 7).</p>
 <p><b>Intuition pump: microphones in a crowded room.</b> Each microphone should record one speaker, but it also picks up the neighbours. Suppose that on each recording every speaker independently says their line either normally or with flipped polarity, and you multiply microphone \(i\)'s track by speaker \(i\)'s own flip. Speaker \(i\) always comes out right way up (\(s_i \times s_i = 1\)). Each neighbour comes out right way up or upside down at random (\(s_i \times s_j\)). Average many recordings and the neighbours cancel; the speaker remains.</p>
 
 <figure class="sim" id="sim-hutch">
@@ -394,7 +436,12 @@ $$ \mathbf{s}^\top A\,\mathbf{s} = A_{11}s_1^2 + A_{22}s_2^2 + (A_{12} + A_{21})
 
 <div class="box warn">
 <span class="boxtitle">Squares bring the cross terms back</span>
-The cancellation works for anything <i>linear</i> in the cross terms. Square the estimate and it fails, because \((s_1s_2)^2 = 1\). In the example, \((\mathbf{s}^\top A\mathbf{s})^2\) is 81 or 49, averaging 65, not \((\operatorname{tr}A)^2 = 64\). The extra 1 is the cross term, squared, surviving. The fix is to multiply two estimates made with <i>independent</i> sign vectors \(\mathbf{s}\) and \(\mathbf{s}'\): then \(\mathbb{E}[(\mathbf{s}^\top A\mathbf{s})(\mathbf{s}'^\top A\mathbf{s}')] = (\operatorname{tr}A)^2\) exactly. theory-v2 says Lemma 7 is “unbiased, not exact, and first moment only” for this reason. In the H-lens the signs are one per token position, so the cross terms are cross-position curvature blocks. <a href="15.html">Level 15</a> shows that the run-1 energy estimator kept them, and that a cross-moment estimator with independent signs removes them.
+The cancellation works for anything <i>linear</i> in the cross terms. Square the estimate and it fails, because \((s_1s_2)^2 = 1\).
+<p><b>Step 1: square the example.</b> \((8 + s_1s_2)^2 = 64 + 16\,s_1s_2 + (s_1s_2)^2\).</p>
+<p><b>Step 2: the last term is always 1</b>, since \((s_1s_2)^2 = s_1^2s_2^2 = 1\times1\). So the square is \(65 + 16\,s_1s_2\): 81 or 49.</p>
+<p><b>Step 3: average.</b> \(65 + 16\times0 = 65\), not \((\operatorname{tr}A)^2 = 64\). The extra 1 is the cross term, squared, surviving.</p>
+<p><b>The fix:</b> multiply two estimates made with <i>independent</i> sign vectors \(\mathbf{s}\) and \(\mathbf{s}'\). <b>Step 1:</b> \((8 + s_1s_2)(8 + s'_1s'_2) = 64 + 8\,s'_1s'_2 + 8\,s_1s_2 + s_1s_2\,s'_1s'_2\). <b>Step 2:</b> average each term. The two middle terms average 0. The last splits, by independence, into \(\mathbb{E}[s_1s_2]\,\mathbb{E}[s'_1s'_2] = 0\times0 = 0\). So \(\mathbb{E}[(\mathbf{s}^\top A\mathbf{s})(\mathbf{s}'^\top A\mathbf{s}')] = 64 = (\operatorname{tr}A)^2\) exactly.</p>
+<p>theory-v2 says Lemma 7 is “unbiased, not exact, and first moment only” for this reason. In the H-lens the signs are one per token position, so the cross terms are cross-position curvature blocks. <a href="15.html">Level 15</a> shows that the run-1 energy estimator kept them, and that a cross-moment estimator with independent signs removes them.</p>
 </div>
 
 <h2>13.11 Null hypotheses, p-values and randomization tests</h2>
@@ -445,7 +492,10 @@ $$ p = \frac{1 + \#\{r : T_r \ge T_0\}}{R + 1}. $$
 <p>Many results in this project are ratios (“5.8 times more interaction than the controls”). Ratios are lopsided: 2× and 0.5× are equally far from 1× but sit at different distances on the number line. So the interval is computed on the logarithm and mapped back. If \(\ln(\text{ratio})\) has 95% CI [0.5, 0.9], the ratio has CI \([e^{0.5}, e^{0.9}] \approx [1.65, 2.46]\). And beware ratios whose denominator can be near 0: tiny changes in the denominator swing the ratio wildly. The README reports run-1 criterion C6 failed partly this way: “a ratio whose denominator is ≈ 0”, with 95% CIs spanning [−1, 10].</p>
 
 <h3>Many tests, one false pass</h3>
-<p>The significance level \(\alpha\) is the false-positive rate you accept for one test, usually 0.05. Run \(m\) independent tests where every null is true, and the chance that at least one passes by luck is</p>
+<p>The significance level \(\alpha\) is the false-positive rate you accept for one test, usually 0.05. Run \(m\) independent tests where every null is true.</p>
+<p><b>Step 1: one test.</b> It stays quiet with probability \(1 - \alpha\).</p>
+<p><b>Step 2: all \(m\) tests.</b> For independent events, the probability that all happen is the product of their probabilities. So all \(m\) stay quiet with probability \((1 - \alpha)^m\).</p>
+<p><b>Step 3: at least one passes</b> is the opposite event, so its probability is</p>
 $$ 1 - (1 - \alpha)^m. $$
 <p>With \(m = 11\) and \(\alpha = 0.05\): \(1 - 0.95^{11} \approx 1 - 0.569 = 0.431\). Eleven honest tests of nothing give a 43% chance of at least one “discovery”. Worse, if after each look you tweak the rule (which layer, which \(k\), which trimming level), you are silently running many tests. This is the garden of forking paths.</p>
 
@@ -461,7 +511,7 @@ $$ \mathbb{E}\Big[\frac{a_w}{q_w}\Big] = \sum_w q_w\,\frac{a_w}{q_w} = \sum_w a_
 <p>the right total, for <i>any</i> choice of the \(q_w\) (as long as no item with \(a_w \ne 0\) has \(q_w = 0\)). So the choice cannot add bias. It only changes the noise.</p>
 <p>Four items of sizes \(a = (100, 1, 1, 1)\), total 103:</p>
 <ul>
-<li><b>Uniform</b>, \(q_w = 1/4\): the report is \(4a_w\), so 400 (one time in four) or 4 (three times in four). Mean \((400 + 4 + 4 + 4)/4 = 103\). Correct on average, but one draw is off by about 171 (its standard deviation).</li>
+<li><b>Uniform</b>, \(q_w = 1/4\): the report is \(a_w/(1/4) = 4a_w\), so 400 (one time in four) or 4 (three times in four). Mean \((400 + 4 + 4 + 4)/4 = 412/4 = 103\). Correct on average. Its spread, step by step. <b>Step 1:</b> deviations from 103 are \(400 - 103 = 297\) and \(4 - 103 = -99\). <b>Step 2:</b> squares are 88,209 and 9,801. <b>Step 3:</b> weight by how often each happens: \(\tfrac14\times88{,}209 + \tfrac34\times9{,}801 = 22{,}052.25 + 7{,}350.75 = 29{,}403\). <b>Step 4:</b> square root: about 171. One draw is typically off by about 171.</li>
 <li><b>Proportional to size</b>, \(q_w = a_w/103\): the report is \(a_w/(a_w/103) = 103\) every time. Zero noise.</li>
 </ul>
 <p>Sampling in proportion to size is optimal. For matrices, theory-v2 Proposition 9 proves that the variance is smallest when \(q_w\) is proportional to the Frobenius norm of window \(w\)'s contribution. The catch: you need to know the sizes before you measure them. theory-v2 Observation 8.3 proposes a cheap first-order screen (one backward pass per window) to predict them, and reports how well it did on the 0.8B model. The 27B test came with v8 (paper §4c); <a href="15.html">Level 15</a> (section 15.14) covers it.</p>
@@ -499,7 +549,9 @@ $$ \mathbb{E}\Big[\frac{a_w}{q_w}\Big] = \sum_w q_w\,\frac{a_w}{q_w} = \sum_w a_
 <div class="ex" data-answer="3.68" data-tol="0.005">
 <p><b>Exercise 13.3.</b> A covariance matrix is \(\Sigma = \begin{pmatrix}4 & 1\\ 1 & 2\end{pmatrix}\) (unit: m²). What is the variance along the unit direction \(\mathbf{u} = (0.6, 0.8)\)?</p>
 <details><summary>Show answer</summary>
-<p>\(\mathbf{u}^\top\Sigma\mathbf{u} = 4(0.6)^2 + 2 \times 1 \times 0.6 \times 0.8 + 2(0.8)^2 = 1.44 + 0.96 + 1.28 = 3.68\ \text{m}^2\). The middle term is doubled because the off-diagonal 1 appears twice in \(\Sigma\).</p>
+<p><b>Step 1: multiply \(\Sigma\) by \(\mathbf{u}\), row by row.</b> \(\Sigma\mathbf{u} = (4\times0.6 + 1\times0.8,\ 1\times0.6 + 2\times0.8) = (2.4 + 0.8,\ 0.6 + 1.6) = (3.2,\ 2.2)\).</p>
+<p><b>Step 2: dot with \(\mathbf{u}\).</b> \(\mathbf{u}^\top\Sigma\mathbf{u} = 0.6\times3.2 + 0.8\times2.2 = 1.92 + 1.76 = 3.68\ \text{m}^2\).</p>
+<p>Check by the expanded form: \(4(0.6)^2 + 2 \times 1 \times 0.6 \times 0.8 + 2(0.8)^2 = 1.44 + 0.96 + 1.28 = 3.68\). The middle term is doubled because the off-diagonal 1 appears twice in \(\Sigma\).</p>
 </details>
 </div>
 

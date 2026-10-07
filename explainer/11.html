@@ -45,6 +45,7 @@
 <tr><td>\(H\), \(\nabla^2 f\); \(H_{jk}\)</td><td>“H”, “H j k”</td><td>the Hessian: the matrix of second partial derivatives; entry \(H_{jk} = \partial^2 f/\partial x_j\,\partial x_k\)</td><td>output per input unit per input unit</td><td>\(H_{12} = -0.7399\)</td></tr>
 <tr><td>\(\mathbf{v}\); \(v_1, v_2\)</td><td>“bold v”</td><td>a direction: a list of input nudges</td><td>input units</td><td>\(\mathbf{v} = (1, 0.5)\)</td></tr>
 <tr><td>\(H\mathbf{v}\)</td><td>“H v”</td><td>Hessian-vector product (HVP): how the gradient changes per unit of movement along \(\mathbf{v}\)</td><td>same as the gradient</td><td>\((0.2528, -0.4871)\)</td></tr>
+<tr><td>\(\lambda\)</td><td>“lambda”</td><td>an eigenvalue of \(H\) (Level 9)</td><td>as \(H\)</td><td>\(\lambda = 1.306\)</td></tr>
 <tr><td>\(\mathbf{v}^\top H\mathbf{v}\)</td><td>“v transpose H v”</td><td>the curvature of \(f\) along \(\mathbf{v}\) (Level 9)</td><td>output unit</td><td>\(0.0093\)</td></tr>
 <tr><td>\(\varepsilon\)</td><td>“epsilon”</td><td>the step size of a finite difference: we move by \(\varepsilon\mathbf{v}\)</td><td>none (pure number multiplying \(\mathbf{v}\))</td><td>\(\varepsilon = 0.01\)</td></tr>
 <tr><td>\(t\); \(k(t)\)</td><td>“t”, “k of t”</td><td>\(t\): how far we have moved along \(\mathbf{v}\) (we stand at \(\mathbf{x} + t\mathbf{v}\)); \(k(t)\): one entry of the gradient there</td><td>\(t\): pure number; \(k\): as the gradient</td><td>\(k(0) = -0.1306\)</td></tr>
@@ -109,7 +110,13 @@ $$ H = \begin{pmatrix} -0.5 &amp; 0.5 \\ 0.5 &amp; -1 \end{pmatrix} \quad \begin
 <li>first entry: \((-0.5\ \tfrac{\text{bushels}}{\text{bucket}^2})(1\ \text{bucket}) + (0.5\ \tfrac{\text{bushels}}{\text{bucket}\cdot\text{bag}})(1\ \text{bag}) = -0.5 + 0.5 = 0\) bushels per bucket;</li>
 <li>second entry: \((0.5\ \tfrac{\text{bushels}}{\text{bucket}\cdot\text{bag}})(1\ \text{bucket}) + (-1\ \tfrac{\text{bushels}}{\text{bag}^2})(1\ \text{bag}) = 0.5 - 1 = -0.5\) bushels per bag.</li>
 </ul>
-<p>Each unit cancels to leave the unit of a gradient entry. <b>Mechanics check.</b> At (4 buckets, 2 bags) the gradient is (1 bushel per bucket, 3 bushels per bag). At (5, 3), one step along \(\mathbf{v}\) later, it is (1, 2.5). The change is (0, −0.5): exactly \(H\mathbf{v}\), because the farm is quadratic. In words: adding a bucket and a bag together leaves the value of the next bucket unchanged (the interaction +0.5 cancels the diminishing return −0.5), and makes the next bag worth half a bushel less.</p>
+<p>Each unit cancels to leave the unit of a gradient entry.</p>
+<p><b>Mechanics check.</b> Measure the gradient before and after one step along \(\mathbf{v}\), and subtract.</p>
+<p><b>Step 1: write out the gradient rule.</b> From Level 5, the two slopes of the farm are \(\partial Y/\partial W = 2 + 0.5F - 0.5W\) bushels per bucket and \(\partial Y/\partial F = 3 + 0.5W - F\) bushels per bag.</p>
+<p><b>Step 2: put in the starting point</b> \((W, F) = (4, 2)\). First slope: \(2 + 0.5\times2 - 0.5\times4 = 2 + 1 - 2 = 1\) bushel per bucket. Second slope: \(3 + 0.5\times4 - 2 = 3 + 2 - 2 = 3\) bushels per bag.</p>
+<p><b>Step 3: put in the point one step along \(\mathbf{v}\)</b>, which is \((4 + 1, 2 + 1) = (5, 3)\). First slope: \(2 + 0.5\times3 - 0.5\times5 = 2 + 1.5 - 2.5 = 1\). Second slope: \(3 + 0.5\times5 - 3 = 3 + 2.5 - 3 = 2.5\).</p>
+<p><b>Step 4: subtract.</b> \((1 - 1,\ 2.5 - 3) = (0, -0.5)\). This is exactly \(H\mathbf{v}\), with no error, because the farm is quadratic: its slopes are straight lines, so a whole step changes them by exactly the rate times the step.</p>
+<p>In words: adding a bucket and a bag together leaves the value of the next bucket unchanged (the interaction +0.5 cancels the diminishing return −0.5), and makes the next bag worth half a bushel less.</p>
 <p>Dot it with \(\mathbf{v}\) once more and you get the curvature along \(\mathbf{v}\) from Level 9: \(\mathbf{v}^\top H\mathbf{v} = 1\times0 + 1\times(-0.5) = -0.5\) bushels.</p>
 
 <h3>The tiny network</h3>
@@ -121,23 +128,36 @@ $$ \text{forward difference:}\quad H\mathbf{v} \approx \frac{\nabla f(\mathbf{x}
 <p>Each costs two gradients: cheap. But how accurate is it?</p>
 
 <h3>Worked example on the tiny network</h3>
-<p>Take \(\varepsilon = 0.01\). The shifted points are \(\mathbf{x} \pm 0.01\,\mathbf{v} = (1.01, 2.005)\) and \((0.99, 1.995)\). Backpropagation (Level 10) at each gives</p>
+<p><b>Step 1: find the shifted points.</b> Take \(\varepsilon = 0.01\). Then \(\varepsilon\mathbf{v} = 0.01\times(1, 0.5) = (0.01, 0.005)\). Add it to \(\mathbf{x} = (1, 2)\) and subtract it:</p>
+$$ \mathbf{x} + \varepsilon\mathbf{v} = (1 + 0.01,\ 2 + 0.005) = (1.01,\ 2.005), \qquad \mathbf{x} - \varepsilon\mathbf{v} = (1 - 0.01,\ 2 - 0.005) = (0.99,\ 1.995). $$
+<p><b>Step 2: compute three gradients.</b> Backpropagation (Level 10) at each point gives</p>
 $$ \nabla y(1.01, 2.005) = (-0.128050,\ -1.436215), \qquad \nabla y(0.99, 1.995) = (-0.133106,\ -1.426472), $$
 <p>and at the base point \(\nabla y(1, 2) = (-0.130589,\ -1.431352)\).</p>
-<ul>
-<li>Forward: \(\big((-0.128050) - (-0.130589),\ (-1.436215) - (-1.431352)\big)/0.01 = (0.2539,\ -0.4862)\).</li>
-<li>Central: \(\big((-0.128050) - (-0.133106),\ (-1.436215) - (-1.426472)\big)/0.02 = (0.25282,\ -0.48712)\).</li>
-</ul>
+<p><b>Step 3 (forward): subtract the base gradient from the forward one, entry by entry.</b></p>
+$$ (-0.128050) - (-0.130589) = 0.002539, \qquad (-1.436215) - (-1.431352) = -0.004863 . $$
+<p><b>Step 4 (forward): divide each entry by \(\varepsilon = 0.01\).</b> This gives \((0.2539,\ -0.4863)\). (From the unrounded gradients it is \((0.25389, -0.48623)\); the last digit moves because the gradients above are rounded to six decimals.)</p>
+<p><b>Step 5 (central): subtract the backward gradient from the forward one.</b></p>
+$$ (-0.128050) - (-0.133106) = 0.005056, \qquad (-1.436215) - (-1.426472) = -0.009743 . $$
+<p><b>Step 6 (central): divide each entry by \(2\varepsilon = 0.02\).</b> This gives \((0.2528,\ -0.4872)\). From the unrounded gradients it is \((0.25282,\ -0.48712)\).</p>
 <p>The exact answer (11.5) is \((0.25282, -0.48712)\). The central difference is right to five digits; the forward one only to about two.</p>
 
 <h3>Why central beats forward: Taylor along the line</h3>
 <p>Follow one entry of the gradient as you walk along \(\mathbf{v}\). Call it \(k(t)\) = that entry at the point \(\mathbf{x} + t\mathbf{v}\). Then the matching entry of \(H\mathbf{v}\) is \(k'(0)\). Taylor's formula from <a href="04.html">Level 4</a> gives</p>
 $$ k(\varepsilon) = k(0) + \varepsilon\,k'(0) + \tfrac12\varepsilon^2 k''(0) + \tfrac16\varepsilon^3 k'''(0) + O(\varepsilon^4), $$
 $$ k(-\varepsilon) = k(0) - \varepsilon\,k'(0) + \tfrac12\varepsilon^2 k''(0) - \tfrac16\varepsilon^3 k'''(0) + O(\varepsilon^4). $$
-<ul>
-<li>Forward: subtract \(k(0)\) from the first line and divide by \(\varepsilon\): \(\dfrac{k(\varepsilon)-k(0)}{\varepsilon} = k'(0) + \tfrac12\varepsilon\,k''(0) + O(\varepsilon^2)\). The error shrinks like \(\varepsilon\).</li>
-<li>Central: subtract the second line from the first. The even terms cancel exactly: \(k(\varepsilon) - k(-\varepsilon) = 2\varepsilon k'(0) + \tfrac13\varepsilon^3k'''(0) + O(\varepsilon^5)\). Divide by \(2\varepsilon\): \(k'(0) + \tfrac16\varepsilon^2k'''(0) + O(\varepsilon^4)\). The error shrinks like \(\varepsilon^2\).</li>
-</ul>
+<p>The second line is the first with \(\varepsilon\) replaced by \(-\varepsilon\). Each odd power flips sign: \((-\varepsilon)^1 = -\varepsilon\), \((-\varepsilon)^2 = \varepsilon^2\), \((-\varepsilon)^3 = -\varepsilon^3\).</p>
+<p><b>Forward difference.</b></p>
+<p><b>Step 1: subtract \(k(0)\) from the first line.</b> The \(k(0)\) on the right cancels:</p>
+$$ k(\varepsilon) - k(0) = \varepsilon\,k'(0) + \tfrac12\varepsilon^2 k''(0) + O(\varepsilon^3). $$
+<p><b>Step 2: divide every term by \(\varepsilon\).</b> Each power of \(\varepsilon\) drops by one:</p>
+$$ \frac{k(\varepsilon) - k(0)}{\varepsilon} = k'(0) + \tfrac12\varepsilon\,k''(0) + O(\varepsilon^2). $$
+<p>The leftover after \(k'(0)\) is the error. It shrinks like \(\varepsilon\): halve the step and the error halves.</p>
+<p><b>Central difference.</b></p>
+<p><b>Step 1: subtract the second line from the first, term by term.</b> \(k(0) - k(0) = 0\). \(\varepsilon k'(0) - (-\varepsilon k'(0)) = 2\varepsilon k'(0)\). \(\tfrac12\varepsilon^2k''(0) - \tfrac12\varepsilon^2k''(0) = 0\). \(\tfrac16\varepsilon^3k'''(0) - (-\tfrac16\varepsilon^3k'''(0)) = \tfrac13\varepsilon^3k'''(0)\). The \(\varepsilon^4\) terms also match and cancel, so what is left starts at \(\varepsilon^5\):</p>
+$$ k(\varepsilon) - k(-\varepsilon) = 2\varepsilon\,k'(0) + \tfrac13\varepsilon^3 k'''(0) + O(\varepsilon^5). $$
+<p><b>Step 2: divide every term by \(2\varepsilon\).</b> \(2\varepsilon k'(0)/(2\varepsilon) = k'(0)\) and \(\tfrac13\varepsilon^3k'''(0)/(2\varepsilon) = \tfrac16\varepsilon^2k'''(0)\):</p>
+$$ \frac{k(\varepsilon) - k(-\varepsilon)}{2\varepsilon} = k'(0) + \tfrac16\varepsilon^2 k'''(0) + O(\varepsilon^4). $$
+<p>The error now shrinks like \(\varepsilon^2\): halve the step and the error falls to a quarter. Toy check with \(k(t) = t^3\) at \(\varepsilon = 0.1\), where \(k'(0) = 0\) and \(k'''(0) = 6\): the central difference is \((0.001 - (-0.001))/0.2 = 0.01\), and \(\tfrac16\times0.1^2\times6 = 0.01\). Same.</p>
 <p>This error, from cutting the Taylor series short, is called truncation error. It says: make \(\varepsilon\) as small as possible. The next section explains why you cannot.</p>
 
 <h2>11.4 Rounding: why the step cannot be too small</h2>
@@ -145,7 +165,13 @@ $$ k(-\varepsilon) = k(0) - \varepsilon\,k'(0) + \tfrac12\varepsilon^2 k''(0) - 
 <p><b>Real-world example.</b> Weigh a lorry with a 2-tonne load, then weigh it after a pigeon lands on the roof, on a weighbridge that reads to the nearest 10 kg. The difference is either 0 kg or 10 kg. Dividing by the pigeon's mass gives nonsense. Subtracting two nearly equal measurements throws away almost all their significant digits. This is called catastrophic cancellation.</p>
 <p>The finite-difference HVP does exactly that. When \(\varepsilon\) is tiny, \(k(\varepsilon)\) and \(k(-\varepsilon)\) agree in almost every digit. Each carries a rounding error of about \(u\,|k|\). Their difference keeps that absolute error, and dividing by \(2\varepsilon\) blows it up:</p>
 $$ \text{rounding error} \approx \frac{u\,|k|}{\varepsilon}, \qquad \text{truncation error (central)} \approx \frac{\varepsilon^2}{6}\,|k'''(0)| . $$
-<p>One error falls as \(\varepsilon\) shrinks and the other rises. Their sum is smallest where the two are about equal, which happens when \(\varepsilon^3\) is about \(u\) (times a ratio of derivatives that is often near 1). So the best step is roughly \(u^{1/3}\), and the best relative error roughly \(u^{2/3}\):</p>
+<p>One error falls as \(\varepsilon\) shrinks and the other rises. Their sum is smallest about where the two are equal. Find that point in steps.</p>
+<p><b>Step 1: set the two errors equal.</b></p>
+$$ \frac{u\,|k|}{\varepsilon} = \frac{\varepsilon^2}{6}\,|k'''(0)| . $$
+<p><b>Step 2: multiply both sides by \(\varepsilon\).</b> \(u\,|k| = \tfrac16\varepsilon^3|k'''(0)|\).</p>
+<p><b>Step 3: solve for \(\varepsilon^3\).</b> Multiply both sides by 6 and divide by \(|k'''(0)|\): \(\varepsilon^3 = 6u\,|k|/|k'''(0)|\). The factor \(6|k|/|k'''(0)|\) is a ratio of derivatives. For a well-scaled function it is often near 1, so take \(\varepsilon^3 \approx u\).</p>
+<p><b>Step 4: take the cube root.</b> The best step is \(\varepsilon \approx u^{1/3}\).</p>
+<p><b>Step 5: put it back into the rounding error.</b> The relative rounding error is \(u/\varepsilon \approx u/u^{1/3} = u^{2/3}\). The truncation error is about the same size there (that is how the point was chosen), so the best total relative error is also roughly \(u^{2/3}\).</p>
 <ul>
 <li>fp64: best \(\varepsilon \approx (1.1\times10^{-16})^{1/3} \approx 5\times10^{-6}\); best error \(\approx 2\times10^{-11}\).</li>
 <li>fp32: best \(\varepsilon \approx (6\times10^{-8})^{1/3} \approx 4\times10^{-3}\); best error \(\approx 1.5\times10^{-5}\).</li>
@@ -166,13 +192,16 @@ $$ \text{rounding error} \approx \frac{u\,|k|}{\varepsilon}, \qquad \text{trunca
 
 <h3>One more derivative we need: \(\operatorname{silu}''\)</h3>
 <p>From Level 10, \(\sigma' = \sigma(1-\sigma)\) and \(\operatorname{silu}'(z) = \sigma(z) + z\,\sigma'(z)\).</p>
-<ol>
-<li>Differentiate \(\sigma' = \sigma - \sigma^2\): \(\sigma'' = \sigma' - 2\sigma\sigma' = \sigma'(1 - 2\sigma)\).</li>
-<li>Differentiate \(\operatorname{silu}' = \sigma + z\sigma'\) with the product rule on the second term: \(\operatorname{silu}'' = \sigma' + (1\cdot\sigma' + z\,\sigma'') = 2\sigma' + z\,\sigma''\).</li>
-<li>Substitute step 1: \(\operatorname{silu}''(z) = \sigma'(z)\big(2 + z(1 - 2\sigma(z))\big) = \sigma(1-\sigma)\big(2 + z(1-2\sigma)\big)\).</li>
-<li>At \(z_1 = -0.5\): \(\sigma = 0.3775\), \(\sigma' = 0.3775\times0.6225 = 0.2350\), \(1 - 2\sigma = 0.2449\), so \(\operatorname{silu}'' = 0.2350\times(2 - 0.1225) = 0.2350\times1.8775 = 0.4412\).</li>
-<li>At \(z_2 = 1.5\): \(\sigma = 0.8176\), \(\sigma' = 0.1491\), \(1 - 2\sigma = -0.6352\), so \(\operatorname{silu}'' = 0.1491\times(2 - 0.9527) = 0.1491\times1.0473 = 0.1562\).</li>
-</ol>
+<p><b>Step 1: multiply out \(\sigma'\).</b> \(\sigma(1 - \sigma) = \sigma - \sigma^2\).</p>
+<p><b>Step 2: differentiate each term.</b> The derivative of \(\sigma\) is \(\sigma'\). For \(\sigma^2\) use the chain rule (outer “square”, inner \(\sigma\)): its derivative is \(2\sigma\cdot\sigma'\). So</p>
+$$ \sigma'' = \sigma' - 2\sigma\,\sigma' . $$
+<p><b>Step 3: factor out \(\sigma'\).</b> \(\sigma'' = \sigma'(1 - 2\sigma)\).</p>
+<p><b>Step 4: differentiate \(\operatorname{silu}' = \sigma + z\sigma'\).</b> The first term gives \(\sigma'\). The second term is a product of \(z\) and \(\sigma'\), so use the product rule: \((z)'\cdot\sigma' + z\cdot(\sigma')' = 1\cdot\sigma' + z\,\sigma''\). Add the pieces:</p>
+$$ \operatorname{silu}'' = \sigma' + \sigma' + z\,\sigma'' = 2\sigma' + z\,\sigma'' . $$
+<p><b>Step 5: substitute Step 3 for \(\sigma''\), then factor out \(\sigma'\).</b></p>
+$$ \operatorname{silu}''(z) = 2\sigma' + z\,\sigma'(1 - 2\sigma) = \sigma'(z)\big(2 + z(1 - 2\sigma(z))\big) = \sigma(1-\sigma)\big(2 + z(1-2\sigma)\big). $$
+<p><b>Step 6: numbers at \(z_1 = -0.5\).</b> \(\sigma(-0.5) = 1/(1 + e^{0.5}) = 0.3775\). Then \(\sigma' = 0.3775\times(1 - 0.3775) = 0.3775\times0.6225 = 0.2350\). Next \(1 - 2\sigma = 1 - 0.7551 = 0.2449\), and \(z(1 - 2\sigma) = -0.5\times0.2449 = -0.1225\). So \(\operatorname{silu}'' = 0.2350\times(2 - 0.1225) = 0.2350\times1.8775 = 0.4412\).</p>
+<p><b>Step 7: numbers at \(z_2 = 1.5\).</b> \(\sigma(1.5) = 1/(1 + e^{-1.5}) = 0.8176\). Then \(\sigma' = 0.8176\times0.1824 = 0.1491\). Next \(1 - 2\sigma = 1 - 1.6351 = -0.6351\), and \(z(1 - 2\sigma) = 1.5\times(-0.6351) = -0.9527\). So \(\operatorname{silu}'' = 0.1491\times(2 - 0.9527) = 0.1491\times1.0473 = 0.1562\).</p>
 
 <h3>Forward-over-reverse, line by line</h3>
 <p>Write the forward and backward passes of Level 10 in the left column. In the right column, take the tangent value of each line along \(\mathbf{v}\): its rate of change per unit of movement along \(\mathbf{v}\), by the chain rule and the product rule.</p>
@@ -186,20 +215,44 @@ $$ \text{rounding error} \approx \frac{u\,|k|}{\varepsilon}, \qquad \text{trunca
 <tr><td>backward</td><td>\(\bar{\mathbf{x}} = W^\top\bar{\mathbf{z}}\) (the gradient)</td><td>\(\dot{\bar{\mathbf{x}}} = W^\top\dot{\bar{\mathbf{z}}}\) (this is \(H\mathbf{v}\))</td><td>\((0.3309 + 0.5(-0.1562),\ -0.3309 - 0.1562) = (0.2528,\ -0.4871)\)</td></tr>
 </table>
 </div>
-<p>The product rule in the fourth row is where curvature enters. \(\bar{\mathbf{z}}\) is a product of the adjoint and the slope \(\operatorname{silu}'(\mathbf{z})\). The slope changes along \(\mathbf{v}\) at the rate \(\operatorname{silu}''(\mathbf{z})\odot\dot{\mathbf{z}}\). The linear lines (\(W\), \(W^\top\), \(\mathbf{c}\)) just pass tangents through; they create no curvature.</p>
+<p>The same five rows, one operation at a time. Throughout, the weights \(W\), \(\mathbf{b}\), \(\mathbf{c}\) are fixed numbers, so their own rates of change along \(\mathbf{v}\) are zero.</p>
+<p><b>Step 1: tangent of \(\mathbf{z}\).</b> \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\) is linear in \(\mathbf{x}\). Moving \(\mathbf{x}\) at rate \(\mathbf{v}\) moves \(W\mathbf{x}\) at rate \(W\mathbf{v}\), and \(\mathbf{b}\) does not move. So \(\dot{\mathbf{z}} = W\mathbf{v}\). Row by row: \(\dot z_1 = 1\times1 + (-1)\times0.5 = 0.5\) and \(\dot z_2 = 0.5\times1 + 1\times0.5 = 1.0\).</p>
+<p><b>Step 2: tangent of \(\mathbf{a}\).</b> Each \(a_i = \operatorname{silu}(z_i)\) is a chain: outer silu, inner \(z_i\). The chain rule gives \(\dot a_i = \operatorname{silu}'(z_i)\,\dot z_i\). With \(\operatorname{silu}'(-0.5) = 0.2600\) and \(\operatorname{silu}'(1.5) = 1.0413\): \(\dot a_1 = 0.2600\times0.5 = 0.1300\) and \(\dot a_2 = 1.0413\times1.0 = 1.0413\).</p>
+<p><b>Step 3: tangent of \(\bar{\mathbf{a}}\).</b> \(\bar{\mathbf{a}} = \mathbf{c}\), a fixed list. It does not depend on \(\mathbf{x}\), so \(\dot{\bar{\mathbf{a}}} = (0, 0)\).</p>
+<p><b>Step 4: tangent of \(\bar{\mathbf{z}}\), by the product rule.</b> Each entry \(\bar z_i = \bar a_i\cdot\operatorname{silu}'(z_i)\) is a product of two things that could move. The product rule gives (rate of the first) × (second) + (first) × (rate of the second). The rate of \(\operatorname{silu}'(z_i)\) is, by the chain rule, \(\operatorname{silu}''(z_i)\,\dot z_i\). So</p>
+$$ \dot{\bar z}_i = \dot{\bar a}_i\,\operatorname{silu}'(z_i) + \bar a_i\,\operatorname{silu}''(z_i)\,\dot z_i . $$
+<p><b>Step 5: drop the zero term.</b> Step 3 says \(\dot{\bar a}_i = 0\), so the first term vanishes and \(\dot{\bar z}_i = c_i\,\operatorname{silu}''(z_i)\,\dot z_i\). Numbers: \(\dot{\bar z}_1 = 1.5\times0.4412\times0.5 = 0.3309\) and \(\dot{\bar z}_2 = -1\times0.1562\times1.0 = -0.1562\).</p>
+<p><b>Step 6: tangent of \(\bar{\mathbf{x}}\).</b> \(\bar{\mathbf{x}} = W^\top\bar{\mathbf{z}}\) is linear in \(\bar{\mathbf{z}}\) with a fixed matrix, so \(\dot{\bar{\mathbf{x}}} = W^\top\dot{\bar{\mathbf{z}}}\). The rows of \(W^\top\) are the columns of \(W\): \((1, 0.5)\) and \((-1, 1)\). So</p>
+$$ \dot{\bar{\mathbf{x}}} = \big(1\times0.3309 + 0.5\times(-0.1562),\ (-1)\times0.3309 + 1\times(-0.1562)\big) = (0.3309 - 0.0781,\ -0.3309 - 0.1562) = (0.2528,\ -0.4871). $$
+<p><b>Step 7: name the result.</b> \(\bar{\mathbf{x}}\) is the gradient \(\nabla y\). Its rate of change along \(\mathbf{v}\) is, by the definition in 11.2, \(H\mathbf{v}\). So \(H\mathbf{v} = (0.2528, -0.4871)\).</p>
+<p>The product rule in Step 4 is where curvature enters. \(\bar{\mathbf{z}}\) is a product of the adjoint and the slope \(\operatorname{silu}'(\mathbf{z})\). The slope changes along \(\mathbf{v}\) at the rate \(\operatorname{silu}''(\mathbf{z})\odot\dot{\mathbf{z}}\). The linear lines (\(W\), \(W^\top\), \(\mathbf{c}\)) just pass tangents through; they create no curvature.</p>
 
 <h3>The full Hessian of the tiny network, for comparison</h3>
-<p>Because the last row holds for every \(\mathbf{v}\), we can read off the matrix:</p>
-$$ H\mathbf{v} = W^\top\,\operatorname{diag}\big(\mathbf{c}\odot\operatorname{silu}''(\mathbf{z})\big)\,W\,\mathbf{v} \quad\Longrightarrow\quad H = W^\top\,\operatorname{diag}\big(c_1\operatorname{silu}''(z_1),\ c_2\operatorname{silu}''(z_2)\big)\,W . $$
-<p>The diagonal entries are \(1.5\times0.4412 = 0.6618\) and \(-1\times0.1562 = -0.1562\). Entry by entry, \(H_{jk} = 0.6618\,W_{1j}W_{1k} - 0.1562\,W_{2j}W_{2k}\):</p>
-$$ H_{11} = 0.6618(1)(1) - 0.1562(0.5)(0.5) = 0.6228, \quad H_{12} = 0.6618(1)(-1) - 0.1562(0.5)(1) = -0.7399, $$
-$$ H_{22} = 0.6618(-1)(-1) - 0.1562(1)(1) = 0.5056 . $$
-<p>Check: \(H\mathbf{v} = (0.6228 - 0.7399\times0.5,\ -0.7399 + 0.5056\times0.5) = (0.2528, -0.4871)\). Same. Its eigenvalues are 1.306 and −0.178 (a saddle, Level 9), and \(\mathbf{v}^\top H\mathbf{v} = 0.2528 - 0.4871\times0.5 = 0.0093\): along this particular \(\mathbf{v}\) the two curvatures almost cancel.</p>
+<p>The steps above hold for every \(\mathbf{v}\), so we can read off the whole matrix.</p>
+<p><b>Step 1: write Step 5 as a matrix.</b> Multiplying entry \(i\) of \(\dot{\mathbf{z}}\) by its own number \(c_i\operatorname{silu}''(z_i)\) is the same as multiplying \(\dot{\mathbf{z}}\) by the diagonal matrix with those numbers on its diagonal:</p>
+$$ \dot{\bar{\mathbf{z}}} = \operatorname{diag}\big(c_1\operatorname{silu}''(z_1),\ c_2\operatorname{silu}''(z_2)\big)\,\dot{\mathbf{z}} . $$
+<p><b>Step 2: substitute \(\dot{\mathbf{z}} = W\mathbf{v}\)</b> (Step 1 of the walk-through) into that, and the result into \(\dot{\bar{\mathbf{x}}} = W^\top\dot{\bar{\mathbf{z}}}\) (Step 6):</p>
+$$ H\mathbf{v} = W^\top\,\operatorname{diag}\big(c_1\operatorname{silu}''(z_1),\ c_2\operatorname{silu}''(z_2)\big)\,W\,\mathbf{v} . $$
+<p><b>Step 3: drop \(\mathbf{v}\).</b> Two matrices that give the same product with every \(\mathbf{v}\) are equal (try \(\mathbf{v} = (1,0)\) and \((0,1)\): you get each column). So</p>
+$$ H = W^\top\,\operatorname{diag}\big(c_1\operatorname{silu}''(z_1),\ c_2\operatorname{silu}''(z_2)\big)\,W . $$
+<p><b>Step 4: the diagonal numbers.</b> \(1.5\times0.4412 = 0.6618\) and \(-1\times0.1562 = -0.1562\).</p>
+<p><b>Step 5: multiply out one entry.</b> Entry \((j,k)\) of \(W^\top D W\), for a diagonal \(D\), is \(\sum_i W_{ij}\,D_{ii}\,W_{ik}\) (row \(j\) of \(W^\top\) is column \(j\) of \(W\)). Here that is \(H_{jk} = 0.6618\,W_{1j}W_{1k} - 0.1562\,W_{2j}W_{2k}\), with \(W_{11} = 1\), \(W_{12} = -1\), \(W_{21} = 0.5\), \(W_{22} = 1\):</p>
+$$ H_{11} = 0.6618(1)(1) - 0.1562(0.5)(0.5) = 0.6618 - 0.0390 = 0.6228, $$
+$$ H_{12} = 0.6618(1)(-1) - 0.1562(0.5)(1) = -0.6618 - 0.0781 = -0.7399, $$
+$$ H_{22} = 0.6618(-1)(-1) - 0.1562(1)(1) = 0.6618 - 0.1562 = 0.5056 . $$
+<p><b>Step 6: check against the double backward.</b> \(H\mathbf{v} = (0.6228\times1 + (-0.7399)\times0.5,\ -0.7399\times1 + 0.5056\times0.5) = (0.6228 - 0.3700,\ -0.7399 + 0.2528) = (0.2528, -0.4871)\). Same.</p>
+<p><b>Step 7: eigenvalues</b> (Level 9). The trace is \(0.6228 + 0.5056 = 1.1284\). The determinant is \(0.6228\times0.5056 - 0.7399^2 = 0.3149 - 0.5475 = -0.2326\). The eigenvalues \(\lambda\) solve \(\lambda^2 - 1.1284\,\lambda - 0.2326 = 0\), so \(\lambda = \big(1.1284 \pm \sqrt{1.1284^2 + 4\times0.2326}\big)/2 = (1.1284 \pm 1.4845)/2\): 1.306 and −0.178. One positive, one negative: a saddle.</p>
+<p><b>Step 8: curvature along \(\mathbf{v}\).</b> \(\mathbf{v}^\top H\mathbf{v} = \mathbf{v}\cdot(H\mathbf{v}) = 1\times0.25282 + 0.5\times(-0.48712) = 0.25282 - 0.24356 = 0.00926\), about 0.0093. Along this particular \(\mathbf{v}\) the two curvatures almost cancel.</p>
 
 <h3>Reverse-over-reverse: what <code>hlens/hvp.py</code> does</h3>
-<p>There is a second route to the same number. Define the scalar \(s(\mathbf{x}) = \nabla y(\mathbf{x})\cdot\mathbf{v}\): the slope along a fixed \(\mathbf{v}\). Its gradient is</p>
-$$ \frac{\partial s}{\partial x_k} = \sum_j \frac{\partial}{\partial x_k}\Big(\frac{\partial y}{\partial x_j}\Big)v_j = \sum_j H_{jk}\,v_j = \sum_j H_{kj}\,v_j = (H\mathbf{v})_k , $$
-<p>where the third step uses the symmetry \(H_{jk} = H_{kj}\) (Level 9). So: compute the gradient, dot it with \(\mathbf{v}\), and backpropagate a second time. That is what the project's code does. In <code>hlens/hvp.py</code>, the function <code>grad_and_hvp</code> runs the model from the layer-\(\ell\) residual stream to the output, computes the objective, takes its gradient with <code>create_graph=True</code> (which tells PyTorch to keep a record of how the gradient itself was computed, so that it can be differentiated), forms the dot product of that gradient with the tangent direction, and calls the gradient routine again. The file's docstring notes that this reverse-over-reverse result is the same exact quantity as forward-over-reverse.</p>
+<p>There is a second route to the same number. Define the scalar \(s(\mathbf{x}) = \nabla y(\mathbf{x})\cdot\mathbf{v}\): the slope along a fixed \(\mathbf{v}\). Example: \(s(1,2) = (-0.1306)(1) + (-1.4314)(0.5) = -0.1306 - 0.7157 = -0.8463\). Now take its gradient.</p>
+<p><b>Step 1: write the dot product as a sum.</b> \(s(\mathbf{x}) = \sum_j \dfrac{\partial y}{\partial x_j}\,v_j\).</p>
+<p><b>Step 2: differentiate with respect to \(x_k\), term by term.</b> The derivative of a sum is the sum of the derivatives. Each \(v_j\) is a fixed number, so it stays as a factor:</p>
+$$ \frac{\partial s}{\partial x_k} = \sum_j \frac{\partial}{\partial x_k}\Big(\frac{\partial y}{\partial x_j}\Big)\,v_j . $$
+<p><b>Step 3: name the bracket.</b> The Hessian is the Jacobian of the gradient (11.2): row \(j\) is slope \(j\), column \(k\) is input \(k\). So \(\frac{\partial}{\partial x_k}\big(\frac{\partial y}{\partial x_j}\big) = H_{jk}\), and \(\dfrac{\partial s}{\partial x_k} = \sum_j H_{jk}\,v_j\).</p>
+<p><b>Step 4: use symmetry.</b> Mixed partials of a smooth function are equal (Levels 6 and 9), so \(H_{jk} = H_{kj}\), and \(\sum_j H_{jk}v_j = \sum_j H_{kj}v_j\).</p>
+<p><b>Step 5: recognise the product.</b> \(\sum_j H_{kj}v_j\) is row \(k\) of \(H\) dotted with \(\mathbf{v}\): entry \(k\) of \(H\mathbf{v}\). So \(\nabla s = H\mathbf{v}\).</p>
+<p>So: compute the gradient, dot it with \(\mathbf{v}\), and backpropagate a second time. That is what the project's code does. In <code>hlens/hvp.py</code>, the function <code>grad_and_hvp</code> runs the model from the layer-\(\ell\) residual stream to the output, computes the objective, takes its gradient with <code>create_graph=True</code> (which tells PyTorch to keep a record of how the gradient itself was computed, so that it can be differentiated), forms the dot product of that gradient with the tangent direction, and calls the gradient routine again. The file's docstring notes that this reverse-over-reverse result is the same exact quantity as forward-over-reverse.</p>
 
 <h3>Cost</h3>
 <p>Forward-over-reverse runs a forward pass, a backward pass, and the tangent of each. That is a small constant number of gradient-sized passes, independent of \(d\). theory-v2 §6 counts cost in “backward-equivalents”: it assumes \(c_{\text{HVP}} \approx 4\) and notes that PyTorch benchmarks put an HVP at 4 to 5 times a gradient (which gives \(c_{\text{HVP}} \approx 6\) to 7.5). Either way: a handful of passes for \(N d = 568{,}320\) numbers of exact second-order information.</p>
@@ -213,7 +266,11 @@ $$ \frac{\partial s}{\partial x_k} = \sum_j \frac{\partial}{\partial x_k}\Big(\f
 <h2>11.7 Checking an HVP: relative error</h2>
 <p>Exact HVP code can still have bugs. The standard check is to compare it with a central finite difference, using a size-free measure. For an estimate \(\mathbf{p}\) of a reference \(\mathbf{q}\):</p>
 $$ \text{relative error} = \frac{\lVert\mathbf{p} - \mathbf{q}\rVert}{\lVert\mathbf{q}\rVert}. $$
-<p>It is a pure number: “how big is the miss, compared with the thing itself”. <b>Worked example:</b> the forward difference of 11.3, \(\mathbf{p} = (0.25389, -0.48623)\), against \(\mathbf{q} = (0.25282, -0.48712)\): \(\mathbf{p} - \mathbf{q} = (0.00107, 0.00089)\), length \(\sqrt{0.00107^2 + 0.00089^2} = 0.00139\); \(\lVert\mathbf{q}\rVert = \sqrt{0.25282^2 + 0.48712^2} = 0.5488\). Relative error \(0.00139/0.5488 = 0.0025\).</p>
+<p>It is a pure number: “how big is the miss, compared with the thing itself”. <b>Worked example:</b> the forward difference of 11.3, \(\mathbf{p} = (0.25389, -0.48623)\), against \(\mathbf{q} = (0.25282, -0.48712)\).</p>
+<p><b>Step 1: subtract, entry by entry.</b> \(\mathbf{p} - \mathbf{q} = (0.25389 - 0.25282,\ -0.48623 - (-0.48712)) = (0.00107,\ 0.00089)\).</p>
+<p><b>Step 2: length of the miss.</b> Square, add, take the root: \(\sqrt{0.00107^2 + 0.00089^2} = \sqrt{0.000001145 + 0.000000792} = \sqrt{0.000001937} = 0.00139\).</p>
+<p><b>Step 3: length of the reference.</b> \(\lVert\mathbf{q}\rVert = \sqrt{0.25282^2 + 0.48712^2} = \sqrt{0.06392 + 0.23729} = \sqrt{0.30121} = 0.5488\).</p>
+<p><b>Step 4: divide.</b> Relative error \(= 0.00139/0.5488 = 0.0025\), that is 0.25%.</p>
 <p><b>What the project measured.</b> theory-v2 §1 reports that the double-backward HVP on Qwen3.5-0.8B matches central finite differences with relative error \(1.3\times10^{-4}\) at layer 12 and \(1.7\times10^{-4}\) at layer 8 (<code>tests/test_hvp.py</code>, \(T = 48\)). The test file runs the fp32 model, tries four step sizes (3%, 1%, 0.3% and 0.1% of the typical residual length) and keeps the best, because of the valley in Figure 11.2. An error around \(10^{-4}\) is the kind of floor the fp32 trade-off leaves; it does not suggest a wrong HVP. A real bug (a missing term, a wrong sign) shows up as an error near 1.</p>
 
 <h2>11.8 Number formats: fp64, fp32, bf16</h2>
@@ -268,7 +325,7 @@ $$ \text{relative error} = \frac{\lVert\mathbf{p} - \mathbf{q}\rVert}{\lVert\mat
 </div>
 
 <div class="ex" data-answer="-0.5" data-tol="0.001" data-unit="bushels per bucket">
-<p><b>Exercise 11.3.</b> <span class="small">(The farm Hessian: \(H = \begin{pmatrix} -0.5 & 0.5 \ 0.5 & -1 \end{pmatrix}\), in bushels per bucket², per bucket per bag, and per bag², with \(W\) in buckets and \(F\) in bags.)</span> For the farm Hessian of 11.2, compute \(H\mathbf{v}\) for \(\mathbf{v} = (2\ \text{buckets},\ 1\ \text{bag})\). Enter the first entry, and say what both entries mean.</p>
+<p><b>Exercise 11.3.</b> <span class="small">(The farm Hessian: \(H = \begin{pmatrix} -0.5 & 0.5 \\ 0.5 & -1 \end{pmatrix}\), in bushels per bucket², per bucket per bag, and per bag², with \(W\) in buckets and \(F\) in bags.)</span> For the farm Hessian of 11.2, compute \(H\mathbf{v}\) for \(\mathbf{v} = (2\ \text{buckets},\ 1\ \text{bag})\). Enter the first entry, and say what both entries mean.</p>
 <details><summary>Show answer</summary>
 <p>First: \((-0.5)(2) + (0.5)(1) = -1 + 0.5 = -0.5\) bushels per bucket. Second: \((0.5)(2) + (-1)(1) = 1 - 1 = 0\) bushels per bag. Moving 2 buckets and 1 bag together makes the next bucket worth half a bushel less, and leaves the value of the next bag unchanged.</p>
 </details>
@@ -277,7 +334,10 @@ $$ \text{relative error} = \frac{\lVert\mathbf{p} - \mathbf{q}\rVert}{\lVert\mat
 <div class="ex" data-answer="6.3" data-tol="0.001" data-unit="">
 <p><b>Exercise 11.4.</b> One input: \(f(x) = x^3\), so the “gradient” is \(f'(x) = 3x^2\) and the exact HVP with \(v = 1\) is \(f''(1) = 6\). Estimate it at \(x = 1\) with the forward difference and \(\varepsilon = 0.1\). Then with the central difference. Why is the central one exact here?</p>
 <details><summary>Show answer</summary>
-<p>Forward: \((3(1.1)^2 - 3(1)^2)/0.1 = (3.63 - 3)/0.1 = 6.3\). Central: \((3(1.1)^2 - 3(0.9)^2)/0.2 = (3.63 - 2.43)/0.2 = 6.0\). The central error is \(\tfrac16\varepsilon^2 k'''\) where \(k = f' = 3x^2\); its third derivative is 0, so there is no truncation error at all.</p>
+<p><b>Step 1: the three gradient values.</b> \(f'(1.1) = 3\times1.1^2 = 3\times1.21 = 3.63\). \(f'(1) = 3\times1 = 3\). \(f'(0.9) = 3\times0.81 = 2.43\).</p>
+<p><b>Step 2: forward difference.</b> \((3.63 - 3)/0.1 = 0.63/0.1 = 6.3\). The error is 0.3, which is \(\tfrac12\varepsilon\,k''\) with \(k = f' = 3x^2\), \(k'' = 6\): \(\tfrac12\times0.1\times6 = 0.3\).</p>
+<p><b>Step 3: central difference.</b> \((3.63 - 2.43)/0.2 = 1.2/0.2 = 6.0\). Exact.</p>
+<p><b>Step 4: why.</b> The central error is \(\tfrac16\varepsilon^2 k'''\). Here \(k = 3x^2\), so \(k' = 6x\), \(k'' = 6\) and \(k''' = 0\). The error term is zero, so there is no truncation error at all.</p>
 </details>
 </div>
 
@@ -289,9 +349,12 @@ $$ \text{relative error} = \frac{\lVert\mathbf{p} - \mathbf{q}\rVert}{\lVert\mat
 </div>
 
 <div class="ex" data-answer="0.6228" data-tol="0.002" data-unit="">
-<p><b>Exercise 11.6.</b> <span class="small">(The tiny network: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(a_i = \operatorname{silu}(z_i) = z_i\,\sigma(z_i)\), \(y = c_1a_1 + c_2a_2\), with \(W = \begin{pmatrix} 1 & -1 \ 0.5 & 1 \end{pmatrix}\), \(\mathbf{b} = (0.5, -1)\), \(\mathbf{c} = (1.5, -1)\).)</span> Run the double-backward lines of 11.5 for the tiny network at \(\mathbf{x} = (1,2)\) with \(\mathbf{v} = (1, 0)\). What is the first entry of \(H\mathbf{v}\)? Which entry of \(H\) have you computed?</p>
+<p><b>Exercise 11.6.</b> <span class="small">(The tiny network: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(a_i = \operatorname{silu}(z_i) = z_i\,\sigma(z_i)\), \(y = c_1a_1 + c_2a_2\), with \(W = \begin{pmatrix} 1 & -1 \\ 0.5 & 1 \end{pmatrix}\), \(\mathbf{b} = (0.5, -1)\), \(\mathbf{c} = (1.5, -1)\).)</span> Run the double-backward lines of 11.5 for the tiny network at \(\mathbf{x} = (1,2)\) with \(\mathbf{v} = (1, 0)\). What is the first entry of \(H\mathbf{v}\)? Which entry of \(H\) have you computed?</p>
 <details><summary>Show answer</summary>
-<p>\(\dot{\mathbf{z}} = W\mathbf{v} = (1, 0.5)\). \(\dot{\bar{\mathbf{z}}} = (1.5\times0.4412\times1,\ -1\times0.1562\times0.5) = (0.6618, -0.0781)\). \(H\mathbf{v} = W^\top\dot{\bar{\mathbf{z}}} = (0.6618 + 0.5(-0.0781),\ -0.6618 - 0.0781) = (0.6228, -0.7399)\). With \(\mathbf{v}\) the first unit vector, \(H\mathbf{v}\) is the first column of \(H\): \(H_{11} = 0.6228\), \(H_{21} = -0.7399\).</p>
+<p><b>Step 1: tangent of \(\mathbf{z}\).</b> \(\dot{\mathbf{z}} = W\mathbf{v}\): \(\dot z_1 = 1\times1 + (-1)\times0 = 1\) and \(\dot z_2 = 0.5\times1 + 1\times0 = 0.5\).</p>
+<p><b>Step 2: tangent of \(\bar{\mathbf{z}}\).</b> \(\dot{\bar z}_i = c_i\operatorname{silu}''(z_i)\,\dot z_i\) (the \(\dot{\bar a}\) term is zero). The point is the same as in 11.5, so \(\operatorname{silu}''\) is still 0.4412 and 0.1562: \(\dot{\bar z}_1 = 1.5\times0.4412\times1 = 0.6618\) and \(\dot{\bar z}_2 = -1\times0.1562\times0.5 = -0.0781\).</p>
+<p><b>Step 3: tangent of \(\bar{\mathbf{x}}\).</b> \(H\mathbf{v} = W^\top\dot{\bar{\mathbf{z}}}\), with rows of \(W^\top\) equal to \((1, 0.5)\) and \((-1, 1)\): \((0.6618 + 0.5\times(-0.0781),\ -0.6618 + 1\times(-0.0781)) = (0.6618 - 0.0390,\ -0.7399) = (0.6228, -0.7399)\).</p>
+<p><b>Step 4: read it.</b> With \(\mathbf{v} = (1, 0)\), entry \(j\) of \(H\mathbf{v}\) is \(H_{j1}\times1 + H_{j2}\times0 = H_{j1}\). So \(H\mathbf{v}\) is the first column of \(H\): \(H_{11} = 0.6228\), \(H_{21} = -0.7399\).</p>
 </details>
 </div>
 
@@ -319,7 +382,10 @@ $$ \text{relative error} = \frac{\lVert\mathbf{p} - \mathbf{q}\rVert}{\lVert\mat
 <div class="ex">
 <p><b>Exercise 11.10.</b> Reverse-over-reverse computes the gradient of \(s(\mathbf{x}) = \nabla f(\mathbf{x})\cdot\mathbf{v}\). Show that, without symmetry, this would give \(H^\top\mathbf{v}\) rather than \(H\mathbf{v}\). Why is that never a problem for a Hessian of a smooth function?</p>
 <details><summary>Show answer</summary>
-<p>\(\partial s/\partial x_k = \sum_j (\partial^2 f/\partial x_k\partial x_j)\,v_j\). The matrix being summed over its first index \(j\) is \(H_{jk}\) read along its column, so the result is \(\sum_j H_{jk}v_j = (H^\top\mathbf{v})_k\). For a function with continuous second derivatives the mixed partials are equal (Level 6), so \(H^\top = H\) and the result is \(H\mathbf{v}\).</p>
+<p><b>Step 1: differentiate term by term.</b> \(s = \sum_j (\partial f/\partial x_j)\,v_j\), and \(v_j\) is fixed, so \(\partial s/\partial x_k = \sum_j \frac{\partial}{\partial x_k}\big(\frac{\partial f}{\partial x_j}\big)\,v_j\).</p>
+<p><b>Step 2: name the entry.</b> \(H\) is the Jacobian of the gradient: row \(j\) is slope \(j\), column \(k\) is input \(k\). So the bracket is \(H_{jk}\), and \(\partial s/\partial x_k = \sum_j H_{jk}v_j\).</p>
+<p><b>Step 3: compare with a product.</b> \((H\mathbf{v})_k = \sum_j H_{kj}v_j\) runs along row \(k\). Our sum runs down column \(k\) instead. Column \(k\) of \(H\) is row \(k\) of \(H^\top\), so \(\sum_j H_{jk}v_j = (H^\top\mathbf{v})_k\). Example with a non-symmetric matrix \(\begin{pmatrix}1 & 2\\ 0 & 1\end{pmatrix}\) and \(\mathbf{v} = (1, 0)\): \(\sum_j H_{jk}v_j\) gives \((1, 2)\), while \(H\mathbf{v} = (1, 0)\).</p>
+<p><b>Step 4: use symmetry.</b> For a function with continuous second derivatives the mixed partials are equal (Level 6): \(H_{jk} = H_{kj}\). So \(H^\top = H\), and the result is \(H\mathbf{v}\).</p>
 </details>
 </div>
 

@@ -101,13 +101,12 @@ $$ Y(W, F) = 2W + 3F + 0.5\,WF - 0.25\,W^2 - 0.5\,F^2. $$
 $$ \nabla Y = \left(\frac{\partial Y}{\partial W},\ \frac{\partial Y}{\partial F}\right) = \big(2 + 0.5F - 0.5W,\ \ 3 + 0.5W - F\big). $$
 <p>The gradient depends on the plan. So it is itself a map: two numbers in (\(W, F\)), two numbers out (the two rates). Call this map \(\mathbf{g}(W, F) = \nabla Y(W, F)\). It is a vector-valued function, and <a href="08.html">Level 8</a> tells us how to take its derivative: build its Jacobian, one row per output, one column per input.</p>
 $$ J_{\mathbf{g}} = \begin{pmatrix} \dfrac{\partial}{\partial W}\Big(\dfrac{\partial Y}{\partial W}\Big) & \dfrac{\partial}{\partial F}\Big(\dfrac{\partial Y}{\partial W}\Big) \\[3ex] \dfrac{\partial}{\partial W}\Big(\dfrac{\partial Y}{\partial F}\Big) & \dfrac{\partial}{\partial F}\Big(\dfrac{\partial Y}{\partial F}\Big) \end{pmatrix}. $$
-<p>Compute each entry from the formulas for the two rates:</p>
-<ul>
-<li>\(\partial/\partial W\) of \(2 + 0.5F - 0.5W\) is \(-0.5\).</li>
-<li>\(\partial/\partial F\) of \(2 + 0.5F - 0.5W\) is \(0.5\).</li>
-<li>\(\partial/\partial W\) of \(3 + 0.5W - F\) is \(0.5\).</li>
-<li>\(\partial/\partial F\) of \(3 + 0.5W - F\) is \(-1\).</li>
-</ul>
+<p>Compute each entry from the formulas for the two rates, one entry per step. In every step, go term by term: a constant gives 0, a term without the moving input gives 0, and a number times the moving input gives that number.</p>
+<p><b>Step 1: \(\partial/\partial W\) of \(2 + 0.5F - 0.5W\).</b> 2 gives 0. \(0.5F\) has no \(W\), so 0. \(-0.5W\) gives \(-0.5\). Entry: \(-0.5\).</p>
+<p><b>Step 2: \(\partial/\partial F\) of \(2 + 0.5F - 0.5W\).</b> 2 gives 0. \(0.5F\) gives \(0.5\). \(-0.5W\) has no \(F\), so 0. Entry: \(0.5\).</p>
+<p><b>Step 3: \(\partial/\partial W\) of \(3 + 0.5W - F\).</b> 3 gives 0. \(0.5W\) gives \(0.5\). \(-F\) has no \(W\), so 0. Entry: \(0.5\).</p>
+<p><b>Step 4: \(\partial/\partial F\) of \(3 + 0.5W - F\).</b> 3 gives 0. \(0.5W\) has no \(F\), so 0. \(-F\) gives \(-1\). Entry: \(-1\).</p>
+<p>Section 9.2 checks all four with real numbers.</p>
 $$ H = \nabla^2 Y = \begin{pmatrix} \dfrac{\partial^2 Y}{\partial W^2} & \dfrac{\partial^2 Y}{\partial W\,\partial F} \\[2ex] \dfrac{\partial^2 Y}{\partial F\,\partial W} & \dfrac{\partial^2 Y}{\partial F^2} \end{pmatrix} = \begin{pmatrix} -0.5 & 0.5 \\ 0.5 & -1 \end{pmatrix}. $$
 <div class="box key">
 <span class="boxtitle">The Hessian</span>
@@ -153,8 +152,17 @@ $$ H\mathbf{v} = \begin{pmatrix} -0.5\times1 + 0.5\times1 \\ 0.5\times1 + (-1)\t
 <h3>Taylor's formula with two inputs</h3>
 <p>At <a href="04.html">Level 4</a>, one input: \(f(x + \Delta x) \approx f(x) + f'(x)\Delta x + \tfrac12 f''(x)\Delta x^2\). With two inputs, the slope becomes the gradient and the second derivative becomes the Hessian. For a move \(\Delta\mathbf{x} = (\Delta W, \Delta F)\):</p>
 $$ Y(\mathbf{x} + \Delta\mathbf{x}) \approx Y(\mathbf{x}) + \nabla Y\cdot\Delta\mathbf{x} + \tfrac12\,\Delta\mathbf{x}^\top H\,\Delta\mathbf{x}. $$
-<p>The last term is a quadratic form. Write it out for a symmetric 2×2 matrix \(\begin{pmatrix} a & b \\ b & c \end{pmatrix}\) and any \(\mathbf{v} = (v_1, v_2)\), step by step:</p>
-$$ H\mathbf{v} = \begin{pmatrix} a v_1 + b v_2 \\ b v_1 + c v_2 \end{pmatrix}, \qquad \mathbf{v}^\top H\mathbf{v} = v_1(a v_1 + b v_2) + v_2(b v_1 + c v_2) = a v_1^2 + 2b\,v_1v_2 + c\,v_2^2. $$
+<p>The last term is a quadratic form. Write it out for a symmetric 2×2 matrix \(\begin{pmatrix} a & b \\ b & c \end{pmatrix}\) and any \(\mathbf{v} = (v_1, v_2)\), step by step. The worked numbers use the farm, \(a = -0.5\), \(b = 0.5\), \(c = -1\), with \(\mathbf{v} = (1, 1)\).</p>
+<p><b>Step 1: multiply the matrix by \(\mathbf{v}\), row by row.</b></p>
+$$ H\mathbf{v} = \begin{pmatrix} a v_1 + b v_2 \\ b v_1 + c v_2 \end{pmatrix}. $$
+<p>Example: \((-0.5 + 0.5,\ 0.5 - 1) = (0, -0.5)\).</p>
+<p><b>Step 2: dot the result with \(\mathbf{v}\).</b> \(\mathbf{v}^\top\) is \(\mathbf{v}\) as a row, so this is a dot product:</p>
+$$ \mathbf{v}^\top H\mathbf{v} = v_1(a v_1 + b v_2) + v_2(b v_1 + c v_2). $$
+<p>Example: \(1\times0 + 1\times(-0.5) = -0.5\).</p>
+<p><b>Step 3: multiply out the brackets.</b> \(v_1(a v_1 + b v_2) = a v_1^2 + b\,v_1v_2\) and \(v_2(b v_1 + c v_2) = b\,v_1v_2 + c\,v_2^2\).</p>
+<p><b>Step 4: collect the two \(b\,v_1v_2\) terms.</b> They are equal (because \(H_{12} = H_{21} = b\)), so they add to \(2b\,v_1v_2\):</p>
+$$ \mathbf{v}^\top H\mathbf{v} = a v_1^2 + 2b\,v_1v_2 + c\,v_2^2. $$
+<p>Example: \(-0.5\times1 + 2\times0.5\times1\times1 - 1\times1 = -0.5 + 1 - 1 = -0.5\), the same as Step 2.</p>
 <p>Three terms: curvature along axis 1, twice the interaction, curvature along axis 2. For the farm with \(\mathbf{v} = (\Delta W, \Delta F)\), each term is in bushels: (bushels per bucket²) × bucket², (bushels per bucket per bag) × bucket × bag, (bushels per bag²) × bag².</p>
 <h3>Worked example: predicting a small change</h3>
 <p>From \((4, 2)\), where \(Y = 8 + 6 + 4 - 4 - 2 = 12\) bushels, move \(\Delta\mathbf{x} = (0.2, -0.05)\).</p>
@@ -166,9 +174,13 @@ $$ H\mathbf{v} = \begin{pmatrix} a v_1 + b v_2 \\ b v_1 + c v_2 \end{pmatrix}, \
 </ul>
 <p>An exact match, because \(Y\) has no terms beyond second order. The first-order (Jacobian) prediction alone, 12.05, was off by the curvature term.</p>
 <h3>The curvature along a line</h3>
-<p>Walk from \(\mathbf{x}\) along a direction \(\mathbf{v}\): the plans \(\mathbf{x} + t\mathbf{v}\). The yield along this walk is a function of one number \(t\). Put \(\Delta\mathbf{x} = t\mathbf{v}\) in Taylor's formula:</p>
+<p>Walk from \(\mathbf{x}\) along a direction \(\mathbf{v}\): the plans \(\mathbf{x} + t\mathbf{v}\). The yield along this walk is a function of one number \(t\).</p>
+<p><b>Step 1: put \(\Delta\mathbf{x} = t\mathbf{v}\) in Taylor's formula.</b> The first-order term is \(\nabla Y\cdot(t\mathbf{v}) = t\,(\nabla Y\cdot\mathbf{v})\). In the second-order term each of the two copies of \(t\mathbf{v}\) brings out one \(t\): \((t\mathbf{v})^\top H(t\mathbf{v}) = t^2\,\mathbf{v}^\top H\mathbf{v}\). So</p>
 $$ Y(\mathbf{x} + t\mathbf{v}) = Y(\mathbf{x}) + t\,(\nabla Y\cdot\mathbf{v}) + \tfrac12\,t^2\,(\mathbf{v}^\top H\mathbf{v}). $$
-<p>Its second derivative in \(t\) is \(\mathbf{v}^\top H\mathbf{v}\). So the quadratic form is the curvature you feel when walking along \(\mathbf{v}\). For a unit direction \(\hat{\mathbf{v}}\) we call \(\hat{\mathbf{v}}^\top H\hat{\mathbf{v}}\) the curvature along that direction, in bushels per unit step².</p>
+<p>The two brackets are fixed numbers; only \(t\) varies.</p>
+<p><b>Step 2: differentiate once in \(t\).</b> \(Y(\mathbf{x})\) gives 0. \(t\,(\nabla Y\cdot\mathbf{v})\) gives \(\nabla Y\cdot\mathbf{v}\). By the power rule, \(\tfrac12 t^2\) gives \(t\), so the last term gives \(t\,(\mathbf{v}^\top H\mathbf{v})\).</p>
+<p><b>Step 3: differentiate again.</b> \(\nabla Y\cdot\mathbf{v}\) is a constant, so it gives 0. \(t\,(\mathbf{v}^\top H\mathbf{v})\) gives \(\mathbf{v}^\top H\mathbf{v}\).</p>
+<p>So the second derivative in \(t\) is \(\mathbf{v}^\top H\mathbf{v}\). So the quadratic form is the curvature you feel when walking along \(\mathbf{v}\). For a unit direction \(\hat{\mathbf{v}}\) we call \(\hat{\mathbf{v}}^\top H\hat{\mathbf{v}}\) the curvature along that direction, in bushels per unit step².</p>
 <p><b>Mechanics at the best plan.</b> The best plan is \((14, 10)\), where both rates are zero: \(2 + 5 - 7 = 0\) and \(3 + 7 - 10 = 0\), and \(Y = 29\) bushels. Walk along \(\mathbf{v} = (1, 1)\): \(\mathbf{v}^\top H\mathbf{v} = -0.5 + 2\times0.5 - 1 = -0.5\), so \(Y(14 + t, 10 + t) = 29 - 0.25t^2\). Check at \(t = 2\): \(Y(16, 12) = 32 + 36 + 96 - 64 - 72 = 28 = 29 - 0.25\times4\). For the unit direction \((1,1)/\sqrt2\) the curvature is \(-0.5/2 = -0.25\) bushels per unit step².</p>
 <div class="tablewrap">
 <table>
@@ -186,23 +198,36 @@ $$ Y(\mathbf{x} + t\mathbf{v}) = Y(\mathbf{x}) + t\,(\nabla Y\cdot\mathbf{v}) + 
 $$ H\mathbf{u} = \lambda\,\mathbf{u}. $$
 <p>The stretch factor \(\lambda\) (“lambda”) is the eigenvalue. Then the curvature along a unit eigenvector is \(\mathbf{u}^\top H\mathbf{u} = \mathbf{u}^\top(\lambda\mathbf{u}) = \lambda\,\mathbf{u}^\top\mathbf{u} = \lambda\). An eigenvalue is the curvature along its eigenvector.</p>
 <h3>Finding them for a 2×2 symmetric matrix</h3>
-<p>\(H\mathbf{u} = \lambda\mathbf{u}\) means \((H - \lambda I)\mathbf{u} = \mathbf{0}\) with \(\mathbf{u} \ne \mathbf{0}\). A non-zero vector is squashed to zero only if \(H - \lambda I\) squashes the plane flat, that is, has determinant zero (Level 7). So:</p>
-$$ \det\begin{pmatrix} a - \lambda & b \\ b & c - \lambda \end{pmatrix} = (a - \lambda)(c - \lambda) - b^2 = \lambda^2 - (a + c)\lambda + (ac - b^2) = 0. $$
-<p>This is the characteristic equation. For the farm, \(a = -0.5\), \(b = 0.5\), \(c = -1\):</p>
-$$ \lambda^2 - (-1.5)\lambda + (0.5 - 0.25) = \lambda^2 + 1.5\lambda + 0.25 = 0. $$
-<p>Quadratic formula, every step:</p>
+<p><b>Step 1: move everything to one side.</b> \(H\mathbf{u} = \lambda\mathbf{u}\) is the same as \(H\mathbf{u} - \lambda I\mathbf{u} = \mathbf{0}\), because \(I\mathbf{u} = \mathbf{u}\). Take out \(\mathbf{u}\): \((H - \lambda I)\mathbf{u} = \mathbf{0}\), with \(\mathbf{u} \ne \mathbf{0}\).</p>
+<p><b>Step 2: require determinant zero.</b> A non-zero vector is squashed to zero only if \(H - \lambda I\) squashes the plane flat, that is, has determinant zero (Level 7). Subtracting \(\lambda I\) takes \(\lambda\) off each diagonal entry. Apply \(ad - bc\):</p>
+$$ \det\begin{pmatrix} a - \lambda & b \\ b & c - \lambda \end{pmatrix} = (a - \lambda)(c - \lambda) - b^2 = 0. $$
+<p><b>Step 3: multiply out the bracket.</b> \((a - \lambda)(c - \lambda) = ac - a\lambda - c\lambda + \lambda^2\). Collect the \(\lambda\) terms and put the highest power first:</p>
+$$ \lambda^2 - (a + c)\lambda + (ac - b^2) = 0. $$
+<p>This is the characteristic equation.</p>
+<p><b>Step 4: put in the farm numbers.</b> \(a = -0.5\), \(b = 0.5\), \(c = -1\). Then \(a + c = -1.5\) and \(ac - b^2 = 0.5 - 0.25 = 0.25\):</p>
+$$ \lambda^2 - (-1.5)\lambda + 0.25 = \lambda^2 + 1.5\lambda + 0.25 = 0. $$
+<p><b>Step 5: the quadratic formula.</b> For an equation “\(\lambda^2\) + (first number) × \(\lambda\) + (second number) = 0”, the two solutions are \(\lambda = \big(-\text{first} \pm \sqrt{\text{first}^2 - 4\times\text{second}}\big)/2\). Here the first number is 1.5 and the second is 0.25:</p>
 $$ \lambda = \frac{-1.5 \pm \sqrt{1.5^2 - 4\times0.25}}{2} = \frac{-1.5 \pm \sqrt{2.25 - 1}}{2} = \frac{-1.5 \pm \sqrt{1.25}}{2} = \frac{-1.5 \pm 1.1180}{2}. $$
 $$ \lambda_1 = \frac{-0.3820}{2} = -0.1910, \qquad \lambda_2 = \frac{-2.6180}{2} = -1.3090 \quad \text{(bushels per unit step}^2\text{)}. $$
-<p><b>The eigenvectors.</b> The first row of \((H - \lambda I)\mathbf{u} = \mathbf{0}\) reads \((a - \lambda)u_1 + b\,u_2 = 0\), so \(u_2/u_1 = (\lambda - a)/b\).</p>
+<p><b>The eigenvectors.</b> Find the direction for each \(\lambda\) in three steps.</p>
+<p><b>Step 1: read the first row.</b> The first row of \((H - \lambda I)\mathbf{u} = \mathbf{0}\) reads \((a - \lambda)u_1 + b\,u_2 = 0\).</p>
+<p><b>Step 2: move the \(u_1\) term across.</b> Subtract \((a - \lambda)u_1\) from both sides: \(b\,u_2 = (\lambda - a)\,u_1\).</p>
+<p><b>Step 3: divide both sides by \(b\,u_1\).</b> \(u_2/u_1 = (\lambda - a)/b\). Only the ratio is fixed, because any multiple of an eigenvector is also one.</p>
 <ul>
 <li>For \(\lambda_1 = -0.1910\): \(u_2/u_1 = (-0.1910 + 0.5)/0.5 = 0.6180\). Take \((1, 0.6180)\), length \(\sqrt{1 + 0.3820} = 1.1756\), so \(\mathbf{u}_1 = (0.8507, 0.5257)\). Its angle is \(31.72^\circ\) from the water axis.</li>
 <li>For \(\lambda_2 = -1.3090\): \(u_2/u_1 = (-1.3090 + 0.5)/0.5 = -1.6180\). Take \((1, -1.6180)\), length \(1.9021\), so \(\mathbf{u}_2 = (0.5257, -0.8507)\), or its negative \((-0.5257, 0.8507)\) at \(121.72^\circ\). Either sign is the same direction line.</li>
 </ul>
 <p>Checks. Perpendicular: \(0.8507\times(-0.5257) + 0.5257\times0.8507 = 0\). Eigen-equation: \(H\mathbf{u}_1 = (-0.5\times0.8507 + 0.5\times0.5257,\ 0.5\times0.8507 - 0.5257) = (-0.1625, -0.1004)\), and \(\lambda_1\mathbf{u}_1 = -0.1910\times(0.8507, 0.5257) = (-0.1625, -0.1004)\). Equal.</p>
 <h3>Why they are the extremes</h3>
-<p>Write any unit direction in eigenvector coordinates: \(\hat{\mathbf{v}} = p\,\mathbf{u}_1 + q\,\mathbf{u}_2\) with \(p^2 + q^2 = 1\). Then</p>
-$$ \hat{\mathbf{v}}^\top H\hat{\mathbf{v}} = p^2\,\mathbf{u}_1^\top H\mathbf{u}_1 + 2pq\,\mathbf{u}_1^\top H\mathbf{u}_2 + q^2\,\mathbf{u}_2^\top H\mathbf{u}_2 = p^2\lambda_1 + 2pq\cdot 0 + q^2\lambda_2. $$
-<p>The middle term vanished because \(\mathbf{u}_1^\top H\mathbf{u}_2 = \mathbf{u}_1^\top(\lambda_2\mathbf{u}_2) = \lambda_2(\mathbf{u}_1\cdot\mathbf{u}_2) = 0\). What is left is a weighted average of \(\lambda_1\) and \(\lambda_2\) with weights \(p^2 + q^2 = 1\). So every direction's curvature lies between \(\lambda_2\) and \(\lambda_1\), and the extremes are reached exactly at the eigenvectors. These two curvatures are the principal curvatures.</p>
+<p>Do it one operation at a time. The worked numbers use the 45° direction \(\hat{\mathbf{v}} = (0.7071, 0.7071)\), whose curvature the table above gives as −0.25.</p>
+<p><b>Step 1: write the direction in eigenvector coordinates.</b> \(\hat{\mathbf{v}} = p\,\mathbf{u}_1 + q\,\mathbf{u}_2\). Because \(\mathbf{u}_1\) and \(\mathbf{u}_2\) are perpendicular unit vectors, \(p = \hat{\mathbf{v}}\cdot\mathbf{u}_1\), \(q = \hat{\mathbf{v}}\cdot\mathbf{u}_2\) and \(p^2 + q^2 = 1\) (Level 7, 7.9). Example: \(p = 0.7071\times(0.8507 + 0.5257) = 0.9732\) and \(q = 0.7071\times(0.5257 - 0.8507) = -0.2298\); \(p^2 = 0.9472\), \(q^2 = 0.0528\), sum 1.</p>
+<p><b>Step 2: multiply out.</b> Put \(p\,\mathbf{u}_1 + q\,\mathbf{u}_2\) in both places of \(\hat{\mathbf{v}}^\top H\hat{\mathbf{v}}\) and multiply every term by every term, as with brackets of numbers. Four terms come out:</p>
+$$ \hat{\mathbf{v}}^\top H\hat{\mathbf{v}} = p^2\,\mathbf{u}_1^\top H\mathbf{u}_1 + pq\,\mathbf{u}_1^\top H\mathbf{u}_2 + qp\,\mathbf{u}_2^\top H\mathbf{u}_1 + q^2\,\mathbf{u}_2^\top H\mathbf{u}_2 . $$
+<p><b>Step 3: use the eigen-equation in each term.</b> \(H\mathbf{u}_1 = \lambda_1\mathbf{u}_1\) and \(H\mathbf{u}_2 = \lambda_2\mathbf{u}_2\). So \(\mathbf{u}_1^\top H\mathbf{u}_1 = \lambda_1\,\mathbf{u}_1\cdot\mathbf{u}_1 = \lambda_1\) (a unit vector dotted with itself is 1), and likewise \(\mathbf{u}_2^\top H\mathbf{u}_2 = \lambda_2\).</p>
+<p><b>Step 4: the cross terms vanish.</b> \(\mathbf{u}_1^\top H\mathbf{u}_2 = \mathbf{u}_1^\top(\lambda_2\mathbf{u}_2) = \lambda_2(\mathbf{u}_1\cdot\mathbf{u}_2) = 0\), because the eigenvectors are perpendicular. The same holds for \(\mathbf{u}_2^\top H\mathbf{u}_1\). So</p>
+$$ \hat{\mathbf{v}}^\top H\hat{\mathbf{v}} = p^2\lambda_1 + q^2\lambda_2 . $$
+<p>Example: \(0.9472\times(-0.1910) + 0.0528\times(-1.3090) = -0.1809 - 0.0691 = -0.25\), the table's value.</p>
+<p>What is left is a weighted average of \(\lambda_1\) and \(\lambda_2\) with weights \(p^2 + q^2 = 1\). So every direction's curvature lies between \(\lambda_2\) and \(\lambda_1\), and the extremes are reached exactly at the eigenvectors. These two curvatures are the principal curvatures.</p>
 <figure class="sim" id="sim-dial">
 <figcaption><b>Figure 9.1.</b> Left: turn the direction \(\hat{\mathbf{v}} = (\cos\theta, \sin\theta)\) with the \(\theta\) slider (black arrow). Dashed lines are the eigenvector directions (blue for \(\lambda_1\), red for \(\lambda_2\)). Right: the curvature \(\hat{\mathbf{v}}^\top H\hat{\mathbf{v}} = a\cos^2\theta + 2b\cos\theta\sin\theta + c\sin^2\theta\) for every angle from 0° to 180°; the dot is your current \(\theta\). The defaults are the farm Hessian. Notice the curve's top and bottom sit exactly at the eigenvector angles, and the top and bottom values are \(\lambda_1\) and \(\lambda_2\). Set \(b = 0\): the extremes move to 0° and 90°.</figcaption>
 </figure>
@@ -229,9 +254,12 @@ A direction like \(\mathbf{u}_1 = (0.8507, 0.5257)\) mixes buckets and bags, and
 </figure>
 
 <h2>9.7 The second-derivative test, trace and determinant</h2>
-<p>Two shortcuts avoid solving for the eigenvalues. Compare the characteristic polynomial with its factored form:</p>
-$$ \lambda^2 - (a + c)\lambda + (ac - b^2) = (\lambda - \lambda_1)(\lambda - \lambda_2) = \lambda^2 - (\lambda_1 + \lambda_2)\lambda + \lambda_1\lambda_2. $$
-<p>Match the coefficients:</p>
+<p>Two shortcuts avoid solving for the eigenvalues. Derive them in three steps.</p>
+<p><b>Step 1: write the characteristic polynomial in factored form.</b> Its two roots are \(\lambda_1\) and \(\lambda_2\). A polynomial that starts with \(\lambda^2\) and is zero exactly at \(\lambda_1\) and \(\lambda_2\) is \((\lambda - \lambda_1)(\lambda - \lambda_2)\):</p>
+$$ \lambda^2 - (a + c)\lambda + (ac - b^2) = (\lambda - \lambda_1)(\lambda - \lambda_2). $$
+<p><b>Step 2: multiply out the right side.</b> \((\lambda - \lambda_1)(\lambda - \lambda_2) = \lambda^2 - \lambda_2\lambda - \lambda_1\lambda + \lambda_1\lambda_2 = \lambda^2 - (\lambda_1 + \lambda_2)\lambda + \lambda_1\lambda_2\).</p>
+$$ \lambda^2 - (a + c)\lambda + (ac - b^2) = \lambda^2 - (\lambda_1 + \lambda_2)\lambda + \lambda_1\lambda_2. $$
+<p><b>Step 3: match the coefficients.</b> The two sides are equal for every \(\lambda\), so the numbers in front of \(\lambda\) must match, and so must the plain numbers:</p>
 $$ \operatorname{tr} H = a + c = \lambda_1 + \lambda_2, \qquad \det H = ac - b^2 = \lambda_1\lambda_2. $$
 <p>Farm check: \(\operatorname{tr} H = -0.5 - 1 = -1.5 = -0.1910 - 1.3090\), and \(\det H = 0.5 - 0.25 = 0.25 = (-0.1910)\times(-1.3090)\).</p>
 <div class="box key">
@@ -260,10 +288,28 @@ At a critical point (gradient zero):<br>
 <p>At Level 6, the interaction between water and fertiliser was the mixed partial, 0.5 bushels per bucket per bag. But “water” and “fertiliser” are just the two axes we happened to pick. Pick two other perpendicular directions and the interaction between <i>them</i> is different.</p>
 <p>Rotate the axes by an angle \(\varphi\). The new axes are the columns of</p>
 $$ R = \begin{pmatrix} \cos\varphi & -\sin\varphi \\ \sin\varphi & \cos\varphi \end{pmatrix}, $$
-<p>and the Hessian written in the new axes is \(H' = R^\top HR\). Multiplying out, entry by entry:</p>
-$$ H'_{11} = a\cos^2\varphi + 2b\sin\varphi\cos\varphi + c\sin^2\varphi, \qquad H'_{22} = a\sin^2\varphi - 2b\sin\varphi\cos\varphi + c\cos^2\varphi, $$
-$$ H'_{12} = (c - a)\sin\varphi\cos\varphi + b(\cos^2\varphi - \sin^2\varphi) = \tfrac12(c - a)\sin 2\varphi + b\cos 2\varphi. $$
-<p>The new interaction \(H'_{12}\) is zero when \(\tan 2\varphi = 2b/(a - c)\). For the farm, \(2\times0.5/(-0.5 + 1) = 2\), so \(2\varphi = 63.43^\circ\) and \(\varphi = 31.72^\circ\): exactly the angle of the eigenvector \(\mathbf{u}_1\). In these axes,</p>
+<p>and the Hessian written in the new axes is \(H' = R^\top HR\). Multiply it out, one entry at a time. The worked numbers use the farm and \(\varphi = 45^\circ\), where \(\cos\varphi = \sin\varphi = 0.7071\) and \(\cos^2\varphi = \sin^2\varphi = \sin\varphi\cos\varphi = 0.5\).</p>
+<p><b>Step 1: what each entry is.</b> Row \(i\) of \(R^\top\) is column \(i\) of \(R\). So entry \((i, j)\) of \(R^\top HR\) is (column \(i\) of \(R\)) dotted with \(H\) times (column \(j\) of \(R\)). Column 1 is \((\cos\varphi, \sin\varphi)\) and column 2 is \((-\sin\varphi, \cos\varphi)\).</p>
+<p><b>Step 2: \(H'_{11}\) is the quadratic form along column 1.</b> Put \(v_1 = \cos\varphi\), \(v_2 = \sin\varphi\) into \(a v_1^2 + 2b\,v_1v_2 + c\,v_2^2\) from 9.4:</p>
+$$ H'_{11} = a\cos^2\varphi + 2b\sin\varphi\cos\varphi + c\sin^2\varphi . $$
+<p>Example: \(-0.5\times0.5 + 2\times0.5\times0.5 - 1\times0.5 = -0.25 + 0.5 - 0.5 = -0.25\), the 45° row of the table in 9.4.</p>
+<p><b>Step 3: \(H'_{22}\) is the quadratic form along column 2.</b> Put \(v_1 = -\sin\varphi\), \(v_2 = \cos\varphi\). The middle term picks up the minus sign:</p>
+$$ H'_{22} = a\sin^2\varphi - 2b\sin\varphi\cos\varphi + c\cos^2\varphi . $$
+<p>Example: \(-0.25 - 0.5 - 0.5 = -1.25\), the 135° row of that table.</p>
+<p><b>Step 4: \(H'_{12}\), first multiply \(H\) by column 2.</b> Row by row:</p>
+$$ H\begin{pmatrix} -\sin\varphi \\ \cos\varphi \end{pmatrix} = \begin{pmatrix} -a\sin\varphi + b\cos\varphi \\ -b\sin\varphi + c\cos\varphi \end{pmatrix}. $$
+<p>Example: \((0.3536 + 0.3536,\ -0.3536 - 0.7071) = (0.7071, -1.0607)\).</p>
+<p><b>Step 5: then dot with column 1.</b> Multiply the first entry by \(\cos\varphi\), the second by \(\sin\varphi\), and add:</p>
+$$ H'_{12} = -a\sin\varphi\cos\varphi + b\cos^2\varphi - b\sin^2\varphi + c\sin\varphi\cos\varphi . $$
+<p>Example: \(0.7071\times0.7071 + (-1.0607)\times0.7071 = 0.5 - 0.75 = -0.25\).</p>
+<p><b>Step 6: collect.</b> The \(a\) and \(c\) terms share \(\sin\varphi\cos\varphi\); the \(b\) terms share \(b\):</p>
+$$ H'_{12} = (c - a)\sin\varphi\cos\varphi + b(\cos^2\varphi - \sin^2\varphi). $$
+<p><b>Step 7: use the double-angle rules.</b> \(\sin\varphi\cos\varphi = \tfrac12\sin 2\varphi\) and \(\cos^2\varphi - \sin^2\varphi = \cos 2\varphi\) (standard trigonometry; check at 45°: \(0.5 = \tfrac12\sin 90^\circ\) and \(0 = \cos 90^\circ\)):</p>
+$$ H'_{12} = \tfrac12(c - a)\sin 2\varphi + b\cos 2\varphi. $$
+<p>Example: \(\tfrac12(-1 + 0.5)\times1 + 0.5\times0 = -0.25\). At 45° the new axes still interact.</p>
+<p><b>Step 8: find where the interaction is zero.</b> Set \(H'_{12} = 0\) and move the first term across: \(b\cos 2\varphi = \tfrac12(a - c)\sin 2\varphi\). Divide both sides by \(\tfrac12(a - c)\cos 2\varphi\):</p>
+$$ \tan 2\varphi = \frac{\sin 2\varphi}{\cos 2\varphi} = \frac{2b}{a - c}. $$
+<p>For the farm, \(2\times0.5/(-0.5 + 1) = 1/0.5 = 2\), so \(2\varphi = 63.43^\circ\) (the angle whose tangent is 2) and \(\varphi = 31.72^\circ\): exactly the angle of the eigenvector \(\mathbf{u}_1\). In these axes,</p>
 $$ H' = \begin{pmatrix} \lambda_1 & 0 \\ 0 & \lambda_2 \end{pmatrix} = \begin{pmatrix} -0.1910 & 0 \\ 0 & -1.3090 \end{pmatrix}, \qquad Y = 29 + \tfrac12\lambda_1 p^2 + \tfrac12\lambda_2 q^2 $$
 <p>where \(p, q\) are the move away from \((14, 10)\) along \(\mathbf{u}_1, \mathbf{u}_2\). No \(pq\) term: no interaction.</p>
 <h3>Mechanics: the 2×2 test along the eigenvectors</h3>
@@ -284,8 +330,11 @@ Lay a rugby ball on a table at a slant and slice it horizontally. The slice is a
 
 <h2>9.9 Products make simple curvature: \(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\)</h2>
 <h3>Real-world example: the area of a field</h3>
-<p>A rectangular field is \(x_1\) metres wide and \(x_2\) metres long. Its area is \(f = x_1 x_2\) m². At a 10 m × 10 m field: grow both sides by 1 m and the area goes 100 → 121 (gain 21). Grow one and shrink the other by 1 m: 100 → 99 (loss 1). The Hessian is</p>
+<p>A rectangular field is \(x_1\) metres wide and \(x_2\) metres long. Its area is \(f = x_1 x_2\) m². At a 10 m × 10 m field: grow both sides by 1 m and the area goes 100 → 121 (gain 21). Grow one and shrink the other by 1 m: 100 → 99 (loss 1). Build the Hessian in three steps.</p>
+<p><b>Step 1: first derivatives.</b> In \(x_1\), the factor \(x_2\) is a constant multiplier, so \(\partial f/\partial x_1 = x_2\). Likewise \(\partial f/\partial x_2 = x_1\).</p>
+<p><b>Step 2: second derivatives.</b> \(x_2\) has no \(x_1\) in it, so \(\partial^2 f/\partial x_1^2 = 0\); in \(x_2\) it gives 1, so \(\partial^2 f/\partial x_1\,\partial x_2 = 1\). Likewise \(\partial^2 f/\partial x_2^2 = 0\).</p>
 $$ \nabla^2(x_1x_2) = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \quad \text{(m}^2\text{ per m per m, a pure number)}. $$
+<p><b>Step 3: eigenvalues.</b> Here \(a = 0\), \(b = 1\), \(c = 0\). The characteristic equation of 9.5 is \(\lambda^2 - 0\times\lambda + (0 - 1) = \lambda^2 - 1 = 0\), so \(\lambda = \pm1\). For \(+1\): \(u_2/u_1 = (1 - 0)/1 = 1\), direction \((1, 1)\). For \(-1\): \(u_2/u_1 = -1\), direction \((1, -1)\).</p>
 <p>Eigenvalues \(\pm1\), along \((1, 1)\) and \((1, -1)\): a saddle. Along \((1, 1)\): \(f(10 + t, 10 + t) = 100 + 20t + t^2\), second derivative \(2 = \mathbf{v}^\top H\mathbf{v}\) for \(\mathbf{v} = (1, 1)\). Along \((1, -1)\): \(100 - t^2\), second derivative \(-2\).</p>
 <h3>The general product of two reads</h3>
 <p>Let \(\mathbf{a}\) and \(\mathbf{b}\) be two fixed directions, and let \(f\) multiply two readings of the input \(\mathbf{x}\):</p>
@@ -295,11 +344,21 @@ $$ \frac{\partial f}{\partial x_i} = a_i\,(\mathbf{b}\cdot\mathbf{x}) + b_i\,(\m
 <p>Second derivatives: differentiate again by \(x_j\). The factors \(a_i\) and \(b_i\) are constants, and \(\partial(\mathbf{b}\cdot\mathbf{x})/\partial x_j = b_j\):</p>
 $$ H_{ij} = a_i b_j + b_i a_j, \qquad H = \mathbf{a}\mathbf{b}^\top + \mathbf{b}\mathbf{a}^\top = \operatorname{sym}(\mathbf{a}\mathbf{b}^\top). $$
 <p>Here \(\operatorname{sym}(M) := M + M^\top\), the convention of <code>hlens/paper/theory-v2.md</code>. Many textbooks put a \(\tfrac12\) in front; with that convention the Hessian would be \(2\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\). Always check which one a formula uses.</p>
-<p><b>Worked example.</b> \(\mathbf{a} = (2, 1)\), \(\mathbf{b} = (1, 3)\). Directly: \(f = (2x_1 + x_2)(x_1 + 3x_2) = 2x_1^2 + 6x_1x_2 + x_1x_2 + 3x_2^2 = 2x_1^2 + 7x_1x_2 + 3x_2^2\), so \(H = \begin{pmatrix} 4 & 7 \\ 7 & 6 \end{pmatrix}\). Via the formula: \(\mathbf{a}\mathbf{b}^\top = \begin{pmatrix} 2 & 6 \\ 1 & 3\end{pmatrix}\), \(\mathbf{b}\mathbf{a}^\top = \begin{pmatrix} 2 & 1 \\ 6 & 3\end{pmatrix}\), sum \(\begin{pmatrix} 4 & 7 \\ 7 & 6\end{pmatrix}\). Same.</p>
+<p><b>Worked example.</b> \(\mathbf{a} = (2, 1)\), \(\mathbf{b} = (1, 3)\). First directly, then by the formula.</p>
+<p><b>Step 1: write out the two reads.</b> \(\mathbf{a}\cdot\mathbf{x} = 2x_1 + x_2\) and \(\mathbf{b}\cdot\mathbf{x} = x_1 + 3x_2\), so \(f = (2x_1 + x_2)(x_1 + 3x_2)\).</p>
+<p><b>Step 2: multiply out.</b> Every term by every term: \(2x_1\cdot x_1 + 2x_1\cdot 3x_2 + x_2\cdot x_1 + x_2\cdot 3x_2 = 2x_1^2 + 6x_1x_2 + x_1x_2 + 3x_2^2 = 2x_1^2 + 7x_1x_2 + 3x_2^2\).</p>
+<p><b>Step 3: read off the second derivatives.</b> \(2x_1^2\) differentiated twice in \(x_1\) gives \(2\times2 = 4\). \(7x_1x_2\) differentiated once in each gives 7. \(3x_2^2\) differentiated twice in \(x_2\) gives \(3\times2 = 6\). So \(H = \begin{pmatrix} 4 & 7 \\ 7 & 6 \end{pmatrix}\).</p>
+<p><b>Step 4: the formula.</b> Column times row puts \(a_ib_j\) in row \(i\), column \(j\): \(\mathbf{a}\mathbf{b}^\top = \begin{pmatrix} 2\cdot1 & 2\cdot3 \\ 1\cdot1 & 1\cdot3\end{pmatrix} = \begin{pmatrix} 2 & 6 \\ 1 & 3\end{pmatrix}\). Its transpose is \(\mathbf{b}\mathbf{a}^\top = \begin{pmatrix} 2 & 1 \\ 6 & 3\end{pmatrix}\). Add entry by entry: \(\begin{pmatrix} 2 + 2 & 6 + 1 \\ 1 + 6 & 3 + 3\end{pmatrix} = \begin{pmatrix} 4 & 7 \\ 7 & 6\end{pmatrix}\). Same as Step 3.</p>
 <h3>Its eigenvalues: \(\mathbf{a}\cdot\mathbf{b} \pm \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\)</h3>
-<p>Let \(\hat{\mathbf{a}}, \hat{\mathbf{b}}\) be the unit vectors along \(\mathbf{a}, \mathbf{b}\), and let \(\gamma\) be the angle between them, so \(\cos\gamma = \hat{\mathbf{a}}\cdot\hat{\mathbf{b}}\). Then \(H = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert(\hat{\mathbf{a}}\hat{\mathbf{b}}^\top + \hat{\mathbf{b}}\hat{\mathbf{a}}^\top)\). Apply the bracket to \(\hat{\mathbf{a}} + \hat{\mathbf{b}}\), using “read along the right, write along the left” (Level 7):</p>
+<p>Let \(\hat{\mathbf{a}}, \hat{\mathbf{b}}\) be the unit vectors along \(\mathbf{a}, \mathbf{b}\), and let \(\gamma\) be the angle between them, so \(\cos\gamma = \hat{\mathbf{a}}\cdot\hat{\mathbf{b}}\) (Level 7). The worked numbers use the example above: \(\hat{\mathbf{a}} = (2, 1)/\sqrt5 = (0.8944, 0.4472)\), \(\hat{\mathbf{b}} = (1, 3)/\sqrt{10} = (0.3162, 0.9487)\), \(\cos\gamma = 0.7071\).</p>
+<p><b>Step 1: pull out the lengths.</b> \(\mathbf{a} = \lVert\mathbf{a}\rVert\,\hat{\mathbf{a}}\) and \(\mathbf{b} = \lVert\mathbf{b}\rVert\,\hat{\mathbf{b}}\). Each outer product contains one \(\mathbf{a}\) and one \(\mathbf{b}\), so both lengths come out in front:</p>
+$$ H = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\,(\hat{\mathbf{a}}\hat{\mathbf{b}}^\top + \hat{\mathbf{b}}\hat{\mathbf{a}}^\top). $$
+<p><b>Step 2: apply the first outer product to \(\hat{\mathbf{a}} + \hat{\mathbf{b}}\).</b> “Read along the right, write along the left” (Level 7): \(\hat{\mathbf{a}}\hat{\mathbf{b}}^\top\) reads \(\hat{\mathbf{b}}\cdot(\hat{\mathbf{a}} + \hat{\mathbf{b}}) = \cos\gamma + 1\) and writes that many copies of \(\hat{\mathbf{a}}\). (A unit vector dotted with itself is 1.)</p>
+<p><b>Step 3: apply the second outer product.</b> \(\hat{\mathbf{b}}\hat{\mathbf{a}}^\top\) reads \(\hat{\mathbf{a}}\cdot(\hat{\mathbf{a}} + \hat{\mathbf{b}}) = 1 + \cos\gamma\) and writes that many copies of \(\hat{\mathbf{b}}\).</p>
+<p><b>Step 4: add, and take out the common number.</b></p>
 $$ (\hat{\mathbf{a}}\hat{\mathbf{b}}^\top + \hat{\mathbf{b}}\hat{\mathbf{a}}^\top)(\hat{\mathbf{a}} + \hat{\mathbf{b}}) = \hat{\mathbf{a}}(\cos\gamma + 1) + \hat{\mathbf{b}}(1 + \cos\gamma) = (1 + \cos\gamma)(\hat{\mathbf{a}} + \hat{\mathbf{b}}). $$
-<p>So \(\hat{\mathbf{a}} + \hat{\mathbf{b}}\) is an eigenvector with eigenvalue \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert(1 + \cos\gamma) = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert + \mathbf{a}\cdot\mathbf{b}\). The same steps with \(\hat{\mathbf{a}} - \hat{\mathbf{b}}\) give \((\cos\gamma - 1)(\hat{\mathbf{a}} - \hat{\mathbf{b}})\), eigenvalue \(\mathbf{a}\cdot\mathbf{b} - \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\). Any direction perpendicular to both \(\mathbf{a}\) and \(\mathbf{b}\) is read as zero by both terms: eigenvalue 0.</p>
+<p>Example: \(\hat{\mathbf{a}} + \hat{\mathbf{b}} = (1.2106, 1.3959)\), and \(1.7071\times(1.2106, 1.3959) = (2.0667, 2.3829)\).</p>
+<p><b>Step 5: put the lengths back.</b> So \(\hat{\mathbf{a}} + \hat{\mathbf{b}}\) is an eigenvector of \(H\) with eigenvalue \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert(1 + \cos\gamma)\). Multiply out, and use \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\gamma = \mathbf{a}\cdot\mathbf{b}\) (Level 7): the eigenvalue is \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert + \mathbf{a}\cdot\mathbf{b}\). The same steps with \(\hat{\mathbf{a}} - \hat{\mathbf{b}}\) give \((\cos\gamma - 1)(\hat{\mathbf{a}} - \hat{\mathbf{b}})\), eigenvalue \(\mathbf{a}\cdot\mathbf{b} - \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\). Any direction perpendicular to both \(\mathbf{a}\) and \(\mathbf{b}\) is read as zero by both terms: eigenvalue 0.</p>
 <p>For the example: \(\mathbf{a}\cdot\mathbf{b} = 5\), \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert = \sqrt5\sqrt{10} = \sqrt{50} = 7.0711\), so \(\lambda = 12.0711\) and \(-2.0711\). Check: sum \(10 = 4 + 6 = \operatorname{tr} H\); product \(-25 = 24 - 49 = \det H\).</p>
 <div class="box key">
 <span class="boxtitle">What a product of two reads does to curvature</span>
@@ -320,10 +379,19 @@ $$ \lVert H\rVert_F = \sqrt{(-0.5)^2 + 0.5^2 + 0.5^2 + (-1)^2} = \sqrt{0.25 + 0.
 <h3>Inertia</h3>
 <p>The inertia of a symmetric matrix is the count \((n_+, n_-, n_0)\) of positive, negative and zero eigenvalues. The farm: \((0, 2, 0)\). A product of two non-parallel reads: \((1, 1, 0)\) in 2-D, and \((1, 1, d - 2)\) in \(d\) dimensions.</p>
 <h3>Mechanics: measure water in litres</h3>
-<p>Let \(w\) be water in litres, so \(W = 0.1w\) buckets. Re-express the yield in \((w, F)\) and differentiate again. Each derivative with respect to \(w\) brings out a factor 0.1 (chain rule, previewed here):</p>
-$$ \frac{\partial^2 Y}{\partial w^2} = 0.1^2\times(-0.5) = -0.005\ \tfrac{\text{bushels}}{\text{litre}^2}, \qquad \frac{\partial^2 Y}{\partial w\,\partial F} = 0.1\times0.5 = 0.05\ \tfrac{\text{bushels}}{\text{litre}\cdot\text{bag}}, \qquad \frac{\partial^2 Y}{\partial F^2} = -1\ \tfrac{\text{bushels}}{\text{bag}^2}. $$
-<p>In matrix form this is \(H_L = B^\top HB\) with \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 1\end{pmatrix}\) (the machine that turns a move in (litres, bags) into a move in (buckets, bags)). So</p>
-$$ H_L = \begin{pmatrix} -0.005 & 0.05 \\ 0.05 & -1 \end{pmatrix}, \qquad \lambda = -0.0025,\ -1.0025, \qquad \text{gentlest direction } (0.9987, 0.0501). $$
+<p>Let \(w\) be water in litres, so \(W = 0.1w\) buckets. Re-express the yield in \((w, F)\) and differentiate again, one step at a time.</p>
+<p><b>Step 1: one derivative in \(w\).</b> One more litre is 0.1 more bucket. So the yield per litre is 0.1 times the yield per bucket: \(\partial Y/\partial w = 0.1\,\partial Y/\partial W\). (This is the chain rule, previewed here; <a href="10.html">Level 10</a> proves it.) Example at \((4, 2)\): \(0.1\times1 = 0.1\) bushels per litre.</p>
+<p><b>Step 2: the second derivative in \(w\).</b> Apply Step 1 again to \(\partial Y/\partial w\). A second factor 0.1 comes out:</p>
+$$ \frac{\partial^2 Y}{\partial w^2} = 0.1\times0.1\times\frac{\partial^2 Y}{\partial W^2} = 0.01\times(-0.5) = -0.005\ \tfrac{\text{bushels}}{\text{litre}^2}. $$
+<p><b>Step 3: the mixed entry.</b> Only one of the two derivatives is in \(w\), so only one factor 0.1 comes out:</p>
+$$ \frac{\partial^2 Y}{\partial w\,\partial F} = 0.1\times\frac{\partial^2 Y}{\partial W\,\partial F} = 0.1\times0.5 = 0.05\ \tfrac{\text{bushels}}{\text{litre}\cdot\text{bag}}. $$
+<p><b>Step 4: the fertiliser entry.</b> No derivative is in \(w\), so it is unchanged: \(\partial^2 Y/\partial F^2 = -1\) bushels per bag².</p>
+<p><b>Step 5: the same thing as a matrix product.</b> Let \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 1\end{pmatrix}\) (the machine that turns a move in (litres, bags) into a move in (buckets, bags)). Because \(B\) is diagonal, \(B^\top HB\) multiplies entry \((i, j)\) of \(H\) by \(B_{ii}\times B_{jj}\): \(0.1\times0.1\) for entry (1, 1), \(0.1\times1\) for the off-diagonal entries, \(1\times1\) for entry (2, 2). That is Steps 2 to 4 exactly. So</p>
+$$ H_L = B^\top HB = \begin{pmatrix} -0.005 & 0.05 \\ 0.05 & -1 \end{pmatrix}. $$
+<p><b>Step 6: its eigenvalues.</b> Use the characteristic equation of 9.5 with \(a = -0.005\), \(b = 0.05\), \(c = -1\): \(a + c = -1.005\) and \(ac - b^2 = 0.005 - 0.0025 = 0.0025\). So \(\lambda^2 + 1.005\lambda + 0.0025 = 0\), and by the quadratic formula</p>
+$$ \lambda = \frac{-1.005 \pm \sqrt{1.005^2 - 4\times0.0025}}{2} = \frac{-1.005 \pm \sqrt{1.000025}}{2} = \frac{-1.005 \pm 1.0000125}{2}, $$
+<p>which gives \(\lambda = -0.0025\) and \(\lambda = -1.0025\).</p>
+<p><b>Step 7: the gentlest direction.</b> For \(\lambda = -0.0025\): \(u_2/u_1 = (\lambda - a)/b = (-0.0025 + 0.005)/0.05 = 0.0501\) (to 4 decimals, using the unrounded \(\lambda = -0.0024938\)). Take \((1, 0.0501)\), length \(\sqrt{1 + 0.0025} = 1.0013\), so the unit direction is \((0.9987, 0.0501)\).</p>
 <p>The gentlest direction now says 1 bag per 19.95 litres, which is 1 bag per 1.995 buckets, not 1 bag per 1.618 buckets. The eigenvalues changed and the eigenvectors moved. What stayed? Both eigenvalues are still negative: the inertia is still \((0, 2, 0)\), and \(\det H_L = 0.005 - 0.0025 = 0.0025 \gt 0\) still says “maximum”.</p>
 <div class="box key">
 <span class="boxtitle">Sylvester's law of inertia</span>
@@ -373,7 +441,7 @@ For any invertible matrix \(B\), the matrices \(H\) and \(B^\top HB\) have the s
 <div class="ex" data-answer="-12" data-tol="0.001" data-unit="(determinant)">
 <p><b>Exercise 9.5.</b> Classify the critical point at the origin of \(f(x_1, x_2) = x_1^2 - 4x_1x_2 + x_2^2\). Then classify the origin for \(x_1^4 + x_2^4\), and explain why the test fails there.</p>
 <details><summary>Show answer</summary>
-<p>\(H = \begin{pmatrix} 2 & -4 \\ -4 & 2\end{pmatrix}\), \(\det H = 4 - 16 = -12 \lt 0\): a saddle, even though both diagonal entries are positive. Along \((1, 1)\): \(\mathbf{v}^\top H\mathbf{v} = 2 - 8 + 2 = -4\), down. For \(x_1^4 + x_2^4\): every second derivative at the origin is 0 (for example \(12x_1^2 = 0\)), so \(\det H = 0\) and the test is silent. The origin is in fact a minimum, but you need the fourth-order terms to see it.</p>
+<p><b>Step 1: the Hessian.</b> Differentiate term by term. \(x_1^2\) twice in \(x_1\) gives 2. \(-4x_1x_2\) once in each input gives \(-4\). \(x_2^2\) twice in \(x_2\) gives 2. So \(H = \begin{pmatrix} 2 & -4 \\ -4 & 2\end{pmatrix}\) (the same at every point, since \(f\) is quadratic). <b>Step 2: the test.</b> \(\det H = 2\times2 - (-4)\times(-4) = 4 - 16 = -12 \lt 0\): a saddle, even though both diagonal entries are positive. Along \((1, 1)\): \(\mathbf{v}^\top H\mathbf{v} = 2 - 8 + 2 = -4\), down. For \(x_1^4 + x_2^4\): every second derivative at the origin is 0 (for example \(12x_1^2 = 0\)), so \(\det H = 0\) and the test is silent. The origin is in fact a minimum, but you need the fourth-order terms to see it.</p>
 </details>
 </div>
 
@@ -399,7 +467,7 @@ For any invertible matrix \(B\), the matrices \(H\) and \(B^\top HB\) have the s
 </div>
 
 <div class="ex" data-answer="-0.0016" data-tol="0.01" data-unit="bushels per kg²">
-<p><b>Exercise 9.9.</b> <span class="small">(The farm Hessian: \(H = \begin{pmatrix} -0.5 & 0.5 \ 0.5 & -1 \end{pmatrix}\), in bushels per bucket², per bucket per bag, and per bag², with \(W\) in buckets and \(F\) in bags.)</span> Suppose one bag of fertiliser holds 25 kg (a made-up figure). Rewrite the farm Hessian with water in litres and fertiliser in kg, using \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 0.04 \end{pmatrix}\). Give the new \(\partial^2 Y/\partial(\text{kg})^2\) entry, and confirm the plan is still a maximum.</p>
+<p><b>Exercise 9.9.</b> <span class="small">(The farm Hessian: \(H = \begin{pmatrix} -0.5 & 0.5 \\ 0.5 & -1 \end{pmatrix}\), in bushels per bucket², per bucket per bag, and per bag², with \(W\) in buckets and \(F\) in bags.)</span> Suppose one bag of fertiliser holds 25 kg (a made-up figure). Rewrite the farm Hessian with water in litres and fertiliser in kg, using \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 0.04 \end{pmatrix}\). Give the new \(\partial^2 Y/\partial(\text{kg})^2\) entry, and confirm the plan is still a maximum.</p>
 <details><summary>Show answer</summary>
 <p>\(B^\top HB\) multiplies entry \((i, j)\) by \(B_{ii}B_{jj}\): \(-0.5\times0.01 = -0.005\), \(0.5\times0.1\times0.04 = 0.002\), \(-1\times0.04^2 = -0.0016\) bushels per kg². Determinant \((-0.005)(-0.0016) - 0.002^2 = 0.000008 - 0.000004 = 0.000004 \gt 0\), and the diagonal is negative: still negative definite, still a maximum. The numbers shrank a lot; the signs did not move (Sylvester).</p>
 </details>
