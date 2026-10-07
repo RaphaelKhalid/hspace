@@ -1,0 +1,61 @@
+[v10 19:22:05 +0.0m] start full, layers [16, 40], budget 170.0 min
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+[v10 19:23:52 +1.8m] S0: class moments from 768 windows
+[v10 19:24:02 +1.9m] S0 L16: rows {'punctuation': 11571, 'word': 64920, 'function': 24557, 'content': 40363, 'digit': 5813, 'whitespace': 2944, 'all': 85248} | M2 ov25 0.026 (ref max 0.023) mean-energy 0.003 (ref max 0.004) -> ok | J-match maxdev 0.93 | H mean-energy 0.0025 vs twins max 0.0074, raw norm 0.694 vs twins max 0.606
+[v10 19:24:11 +2.1m] S0 L40: rows {'punctuation': 11571, 'word': 64920, 'function': 24557, 'content': 40363, 'digit': 5813, 'whitespace': 2944, 'all': 85248} | M2 ov25 0.024 (ref max 0.017) mean-energy 0.004 (ref max 0.004) -> ok | J-match maxdev 0.82 | H mean-energy 0.0040 vs twins max 0.0085, raw norm 1.554 vs twins max 1.364
+[v10 19:24:11 +2.1m] S0 done (2.0 min); live layers [16, 40]
+[v10 19:24:12 +2.1m] W: 40 windows from 40 articles (validation offsets k>=2)
+[v10 19:28:47 +6.7m] W window 4/40 (69.0s/window, peak 58.5 GB)
+[v10 19:33:22 +11.3m] W window 8/40 (68.9s/window, peak 58.5 GB)
+[v10 19:37:58 +15.9m] W window 12/40 (68.9s/window, peak 58.5 GB)
+[v10 19:42:33 +20.5m] W window 16/40 (68.9s/window, peak 58.5 GB)
+[v10 19:47:07 +25.0m] W window 20/40 (68.8s/window, peak 58.5 GB)
+[v10 19:51:42 +29.6m] W window 24/40 (68.8s/window, peak 58.5 GB)
+[v10 19:56:17 +34.2m] W window 28/40 (68.8s/window, peak 58.5 GB)
+[v10 20:00:52 +38.8m] W window 32/40 (68.8s/window, peak 58.5 GB)
+[v10 20:05:27 +43.4m] W window 36/40 (68.8s/window, peak 58.5 GB)
+[v10 20:10:02 +48.0m] W window 40/40 (68.8s/window, peak 58.5 GB)
+[v10 20:10:03 +48.0m] W L16 (n=40): T1 I +1.99 [1.76, 2.22] rank 1/17 p_PI 0.000 | I_trunk +1.97 | global(v9) +1.92 | freeze kept 0.8941683733631649 valid True | J5 -1.59 PC5 +0.02 | word +1.21 | sink-scope False | M3 pass
+[v10 20:10:04 +48.0m] W L40 (n=40): T1 I +1.22 [1.0, 1.45] rank 1/17 p_PI 0.000 | I_trunk +1.29 | global(v9) +0.95 | freeze kept 1.0856293460922204 valid True | J5 -2.18 PC5 +0.28 | word +0.96 | sink-scope False | M3 pass
+[v10 20:11:44 +49.7m] G negation_truth: n 21 DiD +5.21 CI [4.61, 5.84] gated True | L16 site 0.017511303155706603 recA 0.18 recB -0.09 site-gate False L40 site 0.0013712773739660295 recA -0.22 recB 0.05 site-gate False
+[v10 20:13:23 +51.3m] G entity_attribute: n 21 DiD +5.36 CI [3.33, 7.21] gated True | L16 site -0.0012585424450489815 recA -0.00 recB 0.04 site-gate False L40 site 0.06720308140565816 recA 0.07 recB 0.33 site-gate False
+[v10 20:15:01 +52.9m] G relational_composition: n 21 DiD +2.02 CI [1.61, 2.49] gated True | L16 site 0.018118705972628133 recA 0.00 recB 0.03 site-gate False L40 site 0.08406018607466104 recA -0.06 recB 0.26 site-gate False
+[v10 20:16:40 +54.6m] G null_unrelated: n 21 DiD +0.35 CI [-0.24, 0.94] gated None | L16 site 0.1152414248852708 recA -0.00 recB 0.16 site-gate False L40 site 0.08430689160939252 recA -0.01 recB 0.07 site-gate False
+[v10 20:18:21 +56.3m] G binding_backup: n 21 DiD -6.56 CI [-7.78, -5.13] gated True | L16 site 9.812528750154706e-05 recA -0.02 recB -0.00 site-gate False L40 site -0.0007328578927381247 recA 0.03 recB -0.00 site-gate False
+[v10 20:20:02 +58.0m] T negation_truth: item 4/21 (25.3s/item)
+[v10 20:21:43 +59.6m] T negation_truth: item 8/21 (25.2s/item)
+[v10 20:23:26 +61.4m] T negation_truth: item 12/21 (25.4s/item)
+[v10 20:25:11 +63.1m] T negation_truth: item 16/21 (25.6s/item)
+[v10 20:26:58 +64.9m] T negation_truth: item 20/21 (25.8s/item)
+[v10 20:29:10 +67.1m] T entity_attribute: item 4/21 (26.5s/item)
+[v10 20:30:56 +68.9m] T entity_attribute: item 8/21 (26.5s/item)
+[v10 20:32:42 +70.6m] T entity_attribute: item 12/21 (26.5s/item)
+[v10 20:34:29 +72.4m] T entity_attribute: item 16/21 (26.6s/item)
+[v10 20:36:14 +74.1m] T entity_attribute: item 20/21 (26.5s/item)
+[v10 20:38:27 +76.4m] T relational_composition: item 4/21 (26.7s/item)
+[v10 20:40:12 +78.1m] T relational_composition: item 8/21 (26.6s/item)
+[v10 20:42:00 +79.9m] T relational_composition: item 12/21 (26.6s/item)
+[v10 20:43:45 +81.7m] T relational_composition: item 16/21 (26.6s/item)
+[v10 20:45:31 +83.4m] T relational_composition: item 20/21 (26.6s/item)
+[v10 20:47:44 +85.7m] T null_unrelated: item 4/21 (26.5s/item)
+[v10 20:49:30 +87.4m] T null_unrelated: item 8/21 (26.5s/item)
+[v10 20:51:16 +89.2m] T null_unrelated: item 12/21 (26.5s/item)
+[v10 20:53:02 +91.0m] T null_unrelated: item 16/21 (26.5s/item)
+[v10 20:54:48 +92.7m] T null_unrelated: item 20/21 (26.5s/item)
+[v10 20:55:15 +93.2m] T negation_truth L16 (n=21): transfer T1 +0.71 [0.52, 0.91] rank 2/17 p 0.001 | share 4.541410297061044 | H removes -0.02 z -0.6 rankD 12 -> M4 inconclusive | M5 dH -0.002 vs J5 -0.020 -> inconclusive | M7 p 0.430
+[v10 20:55:15 +93.2m] T negation_truth L40 (n=21): transfer T1 +0.71 [0.49, 0.93] rank 1/17 p 0.025 | share -2.9365458682360748 | H removes -0.24 z -3.1 rankD 17 -> M4 inconclusive | M5 dH -0.001 vs J5 -0.032 -> inconclusive | M7 p 0.997
+[v10 20:55:16 +93.2m] T entity_attribute L16 (n=21): transfer T1 +1.41 [1.04, 1.75] rank 1/17 p 0.000 | share -3.8898697569617697 | H removes 0.07 z 1.6 rankD 4 -> M4 inconclusive | M5 dH +0.001 vs J5 -0.001 -> inconclusive | M7 p 0.945
+[v10 20:55:16 +93.2m] T entity_attribute L40 (n=21): transfer T1 +0.69 [0.34, 1.06] rank 1/17 p 0.005 | share 0.20940399932790563 | H removes -0.18 z -1.6 rankD 17 -> M4 inconclusive | M5 dH +0.001 vs J5 +0.004 -> inconclusive | M7 p 0.318
+[v10 20:55:16 +93.2m] T relational_composition L16 (n=21): transfer T1 +1.16 [0.89, 1.43] rank 1/17 p 0.000 | share -0.15060283516557046 | H removes 0.26 z 2.1 rankD 3 -> M4 inconclusive | M5 dH +0.001 vs J5 -0.002 -> inconclusive | M7 p 0.863
+[v10 20:55:16 +93.2m] T relational_composition L40 (n=21): transfer T1 +1.09 [0.88, 1.28] rank 1/17 p 0.002 | share 0.04110723800359951 | H removes -0.24 z -0.9 rankD 13 -> M4 inconclusive | M5 dH +0.001 vs J5 +0.004 -> inconclusive | M7 p 1.000
+[v10 20:55:17 +93.2m] T null_unrelated L16 (n=21): transfer T1 +1.39 [1.22, 1.54] rank 1/17 p 0.000 | share 0.6285596756711912 | H removes 0.01 z 0.9 rankD 5 -> M4 inconclusive | M5 dH +0.002 vs J5 -0.014 -> inconclusive | M7 p 0.975 | TOST 8.551444623741161e-05 [-0.00045397714280653124, 0.0009335775146108181]
+[v10 20:55:17 +93.2m] T null_unrelated L40 (n=21): transfer T1 +0.44 [0.18, 0.68] rank 4/17 p 0.158 | share 0.1723469673827639 | H removes -0.03 z -1.1 rankD 15 -> M4 inconclusive | M5 dH -0.010 vs J5 +0.003 -> inconclusive | M7 p 0.072 | TOST -0.00015505839551689944 [-0.0005946990472738424, 0.00016199522963039088]
+[v10 20:55:20 +93.2m] R: shuffled 195 weight tensors in blocks 41..63 (all blocks > 40 now shuffled)
+[v10 20:57:29 +95.4m] R L40 (n=24): random-weights T1 +0.47 vs trained +1.38 on the same windows (median twin |I| 8.34e-03 vs 9.76e-05) -> pass
+[v10 20:57:31 +95.4m] R: shuffled 204 weight tensors in blocks 17..40 (all blocks > 16 now shuffled)
+[v10 21:01:12 +99.1m] R L16 (n=24): random-weights T1 +0.35 vs trained +1.93 on the same windows (median twin |I| 5.16e-03 vs 1.02e-04) -> pass
+[v10 21:01:12 +99.1m] VERDICT: MUST tier not passed. fail: ['M6', 'M7']; inconclusive: ['M4', 'M5']; qualifiers: position-general (L16); mean/norm-aligned (L16); punctuation-moment-aligned (L16); position-general (L40); mean/norm-aligned (L40); punctuation-moment-aligned (L40); subspace (k = 5 fixed)
+[v10 21:01:12 +99.1m] verdict detail: {"M2": "pass", "M3": "pass", "R": "pass", "M6": "fail", "M4": "inconclusive", "M5": "inconclusive", "M7": "fail", "TOST": "pass"}
+[v10 21:01:12 +99.1m] DONE
