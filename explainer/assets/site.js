@@ -282,7 +282,43 @@
     if (frac) return parseFloat(frac[1]) / parseFloat(frac[2]);
     return parseFloat(s);
   }
+  /* Exercises without a number to check: multiple choice (data-choices="a|b|c" data-correct="index")
+     or, failing that, a free-text box to write your answer before opening the worked one. */
+  function wireOpenExercises() {
+    Array.prototype.forEach.call(document.querySelectorAll(".ex:not([data-answer])"), function (ex) {
+      var det = ex.querySelector("details");
+      var row = el("div", { "class": "check nogl" });
+      if (ex.hasAttribute("data-choices")) {
+        var choices = ex.getAttribute("data-choices").split("|");
+        var correct = parseInt(ex.getAttribute("data-correct"), 10);
+        var name = "q" + Math.random().toString(36).slice(2, 8);
+        row.style.flexDirection = "column"; row.style.alignItems = "flex-start";
+        var html = "";
+        choices.forEach(function (c, i) {
+          html += '<label><input type="radio" name="' + name + '" value="' + i + '"> ' + c + "</label>";
+        });
+        row.innerHTML = html + '<span class="verdict" aria-live="polite"></span>';
+        var out = row.querySelector(".verdict");
+        row.addEventListener("change", function (e) {
+          var v = parseInt(e.target.value, 10);
+          out.textContent = v === correct ? "Correct." : "Not quite. Try again, or open the answer below.";
+        });
+      } else {
+        row.innerHTML = '<label style="width:100%">Your answer:<br><textarea rows="2" style="width:100%; font-family: inherit; font-size: 16px; box-sizing: border-box"></textarea></label>' +
+          '<span class="small">Write it down, then open the worked answer to compare.</span>';
+      }
+      ex.insertBefore(row, det || null);
+      if (det) {
+        var math = row.querySelectorAll("label");
+        if (typeof window.renderMathInElement === "function") window.renderMathInElement(row, {
+          delimiters: [{ left: "\\(", right: "\\)", display: false }], throwOnError: false
+        });
+      }
+    });
+  }
+
   function wireExercises() {
+    wireOpenExercises();
     Array.prototype.forEach.call(document.querySelectorAll(".ex[data-answer]"), function (ex) {
       var ans = parseFloat(ex.getAttribute("data-answer"));
       var tol = parseFloat(ex.getAttribute("data-tol") || "0.01");

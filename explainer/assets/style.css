@@ -127,6 +127,7 @@ button { font-family: inherit; font-size: 16px; }
 .ex { border-top: 1px solid var(--mid); padding: 0.4em 0 0.6em; margin: 1em 0; }
 .ex .check { margin: 0.4em 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .ex .check input { font-family: inherit; font-size: 16px; width: 8em; }
+.ex .check input[type=radio] { width: auto; margin-right: 6px; }
 .ex .verdict { font-style: italic; }
 .ex details { margin-top: 0.3em; }
 .ex summary { cursor: pointer; color: var(--link); text-decoration: underline; }
