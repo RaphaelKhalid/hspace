@@ -1,0 +1,138 @@
+{
+ "Loewner order": {
+  "t": "Loewner order",
+  "a": [
+   "Loewner ordering"
+  ],
+  "l": 15,
+  "d": "A way to compare two symmetric matrices. A ⪰ B means A − B is positive semidefinite, so vᵀAv ≥ vᵀBv for every direction v. Like saying room A is at least as warm as room B at every single spot, not just on average."
+ },
+ "Weyl monotonicity": {
+  "t": "Weyl monotonicity",
+  "a": [
+   "Weyl's monotonicity",
+   "Weyl's inequality"
+  ],
+  "l": 15,
+  "d": "If A ⪰ B (A − B is positive semidefinite), then each eigenvalue of A, sorted from largest, is at least the matching sorted eigenvalue of B. It says nothing about whether the eigenvectors agree."
+ },
+ "Courant–Fischer theorem": {
+  "t": "Courant–Fischer theorem",
+  "a": [
+   "Courant-Fischer theorem",
+   "min-max theorem",
+   "Courant–Fischer"
+  ],
+  "l": 15,
+  "d": "The i-th largest eigenvalue of a symmetric matrix A equals the largest value, over all i-dimensional subspaces U, of the smallest vᵀAv for unit v in U. It turns eigenvalue questions into questions about quadratic forms."
+ },
+ "equivariant": {
+  "t": "equivariant",
+  "a": [
+   "equivariance"
+  ],
+  "l": 15,
+  "d": "A procedure is equivariant to a transformation if transforming the input transforms the output in the matching way. Example: flip a photo left to right, then find its brightest spot; you get the flipped spot."
+ },
+ "conjugation": {
+  "t": "conjugation",
+  "a": [
+   "conjugate",
+   "conjugated",
+   "conjugating"
+  ],
+  "l": 15,
+  "d": "For matrices, conjugating H by an orthogonal D means forming D H Dᵀ (here D H D, because the sign-flip matrices are their own inverse). It is the same curvature written after the axes have been flipped or rotated."
+ },
+ "GOE": {
+  "t": "GOE",
+  "a": [
+   "Gaussian orthogonal ensemble",
+   "GOE-type",
+   "GOE-like"
+  ],
+  "l": 15,
+  "d": "A random symmetric matrix whose entries (up to symmetry) are independent Gaussians. Its law does not change under any rotation of the axes, so it has no preferred direction: a model of structureless curvature."
+ },
+ "exchangeable": {
+  "t": "exchangeable",
+  "a": [
+   "exchangeability"
+  ],
+  "l": 15,
+  "d": "A list of random quantities is exchangeable if shuffling the list does not change their joint law. Example: the values on five lottery balls, listed in the order they were drawn."
+ },
+ "geometric mean": {
+  "t": "geometric mean",
+  "a": [
+   "geometric-mean"
+  ],
+  "l": 15,
+  "d": "Average the logarithms, then map back with exp. For 2 and 8 it is √(2 × 8) = 4. It stops a few huge ratios from dominating an average of ratios."
+ },
+ "trunk": {
+  "t": "trunk",
+  "a": [
+   "model trunk"
+  ],
+  "l": 15,
+  "d": "The body of the network up to the last layer's residual state, before the final norm and softmax. A trunk interaction is already present in that state; it is not created by the final normalisation and softmax."
+ },
+ "token class": {
+  "t": "token class",
+  "a": [
+   "token classes"
+  ],
+  "l": 15,
+  "d": "A coarse label for a token by its characters: digit (only digits), punctuation (no letters or digits), whitespace/newline (empty after trimming), or word (anything else). Run 2 used it to see which kinds of tokens carry curvature energy."
+ },
+ "wikitext-103": {
+  "t": "wikitext-103",
+  "a": [
+   "wikitext"
+  ],
+  "l": 14,
+  "d": "A public corpus of Wikipedia articles with train, validation and test splits. Every H-space run drew its text windows from it."
+ },
+ "multiple comparisons": {
+  "t": "multiple comparisons",
+  "a": [
+   "multiple testing"
+  ],
+  "l": 13,
+  "d": "Running many tests raises the chance that one passes by luck, especially when a later test is chosen after looking at earlier data. Counting the tests in a sequence keeps this risk visible."
+ },
+ "retention score": {
+  "t": "retention score",
+  "a": [
+   "retention scores"
+  ],
+  "l": 15,
+  "d": "How much of the interaction (r_I) or of the main effects (r_M) survives an ablation, as an energy-weighted ratio; 1 means nothing was removed. The specificity S = r_M − r_I is positive when the ablation removes interactions more than main effects."
+ },
+ "spectral gap": {
+  "t": "spectral gap",
+  "a": [
+   "eigengap"
+  ],
+  "l": 15,
+  "d": "The difference (or ratio) between consecutive sorted eigenvalues, for example λ₂₅ versus λ₂₆. A small gap means the top-k eigenspace is poorly defined: tiny noise can swap directions across the cut."
+ },
+ "pre-norm proxy": {
+  "t": "pre-norm proxy",
+  "a": [
+   "pre-norm proxies"
+  ],
+  "l": 14,
+  "d": "The quantity u_t · h_L* = rms(h_L*) · logit_t that the J-lens and the H-lens differentiate: the final residual read along a token's unembedding direction before the final RMSNorm. It is not the logit itself."
+ },
+ "mean-ablation": {
+  "t": "mean-ablation",
+  "a": [
+   "mean-ablate",
+   "mean-ablated"
+  ],
+  "l": 15,
+  "d": "Replacing the part of an activation that lies in a subspace by its average value over the data, so the subspace stops carrying information about the current input."
+ }
+}

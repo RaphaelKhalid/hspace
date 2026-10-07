@@ -1,0 +1,6 @@
+{
+  "pre-activation": {"t": "pre-activation", "a": ["pre-activations"], "l": 10, "d": "The weighted sum inside a neuron before the activation function is applied: z = (weights · inputs) + bias. In the tiny network, z₁ = x₁ − x₂ + 0.5."},
+  "learning rate": {"t": "learning rate", "a": ["learning rates"], "l": 10, "d": "In gradient descent, the number that sets the step size: each weight moves by −(learning rate) × (its partial derivative of the loss). Too large and training overshoots; too small and it crawls."},
+  "tangent value": {"t": "tangent value", "a": ["tangent values", "tangent vector", "tangent vectors"], "l": 10, "d": "In forward-mode differentiation: how fast an intermediate quantity changes when the input moves along a chosen direction v, per unit of movement. Written with a dot, like ż. Pushing tangent values through a network computes a Jacobian-vector product."},
+  "associative": {"t": "associative", "a": ["associativity"], "l": 10, "d": "An operation is associative if the grouping does not change the answer: (AB)C = A(BC). Matrix multiplication is associative, so a chain of Jacobians can be multiplied from either end. The answer is the same; the cost can differ enormously."}
+}

@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 5: Two inputs: partial derivatives and the gradient</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="5">
+<div class="page">
+
+<h1>Level 5: Two inputs: partial derivatives and the gradient</h1>
+<p class="subtitle">When an output depends on two things, you can ask how it changes with each one while the other stays put. Those two answers, side by side, form an arrow that points uphill.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>read a function of two inputs as a surface and as a contour map;</li>
+<li>compute a partial derivative by holding the other input fixed, and give its unit;</li>
+<li>predict the change in output for a small move in both inputs at once;</li>
+<li>build the gradient, compute the rate of change in any direction, and explain why the gradient points straight uphill, at right angles to the contours;</li>
+<li>explain why “the steepest direction” depends on the units you measure the inputs in.</li>
+</ul>
+<p class="small">Prerequisites: <a href="02.html">Level 2</a> (derivatives), <a href="03.html">Level 3</a> (second derivatives) and <a href="04.html">Level 4</a> (the linear approximation \(f(x_0) + f'(x_0)\,\Delta x\)).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first. Nothing appears out of nowhere.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(W\)</td><td>“W”</td><td>water used on the field (1 bucket = 10 litres)</td><td>buckets</td><td>\(W = 4\)</td></tr>
+<tr><td>\(F\)</td><td>“F”</td><td>fertiliser used on the field</td><td>bags</td><td>\(F = 2\)</td></tr>
+<tr><td>\(Y\)</td><td>“Y”</td><td>crop yield (a toy formula, given below)</td><td>bushels</td><td>\(Y = 12\)</td></tr>
+<tr><td>\(Y(W, F)\)</td><td>“Y of W and F”</td><td>the yield you get with \(W\) buckets and \(F\) bags</td><td>bushels</td><td>\(Y(4, 2) = 12\)</td></tr>
+<tr><td>\((W, F)\)</td><td>“the point W, F”</td><td>a plan: a pair of inputs; also a spot on the map</td><td>(buckets, bags)</td><td>\((4, 2)\)</td></tr>
+<tr><td>\(\Delta W,\ \Delta F,\ \Delta Y\)</td><td>“delta W, F, Y”</td><td>a change in water, fertiliser, yield</td><td>buckets, bags, bushels</td><td>\(\Delta W = 1\)</td></tr>
+<tr><td>\(\partial\)</td><td>“partial”</td><td>a curly d: “derivative with the other inputs held fixed”</td><td>none (a symbol)</td><td>\(\partial Y / \partial W\)</td></tr>
+<tr><td>\(\partial Y/\partial W\)</td><td>“partial Y, partial W”</td><td>rate of change of yield as water changes, fertiliser held fixed</td><td>bushels per bucket</td><td>1 at \((4, 2)\)</td></tr>
+<tr><td>\(\partial Y/\partial F\)</td><td>“partial Y, partial F”</td><td>rate of change of yield as fertiliser changes, water held fixed</td><td>bushels per bag</td><td>3 at \((4, 2)\)</td></tr>
+<tr><td>\(\partial^2 Y/\partial W^2\)</td><td>“second partial in W”</td><td>how fast \(\partial Y/\partial W\) changes as \(W\) changes, \(F\) fixed</td><td>bushels per bucket²</td><td>\(-0.5\)</td></tr>
+<tr><td>\(\partial^2 Y/\partial F^2\)</td><td>“second partial in F”</td><td>how fast \(\partial Y/\partial F\) changes as \(F\) changes, \(W\) fixed</td><td>bushels per bag²</td><td>\(-1\)</td></tr>
+<tr><td>\(\nabla Y\)</td><td>“grad Y”</td><td>the gradient: the pair \((\partial Y/\partial W,\ \partial Y/\partial F)\). For a general function \(f\), \(\nabla f\) is the list of all its partials.</td><td>(bushels per bucket, bushels per bag)</td><td>\((1, 3)\) at \((4, 2)\)</td></tr>
+<tr><td>\(\lVert \nabla Y \rVert\)</td><td>“length of grad Y”</td><td>the length of the gradient arrow, \(\sqrt{(\partial Y/\partial W)^2 + (\partial Y/\partial F)^2}\)</td><td>bushels per map unit</td><td>\(\sqrt{10} \approx 3.162\)</td></tr>
+<tr><td>map unit</td><td>“map unit”</td><td>on our map, 1 bucket and 1 bag are drawn the same length; that length is one map unit (a choice, see 5.10)</td><td>(a length on the map)</td><td>a step of 0.6 bucket and 0.8 bag is 1 map unit long</td></tr>
+<tr><td>\(\mathbf{u}\)</td><td>“u” (bold: a vector)</td><td>a direction to walk in: a pair \((u_W, u_F)\) with \(u_W^2 + u_F^2 = 1\)</td><td>(buckets, bags) per map unit</td><td>\((0.6, 0.8)\)</td></tr>
+<tr><td>\(u_W,\ u_F\)</td><td>“u W, u F”</td><td>the water part and the fertiliser part of the direction \(\mathbf{u}\)</td><td>buckets, bags (per map unit)</td><td>\(u_W = 0.6\)</td></tr>
+<tr><td>\(\theta\)</td><td>“theta”</td><td>the angle of a direction, measured anticlockwise from the water axis</td><td>degrees (°)</td><td>\(\theta = 90°\) means “pure fertiliser”</td></tr>
+<tr><td>\(\cos\theta,\ \sin\theta\)</td><td>“cosine, sine of theta”</td><td>the across part and the up part of a length-1 arrow at angle \(\theta\)</td><td>none (pure number)</td><td>\(\cos 60° = 0.5\)</td></tr>
+<tr><td>\(\Delta s\)</td><td>“delta s”</td><td>a distance walked on the map in direction \(\mathbf{u}\)</td><td>map units</td><td>\(\Delta s = 0.01\)</td></tr>
+<tr><td>\(D_{\mathbf{u}} Y\)</td><td>“D u of Y”</td><td>directional derivative: rate of change of yield per map unit walked in direction \(\mathbf{u}\)</td><td>bushels per map unit</td><td>3.0 for \(\mathbf{u} = (0.6, 0.8)\) at \((4,2)\)</td></tr>
+<tr><td>\(\alpha\)</td><td>“alpha”</td><td>the angle between the direction \(\mathbf{u}\) and the gradient arrow</td><td>degrees</td><td>\(\alpha = 0°\): walking straight up the gradient</td></tr>
+<tr><td>\(\cdot\)</td><td>“dot”</td><td>between two pairs: multiply matching parts and add, \((a_1, a_2)\cdot(b_1, b_2) = a_1 b_1 + a_2 b_2\)</td><td>product of the two units</td><td>\((1, 3)\cdot(3, -1) = 0\)</td></tr>
+<tr><td>\(\mathbf{a},\ \mathbf{b}\); \(a_1, a_2, b_1, b_2\)</td><td>“a, b; a one, a two, …”</td><td>any two arrows and their parts; used only to define the dot and to quote one fact from Level 7. \(\lVert\mathbf{a}\rVert\) is the length of \(\mathbf{a}\), \(\sqrt{a_1^2 + a_2^2}\).</td><td>any</td><td>\(a_1 = 1\)</td></tr>
+<tr><td>\(L\)</td><td>“L”</td><td>water measured in litres instead of buckets: \(L = 10\,W\) (section 5.10 only)</td><td>litres</td><td>\(L = 40\)</td></tr>
+<tr><td>\(f,\ x,\ y\)</td><td>“f, x, y”</td><td>a general function of two inputs and its inputs (used to state rules and in exercises)</td><td>depends on the example</td><td>\(f(x, y) = x^2 y\)</td></tr>
+<tr><td>\(\sigma\)</td><td>“sigma”</td><td>a standard deviation: the typical size of a change (section 5.11 only; Level 13 defines it)</td><td>same as the quantity</td><td>a “1σ” move</td></tr>
+<tr><td>\(\approx\)</td><td>“is approximately”</td><td>close to, but not exactly equal</td><td>none</td><td>\(\Delta Y \approx 4\)</td></tr>
+</table>
+</div>
+
+<h2>5.1 One output, two inputs</h2>
+<p>Most things worth predicting depend on more than one thing. A cake depends on oven temperature and baking time. A vote share depends on campaign spending and turnout. A language model's next-word probability depends on 5,120 numbers at each position (Level 14). We start with two inputs, because two is enough to see every new idea, and two inputs still fit on a page.</p>
+
+<h3>The farm</h3>
+<p>A farmer chooses how much water \(W\) (in buckets; one bucket is 10 litres) and how much fertiliser \(F\) (in bags) to use on a field. The yield \(Y\), in bushels, is given by this toy formula:</p>
+$$ Y(W, F) = 2W + 3F + 0.5\,WF - 0.25\,W^2 - 0.5\,F^2. $$
+<p>It is a made-up formula, chosen to be simple and to behave like a real field. Each piece has a meaning and a unit:</p>
+<ul>
+<li>\(2W\): each bucket adds 2 bushels, before anything else is counted. The 2 has unit bushels per bucket.</li>
+<li>\(3F\): each bag adds 3 bushels. The 3 has unit bushels per bag.</li>
+<li>\(0.5\,WF\): water and fertiliser help each other. The 0.5 has unit bushels per (bucket × bag). This term is the star of <a href="06.html">Level 6</a>.</li>
+<li>\(-0.25\,W^2\): too much water drowns the roots. The 0.25 has unit bushels per bucket².</li>
+<li>\(-0.5\,F^2\): too much fertiliser burns the plants. The 0.5 has unit bushels per bag².</li>
+</ul>
+<p>Every term ends up in bushels. For example, \(0.5\ \tfrac{\text{bushels}}{\text{bucket}\cdot\text{bag}} \times 4\ \text{buckets} \times 2\ \text{bags} = 4\ \text{bushels}\).</p>
+
+<h3>Worked example: the yield of the plan (4, 2)</h3>
+<p>Use 4 buckets and 2 bags. Compute each term on its own line:</p>
+$$ 2W = 2 \times 4 = 8 $$
+$$ 3F = 3 \times 2 = 6 $$
+$$ 0.5\,WF = 0.5 \times 4 \times 2 = 4 $$
+$$ -0.25\,W^2 = -0.25 \times 16 = -4 $$
+$$ -0.5\,F^2 = -0.5 \times 4 = -2 $$
+$$ Y(4, 2) = 8 + 6 + 4 - 4 - 2 = 12\ \text{bushels}. $$
+<p>Here is a table of \(Y\) (bushels) on a grid of plans. Each row is one amount of fertiliser; each column is one amount of water.</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(F\) (bags) \ \(W\) (buckets)</th><th>0</th><th>2</th><th>4</th><th>6</th><th>8</th><th>10</th><th>12</th><th>14</th></tr>
+<tr><td>0</td><td>0</td><td>3</td><td>4</td><td>3</td><td>0</td><td>−5</td><td>−12</td><td>−21</td></tr>
+<tr><td>2</td><td>4</td><td>9</td><td>12</td><td>13</td><td>12</td><td>9</td><td>4</td><td>−3</td></tr>
+<tr><td>4</td><td>4</td><td>11</td><td>16</td><td>19</td><td>20</td><td>19</td><td>16</td><td>11</td></tr>
+<tr><td>6</td><td>0</td><td>9</td><td>16</td><td>21</td><td>24</td><td>25</td><td>24</td><td>21</td></tr>
+<tr><td>8</td><td>−8</td><td>3</td><td>12</td><td>19</td><td>24</td><td>27</td><td>28</td><td>27</td></tr>
+<tr><td>10</td><td>−20</td><td>−7</td><td>4</td><td>13</td><td>20</td><td>25</td><td>28</td><td>29</td></tr>
+</table>
+</div>
+<p>Negative yields say the field is ruined (read them as money lost). The best plan in the table is \((14, 10)\) with 29 bushels. We will prove later that it is the best plan of all.</p>
+<p>Look along the row \(F = 0\): yield rises from 0 to 4 and then falls. With no fertiliser, more than about 4 buckets hurts. Now look along the row \(F = 10\): yield keeps rising all the way to 14 buckets. How useful water is depends on how much fertiliser there is. Remember that; it is the subject of Level 6.</p>
+
+<h2>5.2 Two pictures: the surface and the contour map</h2>
+<p>A function of one input has a graph: a curve. A function of two inputs needs one more dimension. Put the plan \((W, F)\) on the floor, and stand a pole at each spot whose height is \(Y(W, F)\). The tops of all the poles form a surface: a hill.</p>
+
+<figure class="sim" id="sim-surface">
+<figcaption><b>Figure 5.1.</b> The farm as a hill. The floor has water \(W\) (buckets) and fertiliser \(F\) (bags); height is yield \(Y\) (bushels). The black dot is the plan you choose with the sliders. The red curve is the slice through the dot with fertiliser fixed; the blue curve is the slice with water fixed. Turn the hill to see it from other sides. Notice that the hill has a single top, and that the red and blue curves have different steepness at the dot.</figcaption>
+</figure>
+
+<p>A 3-D picture is hard to read precisely. Hikers solved this long ago with the contour map. Look at the hill from straight above. Draw a line through all the spots at the same height, for several heights. Each line is a contour line (or level curve). Where contours are close together, the hill is steep. Where they are far apart, it is gentle.</p>
+<p>For the farm, a contour line is a set of plans that all give the same yield. Economists call such a line an isoquant. A farmer short on fertiliser can slide along a contour, swapping fertiliser for water, without losing yield.</p>
+
+<h2>5.3 Partial derivatives: hold everything else fixed</h2>
+<p>We know how to take a derivative of a function of one input. A function of two inputs has two inputs to wiggle. So ask two separate questions:</p>
+<ol>
+<li>If I add a little water and keep the fertiliser exactly as it is, how fast does yield change?</li>
+<li>If I add a little fertiliser and keep the water exactly as it is, how fast does yield change?</li>
+</ol>
+<p>Each answer is a partial derivative. The first is written \(\partial Y/\partial W\), read “partial Y, partial W”. The curly \(\partial\) is there to remind you that the other input is held fixed. Economists call \(\partial Y/\partial W\) the marginal product of water. Social scientists use the Latin phrase ceteris paribus, “all else equal”, for exactly this idea.</p>
+
+<h3>Slices: the one-input functions hiding inside</h3>
+<p>Holding \(F\) fixed turns \(Y\) into a function of \(W\) alone. Geometrically, you cut the hill with a vertical knife along the line \(F = 2\). The cut edge is a curve: the W-slice. Write it out by putting \(F = 2\) into the formula:</p>
+$$ Y(W, 2) = 2W + 3(2) + 0.5\,W(2) - 0.25\,W^2 - 0.5\,(2)^2 $$
+$$ = 2W + 6 + W - 0.25\,W^2 - 2 $$
+$$ = 3W - 0.25\,W^2 + 4. $$
+<p>That is an ordinary one-input function. Its derivative, by the rules of Level 2, is \(3 - 0.5\,W\). At \(W = 4\): \(3 - 2 = 1\) bushel per bucket. So</p>
+$$ \frac{\partial Y}{\partial W}(4, 2) = 1\ \text{bushel per bucket}. $$
+<p>Now cut the other way, along \(W = 4\). Put \(W = 4\) into the formula:</p>
+$$ Y(4, F) = 2(4) + 3F + 0.5(4)F - 0.25\,(4)^2 - 0.5\,F^2 $$
+$$ = 8 + 3F + 2F - 4 - 0.5\,F^2 $$
+$$ = 5F - 0.5\,F^2 + 4. $$
+<p>Its derivative is \(5 - F\). At \(F = 2\): \(5 - 2 = 3\) bushels per bag. So</p>
+$$ \frac{\partial Y}{\partial F}(4, 2) = 3\ \text{bushels per bag}. $$
+<div class="box key">
+<span class="boxtitle">Partial derivative</span>
+\(\partial f/\partial x\) at a point is the ordinary derivative of the slice through that point along \(x\), with every other input frozen at its value there. Its unit is (output unit) per (unit of \(x\)).
+</div>
+
+<figure class="sim" id="sim-slices">
+<figcaption><b>Figure 5.2.</b> Top: the contour map of the farm, seen from above (red = high yield, blue = negative yield, white = zero; thin lines are contours at −40, −30, −20 and −10 bushels, every 5 bushels from −5 to 25, and at 28 just below the top). Drag the black dot. The red line is the W-slice (fertiliser fixed); the blue line is the F-slice (water fixed). Bottom: the two slices drawn as ordinary graphs. The short straight segments are their tangent lines, and their slopes are the two partial derivatives in the <span class="nogl">readout</span>. The arrow on the map is the gradient (section 5.7). Drag the dot to the top of the hill and watch both slopes reach zero together.</figcaption>
+</figure>
+
+<h2>5.4 The shortcut: treat the other letter as a number</h2>
+<p>Writing out slices every time is slow. There is a shortcut. To get \(\partial Y/\partial W\), differentiate with respect to \(W\) and treat \(F\) as if it were a fixed number, like 2 or 7. Go term by term:</p>
+<div class="tablewrap">
+<table>
+<tr><th>term</th><th>derivative in \(W\) (\(F\) frozen)</th><th>why</th></tr>
+<tr><td>\(2W\)</td><td>\(2\)</td><td>a constant times \(W\)</td></tr>
+<tr><td>\(3F\)</td><td>\(0\)</td><td>no \(W\) in it: a constant</td></tr>
+<tr><td>\(0.5\,WF\)</td><td>\(0.5\,F\)</td><td>\(0.5F\) is a constant multiplying \(W\)</td></tr>
+<tr><td>\(-0.25\,W^2\)</td><td>\(-0.5\,W\)</td><td>power rule: \(W^2 \to 2W\)</td></tr>
+<tr><td>\(-0.5\,F^2\)</td><td>\(0\)</td><td>no \(W\) in it: a constant</td></tr>
+</table>
+</div>
+$$ \frac{\partial Y}{\partial W} = 2 + 0.5\,F - 0.5\,W\ \ \text{bushels per bucket}. $$
+<p>Do the same with \(W\) frozen:</p>
+<div class="tablewrap">
+<table>
+<tr><th>term</th><th>derivative in \(F\) (\(W\) frozen)</th><th>why</th></tr>
+<tr><td>\(2W\)</td><td>\(0\)</td><td>no \(F\): a constant</td></tr>
+<tr><td>\(3F\)</td><td>\(3\)</td><td>a constant times \(F\)</td></tr>
+<tr><td>\(0.5\,WF\)</td><td>\(0.5\,W\)</td><td>\(0.5W\) is a constant multiplying \(F\)</td></tr>
+<tr><td>\(-0.25\,W^2\)</td><td>\(0\)</td><td>no \(F\): a constant</td></tr>
+<tr><td>\(-0.5\,F^2\)</td><td>\(-F\)</td><td>power rule: \(F^2 \to 2F\), times \(-0.5\)</td></tr>
+</table>
+</div>
+$$ \frac{\partial Y}{\partial F} = 3 + 0.5\,W - F\ \ \text{bushels per bag}. $$
+<p>Check at \((4, 2)\): \(2 + 0.5 \times 2 - 0.5 \times 4 = 2 + 1 - 2 = 1\), and \(3 + 0.5 \times 4 - 2 = 3 + 2 - 2 = 3\). Same as the slices. Good.</p>
+
+<h3>Check with real numbers: a finite difference</h3>
+<p>Never trust a formula you have not checked. Add 0.01 bucket and keep \(F = 2\):</p>
+$$ Y(4.01, 2) = 8.02 + 6 + 4.01 - 4.020025 - 2 = 12.009975. $$
+$$ \frac{Y(4.01, 2) - Y(4, 2)}{0.01} = \frac{0.009975}{0.01} = 0.9975\ \text{bushels per bucket} \approx 1. $$
+<p>Add 0.01 bag and keep \(W = 4\): \(Y(4, 2.01) = 12.02995\), so the ratio is \(0.02995 / 0.01 = 2.995 \approx 3\) bushels per bag. Both agree. The small gaps (0.0025 and 0.005) are the curvature terms from Level 4, and they shrink if you use a smaller step.</p>
+
+<h2>5.5 What happens to the partials when you move</h2>
+<p>The partials are not fixed numbers. They are functions of where you are. Here is \(\partial Y/\partial W = 2 + 0.5F - 0.5W\), in bushels per bucket, on a grid:</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(F\) \ \(W\)</th><th>0</th><th>2</th><th>4</th><th>6</th><th>8</th></tr>
+<tr><td>0</td><td>2</td><td>1</td><td>0</td><td>−1</td><td>−2</td></tr>
+<tr><td>2</td><td>3</td><td>2</td><td>1</td><td>0</td><td>−1</td></tr>
+<tr><td>4</td><td>4</td><td>3</td><td>2</td><td>1</td><td>0</td></tr>
+<tr><td>6</td><td>5</td><td>4</td><td>3</td><td>2</td><td>1</td></tr>
+</table>
+</div>
+<p>Two patterns, two mechanisms:</p>
+<ul>
+<li><b>Along a row (more water, same fertiliser), the value drops by 1 for every 2 buckets.</b> That is 0.5 bushels per bucket for each extra bucket. Each new bucket is worth less than the last: diminishing returns. In derivative language, \(\partial^2 Y/\partial W^2 = -0.5\) bushels per bucket². Likewise \(\partial^2 Y/\partial F^2 = -1\) bushels per bag² (differentiate \(3 + 0.5W - F\) in \(F\)).</li>
+<li><b>Down a column (more fertiliser, same water), the value rises by 1 for every 2 bags.</b> That is 0.5 bushels per bucket for each extra bag. Fertiliser makes water more valuable. This cross-effect is not a curvature along either input. It is an interaction, and <a href="06.html">Level 6</a> is all about it.</li>
+</ul>
+<p>Mechanics in one line: start at \((4, 2)\), where a bucket is worth 1 bushel. Add one bag, keeping water at 4. Now a bucket is worth \(2 + 0.5 \times 3 - 2 = 1.5\) bushels. The bag did not just add yield; it changed the value of water.</p>
+
+<h2>5.6 Moving both inputs: the linear approximation</h2>
+<p>Suppose you change both: \(\Delta W\) more buckets and \(\Delta F\) more bags. How much does the yield change? Do it in two legs.</p>
+<ol>
+<li>Leg 1: change water only. The yield changes by about \(\frac{\partial Y}{\partial W}\,\Delta W\) (Level 4, order 1).</li>
+<li>Leg 2: from there, change fertiliser only. The yield changes by about \(\frac{\partial Y}{\partial F}\,\Delta F\), using the partial at the end of leg 1. For small moves that is almost the partial at the start.</li>
+</ol>
+<p>Add the legs:</p>
+<div class="box key">
+<span class="boxtitle">First-order change in two inputs</span>
+$$ \Delta Y \approx \frac{\partial Y}{\partial W}\,\Delta W + \frac{\partial Y}{\partial F}\,\Delta F. $$
+Units: (bushels per bucket) × buckets + (bushels per bag) × bags = bushels. Geometrically, this replaces the hill near the point by a flat tilted sheet: the tangent plane. It is the two-input version of the tangent line.
+</div>
+
+<h3>Worked example: from (4, 2) to (5, 3)</h3>
+<p>Prediction: \(\Delta Y \approx 1 \times 1 + 3 \times 1 = 4\) bushels. Truth: \(Y(5, 3) - Y(4, 2)\). Compute \(Y(5, 3) = 10 + 9 + 7.5 - 6.25 - 4.5 = 15.75\). So the true change is \(15.75 - 12 = 3.75\) bushels. The prediction is 0.25 too high.</p>
+<p>Where does the 0.25 go? Because the farm is a quadratic, we can expand exactly. Put \(W + \Delta W\) and \(F + \Delta F\) into the formula, multiply out, and subtract \(Y(W, F)\). Every term that does not contain a \(\Delta\) cancels, and what is left is</p>
+$$ \Delta Y = \underbrace{(2 + 0.5F - 0.5W)}_{\partial Y/\partial W}\,\Delta W + \underbrace{(3 + 0.5W - F)}_{\partial Y/\partial F}\,\Delta F \;-\; 0.25\,\Delta W^2 \;-\; 0.5\,\Delta F^2 \;+\; 0.5\,\Delta W\,\Delta F. $$
+<p>With \(\Delta W = \Delta F = 1\) at \((4, 2)\):</p>
+$$ \Delta Y = 1 + 3 - 0.25 - 0.5 + 0.5 = 3.75. $$
+<p>Exact. The three extra pieces are second-order: water's diminishing returns (−0.25), fertiliser's diminishing returns (−0.5) and the interaction (+0.5). For a small move like \(\Delta W = \Delta F = 0.1\), they are 100 times smaller (−0.0025, −0.005, +0.005), and the linear approximation is nearly perfect.</p>
+
+<h2>5.7 The gradient: both partials in one arrow</h2>
+<p>Put the two partial derivatives side by side:</p>
+$$ \nabla Y = \left( \frac{\partial Y}{\partial W},\ \frac{\partial Y}{\partial F} \right) = (2 + 0.5F - 0.5W,\ \ 3 + 0.5W - F). $$
+<p>This pair is the gradient, written \(\nabla Y\) and read “grad Y”. At \((4, 2)\) it is \((1, 3)\). The first entry is in bushels per bucket, the second in bushels per bag. A pair of numbers like this is a vector (Level 7 treats vectors in general); vectors are written in bold, like \(\mathbf{u}\), from here on.</p>
+<p>Draw the gradient as an arrow on the map, starting at the plan: 1 map unit across (water) and 3 map units up (fertiliser). To draw it we had to decide that “1 bushel per bucket” and “1 bushel per bag” are the same length on paper. Section 5.10 shows that this decision matters.</p>
+<p>Its length, by Pythagoras, is</p>
+$$ \lVert \nabla Y \rVert = \sqrt{1^2 + 3^2} = \sqrt{10} \approx 3.162. $$
+<p>At the best plan \((14, 10)\): \(\partial Y/\partial W = 2 + 5 - 7 = 0\) and \(\partial Y/\partial F = 3 + 7 - 10 = 0\). The gradient is \((0, 0)\): no arrow. At the top of a hill there is no uphill. Solving “both partials equal zero” is how we find the top: \(2 + 0.5F - 0.5W = 0\) gives \(W = 4 + F\); putting that into \(3 + 0.5W - F = 0\) gives \(3 + 2 + 0.5F - F = 0\), so \(F = 10\) and \(W = 14\). Then \(Y(14, 10) = 28 + 30 + 70 - 49 - 50 = 29\) bushels. (That this flat spot is a top and not a saddle is checked with second derivatives at <a href="09.html">Level 9</a>.)</p>
+
+<h2>5.8 The directional derivative: any direction you like</h2>
+<p>Partials answer “what if I change only water?” and “what if I change only fertiliser?”. A farmer can also change both in a fixed mix: say 0.6 bucket for every 0.8 bag. How fast does yield change per unit walked in that direction?</p>
+<p>Describe the direction by a pair \(\mathbf{u} = (u_W, u_F)\) of length 1 on the map, so \(u_W^2 + u_F^2 = 1\). For example \((0.6, 0.8)\): \(0.36 + 0.64 = 1\). Walk a small distance \(\Delta s\) map units in that direction. The water changes by \(\Delta W = u_W\,\Delta s\) and the fertiliser by \(\Delta F = u_F\,\Delta s\). Put these into the first-order change from section 5.6:</p>
+$$ \Delta Y \approx \frac{\partial Y}{\partial W}\,u_W\,\Delta s + \frac{\partial Y}{\partial F}\,u_F\,\Delta s. $$
+<p>Divide by \(\Delta s\), and let \(\Delta s\) shrink to zero so the “≈” becomes “=”:</p>
+<div class="box key">
+<span class="boxtitle">Directional derivative</span>
+$$ D_{\mathbf{u}} Y = \frac{\partial Y}{\partial W}\,u_W + \frac{\partial Y}{\partial F}\,u_F = \nabla Y \cdot \mathbf{u}. $$
+The dot means: multiply matching entries and add. Unit: bushels per map unit. The two partials are the special cases \(\mathbf{u} = (1, 0)\) and \(\mathbf{u} = (0, 1)\).
+</div>
+<p>At \((4, 2)\) with \(\mathbf{u} = (0.6, 0.8)\): \(D_{\mathbf{u}} Y = 1 \times 0.6 + 3 \times 0.8 = 0.6 + 2.4 = 3.0\) bushels per map unit.</p>
+
+<h3>Every direction at once</h3>
+<p>A length-1 arrow at angle \(\theta\) from the water axis has across part \(\cos\theta\) and up part \(\sin\theta\). So \(\mathbf{u} = (\cos\theta, \sin\theta)\) and, at \((4, 2)\),</p>
+$$ D_{\mathbf{u}} Y = 1 \times \cos\theta + 3 \times \sin\theta. $$
+<div class="tablewrap">
+<table>
+<tr><th>\(\theta\)</th><th>0°</th><th>30°</th><th>45°</th><th>60°</th><th>71.6°</th><th>90°</th><th>120°</th><th>161.6°</th><th>180°</th><th>251.6°</th></tr>
+<tr><td>\(D_{\mathbf{u}}Y\) (bushels per map unit)</td><td>1.000</td><td>2.366</td><td>2.828</td><td>3.098</td><td><b>3.162</b></td><td>3.000</td><td>2.098</td><td>0.000</td><td>−1.000</td><td>−3.162</td></tr>
+</table>
+</div>
+<p>The angles 71.6°, 161.6° and 251.6° are rounded from 71.57°, 161.57° and 251.57°; the table gives the values at the unrounded angles. The largest value, 3.162, appears at 71.6°. That is exactly \(\sqrt{10} = \lVert \nabla Y \rVert\), and 71.6° is exactly the angle of the gradient arrow \((1, 3)\) (it rises 3 for each 1 across). The most negative value is in the opposite direction, 251.6°. And at 161.6°, at right angles to the gradient, the rate is zero.</p>
+
+<figure class="sim" id="sim-dial">
+<figcaption><b>Figure 5.3.</b> The direction dial. Top: a close-up of the map around your plan, with the gradient (grey arrow) and the walking direction \(\mathbf{u}\) at angle \(\theta\) (red arrow). Bottom: \(D_{\mathbf{u}}Y = \tfrac{\partial Y}{\partial W}\cos\theta + \tfrac{\partial Y}{\partial F}\sin\theta\) for every angle; the red dot is your current \(\theta\). Turn the dial. Find the angle where the red arrow lies along a contour line: the rate there is zero. Find the top of the curve: the red arrow then lies on the grey one. The <span class="nogl">readout</span> also checks the formula with a real tiny step.</figcaption>
+</figure>
+
+<h2>5.9 Steepest ascent, and why the gradient crosses contours at right angles</h2>
+<p>The table showed it with numbers. Here is why it must be so. Level 7 proves that for any two arrows, \(\mathbf{a}\cdot\mathbf{b} = \lVert\mathbf{a}\rVert\,\lVert\mathbf{b}\rVert\cos(\text{angle between them})\). Use it with \(\nabla Y\) and the length-1 direction \(\mathbf{u}\), and call the angle between them \(\alpha\):</p>
+$$ D_{\mathbf{u}} Y = \lVert \nabla Y \rVert \times 1 \times \cos\alpha. $$
+<p>Now \(\cos\alpha\) is at most 1, reached at \(\alpha = 0°\). So:</p>
+<ul>
+<li><b>Steepest ascent.</b> The fastest way uphill is along the gradient (\(\alpha = 0°\)), and the rate there is \(\lVert\nabla Y\rVert\). The fastest way downhill is straight against it (\(\alpha = 180°\)). Walking against the gradient, step after step, is gradient descent: how neural networks are trained (Level 10).</li>
+<li><b>Contours.</b> Walking along a contour, the yield does not change, so \(D_{\mathbf{u}}Y = 0\), so \(\cos\alpha = 0\), so \(\alpha = 90°\). The gradient is perpendicular to the contour line through the point.</li>
+</ul>
+
+<h3>Mechanics: the contour direction at (4, 2)</h3>
+<p>Along the contour, to first order, \(1 \times \Delta W + 3 \times \Delta F = 0\). So \(\Delta F = -\Delta W / 3\): one third of a bag less for each extra bucket. A direction along the contour is \((3, -1)\). Check it is perpendicular to the gradient: \((1, 3)\cdot(3, -1) = 3 - 3 = 0\). Now test with real numbers. Take a step of 0.01 times each direction:</p>
+<ul>
+<li>along the contour, to \((4.03, 1.99)\): \(Y = 11.999575\), a change of only −0.000425 bushels (a second-order leftover);</li>
+<li>along the gradient, the same distance, to \((4.01, 2.03)\): \(Y = 12.099675\), a change of +0.0997 bushels.</li>
+</ul>
+<p>Same distance walked. More than two hundred times more yield change one way than the other.</p>
+
+<figure class="sim" id="sim-ascent">
+<figcaption><b>Figure 5.4.</b> Climbing the hill by always walking along the gradient. Drag the green start point anywhere. The blue path takes small steps, each in the gradient direction at that moment, and stops near the top \((14, 10)\). Small grey arrows show the gradient direction everywhere. Notice that the blue path crosses every contour at a right angle. Then tick the box to also walk with water measured in litres (section 5.10): the red path climbs to the same top by a different route, and it does not cross the contours at right angles on this map.</figcaption>
+</figure>
+
+<h2>5.10 “Steepest” depends on your ruler</h2>
+<p>This is the one non-obvious point of the page. The gradient's two entries have different units: bushels per bucket and bushels per bag. To draw the arrow, or to say which direction is “steepest”, we had to treat 1 bucket and 1 bag as the same length. That is a choice, not a fact about the farm.</p>
+
+<h3>Worked example: measure water in litres</h3>
+<p>Let \(L\) be the water in litres, so \(L = 10\,W\). One more litre is a tenth of a bucket, so it adds a tenth as much yield:</p>
+$$ \frac{\partial Y}{\partial L} = \frac{\partial Y}{\partial W} \times \frac{1\ \text{bucket}}{10\ \text{litres}} = 1 \times 0.1 = 0.1\ \text{bushels per litre at } (4, 2). $$
+<p>In (litre, bag) units the gradient is \((0.1, 3)\). Its direction is almost pure fertiliser. Compare the steepest-ascent mixes:</p>
+<ul>
+<li>bucket ruler: gradient \((1, 3)\), so walk 1 bucket for every 3 bags, that is 0.333 buckets per bag;</li>
+<li>litre ruler: gradient \((0.1, 3)\), so walk 0.1 litre for every 3 bags, that is 0.0333 litres = 0.00333 buckets per bag.</li>
+</ul>
+<p>The “steepest” mix of water and fertiliser changed by a factor of 100. The farm did not change. Only the ruler did. (The factor is \(10^2\): one 10 because each litre is worth a tenth as much yield, and another 10 because a step of one litre is a tenth as much water.)</p>
+<p>A real-world version: suppose (a toy assumption) water costs 1 dollar a bucket and fertiliser 5 dollars a bag. Per dollar, water gives \(1 / 1 = 1\) bushel and fertiliser gives \(3 / 5 = 0.6\) bushels. Measured in dollars, the best next dollar goes on water. Measured in buckets and bags, the best next step is mostly fertiliser. Both are right. They answer different questions.</p>
+
+<div class="box warn">
+<span class="boxtitle">The partials are facts; “steepest” is a convention</span>
+The values \(\partial Y/\partial W = 1\) bushel per bucket and \(\partial Y/\partial F = 3\) bushels per bag do not depend on any choice. The steepest direction, the length of the gradient and the right angle with the contours all depend on how you compare a bucket with a bag. Before you say a direction is “the most important”, say what ruler you used.
+</div>
+
+<h2>5.11 Why this matters for H-space</h2>
+<ol>
+<li><b>Directions, not just inputs.</b> In a language model the residual state at one position is 5,120 numbers (Level 14). Interesting things rarely live along one of those numbers. They live along directions: fixed mixes of all 5,120, exactly like the water-and-fertiliser mix \(\mathbf{u}\). The rate of change along such a direction is a directional derivative, \(\nabla f \cdot \mathbf{u}\).</li>
+<li><b>First order is the J-lens.</b> Stacking gradients for many outputs gives the Jacobian (Level 8). The J-lens of Level 14 is built from these first derivatives. H-space asks the same questions one derivative higher: how does the gradient itself change when you move? Section 5.5 is the first glimpse of that.</li>
+<li><b>The ruler problem is real there.</b> Different directions in the residual stream naturally vary by very different amounts. Comparing raw rates along them is like comparing per-litre with per-bag. Level 15 measures every direction in units of its own natural spread (one standard deviation, “1σ”), a step called whitening. Section 5.10 is the reason it is needed.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="19" data-tol="0.001" data-unit="bushels">
+<p><b>Exercise 5.1.</b> Compute \(Y(6, 4)\) term by term.</p>
+<details><summary>Show answer</summary>
+<p>\(2 \times 6 = 12\); \(3 \times 4 = 12\); \(0.5 \times 6 \times 4 = 12\); \(-0.25 \times 36 = -9\); \(-0.5 \times 16 = -8\). Total: \(12 + 12 + 12 - 9 - 8 = 19\) bushels.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1" data-tol="0.001" data-unit="bushels per bucket">
+<p><b>Exercise 5.2.</b> Compute \(\partial Y/\partial W\) at \((6, 4)\).</p>
+<details><summary>Show answer</summary>
+<p>\(2 + 0.5 \times 4 - 0.5 \times 6 = 2 + 2 - 3 = 1\) bushel per bucket.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2" data-tol="0.001" data-unit="bushels per bag">
+<p><b>Exercise 5.3.</b> Compute \(\partial Y/\partial F\) at \((6, 4)\). Then write the F-slice \(Y(6, F)\) (water fixed at 6) as a one-input function and check your answer by differentiating it.</p>
+<details><summary>Show answer</summary>
+<p>\(3 + 0.5 \times 6 - 4 = 2\) bushels per bag. Slice: \(Y(6, F) = 12 + 3F + 3F - 9 - 0.5F^2 = 6F - 0.5F^2 + 3\). Its derivative is \(6 - F\), which is 2 at \(F = 4\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.4" data-tol="0.001" data-unit="bushels">
+<p><b>Exercise 5.4.</b> From \((6, 4)\), add 0.2 bucket and 0.1 bag. Use the first-order change to predict \(\Delta Y\). Then find the exact change with the full expansion of section 5.6.</p>
+<details><summary>Show answer</summary>
+<p>Prediction: \(1 \times 0.2 + 2 \times 0.1 = 0.4\) bushels. Exact: add \(-0.25 \times 0.04 - 0.5 \times 0.01 + 0.5 \times 0.2 \times 0.1 = -0.01 - 0.005 + 0.01 = -0.005\). So \(\Delta Y = 0.395\) bushels.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="3" data-tol="0.001" data-unit="bushels per map unit">
+<p><b>Exercise 5.5.</b> At \((4, 2)\), what is the directional derivative in the direction \(\mathbf{u} = (0.6, 0.8)\)? First check that \(\mathbf{u}\) has length 1.</p>
+<details><summary>Show answer</summary>
+<p>Length: \(\sqrt{0.36 + 0.64} = 1\). \(D_{\mathbf{u}}Y = 1 \times 0.6 + 3 \times 0.8 = 3.0\) bushels per map unit. That is a little less than the maximum, 3.162, because \(\mathbf{u}\) points at 53.1°, not 71.6°.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2.2360680" data-tol="0.001" data-unit="bushels per map unit">
+<p><b>Exercise 5.6.</b> What is the steepest rate of increase of yield at \((6, 4)\), in bushels per map unit?</p>
+<details><summary>Show answer</summary>
+<p>The gradient is \((1, 2)\) (Exercises 5.2 and 5.3). The steepest rate is its length, \(\sqrt{1 + 4} = \sqrt{5} \approx 2.236\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="6" data-tol="0.001" data-unit="buckets">
+<p><b>Exercise 5.7.</b> With 2 bags of fertiliser, at what amount of water does one more bucket stop helping?</p>
+<details><summary>Show answer</summary>
+<p>Set \(\partial Y/\partial W = 2 + 0.5 \times 2 - 0.5W = 3 - 0.5W = 0\). So \(W = 6\) buckets. Check in the table of section 5.5: row \(F = 2\), column \(W = 6\) shows 0.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.5" data-tol="0.001" data-unit="bags">
+<p><b>Exercise 5.8.</b> At \((6, 4)\) you add one small extra bucket. To first order, how many bags must you remove to keep the yield the same?</p>
+<details><summary>Show answer</summary>
+<p>Stay on the contour: \(1 \times \Delta W + 2 \times \Delta F = 0\). With \(\Delta W = 1\) (per bucket), \(\Delta F = -0.5\). Remove 0.5 bag per bucket. The step \((1, -0.5)\) is perpendicular to the gradient \((1, 2)\): \(1 - 1 = 0\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.1" data-tol="0.001" data-unit="bushels per litre">
+<p><b>Exercise 5.9.</b> At \((4, 2)\), what is the rate of change of yield per extra litre of water?</p>
+<details><summary>Show answer</summary>
+<p>A litre is 0.1 bucket, so \(\partial Y/\partial L = 1\ \tfrac{\text{bushel}}{\text{bucket}} \times 0.1\ \tfrac{\text{bucket}}{\text{litre}} = 0.1\) bushel per litre.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="12" data-tol="0.001">
+<p><b>Exercise 5.10.</b> Let \(f(x, y) = x^2 y\). Compute \(\partial f/\partial x\) and \(\partial f/\partial y\) at \((3, 2)\). Enter \(\partial f/\partial x\).</p>
+<details><summary>Show answer</summary>
+<p>Treat \(y\) as a number: \(\partial f/\partial x = 2xy = 2 \times 3 \times 2 = 12\). Treat \(x\) as a number: \(\partial f/\partial y = x^2 = 9\).</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  /* the farm (toy): Y in bushels, W in buckets, F in bags */
+  function Y(W, F) { return 2 * W + 3 * F + 0.5 * W * F - 0.25 * W * W - 0.5 * F * F; }
+  function YW(W, F) { return 2 + 0.5 * F - 0.5 * W; }
+  function YF(W, F) { return 3 + 0.5 * W - F; }
+  var LEVELS = [-40, -30, -20, -10, -5, 0, 5, 10, 15, 20, 25, 28];
+  function setup(host) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    return wrap;
+  }
+  /* keep 1 bucket and 1 bag the same length on screen */
+  function equalScale(v, xmin, xmax, ymin) {
+    var b = v.box();
+    v.set({ xmin: xmin, xmax: xmax, ymin: ymin, ymax: ymin + (xmax - xmin) * (b.b - b.t) / (b.r - b.l) });
+  }
+
+  /* Figure 5.1: the surface */
+  (function () {
+    var wrap = setup(document.getElementById("sim-surface"));
+    var c = S.canvas(wrap, { aspect: 0.62 });
+    var g = S.v3(c, { azimuth: -0.7, elevation: 0.5, scale: 1.1 });
+    var w0 = S.slider(wrap, { label: "water W", min: 0, max: 16, step: 0.5, value: 4, unit: "buckets", digits: 1, oninput: function () { c.redraw(); } });
+    var f0 = S.slider(wrap, { label: "fertiliser F", min: 0, max: 12, step: 0.5, value: 2, unit: "bags", digits: 1, oninput: function () { c.redraw(); } });
+    var az = S.slider(wrap, { label: "turn", min: -3.1, max: 3.1, step: 0.05, value: -0.7, unit: "rad", digits: 2, oninput: function () { g.azimuth = az.get(); c.redraw(); } });
+    var out = S.readout(wrap);
+    /* map farm coordinates to the centred box used by the 3-D helper */
+    function P(W, F, Z) { g.cy = c.H * 0.42; return g.p((W - 8) / 4, (F - 6) / 4, Z / 25); }
+    function poly(pts, col, wd, dash) {
+      var ctx = c.ctx; ctx.strokeStyle = col; ctx.lineWidth = wd; ctx.setLineDash(dash || []);
+      ctx.beginPath(); pts.forEach(function (p, i) { if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); }); ctx.stroke(); ctx.setLineDash([]);
+    }
+    c.draw = function () {
+      var W0 = w0.get(), F0 = f0.get(), i, j, pts, floor = -36;
+      /* floor outline */
+      poly([P(0, 0, floor), P(16, 0, floor), P(16, 12, floor), P(0, 12, floor), P(0, 0, floor)], S.col.light, 1);
+      for (i = 0; i <= 16; i++) { pts = []; for (j = 0; j <= 24; j++) pts.push(P(i, j / 2, Y(i, j / 2))); poly(pts, S.col.gray, 0.8); }
+      for (j = 0; j <= 12; j++) { pts = []; for (i = 0; i <= 32; i++) pts.push(P(i / 2, j, Y(i / 2, j))); poly(pts, S.col.gray, 0.8); }
+      pts = []; for (i = 0; i <= 64; i++) pts.push(P(i / 4, F0, Y(i / 4, F0))); poly(pts, S.col.red, 2.5);
+      pts = []; for (j = 0; j <= 48; j++) pts.push(P(W0, j / 4, Y(W0, j / 4))); poly(pts, S.col.blue, 2.5);
+      var top = P(W0, F0, Y(W0, F0)), bot = P(W0, F0, floor);
+      poly([bot, top], S.col.ink, 1, [3, 3]);
+      var ctx = c.ctx; ctx.fillStyle = S.col.ink; ctx.beginPath(); ctx.arc(top[0], top[1], 5, 0, 2 * Math.PI); ctx.fill();
+      ctx.beginPath(); ctx.arc(bot[0], bot[1], 3, 0, 2 * Math.PI); ctx.fill();
+      ctx.font = S.font; ctx.textAlign = "center";
+      var a = P(16, F0, Y(16, F0)), b = P(W0, 12, Y(W0, 12)), m = P(14, 10, 29);
+      ctx.fillStyle = S.col.red; ctx.fillText("more water →", a[0], a[1] + 18);
+      ctx.fillStyle = S.col.blue; ctx.fillText("more fertiliser →", b[0], b[1] + 18);
+      ctx.fillStyle = S.col.green; ctx.beginPath(); ctx.arc(m[0], m[1], 4, 0, 2 * Math.PI); ctx.fill();
+      ctx.fillText("top: 29 bushels", m[0], m[1] - 10);
+      ctx.fillStyle = S.col.ink; ctx.textAlign = "left"; ctx.fillText("height = yield Y (bushels); floor drawn at Y = −36", 10, 20);
+      out.textContent =
+        "Y(" + S.fmt(W0, 1) + ", " + S.fmt(F0, 1) + ") = 2×" + S.fmt(W0, 1) + " + 3×" + S.fmt(F0, 1) + " + 0.5×" + S.fmt(W0, 1) + "×" + S.fmt(F0, 1) +
+        " − 0.25×" + S.fmt(W0, 1) + "² − 0.5×" + S.fmt(F0, 1) + "² = " + S.fmt(Y(W0, F0), 3) + " bushels\n" +
+        "red slice: F fixed at " + S.fmt(F0, 1) + " bags    blue slice: W fixed at " + S.fmt(W0, 1) + " buckets";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 5.2: contour map with draggable point, and the two slices */
+  (function () {
+    var wrap = setup(document.getElementById("sim-slices"));
+    var cm = S.canvas(wrap, { aspect: 0.6 });
+    var vm = S.view(cm, { xmin: 0, xmax: 20, ymin: 0, ymax: 12, padLeft: 40, padBottom: 30 });
+    var cs = S.canvas(wrap, { aspect: 0.42 });
+    var vW = S.view(cs, { xmin: 0, xmax: 20, ymin: -20, ymax: 32, padLeft: 36, padBottom: 30 });
+    var vF = S.view(cs, { xmin: 0, xmax: 14, ymin: -20, ymax: 32, padLeft: 36, padBottom: 30 });
+    var out = S.readout(wrap);
+    var pt = { x: 4, y: 2 };
+    function redraw() { cm.redraw(); cs.redraw(); }
+    S.drag(cm, vm, [pt], function () { redraw(); });
+    cm.draw = function () {
+      equalScale(vm, 0, 20, 0);
+      vm.heat(Y, { min: -30, max: 30, step: 5 });
+      vm.contour(Y, LEVELS, { color: S.col.gray, width: 0.8, res: 70 });
+      vm.axes({ xlabel: "water W (buckets)", ylabel: "fertiliser F (bags)", xticks: 2, yticks: 2, grid: false });
+      var W = pt.x, F = pt.y;
+      vm.line(vm.r.xmin, F, vm.r.xmax, F, { color: S.col.red, width: 1.5 });
+      vm.line(W, vm.r.ymin, W, vm.r.ymax, { color: S.col.blue, width: 1.5 });
+      vm.arrow(W, F, W + YW(W, F), F + YF(W, F), { color: S.col.ink, width: 2 });
+      vm.dot(14, 10, { color: S.col.green, r: 4 });
+      vm.text("top (14, 10)", 14, 10, { dx: 6, dy: -6, color: S.col.green, font: S.fontSmall });
+      vm.dot(W, F, { color: S.col.ink, r: 6 });
+    };
+    cs.draw = function () {
+      var W = pt.x, F = pt.y, half = cs.W / 2;
+      vW.set({ left: 0, width: half }); vF.set({ left: half, width: half });
+      vW.axes({ xlabel: "W (buckets)", ylabel: "Y (bushels), F fixed", xticks: 4, yticks: 10 });
+      vW.fn(function (w) { return Y(w, F); }, { color: S.col.red, width: 2 });
+      var sW = YW(W, F), y0 = Y(W, F);
+      vW.line(W - 3, y0 - 3 * sW, W + 3, y0 + 3 * sW, { color: S.col.ink, width: 1.2 });
+      vW.dot(W, y0, { color: S.col.ink });
+      vF.axes({ xlabel: "F (bags)", ylabel: "Y (bushels), W fixed", xticks: 2, yticks: 10 });
+      vF.fn(function (f) { return Y(W, f); }, { color: S.col.blue, width: 2 });
+      var sF = YF(W, F);
+      vF.line(F - 2, y0 - 2 * sF, F + 2, y0 + 2 * sF, { color: S.col.ink, width: 1.2 });
+      vF.dot(F, y0, { color: S.col.ink });
+      out.textContent =
+        "plan (W, F) = (" + S.fmt(W, 2) + " buckets, " + S.fmt(F, 2) + " bags)    Y = " + S.fmt(y0, 3) + " bushels\n" +
+        "∂Y/∂W = 2 + 0.5F − 0.5W = 2 + 0.5×" + S.fmt(F, 2) + " − 0.5×" + S.fmt(W, 2) + " = " + S.fmt(sW, 3) + " bushels per bucket   (slope of the red slice)\n" +
+        "∂Y/∂F = 3 + 0.5W − F = 3 + 0.5×" + S.fmt(W, 2) + " − " + S.fmt(F, 2) + " = " + S.fmt(sF, 3) + " bushels per bag   (slope of the blue slice)\n" +
+        "gradient ∇Y = (" + S.fmt(sW, 3) + ", " + S.fmt(sF, 3) + ")   (arrow drawn with 1 bushel per bucket or per bag = 1 map unit)";
+    };
+    redraw();
+  })();
+
+  /* Figure 5.3: the direction dial */
+  (function () {
+    var wrap = setup(document.getElementById("sim-dial"));
+    var cm = S.canvas(wrap, { aspect: 0.5 });
+    var vm = S.view(cm, { xmin: 0, xmax: 1, ymin: 0, ymax: 1, padLeft: 40, padBottom: 30 });
+    var cg = S.canvas(wrap, { aspect: 0.36 });
+    var vg = S.view(cg, { xmin: 0, xmax: 360, ymin: -4, ymax: 4, padLeft: 40, padBottom: 30 });
+    function redraw() { cm.redraw(); cg.redraw(); }
+    var th = S.slider(wrap, { label: "direction θ", min: 0, max: 360, step: 1, value: 60, unit: "°", digits: 0, oninput: redraw });
+    var w0 = S.slider(wrap, { label: "water W", min: 0, max: 18, step: 0.5, value: 4, unit: "buckets", digits: 1, oninput: redraw });
+    var f0 = S.slider(wrap, { label: "fertiliser F", min: 0, max: 12, step: 0.5, value: 2, unit: "bags", digits: 1, oninput: redraw });
+    var out = S.readout(wrap);
+    cm.draw = function () {
+      var W = w0.get(), F = f0.get();
+      equalScale(vm, W - 5, W + 5, F - 2.5);
+      var b = vm.box(); vm.set({ ymin: F - (vm.r.ymax - vm.r.ymin) / 2, ymax: F + (vm.r.ymax - vm.r.ymin) / 2 });
+      vm.heat(Y, { min: -30, max: 30, step: 5 });
+      var lv = []; for (var k = -40; k <= 28; k += 2) lv.push(k);
+      vm.contour(Y, lv, { color: S.col.light, width: 0.8, res: 50 });
+      vm.contour(Y, [Y(W, F)], { color: S.col.ink, width: 1.2, res: 80, dash: [4, 3] });
+      vm.axes({ xlabel: "W (buckets)", ylabel: "F (bags)", xticks: 1, yticks: 1, grid: false, frame: true });
+      var gW = YW(W, F), gF = YF(W, F), t = th.get() * Math.PI / 180;
+      vm.arrow(W, F, W + gW, F + gF, { color: S.col.gray, width: 3 });
+      vm.arrow(W, F, W + 2 * Math.cos(t), F + 2 * Math.sin(t), { color: S.col.red, width: 2.5 });
+      vm.text("u (2 map units long)", W + 2.1 * Math.cos(t), F + 2.1 * Math.sin(t), { color: S.col.red, font: S.fontSmall, dx: 4 });
+      vm.dot(W, F, { color: S.col.ink, r: 5 });
+    };
+    cg.draw = function () {
+      var W = w0.get(), F = f0.get(), gW = YW(W, F), gF = YF(W, F), T = th.get(), t = T * Math.PI / 180;
+      var R = Math.max(2, Math.ceil(Math.hypot(gW, gF) + 0.5));
+      vg.set({ ymin: -R, ymax: R });
+      vg.axes({ xlabel: "θ (degrees)", ylabel: "D_u Y (bushels per map unit)", xticks: 45, yticks: R > 6 ? 2 : 1 });
+      vg.fn(function (a) { var r = a * Math.PI / 180; return gW * Math.cos(r) + gF * Math.sin(r); }, { color: S.col.ink, width: 2 });
+      var best = (Math.atan2(gF, gW) * 180 / Math.PI + 360) % 360, n = Math.hypot(gW, gF);
+      vg.line(best, -R, best, R, { color: S.col.gray, dash: [4, 4], width: 1 });
+      var D = gW * Math.cos(t) + gF * Math.sin(t);
+      vg.dot(T, D, { color: S.col.red, r: 5 });
+      var ds = 0.001, fd = (Y(W + ds * Math.cos(t), F + ds * Math.sin(t)) - Y(W, F)) / ds;
+      out.textContent =
+        "at (" + S.fmt(W, 1) + ", " + S.fmt(F, 1) + "):  ∂Y/∂W = " + S.fmt(gW, 3) + " bushels/bucket,  ∂Y/∂F = " + S.fmt(gF, 3) + " bushels/bag\n" +
+        "u = (cos θ, sin θ) = (" + S.fmt(Math.cos(t), 3) + ", " + S.fmt(Math.sin(t), 3) + ")\n" +
+        "D_u Y = " + S.fmt(gW, 3) + " × " + S.fmt(Math.cos(t), 3) + " + " + S.fmt(gF, 3) + " × " + S.fmt(Math.sin(t), 3) + " = " + S.fmt(D, 3) + " bushels per map unit\n" +
+        "check with a real step Δs = 0.001: [Y(after) − Y(before)] / Δs = " + S.fmt(fd, 3) + "\n" +
+        (n > 1e-9 ? "steepest: θ = " + S.fmt(best, 1) + "° (dashed line), rate = ‖∇Y‖ = " + S.fmt(n, 3) : "gradient is zero here: this is the top, every direction gives 0");
+    };
+    redraw();
+  })();
+
+  /* Figure 5.4: steepest-ascent path, and the litre ruler */
+  (function () {
+    var wrap = setup(document.getElementById("sim-ascent"));
+    var c = S.canvas(wrap, { aspect: 0.62 });
+    var v = S.view(c, { xmin: 0, xmax: 20, ymin: 0, ymax: 12, padLeft: 40, padBottom: 30 });
+    var start = { x: 1, y: 1 };
+    var lit = S.checkbox(wrap, "also walk with water measured in litres (red)", false, function () { c.redraw(); });
+    var out = S.readout(wrap);
+    S.drag(c, v, [start], function () { c.redraw(); });
+    /* walk: dirFn gives the uphill direction in (W, F) coordinates */
+    function walk(dirFn, cap) {
+      var W = start.x, F = start.y, pts = [[W, F]], n = 0;
+      for (n = 0; n < 4000; n++) {
+        if (Math.hypot(W - 14, F - 10) < 0.06) break;
+        var d = dirFn(W, F), L = Math.hypot(d[0], d[1]);
+        if (L < 1e-9) break;
+        var st = Math.min(0.05 / L, cap);
+        W += d[0] * st; F += d[1] * st; pts.push([W, F]);
+      }
+      return { pts: pts, n: n, W: W, F: F };
+    }
+    c.draw = function () {
+      equalScale(v, 0, 20, 0);
+      v.heat(Y, { min: -30, max: 30, step: 5 });
+      v.contour(Y, LEVELS, { color: S.col.gray, width: 0.8, res: 70 });
+      v.axes({ xlabel: "water W (buckets)", ylabel: "fertiliser F (bags)", xticks: 2, yticks: 2, grid: false });
+      for (var W = 1; W < 20; W += 2) for (var F = 1; F < v.r.ymax; F += 2) {
+        var gw = YW(W, F), gf = YF(W, F), L = Math.hypot(gw, gf);
+        if (L > 1e-6) v.arrow(W, F, W + 0.7 * gw / L, F + 0.7 * gf / L, { color: S.col.gray, width: 1, head: 5 });
+      }
+      var a = walk(function (W, F) { return [YW(W, F), YF(W, F)]; }, 0.5);
+      v.poly(a.pts, { color: S.col.blue, width: 2.5, close: false });
+      var txt = "start (" + S.fmt(start.x, 2) + ", " + S.fmt(start.y, 2) + "): Y = " + S.fmt(Y(start.x, start.y), 2) + " bushels\n" +
+        "blue (bucket ruler): " + a.n + " steps of 0.05 map units, ends at (" + S.fmt(a.W, 2) + ", " + S.fmt(a.F, 2) + "), Y = " + S.fmt(Y(a.W, a.F), 3) + " bushels";
+      if (lit.get()) {
+        var b = walk(function (W, F) { return [0.01 * YW(W, F), YF(W, F)]; }, 1.2);
+        v.poly(b.pts, { color: S.col.red, width: 2, dash: [5, 3], close: false });
+        txt += "\nred (litre ruler): uphill direction in (W, F) is (0.01 × ∂Y/∂W, ∂Y/∂F); ends at (" + S.fmt(b.W, 2) + ", " + S.fmt(b.F, 2) + "), Y = " + S.fmt(Y(b.W, b.F), 3);
+      }
+      v.dot(14, 10, { color: S.col.ink, r: 4 });
+      v.dot(start.x, start.y, { color: S.col.green, r: 7 });
+      v.text("drag", start.x, start.y, { dx: 9, dy: 4, color: S.col.green, font: S.fontSmall });
+      out.textContent = txt;
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

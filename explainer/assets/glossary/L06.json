@@ -1,0 +1,5 @@
+{
+ "complements": {"t": "complements", "a": ["complementary inputs"], "l": 6, "d": "Two inputs that make each other more valuable, so their interaction is positive: water and fertiliser, a left and a right shoe, the two keys of a vault."},
+ "substitutes": {"t": "substitutes", "a": ["substitute inputs"], "l": 6, "d": "Two inputs that do the same job, so each makes the other less valuable and their interaction is negative: two backup generators, tea and coffee for someone who drinks one hot drink a day."},
+ "matched control": {"t": "matched control", "a": ["matched controls"], "l": 6, "d": "A comparison case built to be the same as the case under test in everything except the property being tested. If the test case still stands out, that property, not the matched features, is the likely reason."}
+}

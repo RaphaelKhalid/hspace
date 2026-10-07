@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 9: The Hessian</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="9">
+<div class="page">
+
+<h1>Level 9: The Hessian</h1>
+<p class="subtitle">The gradient says which way is uphill. The Hessian says how that answer changes as you walk: bending along each direction, and how the directions interact.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>build the Hessian as the Jacobian of the gradient, and give each entry its unit (“bushels per bucket per bag”);</li>
+<li>compute the curvature along any direction with the quadratic form \(\mathbf{v}^\top H\mathbf{v}\);</li>
+<li>find the eigenvalues and eigenvectors of a 2×2 symmetric matrix by hand, and say why they are the principal curvatures;</li>
+<li>tell a bowl from a dome from a saddle using signs of eigenvalues, or the trace and determinant;</li>
+<li>show that interaction depends on the axes you choose, and that the eigenvectors are the axes with no interaction;</li>
+<li>compute the Hessian of a product of two reads, \(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\), and its eigenvalues;</li>
+<li>measure a Hessian's size (Frobenius norm) and explain which of its features survive a change of units (Sylvester's law of inertia).</li>
+</ul>
+<p class="small">Prerequisites: the farm, partial derivatives and the gradient (<a href="05.html">Level 5</a>), the mixed partial and the 2×2 interaction (<a href="06.html">Level 6</a>), matrices, transpose and determinant (<a href="07.html">Level 7</a>), and the Jacobian (<a href="08.html">Level 8</a>).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Bold lower-case letters are vectors; upper-case letters are matrices. In this level, a “unit step” means a move of total length 1 when one bucket and one bag are counted as equal-sized steps; 9.10 examines that choice.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(W\)</td><td>“W”</td><td>water used on the farm (1 bucket = 10 litres)</td><td>buckets</td><td>\(W = 4\)</td></tr>
+<tr><td>\(F\)</td><td>“F”</td><td>fertiliser used</td><td>bags</td><td>\(F = 2\)</td></tr>
+<tr><td>\(Y\)</td><td>“Y”</td><td>crop yield, \(Y = 2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\)</td><td>bushels</td><td>\(Y(4, 2) = 12\)</td></tr>
+<tr><td>\(\mathbf{x}\)</td><td>“x”</td><td>a plan (input point) as a vector: \((W, F)\) on the farm, \((x_1, x_2)\) in general</td><td>(buckets, bags)</td><td>\(\mathbf{x} = (4, 2)\)</td></tr>
+<tr><td>\(x_1, x_2\)</td><td>“x one”, “x two”</td><td>the two inputs of a general function</td><td>none (pure number) in the toys</td><td></td></tr>
+<tr><td>\(\partial Y/\partial W\)</td><td>“partial Y by partial W”</td><td>rate of yield per bucket, fertiliser held fixed</td><td>bushels per bucket</td><td>1 at (4, 2)</td></tr>
+<tr><td>\(\partial^2 Y/\partial W^2\)</td><td>“second partial of Y by W”</td><td>how fast \(\partial Y/\partial W\) changes per bucket</td><td>bushels per bucket per bucket</td><td>\(-0.5\)</td></tr>
+<tr><td>\(\partial^2 Y/\partial W\,\partial F\)</td><td>“mixed partial of Y by W and F”</td><td>how fast \(\partial Y/\partial W\) changes per bag (the interaction)</td><td>bushels per bucket per bag</td><td>\(0.5\)</td></tr>
+<tr><td>\(\nabla Y\)</td><td>“grad Y”</td><td>the gradient: \((\partial Y/\partial W, \partial Y/\partial F)\)</td><td>(bushels per bucket, bushels per bag)</td><td>\((1, 3)\) at (4, 2)</td></tr>
+<tr><td>\(\mathbf{g}\)</td><td>“g”</td><td>the gradient viewed as a map: plan in, gradient out</td><td>as \(\nabla Y\)</td><td>\(\mathbf{g}(4, 2) = (1, 3)\)</td></tr>
+<tr><td>\(H, \nabla^2 Y\)</td><td>“H”, “the Hessian of Y”</td><td>the matrix of all second partial derivatives</td><td>entry \((i, j)\): output unit per input \(i\) per input \(j\)</td><td>\(\begin{pmatrix} -0.5 & 0.5 \\ 0.5 & -1 \end{pmatrix}\)</td></tr>
+<tr><td>\(H_{ij}\)</td><td>“H i j”</td><td>row \(i\), column \(j\) of \(H\): \(\partial^2 Y/\partial x_i\,\partial x_j\)</td><td>as above</td><td>\(H_{12} = 0.5\)</td></tr>
+<tr><td>\(i, j\)</td><td>“i”, “j”</td><td>counters: which input</td><td>none (pure number)</td><td>\(i = 2\)</td></tr>
+<tr><td>\(a, b, c\)</td><td>“a, b, c”</td><td>the entries of a general symmetric 2×2 matrix \(\begin{pmatrix} a & b \\ b & c \end{pmatrix}\)</td><td>as \(H\)'s entries</td><td>farm: \(a = -0.5, b = 0.5, c = -1\)</td></tr>
+<tr><td>\(\Delta W, \Delta F\)</td><td>“delta W”, “delta F”</td><td>finite changes of the inputs</td><td>buckets, bags</td><td>\(\Delta W = 0.2\)</td></tr>
+<tr><td>\(\Delta\mathbf{x}\)</td><td>“delta x”</td><td>the move \((\Delta W, \Delta F)\) as one vector</td><td>(buckets, bags)</td><td>\((0.2, -0.05)\)</td></tr>
+<tr><td>\(\mathbf{v}, \hat{\mathbf{v}}\)</td><td>“v”, “v hat”</td><td>a direction to move in; the same direction scaled to length 1</td><td>(buckets, bags); none</td><td>\(\mathbf{v} = (1, 1)\)</td></tr>
+<tr><td>\(\mathbf{u};\ v_1, v_2;\ u_1, u_2;\ a_i, b_i\)</td><td>“u”; “v one”, …</td><td>\(\mathbf{u}\): any eigenvector (9.5). Plain letters with a subscript: the components of \(\mathbf{v}\), of an eigenvector \(\mathbf{u}\), of \(\mathbf{a}\) and \(\mathbf{b}\)</td><td>as the vector</td><td>\(u_2/u_1 = 0.618\)</td></tr>
+<tr><td>\(\mathbf{v}^\top H\mathbf{v}\)</td><td>“v transpose H v”, “the quadratic form”</td><td>one number: the curvature along \(\mathbf{v}\), times \(\lVert\mathbf{v}\rVert^2\)</td><td>bushels</td><td>\(-0.5\) for \(\mathbf{v} = (1, 1)\)</td></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>how far along a direction we go: \(\mathbf{x} + t\mathbf{v}\)</td><td>none (pure number)</td><td>\(t = 2\)</td></tr>
+<tr><td>\(\theta\)</td><td>“theta”</td><td>angle of a unit direction, \(\hat{\mathbf{v}} = (\cos\theta, \sin\theta)\), measured from the water axis</td><td>degrees (°)</td><td>\(\theta = 31.7^\circ\)</td></tr>
+<tr><td>\(\lambda, \lambda_1, \lambda_2\)</td><td>“lambda”, “lambda one”, “lambda two”</td><td>eigenvalues of \(H\): curvatures along the eigenvectors (\(\lambda_1\) the larger)</td><td>bushels per unit step²</td><td>\(\lambda_1 = -0.191\)</td></tr>
+<tr><td>\(\mathbf{u}_1, \mathbf{u}_2\)</td><td>“u one”, “u two”</td><td>unit eigenvectors of \(H\): \(H\mathbf{u}_i = \lambda_i\mathbf{u}_i\)</td><td>none (directions)</td><td>\(\mathbf{u}_1 = (0.851, 0.526)\)</td></tr>
+<tr><td>\(I\)</td><td>“the identity”</td><td>the do-nothing matrix (Level 7)</td><td>none</td><td></td></tr>
+<tr><td>\(\operatorname{tr} H\)</td><td>“trace of H”</td><td>sum of the diagonal entries: \(a + c\)</td><td>needs equal step units (see 9.7)</td><td>\(-1.5\)</td></tr>
+<tr><td>\(\det H\)</td><td>“det H”</td><td>determinant: \(ac - b^2\)</td><td>bushels² per bucket² per bag²</td><td>\(0.25\)</td></tr>
+<tr><td>\(p, q\)</td><td>“p”, “q”</td><td>coordinates of a move along \(\mathbf{u}_1\) and \(\mathbf{u}_2\)</td><td>unit steps</td><td>\(p = 1, q = 0\)</td></tr>
+<tr><td>\(\varphi\)</td><td>“phi”</td><td>the angle by which we rotate the coordinate axes</td><td>degrees (°)</td><td>\(\varphi = 31.7^\circ\)</td></tr>
+<tr><td>\(R\)</td><td>“R”</td><td>the rotation matrix whose columns are the rotated axes</td><td>none</td><td>\(\begin{pmatrix} \cos\varphi & -\sin\varphi \\ \sin\varphi & \cos\varphi \end{pmatrix}\)</td></tr>
+<tr><td>\(H'\)</td><td>“H prime”</td><td>the same Hessian written in the rotated axes: \(R^\top HR\)</td><td>as \(H\)</td><td></td></tr>
+<tr><td>\(\mathbf{a}, \mathbf{b}\)</td><td>“a”, “b”</td><td>two reading directions in a product \(f(\mathbf{x}) = (\mathbf{a}\cdot\mathbf{x})(\mathbf{b}\cdot\mathbf{x})\)</td><td>none in the toys</td><td>\(\mathbf{a} = (2, 1)\)</td></tr>
+<tr><td>\(f\)</td><td>“f”</td><td>a general function of the inputs</td><td>none in the toys</td><td></td></tr>
+<tr><td>\(\operatorname{sym}(M)\)</td><td>“sym of M”</td><td>\(M + M^\top\) (this project's convention, from theory-v2; many books use half of this)</td><td>as \(M\)</td><td>\(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top) = \mathbf{a}\mathbf{b}^\top + \mathbf{b}\mathbf{a}^\top\)</td></tr>
+<tr><td>\(\mathbf{e}_1, \mathbf{e}_2\)</td><td>“e one”, “e two”</td><td>unit arrows along the two input axes</td><td>none</td><td>\(\mathbf{e}_1 = (1, 0)\)</td></tr>
+<tr><td>\(\lVert H \rVert_F\)</td><td>“the Frobenius norm of H”</td><td>square root of the sum of squared entries</td><td>as the entries (equal step units)</td><td>\(1.323\)</td></tr>
+<tr><td>\(n_+, n_-, n_0\)</td><td>“n plus, n minus, n zero”</td><td>inertia: how many eigenvalues are positive, negative, zero</td><td>none (counts)</td><td>farm: \((0, 2, 0)\)</td></tr>
+<tr><td>\(w\)</td><td>“w”</td><td>water measured in litres instead of buckets (9.10)</td><td>litres</td><td>\(w = 10W\)</td></tr>
+<tr><td>\(B\)</td><td>“B”</td><td>a change-of-units (change-of-basis) matrix</td><td>buckets per litre, bags per bag</td><td>\(\begin{pmatrix} 0.1 & 0 \\ 0 & 1 \end{pmatrix}\)</td></tr>
+<tr><td>\(H_L\)</td><td>“H L”</td><td>the farm Hessian with water in litres</td><td>bushels per litre², etc.</td><td>\(\begin{pmatrix} -0.005 & 0.05 \\ 0.05 & -1 \end{pmatrix}\)</td></tr>
+<tr><td>\(z\)</td><td>“z”</td><td>height of a surface in the 3-D figure</td><td>none (pure number)</td><td>\(z = \tfrac12\mathbf{x}^\top H\mathbf{x}\)</td></tr>
+<tr><td>\(d\)</td><td>“d”</td><td>dimension: number of inputs</td><td>none</td><td>\(d = 5{,}120\)</td></tr>
+<tr><td>\(\approx, \Rightarrow, \pm\)</td><td>“about”, “so”, “plus or minus”</td><td>approximately equal; it follows; both signs</td><td>none</td><td>\(\lambda = 5 \pm 7.07\)</td></tr>
+<tr><td>\(\Sigma, \Sigma^{1/2}, \tilde H, T_\ell\)</td><td>“Sigma”, “Sigma to the half”, “H tilde”, “T ell”</td><td>9.11 only, defined at Levels 13 to 15: activation covariance, its square root, the whitened Hessian, the H-lens at layer \(\ell\)</td><td>see Levels 13 to 15</td><td></td></tr>
+<tr><td>\(\mathbf{u}_2'\)</td><td>“u two prime”</td><td>\(-\mathbf{u}_2\): the same eigenvector line, pointing the other way</td><td>none</td><td>\((-0.526, 0.851)\)</td></tr>
+<tr><td>\(\hat{\mathbf{a}}, \hat{\mathbf{b}}, \gamma\)</td><td>“a hat”, “b hat”, “gamma”</td><td>unit vectors along \(\mathbf{a}, \mathbf{b}\), and the angle between them</td><td>none; degrees</td><td></td></tr>
+<tr><td>\(k\)</td><td>“k”</td><td>a plain number multiplying a square, \(k(\mathbf{a}\cdot\mathbf{x})^2\)</td><td>none</td><td>\(k = -0.25\)</td></tr>
+<tr><td>\(f'(x), f''(x), x, \Delta x\)</td><td>“f prime”, “f double prime”, “x”, “delta x”</td><td>one-input slope and curvature, input and step (Levels 2 to 4), recalled in 9.4</td><td>as at Level 4</td><td></td></tr>
+<tr><td>\(\cos, \sin, \tan\)</td><td>“cos”, “sine”, “tan”</td><td>cosine, sine and tangent of an angle (\(\tan = \sin/\cos\))</td><td>none</td><td>\(\tan 63.43^\circ = 2\)</td></tr>
+<tr><td>\(\lVert \mathbf{v} \rVert, \mathbf{0}\)</td><td>“length of v”, “the zero vector”</td><td>norm (Level 7); the vector of zeros</td><td>as \(\mathbf{v}\)</td><td>\(\lVert(1,1)\rVert = \sqrt2\)</td></tr>
+<tr><td>\(:=,\ \propto\)</td><td>“is defined as”, “is proportional to”</td><td>a definition; equal up to a constant factor</td><td>none</td><td>\((2, 0) \propto (1, 0)\)</td></tr>
+<tr><td>\(P, L, K\)</td><td>“P”, “L”, “K”</td><td>Exercise 9.2 only: profit, loaves, cakes</td><td>dollars, loaves, cakes</td><td></td></tr>
+</table>
+</div>
+
+<h2>9.1 The Hessian is the Jacobian of the gradient</h2>
+<p>Back to the farm. Let \(W\) be buckets of water, \(F\) bags of fertiliser, and \(Y\) the yield in bushels:</p>
+$$ Y(W, F) = 2W + 3F + 0.5\,WF - 0.25\,W^2 - 0.5\,F^2. $$
+<p>At <a href="05.html">Level 5</a> we found the gradient, the vector of the two partial derivatives:</p>
+$$ \nabla Y = \left(\frac{\partial Y}{\partial W},\ \frac{\partial Y}{\partial F}\right) = \big(2 + 0.5F - 0.5W,\ \ 3 + 0.5W - F\big). $$
+<p>The gradient depends on the plan. So it is itself a map: two numbers in (\(W, F\)), two numbers out (the two rates). Call this map \(\mathbf{g}(W, F) = \nabla Y(W, F)\). It is a vector-valued function, and <a href="08.html">Level 8</a> tells us how to take its derivative: build its Jacobian, one row per output, one column per input.</p>
+$$ J_{\mathbf{g}} = \begin{pmatrix} \dfrac{\partial}{\partial W}\Big(\dfrac{\partial Y}{\partial W}\Big) & \dfrac{\partial}{\partial F}\Big(\dfrac{\partial Y}{\partial W}\Big) \\[3ex] \dfrac{\partial}{\partial W}\Big(\dfrac{\partial Y}{\partial F}\Big) & \dfrac{\partial}{\partial F}\Big(\dfrac{\partial Y}{\partial F}\Big) \end{pmatrix}. $$
+<p>Compute each entry from the formulas for the two rates:</p>
+<ul>
+<li>\(\partial/\partial W\) of \(2 + 0.5F - 0.5W\) is \(-0.5\).</li>
+<li>\(\partial/\partial F\) of \(2 + 0.5F - 0.5W\) is \(0.5\).</li>
+<li>\(\partial/\partial W\) of \(3 + 0.5W - F\) is \(0.5\).</li>
+<li>\(\partial/\partial F\) of \(3 + 0.5W - F\) is \(-1\).</li>
+</ul>
+$$ H = \nabla^2 Y = \begin{pmatrix} \dfrac{\partial^2 Y}{\partial W^2} & \dfrac{\partial^2 Y}{\partial W\,\partial F} \\[2ex] \dfrac{\partial^2 Y}{\partial F\,\partial W} & \dfrac{\partial^2 Y}{\partial F^2} \end{pmatrix} = \begin{pmatrix} -0.5 & 0.5 \\ 0.5 & -1 \end{pmatrix}. $$
+<div class="box key">
+<span class="boxtitle">The Hessian</span>
+For a function \(f\) with one output and \(d\) inputs \(x_1, \dots, x_d\), the Hessian is the \(d\times d\) matrix of all second partial derivatives, \(H_{ij} = \partial^2 f/\partial x_i\,\partial x_j\). It is the Jacobian of the gradient. Diagonal entries are curvatures along the input axes (<a href="03.html">Level 3</a>). Off-diagonal entries are interactions (<a href="06.html">Level 6</a>).
+</div>
+<h3>Units of every entry</h3>
+<p>Each entry is “a rate of a rate”. Its unit is the output unit divided by the units of both inputs involved.</p>
+<div class="tablewrap">
+<table>
+<tr><th>Entry</th><th>Value</th><th>Unit</th><th>Plain meaning</th></tr>
+<tr><td>\(H_{11} = \partial^2 Y/\partial W^2\)</td><td>−0.5</td><td>bushels per bucket per bucket (bushels per bucket²)</td><td>each extra bucket makes the next bucket worth 0.5 bushels less: diminishing returns</td></tr>
+<tr><td>\(H_{12} = \partial^2 Y/\partial W\,\partial F\)</td><td>0.5</td><td>bushels per bucket per bag</td><td>each extra bag makes each bucket worth 0.5 bushels more</td></tr>
+<tr><td>\(H_{21} = \partial^2 Y/\partial F\,\partial W\)</td><td>0.5</td><td>bushels per bag per bucket</td><td>each extra bucket makes each bag worth 0.5 bushels more</td></tr>
+<tr><td>\(H_{22} = \partial^2 Y/\partial F^2\)</td><td>−1</td><td>bushels per bag per bag (bushels per bag²)</td><td>each extra bag makes the next bag worth 1 bushel less</td></tr>
+</table>
+</div>
+<p>Because \(Y\) is quadratic, these numbers are the same at every plan. For other functions the Hessian changes from point to point, like the Jacobian did at Level 8, and you must say where it is evaluated.</p>
+<div class="box plain">
+<span class="boxtitle">Intuition pump: the slope arrows on a hillside</span>
+Paint, at every spot on a hillside, an arrow pointing uphill whose length is the steepness. That field of arrows is the gradient. The Hessian answers: if I take one step east, how does the arrow under my feet change? And one step north? Four numbers, because the arrow has two components and you can step in two directions.
+</div>
+
+<h2>9.2 Mechanics: each column is a change of the gradient</h2>
+<p>Stand at the plan \((W, F) = (4, 2)\). The gradient there is</p>
+$$ \nabla Y(4, 2) = (2 + 1 - 2,\ 3 + 2 - 2) = (1, 3) \quad \text{(bushels per bucket, bushels per bag)}. $$
+<p><b>Add one bucket</b>, keep 2 bags. At \((5, 2)\): \(\nabla Y = (2 + 1 - 2.5,\ 3 + 2.5 - 2) = (0.5, 3.5)\). The change is \((0.5 - 1,\ 3.5 - 3) = (-0.5, +0.5)\): column 1 of \(H\). Water got less valuable (diminishing returns), fertiliser got more valuable (the interaction).</p>
+<p><b>Add one bag</b>, keep 4 buckets. At \((4, 3)\): \(\nabla Y = (2 + 1.5 - 2,\ 3 + 2 - 3) = (1.5, 2)\). The change is \((+0.5, -1)\): column 2 of \(H\).</p>
+<p><b>Add one of each</b>, \(\mathbf{v} = (1, 1)\). At \((5, 3)\): \(\nabla Y = (2 + 1.5 - 2.5,\ 3 + 2.5 - 3) = (1, 2.5)\). The change is \((0, -0.5)\). And the matrix-vector product predicts</p>
+$$ H\mathbf{v} = \begin{pmatrix} -0.5\times1 + 0.5\times1 \\ 0.5\times1 + (-1)\times1 \end{pmatrix} = \begin{pmatrix} 0 \\ -0.5 \end{pmatrix}. $$
+<p>Exactly right. \(H\mathbf{v}\) is the change of the gradient when you move along \(\mathbf{v}\). Here it is exact because the gradient of a quadratic is a straight-line function; in general it is the first-order prediction, like \(J\mathbf{v}\) at Level 8. This product is the Hessian-vector product, the workhorse of <a href="11.html">Level 11</a>.</p>
+
+<h2>9.3 Symmetry</h2>
+<p>The two off-diagonal entries are equal: \(H_{12} = H_{21} = 0.5\). That is the symmetry of mixed partials from <a href="06.html">Level 6</a>: for a smooth function, the order of the two derivatives does not matter. The units agree too: bushels per bucket per bag equals bushels per bag per bucket. A matrix equal to its own transpose, \(H^\top = H\), is a symmetric matrix.</p>
+<p>Symmetry is not a detail. It guarantees three things that the rest of this level uses (the spectral theorem):</p>
+<ol>
+<li>the eigenvalues are real numbers;</li>
+<li>eigenvectors for different eigenvalues are perpendicular;</li>
+<li>there is a full set of them: \(d\) perpendicular unit eigenvectors for a \(d\times d\) matrix.</li>
+</ol>
+<p>A practical use: if code returns a “Hessian” that is not symmetric (beyond rounding), something is wrong.</p>
+
+<h2>9.4 Curvature along a direction: the quadratic form</h2>
+<h3>Taylor's formula with two inputs</h3>
+<p>At <a href="04.html">Level 4</a>, one input: \(f(x + \Delta x) \approx f(x) + f'(x)\Delta x + \tfrac12 f''(x)\Delta x^2\). With two inputs, the slope becomes the gradient and the second derivative becomes the Hessian. For a move \(\Delta\mathbf{x} = (\Delta W, \Delta F)\):</p>
+$$ Y(\mathbf{x} + \Delta\mathbf{x}) \approx Y(\mathbf{x}) + \nabla Y\cdot\Delta\mathbf{x} + \tfrac12\,\Delta\mathbf{x}^\top H\,\Delta\mathbf{x}. $$
+<p>The last term is a quadratic form. Write it out for a symmetric 2×2 matrix \(\begin{pmatrix} a & b \\ b & c \end{pmatrix}\) and any \(\mathbf{v} = (v_1, v_2)\), step by step:</p>
+$$ H\mathbf{v} = \begin{pmatrix} a v_1 + b v_2 \\ b v_1 + c v_2 \end{pmatrix}, \qquad \mathbf{v}^\top H\mathbf{v} = v_1(a v_1 + b v_2) + v_2(b v_1 + c v_2) = a v_1^2 + 2b\,v_1v_2 + c\,v_2^2. $$
+<p>Three terms: curvature along axis 1, twice the interaction, curvature along axis 2. For the farm with \(\mathbf{v} = (\Delta W, \Delta F)\), each term is in bushels: (bushels per bucket²) × bucket², (bushels per bucket per bag) × bucket × bag, (bushels per bag²) × bag².</p>
+<h3>Worked example: predicting a small change</h3>
+<p>From \((4, 2)\), where \(Y = 8 + 6 + 4 - 4 - 2 = 12\) bushels, move \(\Delta\mathbf{x} = (0.2, -0.05)\).</p>
+<ul>
+<li>First-order term: \(\nabla Y\cdot\Delta\mathbf{x} = 1\times0.2 + 3\times(-0.05) = 0.2 - 0.15 = 0.05\) bushels.</li>
+<li>Second-order term: \(\Delta\mathbf{x}^\top H\Delta\mathbf{x} = -0.5\times0.04 + 2\times0.5\times0.2\times(-0.05) - 1\times0.0025 = -0.02 - 0.01 - 0.0025 = -0.0325\); half of it is \(-0.01625\) bushels.</li>
+<li>Prediction: \(12 + 0.05 - 0.01625 = 12.03375\) bushels.</li>
+<li>Exact: \(Y(4.2, 1.95) = 8.4 + 5.85 + 4.095 - 4.41 - 1.90125 = 12.03375\) bushels.</li>
+</ul>
+<p>An exact match, because \(Y\) has no terms beyond second order. The first-order (Jacobian) prediction alone, 12.05, was off by the curvature term.</p>
+<h3>The curvature along a line</h3>
+<p>Walk from \(\mathbf{x}\) along a direction \(\mathbf{v}\): the plans \(\mathbf{x} + t\mathbf{v}\). The yield along this walk is a function of one number \(t\). Put \(\Delta\mathbf{x} = t\mathbf{v}\) in Taylor's formula:</p>
+$$ Y(\mathbf{x} + t\mathbf{v}) = Y(\mathbf{x}) + t\,(\nabla Y\cdot\mathbf{v}) + \tfrac12\,t^2\,(\mathbf{v}^\top H\mathbf{v}). $$
+<p>Its second derivative in \(t\) is \(\mathbf{v}^\top H\mathbf{v}\). So the quadratic form is the curvature you feel when walking along \(\mathbf{v}\). For a unit direction \(\hat{\mathbf{v}}\) we call \(\hat{\mathbf{v}}^\top H\hat{\mathbf{v}}\) the curvature along that direction, in bushels per unit step².</p>
+<p><b>Mechanics at the best plan.</b> The best plan is \((14, 10)\), where both rates are zero: \(2 + 5 - 7 = 0\) and \(3 + 7 - 10 = 0\), and \(Y = 29\) bushels. Walk along \(\mathbf{v} = (1, 1)\): \(\mathbf{v}^\top H\mathbf{v} = -0.5 + 2\times0.5 - 1 = -0.5\), so \(Y(14 + t, 10 + t) = 29 - 0.25t^2\). Check at \(t = 2\): \(Y(16, 12) = 32 + 36 + 96 - 64 - 72 = 28 = 29 - 0.25\times4\). For the unit direction \((1,1)/\sqrt2\) the curvature is \(-0.5/2 = -0.25\) bushels per unit step².</p>
+<div class="tablewrap">
+<table>
+<tr><th>Direction (from the water axis)</th><th>\(\hat{\mathbf{v}}\)</th><th>\(\hat{\mathbf{v}}^\top H \hat{\mathbf{v}}\) (bushels per unit step²)</th></tr>
+<tr><td>0° (water only)</td><td>(1, 0)</td><td>−0.5</td></tr>
+<tr><td>45° (equal amounts)</td><td>(0.707, 0.707)</td><td>−0.25</td></tr>
+<tr><td>90° (fertiliser only)</td><td>(0, 1)</td><td>−1</td></tr>
+<tr><td>135° (trade one for the other)</td><td>(−0.707, 0.707)</td><td>−1.25</td></tr>
+</table>
+</div>
+<p>The curvature depends on direction. Some directions are gentle, some are steep. Which are the extremes? That is the next section.</p>
+
+<h2>9.5 Eigenvectors and eigenvalues: the principal curvatures</h2>
+<p>A direction \(\mathbf{u}\) is an eigenvector of \(H\) if \(H\) does not turn it, only stretches it:</p>
+$$ H\mathbf{u} = \lambda\,\mathbf{u}. $$
+<p>The stretch factor \(\lambda\) (“lambda”) is the eigenvalue. Then the curvature along a unit eigenvector is \(\mathbf{u}^\top H\mathbf{u} = \mathbf{u}^\top(\lambda\mathbf{u}) = \lambda\,\mathbf{u}^\top\mathbf{u} = \lambda\). An eigenvalue is the curvature along its eigenvector.</p>
+<h3>Finding them for a 2×2 symmetric matrix</h3>
+<p>\(H\mathbf{u} = \lambda\mathbf{u}\) means \((H - \lambda I)\mathbf{u} = \mathbf{0}\) with \(\mathbf{u} \ne \mathbf{0}\). A non-zero vector is squashed to zero only if \(H - \lambda I\) squashes the plane flat, that is, has determinant zero (Level 7). So:</p>
+$$ \det\begin{pmatrix} a - \lambda & b \\ b & c - \lambda \end{pmatrix} = (a - \lambda)(c - \lambda) - b^2 = \lambda^2 - (a + c)\lambda + (ac - b^2) = 0. $$
+<p>This is the characteristic equation. For the farm, \(a = -0.5\), \(b = 0.5\), \(c = -1\):</p>
+$$ \lambda^2 - (-1.5)\lambda + (0.5 - 0.25) = \lambda^2 + 1.5\lambda + 0.25 = 0. $$
+<p>Quadratic formula, every step:</p>
+$$ \lambda = \frac{-1.5 \pm \sqrt{1.5^2 - 4\times0.25}}{2} = \frac{-1.5 \pm \sqrt{2.25 - 1}}{2} = \frac{-1.5 \pm \sqrt{1.25}}{2} = \frac{-1.5 \pm 1.1180}{2}. $$
+$$ \lambda_1 = \frac{-0.3820}{2} = -0.1910, \qquad \lambda_2 = \frac{-2.6180}{2} = -1.3090 \quad \text{(bushels per unit step}^2\text{)}. $$
+<p><b>The eigenvectors.</b> The first row of \((H - \lambda I)\mathbf{u} = \mathbf{0}\) reads \((a - \lambda)u_1 + b\,u_2 = 0\), so \(u_2/u_1 = (\lambda - a)/b\).</p>
+<ul>
+<li>For \(\lambda_1 = -0.1910\): \(u_2/u_1 = (-0.1910 + 0.5)/0.5 = 0.6180\). Take \((1, 0.6180)\), length \(\sqrt{1 + 0.3820} = 1.1756\), so \(\mathbf{u}_1 = (0.8507, 0.5257)\). Its angle is \(31.72^\circ\) from the water axis.</li>
+<li>For \(\lambda_2 = -1.3090\): \(u_2/u_1 = (-1.3090 + 0.5)/0.5 = -1.6180\). Take \((1, -1.6180)\), length \(1.9021\), so \(\mathbf{u}_2 = (0.5257, -0.8507)\), or its negative \((-0.5257, 0.8507)\) at \(121.72^\circ\). Either sign is the same direction line.</li>
+</ul>
+<p>Checks. Perpendicular: \(0.8507\times(-0.5257) + 0.5257\times0.8507 = 0\). Eigen-equation: \(H\mathbf{u}_1 = (-0.5\times0.8507 + 0.5\times0.5257,\ 0.5\times0.8507 - 0.5257) = (-0.1625, -0.1004)\), and \(\lambda_1\mathbf{u}_1 = -0.1910\times(0.8507, 0.5257) = (-0.1625, -0.1004)\). Equal.</p>
+<h3>Why they are the extremes</h3>
+<p>Write any unit direction in eigenvector coordinates: \(\hat{\mathbf{v}} = p\,\mathbf{u}_1 + q\,\mathbf{u}_2\) with \(p^2 + q^2 = 1\). Then</p>
+$$ \hat{\mathbf{v}}^\top H\hat{\mathbf{v}} = p^2\,\mathbf{u}_1^\top H\mathbf{u}_1 + 2pq\,\mathbf{u}_1^\top H\mathbf{u}_2 + q^2\,\mathbf{u}_2^\top H\mathbf{u}_2 = p^2\lambda_1 + 2pq\cdot 0 + q^2\lambda_2. $$
+<p>The middle term vanished because \(\mathbf{u}_1^\top H\mathbf{u}_2 = \mathbf{u}_1^\top(\lambda_2\mathbf{u}_2) = \lambda_2(\mathbf{u}_1\cdot\mathbf{u}_2) = 0\). What is left is a weighted average of \(\lambda_1\) and \(\lambda_2\) with weights \(p^2 + q^2 = 1\). So every direction's curvature lies between \(\lambda_2\) and \(\lambda_1\), and the extremes are reached exactly at the eigenvectors. These two curvatures are the principal curvatures.</p>
+<figure class="sim" id="sim-dial">
+<figcaption><b>Figure 9.1.</b> Left: turn the direction \(\hat{\mathbf{v}} = (\cos\theta, \sin\theta)\) with the \(\theta\) slider (black arrow). Dashed lines are the eigenvector directions (blue for \(\lambda_1\), red for \(\lambda_2\)). Right: the curvature \(\hat{\mathbf{v}}^\top H\hat{\mathbf{v}} = a\cos^2\theta + 2b\cos\theta\sin\theta + c\sin^2\theta\) for every angle from 0° to 180°; the dot is your current \(\theta\). The defaults are the farm Hessian. Notice the curve's top and bottom sit exactly at the eigenvector angles, and the top and bottom values are \(\lambda_1\) and \(\lambda_2\). Set \(b = 0\): the extremes move to 0° and 90°.</figcaption>
+</figure>
+<div class="box warn">
+<span class="boxtitle">Units warning: eigenvectors need comparable steps</span>
+A direction like \(\mathbf{u}_1 = (0.8507, 0.5257)\) mixes buckets and bags, and “length 1” added buckets² to bags². That only makes sense because we decided one bucket and one bag count as equal-sized steps. Measure water in litres and the eigenvectors move. Section 9.10 shows by how much, and what does <i>not</i> move.
+</div>
+<p><b>Farm reading.</b> The gentlest direction, \(\mathbf{u}_1\), adds water and fertiliser together, about 1.618 buckets per bag. Along it, yield falls off slowly from the peak (\(-0.191\)). The steepest direction, \(\mathbf{u}_2\), trades one input for the other. Along it, yield falls off fast (\(-1.309\)). Check from the peak: \(Y\big((14, 10) + 2\mathbf{u}_1\big) = 28.618 = 29 + \tfrac12(-0.1910)(2^2)\).</p>
+
+<h2>9.6 Bowl, dome, saddle: definiteness</h2>
+<p>Take the pure quadratic surface \(z = \tfrac12\mathbf{x}^\top H\mathbf{x}\). In eigenvector coordinates it is \(z = \tfrac12(\lambda_1 p^2 + \lambda_2 q^2)\): a sum of two parabolas at right angles, no cross term. The signs of the two eigenvalues decide the shape.</p>
+<div class="tablewrap">
+<table>
+<tr><th>Eigenvalues</th><th>Shape</th><th>Name</th><th>Real-world picture</th></tr>
+<tr><td>both \(\gt 0\)</td><td>bowl: up in every direction</td><td>positive definite</td><td>a salad bowl, a valley floor</td></tr>
+<tr><td>both \(\lt 0\)</td><td>dome: down in every direction</td><td>negative definite</td><td>a hilltop; the farm at its best plan</td></tr>
+<tr><td>one \(\gt 0\), one \(\lt 0\)</td><td>saddle: up one way, down the other</td><td>indefinite</td><td>a mountain pass, a horse saddle</td></tr>
+<tr><td>one \(= 0\)</td><td>trough or ridge: flat along one direction</td><td>semidefinite</td><td>a long gutter, a ridge line</td></tr>
+</table>
+</div>
+<p>The same statements in terms of the quadratic form: \(H\) is positive definite if \(\mathbf{v}^\top H\mathbf{v} \gt 0\) for every \(\mathbf{v} \ne \mathbf{0}\); negative definite if \(\lt 0\) for every such \(\mathbf{v}\); indefinite if it takes both signs; positive semidefinite if it is never negative. Since the farm's eigenvalues are both negative, its Hessian is negative definite: every direction curves down, which is why \((14, 10)\) is a maximum and not a pass.</p>
+<figure class="sim" id="sim-shape">
+<figcaption><b>Figure 9.2.</b> The surface \(z = \tfrac12(a x_1^2 + 2b\,x_1x_2 + c\,x_2^2)\) for the symmetric matrix \(\begin{pmatrix} a & b \\ b & c\end{pmatrix}\). The thick blue and red curves run along the two eigenvectors; their bending is \(\lambda_1\) and \(\lambda_2\). Move the sliders. Make both eigenvalues positive (a bowl), both negative (a dome), or one of each (a saddle). Try \(a = 1, c = 1\) and raise \(b\) from 0: at \(b = 1\) one eigenvalue hits 0 (a trough), and past it the bowl becomes a saddle. Use the turn slider to look from another side.</figcaption>
+</figure>
+
+<h2>9.7 The second-derivative test, trace and determinant</h2>
+<p>Two shortcuts avoid solving for the eigenvalues. Compare the characteristic polynomial with its factored form:</p>
+$$ \lambda^2 - (a + c)\lambda + (ac - b^2) = (\lambda - \lambda_1)(\lambda - \lambda_2) = \lambda^2 - (\lambda_1 + \lambda_2)\lambda + \lambda_1\lambda_2. $$
+<p>Match the coefficients:</p>
+$$ \operatorname{tr} H = a + c = \lambda_1 + \lambda_2, \qquad \det H = ac - b^2 = \lambda_1\lambda_2. $$
+<p>Farm check: \(\operatorname{tr} H = -0.5 - 1 = -1.5 = -0.1910 - 1.3090\), and \(\det H = 0.5 - 0.25 = 0.25 = (-0.1910)\times(-1.3090)\).</p>
+<div class="box key">
+<span class="boxtitle">Second-derivative test in two dimensions</span>
+At a critical point (gradient zero):<br>
+\(\det H \gt 0\) and \(\operatorname{tr} H \lt 0\): both eigenvalues negative: a maximum.<br>
+\(\det H \gt 0\) and \(\operatorname{tr} H \gt 0\): both positive: a minimum.<br>
+\(\det H \lt 0\): opposite signs: a saddle.<br>
+\(\det H = 0\): the test says nothing; look at higher-order terms.
+</div>
+<p>Why: a positive product means the signs agree, and then the sum tells you which sign. A negative product means the signs differ. (With \(\det H \gt 0\), the sign of \(a\) alone also works, since \(ac \gt b^2 \ge 0\) forces \(a\) and \(c\) to share a sign.)</p>
+<p><b>Mechanics: turn up the interaction.</b> Keep \(a = -0.5\) and \(c = -1\), and change only the interaction \(b\) (the coefficient of \(WF\) in \(Y\)). Then \(\det H = 0.5 - b^2\).</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(b\) (bushels per bucket per bag)</th><th>\(\det H\)</th><th>shape at the critical point</th></tr>
+<tr><td>0</td><td>0.5</td><td>dome (maximum)</td></tr>
+<tr><td>0.5 (the farm)</td><td>0.25</td><td>dome (maximum)</td></tr>
+<tr><td>0.7071</td><td>0</td><td>flat ridge: the test is silent</td></tr>
+<tr><td>0.8</td><td>−0.14</td><td>saddle: no best plan</td></tr>
+</table>
+</div>
+<p>In farm words: if water and fertiliser helped each other strongly enough, adding both together would gain more from the interaction than diminishing returns take away. Yield would grow without limit along the ridge, and there would be no best plan. Of course, a real farm would hit other limits; the toy only shows what the numbers say.</p>
+<p><b>A note on units.</b> \(\det H\) has unit bushels² per bucket² per bag², and its <i>sign</i> does not depend on how you measure water or fertiliser. \(\operatorname{tr} H\) adds bushels per bucket² to bushels per bag², so its size depends on the step units you choose. The test above only uses the trace's sign when \(\det H \gt 0\), where it agrees with the sign of \(a\), so the verdict never depends on units.</p>
+
+<h2>9.8 Interaction depends on the axes: rotate it away</h2>
+<p>At Level 6, the interaction between water and fertiliser was the mixed partial, 0.5 bushels per bucket per bag. But “water” and “fertiliser” are just the two axes we happened to pick. Pick two other perpendicular directions and the interaction between <i>them</i> is different.</p>
+<p>Rotate the axes by an angle \(\varphi\). The new axes are the columns of</p>
+$$ R = \begin{pmatrix} \cos\varphi & -\sin\varphi \\ \sin\varphi & \cos\varphi \end{pmatrix}, $$
+<p>and the Hessian written in the new axes is \(H' = R^\top HR\). Multiplying out, entry by entry:</p>
+$$ H'_{11} = a\cos^2\varphi + 2b\sin\varphi\cos\varphi + c\sin^2\varphi, \qquad H'_{22} = a\sin^2\varphi - 2b\sin\varphi\cos\varphi + c\cos^2\varphi, $$
+$$ H'_{12} = (c - a)\sin\varphi\cos\varphi + b(\cos^2\varphi - \sin^2\varphi) = \tfrac12(c - a)\sin 2\varphi + b\cos 2\varphi. $$
+<p>The new interaction \(H'_{12}\) is zero when \(\tan 2\varphi = 2b/(a - c)\). For the farm, \(2\times0.5/(-0.5 + 1) = 2\), so \(2\varphi = 63.43^\circ\) and \(\varphi = 31.72^\circ\): exactly the angle of the eigenvector \(\mathbf{u}_1\). In these axes,</p>
+$$ H' = \begin{pmatrix} \lambda_1 & 0 \\ 0 & \lambda_2 \end{pmatrix} = \begin{pmatrix} -0.1910 & 0 \\ 0 & -1.3090 \end{pmatrix}, \qquad Y = 29 + \tfrac12\lambda_1 p^2 + \tfrac12\lambda_2 q^2 $$
+<p>where \(p, q\) are the move away from \((14, 10)\) along \(\mathbf{u}_1, \mathbf{u}_2\). No \(pq\) term: no interaction.</p>
+<h3>Mechanics: the 2×2 test along the eigenvectors</h3>
+<p>Repeat Level 6's four-corner test from \(\mathbf{x} = (4, 2)\), but move one unit step along \(\mathbf{u}_1\) and one along \(\mathbf{u}_2' = (-0.5257, 0.8507)\) instead of one bucket and one bag:</p>
+$$ Y(\mathbf{x} + \mathbf{u}_1 + \mathbf{u}_2') - Y(\mathbf{x} + \mathbf{u}_1) - Y(\mathbf{x} + \mathbf{u}_2') + Y(\mathbf{x}) = 15.7041 - 14.3324 - 13.3717 + 12 = 0.0000. $$
+<p>With bucket and bag moves the same test gave 0.5 bushels (Level 6). Same function, same starting plan, different axes, different interaction.</p>
+<div class="box key">
+<span class="boxtitle">Interaction is a property of a pair of directions</span>
+The off-diagonal entry \(H_{12}\) is the interaction between input axis 1 and input axis 2. Rotate the axes and it changes. The eigenvectors are the unique perpendicular axes (when the eigenvalues differ) along which there is no interaction at all: all of the bending is pure curvature.
+</div>
+<figure class="sim" id="sim-rotate">
+<figcaption><b>Figure 9.3.</b> Contour lines of the farm yield around the best plan \((14, 10)\), at 28.75, 28, 27, 25, 23, 20, 17 and 13 bushels (innermost first). Turn the coordinate axes (blue \(p\), red \(q\)) with the \(\varphi\) slider. The readout shows the Hessian in those axes and runs the four-corner interaction test with unit steps from the black corner, using the actual yields at the four green points. Notice the interaction passes through zero exactly when the axes line up with the ellipses of the contour map, at \(\varphi = 31.7^\circ\); press “snap to eigenvectors” to land there.</figcaption>
+</figure>
+<div class="box plain">
+<span class="boxtitle">Intuition pump: a rugby ball lying at a slant</span>
+Lay a rugby ball on a table at a slant and slice it horizontally. The slice is a tilted ellipse. Described in the table's north-south and east-west axes, the ellipse needs a cross term. Described along its own long and short axes, it does not. The function did not change; only the description did.
+</div>
+
+<h2>9.9 Products make simple curvature: \(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\)</h2>
+<h3>Real-world example: the area of a field</h3>
+<p>A rectangular field is \(x_1\) metres wide and \(x_2\) metres long. Its area is \(f = x_1 x_2\) m². At a 10 m × 10 m field: grow both sides by 1 m and the area goes 100 → 121 (gain 21). Grow one and shrink the other by 1 m: 100 → 99 (loss 1). The Hessian is</p>
+$$ \nabla^2(x_1x_2) = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \quad \text{(m}^2\text{ per m per m, a pure number)}. $$
+<p>Eigenvalues \(\pm1\), along \((1, 1)\) and \((1, -1)\): a saddle. Along \((1, 1)\): \(f(10 + t, 10 + t) = 100 + 20t + t^2\), second derivative \(2 = \mathbf{v}^\top H\mathbf{v}\) for \(\mathbf{v} = (1, 1)\). Along \((1, -1)\): \(100 - t^2\), second derivative \(-2\).</p>
+<h3>The general product of two reads</h3>
+<p>Let \(\mathbf{a}\) and \(\mathbf{b}\) be two fixed directions, and let \(f\) multiply two readings of the input \(\mathbf{x}\):</p>
+$$ f(\mathbf{x}) = (\mathbf{a}\cdot\mathbf{x})(\mathbf{b}\cdot\mathbf{x}). $$
+<p>(The field is the case \(\mathbf{a} = \mathbf{e}_1 = (1, 0)\), \(\mathbf{b} = \mathbf{e}_2 = (0, 1)\).) First derivatives, by the product rule: \(\partial(\mathbf{a}\cdot\mathbf{x})/\partial x_i = a_i\), so</p>
+$$ \frac{\partial f}{\partial x_i} = a_i\,(\mathbf{b}\cdot\mathbf{x}) + b_i\,(\mathbf{a}\cdot\mathbf{x}). $$
+<p>Second derivatives: differentiate again by \(x_j\). The factors \(a_i\) and \(b_i\) are constants, and \(\partial(\mathbf{b}\cdot\mathbf{x})/\partial x_j = b_j\):</p>
+$$ H_{ij} = a_i b_j + b_i a_j, \qquad H = \mathbf{a}\mathbf{b}^\top + \mathbf{b}\mathbf{a}^\top = \operatorname{sym}(\mathbf{a}\mathbf{b}^\top). $$
+<p>Here \(\operatorname{sym}(M) := M + M^\top\), the convention of <code>hlens/paper/theory-v2.md</code>. Many textbooks put a \(\tfrac12\) in front; with that convention the Hessian would be \(2\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\). Always check which one a formula uses.</p>
+<p><b>Worked example.</b> \(\mathbf{a} = (2, 1)\), \(\mathbf{b} = (1, 3)\). Directly: \(f = (2x_1 + x_2)(x_1 + 3x_2) = 2x_1^2 + 6x_1x_2 + x_1x_2 + 3x_2^2 = 2x_1^2 + 7x_1x_2 + 3x_2^2\), so \(H = \begin{pmatrix} 4 & 7 \\ 7 & 6 \end{pmatrix}\). Via the formula: \(\mathbf{a}\mathbf{b}^\top = \begin{pmatrix} 2 & 6 \\ 1 & 3\end{pmatrix}\), \(\mathbf{b}\mathbf{a}^\top = \begin{pmatrix} 2 & 1 \\ 6 & 3\end{pmatrix}\), sum \(\begin{pmatrix} 4 & 7 \\ 7 & 6\end{pmatrix}\). Same.</p>
+<h3>Its eigenvalues: \(\mathbf{a}\cdot\mathbf{b} \pm \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\)</h3>
+<p>Let \(\hat{\mathbf{a}}, \hat{\mathbf{b}}\) be the unit vectors along \(\mathbf{a}, \mathbf{b}\), and let \(\gamma\) be the angle between them, so \(\cos\gamma = \hat{\mathbf{a}}\cdot\hat{\mathbf{b}}\). Then \(H = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert(\hat{\mathbf{a}}\hat{\mathbf{b}}^\top + \hat{\mathbf{b}}\hat{\mathbf{a}}^\top)\). Apply the bracket to \(\hat{\mathbf{a}} + \hat{\mathbf{b}}\), using “read along the right, write along the left” (Level 7):</p>
+$$ (\hat{\mathbf{a}}\hat{\mathbf{b}}^\top + \hat{\mathbf{b}}\hat{\mathbf{a}}^\top)(\hat{\mathbf{a}} + \hat{\mathbf{b}}) = \hat{\mathbf{a}}(\cos\gamma + 1) + \hat{\mathbf{b}}(1 + \cos\gamma) = (1 + \cos\gamma)(\hat{\mathbf{a}} + \hat{\mathbf{b}}). $$
+<p>So \(\hat{\mathbf{a}} + \hat{\mathbf{b}}\) is an eigenvector with eigenvalue \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert(1 + \cos\gamma) = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert + \mathbf{a}\cdot\mathbf{b}\). The same steps with \(\hat{\mathbf{a}} - \hat{\mathbf{b}}\) give \((\cos\gamma - 1)(\hat{\mathbf{a}} - \hat{\mathbf{b}})\), eigenvalue \(\mathbf{a}\cdot\mathbf{b} - \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\). Any direction perpendicular to both \(\mathbf{a}\) and \(\mathbf{b}\) is read as zero by both terms: eigenvalue 0.</p>
+<p>For the example: \(\mathbf{a}\cdot\mathbf{b} = 5\), \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert = \sqrt5\sqrt{10} = \sqrt{50} = 7.0711\), so \(\lambda = 12.0711\) and \(-2.0711\). Check: sum \(10 = 4 + 6 = \operatorname{tr} H\); product \(-25 = 24 - 49 = \det H\).</p>
+<div class="box key">
+<span class="boxtitle">What a product of two reads does to curvature</span>
+\(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\) has rank at most 2, in any dimension. Unless \(\mathbf{a}\) and \(\mathbf{b}\) are parallel it has one positive and one negative eigenvalue (inertia \((1, 1)\)): a saddle in the plane of \(\mathbf{a}\) and \(\mathbf{b}\), flat in every other direction. If \(\mathbf{b}\) is a multiple of \(\mathbf{a}\), the product is a square, \(k(\mathbf{a}\cdot\mathbf{x})^2\) for some number \(k\), and the Hessian \(2k\,\mathbf{a}\mathbf{a}^\top\) has rank 1.
+</div>
+<p><b>The farm, rebuilt from pieces.</b> Each term of \(Y\) is a product or a square of the two reads \(W = \mathbf{e}_1\cdot\mathbf{x}\) and \(F = \mathbf{e}_2\cdot\mathbf{x}\):</p>
+$$ \underbrace{-0.25W^2}_{-0.5\,\mathbf{e}_1\mathbf{e}_1^\top} + \underbrace{0.5\,WF}_{0.5\,\operatorname{sym}(\mathbf{e}_1\mathbf{e}_2^\top)} \underbrace{-\,0.5F^2}_{-1\,\mathbf{e}_2\mathbf{e}_2^\top} \quad\Rightarrow\quad \begin{pmatrix} -0.5 & 0 \\ 0 & 0 \end{pmatrix} + \begin{pmatrix} 0 & 0.5 \\ 0.5 & 0 \end{pmatrix} + \begin{pmatrix} 0 & 0 \\ 0 & -1 \end{pmatrix} = H. $$
+<p>The interaction term on its own is a saddle (eigenvalues \(\pm0.5\)). Added to the two downward squares, the total is still a dome, because \(\det H = 0.25 \gt 0\).</p>
+<figure class="sim" id="sim-product">
+<figcaption><b>Figure 9.4.</b> Colour shows \(f(\mathbf{x}) = (\mathbf{a}\cdot\mathbf{x})(\mathbf{b}\cdot\mathbf{x})\): red positive, blue negative, white zero. Drag the tips of \(\mathbf{a}\) and \(\mathbf{b}\). The dashed black lines are where \(f = 0\): perpendicular to \(\mathbf{a}\) and to \(\mathbf{b}\). The thick blue line is the eigenvector along \(\hat{\mathbf{a}} + \hat{\mathbf{b}}\) (upward curvature); the thick red line is along \(\hat{\mathbf{a}} - \hat{\mathbf{b}}\) (downward). Notice the saddle shape for any non-parallel pair, and that the negative eigenvalue goes to zero as you make \(\mathbf{a}\) and \(\mathbf{b}\) point the same way.</figcaption>
+</figure>
+
+<h2>9.10 How big is a Hessian, and what survives a change of units</h2>
+<h3>The Frobenius norm</h3>
+<p>One number for the overall size of a matrix: square every entry, add, take the square root.</p>
+$$ \lVert H\rVert_F = \sqrt{(-0.5)^2 + 0.5^2 + 0.5^2 + (-1)^2} = \sqrt{0.25 + 0.25 + 0.25 + 1} = \sqrt{1.75} = 1.3229. $$
+<p>For a symmetric matrix this equals \(\sqrt{\lambda_1^2 + \lambda_2^2}\): here \(\sqrt{0.0365 + 1.7135} = \sqrt{1.75}\). The reason: rotating to the eigenvector axes does not change the sum of squared entries (a rotation keeps lengths), and in those axes the only entries are the eigenvalues.</p>
+<h3>Inertia</h3>
+<p>The inertia of a symmetric matrix is the count \((n_+, n_-, n_0)\) of positive, negative and zero eigenvalues. The farm: \((0, 2, 0)\). A product of two non-parallel reads: \((1, 1, 0)\) in 2-D, and \((1, 1, d - 2)\) in \(d\) dimensions.</p>
+<h3>Mechanics: measure water in litres</h3>
+<p>Let \(w\) be water in litres, so \(W = 0.1w\) buckets. Re-express the yield in \((w, F)\) and differentiate again. Each derivative with respect to \(w\) brings out a factor 0.1 (chain rule, previewed here):</p>
+$$ \frac{\partial^2 Y}{\partial w^2} = 0.1^2\times(-0.5) = -0.005\ \tfrac{\text{bushels}}{\text{litre}^2}, \qquad \frac{\partial^2 Y}{\partial w\,\partial F} = 0.1\times0.5 = 0.05\ \tfrac{\text{bushels}}{\text{litre}\cdot\text{bag}}, \qquad \frac{\partial^2 Y}{\partial F^2} = -1\ \tfrac{\text{bushels}}{\text{bag}^2}. $$
+<p>In matrix form this is \(H_L = B^\top HB\) with \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 1\end{pmatrix}\) (the machine that turns a move in (litres, bags) into a move in (buckets, bags)). So</p>
+$$ H_L = \begin{pmatrix} -0.005 & 0.05 \\ 0.05 & -1 \end{pmatrix}, \qquad \lambda = -0.0025,\ -1.0025, \qquad \text{gentlest direction } (0.9987, 0.0501). $$
+<p>The gentlest direction now says 1 bag per 19.95 litres, which is 1 bag per 1.995 buckets, not 1 bag per 1.618 buckets. The eigenvalues changed and the eigenvectors moved. What stayed? Both eigenvalues are still negative: the inertia is still \((0, 2, 0)\), and \(\det H_L = 0.005 - 0.0025 = 0.0025 \gt 0\) still says “maximum”.</p>
+<div class="box key">
+<span class="boxtitle">Sylvester's law of inertia</span>
+For any invertible matrix \(B\), the matrices \(H\) and \(B^\top HB\) have the same inertia: the same numbers of positive, negative and zero eigenvalues. A rotation (where \(B^\top B = I\)) keeps even the eigenvalues. A stretch or unit change moves eigenvalues and eigenvectors, but never flips a sign.
+</div>
+<p>Why, at least for definiteness: \(\mathbf{v}^\top(B^\top HB)\mathbf{v} = (B\mathbf{v})^\top H(B\mathbf{v})\). The new matrix tested on \(\mathbf{v}\) gives the same number as the old one tested on the direction \(B\mathbf{v}\). If the old one is negative on every non-zero direction, so is the new one, because \(B\mathbf{v} \ne \mathbf{0}\) whenever \(\mathbf{v} \ne \mathbf{0}\).</p>
+
+<h2>9.11 Why this matters for H-space</h2>
+<ol>
+<li><b>The H-lens is an averaged Hessian.</b> In <code>hlens/paper/theory-v2.md</code> §0, \(T_\ell\) averages the Hessian of a readout of the final state with respect to the layer-\(\ell\) state, over texts and positions: “the J-lens reduction one derivative higher”. For each readout direction it is a symmetric 5,120 × 5,120 matrix for Qwen3.6-27B. Everything in 9.3 to 9.6 applies: real eigenvalues, perpendicular eigenvectors, principal curvatures.</li>
+<li><b>Products of reads are where curvature comes from.</b> A SwiGLU neuron multiplies two reads of the state (one of them first bent through SiLU). theory-v2 Lemma 2 writes a sublayer's Hessian as a sum of terms \(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\) (product sites) and \(\mathbf{a}\mathbf{a}^\top\) times a number (threshold sites). Remark 2.1 states that a product site has eigenvalues of the form \(\mathbf{a}\cdot\mathbf{b} \pm \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\) (times a weight), inertia \((1, 1)\): the result of 9.9.</li>
+<li><b>Eigenvectors depend on units; inertia does not.</b> Level 15 whitens: \(\tilde H = \Sigma^{1/2}H\Sigma^{1/2}\), where \(\Sigma\) is the activation covariance (Level 13). This is exactly 9.10's \(B^\top HB\) with \(B = \Sigma^{1/2}\): measuring each direction in units of its natural spread, as litres versus buckets. theory-v2 calls this “a choice, not a consequence”. Its eigenvectors differ from the raw Hessian's; by Sylvester's law its inertia does not. theory-v2 Remark 2.1 uses exactly this invariance.</li>
+<li><b>“No interaction” axes.</b> 9.8 showed that eigenvectors are the directions with no pairwise interaction. H-space is built from the top eigenvectors of an energy operator made from such Hessians. Asking “which directions carry the most curvature?” is asking for eigenvectors with the largest eigenvalues.</li>
+<li><b>Size.</b> The squared Frobenius norm and the sum of squared eigenvalues are the same number. The energy operators of Level 15 are averages of squared (whitened) Hessians, so they are positive semidefinite: they measure squared curvature, averaged over texts, positions and readouts.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="44" data-tol="0.001" data-unit="(determinant)">
+<p><b>Exercise 9.1.</b> For \(f(x_1, x_2) = x_1^2x_2 + x_2^3\), find the Hessian at \((1, 2)\) and its determinant. Is it a bowl, a dome or a saddle there?</p>
+<details><summary>Show answer</summary>
+<p>First derivatives: \(\partial f/\partial x_1 = 2x_1x_2\), \(\partial f/\partial x_2 = x_1^2 + 3x_2^2\). Second: \(\partial^2 f/\partial x_1^2 = 2x_2 = 4\), \(\partial^2 f/\partial x_1\partial x_2 = 2x_1 = 2\), \(\partial^2 f/\partial x_2^2 = 6x_2 = 12\). \(H = \begin{pmatrix} 4 & 2 \\ 2 & 12\end{pmatrix}\), \(\det H = 48 - 4 = 44 \gt 0\), \(\operatorname{tr} H = 16 \gt 0\): both eigenvalues positive (they are 3.53 and 12.47), so the local shape is a bowl. (The point is not a critical point, so this is curvature, not a minimum.)</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 9.2.</b> A bakery's profit \(P\) in dollars depends on loaves \(L\) and cakes \(K\) baked per day. Give the unit of each entry of the Hessian of \(P\), and say in words what a negative \(\partial^2 P/\partial L\,\partial K\) would mean. (\(P, L, K\) are used only here.)</p>
+<details><summary>Show answer</summary>
+<p>\(\partial^2 P/\partial L^2\): dollars per loaf². \(\partial^2 P/\partial L\,\partial K = \partial^2 P/\partial K\,\partial L\): dollars per loaf per cake. \(\partial^2 P/\partial K^2\): dollars per cake². A negative mixed entry means each extra cake makes each extra loaf earn less (and vice versa): the two compete, perhaps for oven space or for the same customers. They are substitutes, in Level 6's language.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-1.25" data-tol="0.001" data-unit="bushels per unit step²">
+<p><b>Exercise 9.3.</b> Compute the farm's curvature along the unit direction \((1, -1)/\sqrt2\) (one more bucket, one fewer bag). Then check it from the yields: compute \(Y(14 + t, 10 - t)\) for \(t = 1\) and compare with \(29 + \tfrac12\,\mathbf{v}^\top H\mathbf{v}\,t^2\) for \(\mathbf{v} = (1, -1)\).</p>
+<details><summary>Show answer</summary>
+<p>\(\mathbf{v}^\top H\mathbf{v} = -0.5\times1 + 2\times0.5\times(1)(-1) - 1\times1 = -0.5 - 1 - 1 = -2.5\). Unit direction: divide by \(\lVert\mathbf{v}\rVert^2 = 2\): \(-1.25\). Check: \(Y(15, 9) = 30 + 27 + 67.5 - 56.25 - 40.5 = 27.75\), and \(29 + \tfrac12(-2.5)(1) = 27.75\). Equal.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="3" data-tol="0.001" data-unit="(larger eigenvalue)">
+<p><b>Exercise 9.4.</b> Find the eigenvalues and unit eigenvectors of \(\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}\). Check \(\operatorname{tr}\) and \(\det\).</p>
+<details><summary>Show answer</summary>
+<p>\(\lambda^2 - 4\lambda + 3 = 0\), so \(\lambda = (4 \pm \sqrt{16 - 12})/2 = (4 \pm 2)/2 = 3\) or \(1\). For 3: \(u_2/u_1 = (3 - 2)/1 = 1\), unit \((0.7071, 0.7071)\). For 1: \(u_2/u_1 = (1 - 2)/1 = -1\), unit \((0.7071, -0.7071)\). Trace \(4 = 3 + 1\), determinant \(3 = 3\times1\). A bowl that is steeper along the diagonal.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-12" data-tol="0.001" data-unit="(determinant)">
+<p><b>Exercise 9.5.</b> Classify the critical point at the origin of \(f(x_1, x_2) = x_1^2 - 4x_1x_2 + x_2^2\). Then classify the origin for \(x_1^4 + x_2^4\), and explain why the test fails there.</p>
+<details><summary>Show answer</summary>
+<p>\(H = \begin{pmatrix} 2 & -4 \\ -4 & 2\end{pmatrix}\), \(\det H = 4 - 16 = -12 \lt 0\): a saddle, even though both diagonal entries are positive. Along \((1, 1)\): \(\mathbf{v}^\top H\mathbf{v} = 2 - 8 + 2 = -4\), down. For \(x_1^4 + x_2^4\): every second derivative at the origin is 0 (for example \(12x_1^2 = 0\)), so \(\det H = 0\) and the test is silent. The origin is in fact a minimum, but you need the fourth-order terms to see it.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.7071" data-tol="0.002" data-unit="bushels per bucket per bag">
+<p><b>Exercise 9.6.</b> Replace the farm's \(0.5\,WF\) by \(b\,WF\), keeping everything else. For which \(b \gt 0\) does the best plan stop existing (the critical point becomes a saddle)? Give the boundary value.</p>
+<details><summary>Show answer</summary>
+<p>The mixed partial becomes \(b\), so \(H = \begin{pmatrix} -0.5 & b \\ b & -1\end{pmatrix}\) and \(\det H = 0.5 - b^2\). It turns negative when \(b^2 \gt 0.5\), that is \(b \gt \sqrt{0.5} = 0.7071\) bushels per bucket per bag.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 9.7.</b> Take \(\mathbf{a} = (1, 1)\), \(\mathbf{b} = (1, -1)\). Write \(f = (\mathbf{a}\cdot\mathbf{x})(\mathbf{b}\cdot\mathbf{x})\) in terms of \(x_1, x_2\), find \(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top)\), and check its eigenvalues against \(\mathbf{a}\cdot\mathbf{b} \pm \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\).</p>
+<details><summary>Show answer</summary>
+<p>\(f = (x_1 + x_2)(x_1 - x_2) = x_1^2 - x_2^2\). \(\mathbf{a}\mathbf{b}^\top = \begin{pmatrix} 1 & -1 \\ 1 & -1\end{pmatrix}\), \(\mathbf{b}\mathbf{a}^\top = \begin{pmatrix} 1 & 1 \\ -1 & -1\end{pmatrix}\), sum \(\begin{pmatrix} 2 & 0 \\ 0 & -2\end{pmatrix}\), matching the second derivatives of \(x_1^2 - x_2^2\). Eigenvalues \(\pm2\). Formula: \(\mathbf{a}\cdot\mathbf{b} = 0\), \(\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert = \sqrt2\sqrt2 = 2\), so \(0 \pm 2\). Eigenvectors along \(\hat{\mathbf{a}} + \hat{\mathbf{b}} \propto (1, 0)\) and \(\hat{\mathbf{a}} - \hat{\mathbf{b}} \propto (0, 1)\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="12.247" data-tol="0.002" data-unit="(Frobenius norm)">
+<p><b>Exercise 9.8.</b> Compute the Frobenius norm of \(\begin{pmatrix} 4 & 7 \\ 7 & 6 \end{pmatrix}\) from its entries, then from its eigenvalues \(12.0711\) and \(-2.0711\).</p>
+<details><summary>Show answer</summary>
+<p>Entries: \(\sqrt{16 + 49 + 49 + 36} = \sqrt{150} = 12.247\). Eigenvalues: \(\sqrt{12.0711^2 + 2.0711^2} = \sqrt{145.71 + 4.29} = \sqrt{150}\). Same.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-0.0016" data-tol="0.01" data-unit="bushels per kg²">
+<p><b>Exercise 9.9.</b> Suppose one bag of fertiliser holds 25 kg (a made-up figure). Rewrite the farm Hessian with water in litres and fertiliser in kg, using \(B = \begin{pmatrix} 0.1 & 0 \\ 0 & 0.04 \end{pmatrix}\). Give the new \(\partial^2 Y/\partial(\text{kg})^2\) entry, and confirm the plan is still a maximum.</p>
+<details><summary>Show answer</summary>
+<p>\(B^\top HB\) multiplies entry \((i, j)\) by \(B_{ii}B_{jj}\): \(-0.5\times0.01 = -0.005\), \(0.5\times0.1\times0.04 = 0.002\), \(-1\times0.04^2 = -0.0016\) bushels per kg². Determinant \((-0.005)(-0.0016) - 0.002^2 = 0.000008 - 0.000004 = 0.000004 \gt 0\), and the diagonal is negative: still negative definite, still a maximum. The numbers shrank a lot; the signs did not move (Sylvester).</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  var fm = S.fmt, DEG = 180 / Math.PI;
+  function mount(host, aspect) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: aspect, maxH: 480 });
+    return { wrap: wrap, c: c };
+  }
+  function fitEqual(v, cx, cy, half) {
+    var b = v.box(), w = b.r - b.l, h = b.b - b.t, s = Math.min(w, h) / (2 * half);
+    v.set({ xmin: cx - w / (2 * s), xmax: cx + w / (2 * s), ymin: cy - h / (2 * s), ymax: cy + h / (2 * s) });
+  }
+  function clip(v) { var b = v.box(), x = v.ctx; x.save(); x.beginPath(); x.rect(b.l, b.t, b.r - b.l, b.b - b.t); x.clip(); }
+  function unclip(v) { v.ctx.restore(); }
+  function title(v, s) { var b = v.box(); v.ctx.font = S.font; v.ctx.fillStyle = S.col.ink; v.ctx.textAlign = "left"; v.ctx.textBaseline = "bottom"; v.ctx.fillText(s, b.l, b.t - 4); }
+  /* eigen-decomposition of [[a,b],[b,c]]: vals [big, small], unit vecs */
+  function eig(a, b, c) { return S.linalg.eigSym2([[a, b], [b, c]]); }
+  function angDeg(u) { var t = Math.atan2(u[1], u[0]) * DEG; if (t < 0) t += 180; if (t >= 180) t -= 180; return t; }
+  function shape(l1, l2) {
+    var e = 1e-9;
+    if (l2 > e) return "bowl (positive definite)";
+    if (l1 < -e) return "dome (negative definite)";
+    if (l1 > e && l2 < -e) return "saddle (indefinite)";
+    if (Math.abs(l1) <= e && Math.abs(l2) <= e) return "flat (zero matrix)";
+    return l1 > e ? "trough (positive semidefinite, one zero eigenvalue)" : "ridge (negative semidefinite, one zero eigenvalue)";
+  }
+  function Yf(W, F) { return 2 * W + 3 * F + 0.5 * W * F - 0.25 * W * W - 0.5 * F * F; }
+
+  /* Figure 9.1: curvature along a direction */
+  (function () {
+    var m = mount(document.getElementById("sim-dial"), 0.5), c = m.c;
+    var L = S.view(c, { xmin: -1.3, xmax: 1.3, ymin: -1.3, ymax: 1.3, padLeft: 12, padRight: 12, padTop: 22, padBottom: 12 });
+    var R = S.view(c, { xmin: 0, xmax: 180, ymin: -2, ymax: 2, padLeft: 44, padRight: 12, padTop: 22, padBottom: 30 });
+    function rd() { c.redraw(); }
+    var th = S.slider(m.wrap, { label: "direction θ", min: 0, max: 180, step: 0.5, value: 45, unit: "°", digits: 1, oninput: rd });
+    var sa = S.slider(m.wrap, { label: "a", min: -2, max: 2, step: 0.05, value: -0.5, digits: 2, oninput: rd });
+    var sb = S.slider(m.wrap, { label: "b", min: -2, max: 2, step: 0.05, value: 0.5, digits: 2, oninput: rd });
+    var sc = S.slider(m.wrap, { label: "c", min: -2, max: 2, step: 0.05, value: -1, digits: 2, oninput: rd });
+    S.button(m.wrap, "farm Hessian", function () { sa.set(-0.5); sb.set(0.5); sc.set(-1); rd(); });
+    var out = S.readout(m.wrap);
+    c.draw = function () {
+      var w1 = Math.min(c.W * 0.4, c.H);
+      L.set({ left: 0, width: w1 }); R.set({ left: w1, width: c.W - w1 });
+      fitEqual(L, 0, 0, 1.25);
+      var a = sa.get(), b = sb.get(), cc = sc.get(), t = th.get() / DEG, E = eig(a, b, cc), l1 = E.vals[0], l2 = E.vals[1];
+      var top = Math.max(l1, 0), bot = Math.min(l2, 0), span = Math.max(top - bot, 0.5), hi = Math.max(top, -bot);
+      R.set({ ymin: bot - 0.15 * span, ymax: top + 0.15 * span });
+      title(L, "direction"); title(R, "curvature along that direction");
+      /* left */
+      var ctx = c.ctx; ctx.strokeStyle = S.col.gray; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(L.X(0), L.Y(0), L.X(1) - L.X(0), 0, 2 * Math.PI); ctx.stroke();
+      L.line(-1.2, 0, 1.2, 0, { color: S.col.light, width: 1 }); L.line(0, -1.2, 0, 1.2, { color: S.col.light, width: 1 });
+      E.vecs.forEach(function (u, i) { L.line(-1.2 * u[0], -1.2 * u[1], 1.2 * u[0], 1.2 * u[1], { color: i ? S.col.red : S.col.blue, dash: [6, 4], width: 1.5 }); });
+      L.arrow(0, 0, Math.cos(t), Math.sin(t), { color: S.col.ink, width: 2.5 });
+      L.text("v̂", Math.cos(t), Math.sin(t), { dx: 6, dy: -4 });
+      L.text("water →", 1.25, 0, { dy: 14, align: "right", font: S.fontSmall });
+      /* right */
+      R.axes({ xlabel: "θ (degrees)", ylabel: "v̂ᵀHv̂", xticks: 30, yticks: hi > 2 ? 1 : 0.5, ydigits: hi > 2 ? 0 : 1 });
+      function kap(d) { var r = d / DEG, co = Math.cos(r), si = Math.sin(r); return a * co * co + 2 * b * co * si + cc * si * si; }
+      E.vecs.forEach(function (u, i) { var d = angDeg(u); R.line(d, R.r.ymin, d, R.r.ymax, { color: i ? S.col.red : S.col.blue, dash: [6, 4], width: 1.2 }); });
+      R.line(0, l1, 180, l1, { color: S.col.blue, dash: [2, 4], width: 1 }); R.line(0, l2, 180, l2, { color: S.col.red, dash: [2, 4], width: 1 });
+      R.fn(kap, { color: S.col.ink, width: 2 });
+      R.dot(th.get(), kap(th.get()), { color: S.col.ink, r: 6 });
+      var co = Math.cos(t), si = Math.sin(t);
+      out.textContent = "H = [[" + fm(a, 2) + ", " + fm(b, 2) + "], [" + fm(b, 2) + ", " + fm(cc, 2) + "]]   v̂ = (cos θ, sin θ) = (" + fm(co, 4) + ", " + fm(si, 4) + ")\n" +
+        "v̂ᵀHv̂ = a cos²θ + 2b cosθ sinθ + c sin²θ = " + fm(a * co * co, 4) + " + " + fm(2 * b * co * si, 4) + " + " + fm(cc * si * si, 4) + " = " + fm(kap(th.get()), 4) + "\n" +
+        "λ₁ = " + fm(l1, 4) + " at θ = " + fm(angDeg(E.vecs[0]), 1) + "°   λ₂ = " + fm(l2, 4) + " at θ = " + fm(angDeg(E.vecs[1]), 1) + "°   (largest and smallest of the curve)";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 9.2: bowl, dome, saddle in 3-D */
+  (function () {
+    var m = mount(document.getElementById("sim-shape"), 0.62), c = m.c;
+    function rd() { c.redraw(); }
+    var sa = S.slider(m.wrap, { label: "a", min: -2, max: 2, step: 0.05, value: 1, digits: 2, oninput: rd });
+    var sb = S.slider(m.wrap, { label: "b", min: -2, max: 2, step: 0.05, value: 0.5, digits: 2, oninput: rd });
+    var sc = S.slider(m.wrap, { label: "c", min: -2, max: 2, step: 0.05, value: 1, digits: 2, oninput: rd });
+    var az = S.slider(m.wrap, { label: "turn view", min: -180, max: 180, step: 1, value: -20, unit: "°", digits: 0, oninput: rd });
+    S.button(m.wrap, "bowl", function () { sa.set(1); sb.set(0.3); sc.set(0.6); rd(); });
+    S.button(m.wrap, "dome (farm)", function () { sa.set(-0.5); sb.set(0.5); sc.set(-1); rd(); });
+    S.button(m.wrap, "saddle", function () { sa.set(1); sb.set(0); sc.set(-1); rd(); });
+    S.button(m.wrap, "trough", function () { sa.set(1); sb.set(1); sc.set(1); rd(); });
+    var out = S.readout(m.wrap);
+    var g = S.v3(c, { azimuth: 0, elevation: 0.45, scale: 1.3, cy: null });
+    c.draw = function () {
+      var a = sa.get(), b = sb.get(), cc = sc.get(), E = eig(a, b, cc), l1 = E.vals[0], l2 = E.vals[1], r = 1.5;
+      function z(x, y) { return 0.5 * (a * x * x + 2 * b * x * y + cc * y * y); }
+      var zmax = 0.3;
+      [[r, r], [r, -r], [-r, r], [-r, -r], [r, 0], [0, r]].forEach(function (p) { zmax = Math.max(zmax, Math.abs(z(p[0], p[1]))); });
+      g.azimuth = az.get() / DEG; g.zscale = 1.2 / zmax; g.cy = c.H * 0.52;
+      g.line([-r, 0, 0], [r, 0, 0], { color: S.col.light, width: 1 }); g.line([0, -r, 0], [0, r, 0], { color: S.col.light, width: 1 });
+      g.surface(z, { n: 20, range: r, color: "#9a9a9a", width: 0.8 });
+      E.vecs.forEach(function (u, i) {
+        var col = i ? S.col.red : S.col.blue, prev = null, n = 40;
+        for (var k = 0; k <= n; k++) {
+          var t = -r + 2 * r * k / n, P = [t * u[0], t * u[1], z(t * u[0], t * u[1])];
+          if (prev) g.line(prev, P, { color: col, width: 3 });
+          prev = P;
+        }
+        g.line([-r * u[0], -r * u[1], 0], [r * u[0], r * u[1], 0], { color: col, width: 1, dash: [5, 4] });
+      });
+      g.dot([0, 0, 0], { color: S.col.ink });
+      g.text("x₁", [r * 1.1, 0, 0]); g.text("x₂", [0, r * 1.1, 0]);
+      out.textContent = "H = [[" + fm(a, 2) + ", " + fm(b, 2) + "], [" + fm(b, 2) + ", " + fm(cc, 2) + "]]   tr = " + fm(a + cc, 3) + "   det = ac − b² = " + fm(a * cc - b * b, 4) + "\n" +
+        "λ₁ = " + fm(l1, 4) + " (blue curve)   λ₂ = " + fm(l2, 4) + " (red curve)\n" +
+        "shape: " + shape(l1, l2);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 9.3: rotate the axes, watch the interaction */
+  (function () {
+    var m = mount(document.getElementById("sim-rotate"), 0.62), c = m.c;
+    var v = S.view(c, { xmin: 6, xmax: 22, ymin: 4, ymax: 16, padLeft: 40, padBottom: 30, padTop: 12 });
+    var ph = S.slider(m.wrap, { label: "axis angle φ", min: 0, max: 180, step: 0.01, value: 0, unit: "°", digits: 2, oninput: function () { c.redraw(); } });
+    var eAng = Math.atan2(0.5257311121, 0.8506508084) * DEG;
+    S.button(m.wrap, "snap to eigenvectors", function () { ph.set(Math.round(eAng * 100) / 100); c.redraw(); });
+    var out = S.readout(m.wrap);
+    var a = -0.5, b = 0.5, cc = -1;
+    c.draw = function () {
+      fitEqual(v, 14, 9.5, 6.2);
+      var levels = [28.75, 28, 27, 25, 23, 20, 17, 13];
+      v.axes({ xlabel: "W (buckets)", ylabel: "F (bags)", xticks: 2, yticks: 2 });
+      v.contour(Yf, levels, { color: S.col.gray, width: 1, res: 90 });
+      var f = ph.get() / DEG, co = Math.cos(f), si = Math.sin(f), r1 = [co, si], r2 = [-si, co];
+      /* principal axes for reference */
+      clip(v);
+      v.line(14 - 9 * 0.8507, 10 - 9 * 0.5257, 14 + 9 * 0.8507, 10 + 9 * 0.5257, { color: "#cfcfcf", width: 1, dash: [3, 4] });
+      v.line(14 + 9 * 0.5257, 10 - 9 * 0.8507, 14 - 9 * 0.5257, 10 + 9 * 0.8507, { color: "#cfcfcf", width: 1, dash: [3, 4] });
+      unclip(v);
+      v.arrow(14, 10, 14 + 3.5 * r1[0], 10 + 3.5 * r1[1], { color: S.col.blue, width: 2.5 });
+      v.arrow(14, 10, 14 + 3.5 * r2[0], 10 + 3.5 * r2[1], { color: S.col.red, width: 2.5 });
+      v.text("p", 14 + 3.5 * r1[0], 10 + 3.5 * r1[1], { dx: 6, dy: -4, color: S.col.blue });
+      v.text("q", 14 + 3.5 * r2[0], 10 + 3.5 * r2[1], { dx: 6, dy: -4, color: S.col.red });
+      v.dot(14, 10, { color: S.col.ink, r: 3 }); v.text("best plan (14, 10): 29 bushels", 14, 10, { dx: 8, dy: 16, font: S.fontSmall });
+      /* four-corner test from (8, 6) */
+      var x0 = [8, 6], P = [x0, [x0[0] + r1[0], x0[1] + r1[1]], [x0[0] + r2[0], x0[1] + r2[1]], [x0[0] + r1[0] + r2[0], x0[1] + r1[1] + r2[1]]];
+      v.poly([P[0], P[1], P[3], P[2]], { color: S.col.green, width: 1.2 });
+      P.forEach(function (q, i) { v.dot(q[0], q[1], { color: i ? S.col.green : S.col.ink, r: 4 }); });
+      var Yv = P.map(function (q) { return Yf(q[0], q[1]); }), I = Yv[3] - Yv[1] - Yv[2] + Yv[0];
+      var h11 = a * co * co + 2 * b * si * co + cc * si * si, h22 = a * si * si - 2 * b * si * co + cc * co * co, h12 = (cc - a) * si * co + b * (co * co - si * si);
+      out.textContent = "φ = " + fm(ph.get(), 1) + "°   p axis = (" + fm(co, 4) + ", " + fm(si, 4) + ")   q axis = (" + fm(-si, 4) + ", " + fm(co, 4) + ")\n" +
+        "H' = RᵀHR = [[" + fm(h11, 4) + ", " + fm(h12, 4) + "], [" + fm(h12, 4) + ", " + fm(h22, 4) + "]]   interaction H'₁₂ = " + fm(h12, 4) + "\n" +
+        "4-corner test from (8, 6): Y(both) − Y(p only) − Y(q only) + Y(none) = " + fm(Yv[3], 4) + " − " + fm(Yv[1], 4) + " − " + fm(Yv[2], 4) + " + " + fm(Yv[0], 4) + " = " + fm(I, 4) + "\n" +
+        (Math.abs(h12) < 0.002 ? "axes are the eigenvectors: no interaction, pure curvature " + fm(h11, 4) + " and " + fm(h22, 4) : "eigenvector angle is " + fm(eAng, 2) + "°");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 9.4: Hessian of a product of two reads */
+  (function () {
+    var m = mount(document.getElementById("sim-product"), 0.62), c = m.c;
+    var v = S.view(c, { xmin: -3, xmax: 3, ymin: -3, ymax: 3, pad: 26 });
+    var A = { x: 2, y: 1 }, B = { x: 1, y: 3 };
+    var out = S.readout(m.wrap);
+    S.drag(c, v, [A, B], function (p) { p.x = Math.round(p.x * 4) / 4; p.y = Math.round(p.y * 4) / 4; c.redraw(); });
+    c.draw = function () {
+      fitEqual(v, 0, 0, 3.2);
+      function f(x, y) { return (A.x * x + A.y * y) * (B.x * x + B.y * y); }
+      var la = Math.hypot(A.x, A.y), lb = Math.hypot(B.x, B.y), big = la * lb * 9 + 1e-9;
+      v.heat(f, { min: -big / 4, max: big / 4, step: 5 });
+      v.axes({ xlabel: "x₁", ylabel: "x₂", xticks: 1, yticks: 1 });
+      clip(v);
+      if (la > 1e-9) v.line(-9 * A.y / la, 9 * A.x / la, 9 * A.y / la, -9 * A.x / la, { color: S.col.ink, dash: [6, 4], width: 1 });
+      if (lb > 1e-9) v.line(-9 * B.y / lb, 9 * B.x / lb, 9 * B.y / lb, -9 * B.x / lb, { color: S.col.ink, dash: [6, 4], width: 1 });
+      var ab = A.x * B.x + A.y * B.y, H = [[2 * A.x * B.x, A.x * B.y + A.y * B.x], [A.x * B.y + A.y * B.x, 2 * A.y * B.y]];
+      var E = S.linalg.eigSym2(H), lp = ab + la * lb, lm = ab - la * lb;
+      if (la > 1e-9 && lb > 1e-9) {
+        var s = [A.x / la + B.x / lb, A.y / la + B.y / lb], d = [A.x / la - B.x / lb, A.y / la - B.y / lb], ns = Math.hypot(s[0], s[1]), nd = Math.hypot(d[0], d[1]);
+        if (ns > 1e-6) v.line(-9 * s[0] / ns, -9 * s[1] / ns, 9 * s[0] / ns, 9 * s[1] / ns, { color: S.col.blue, width: 3, alpha: 0.7 });
+        if (nd > 1e-6) v.line(-9 * d[0] / nd, -9 * d[1] / nd, 9 * d[0] / nd, 9 * d[1] / nd, { color: S.col.red, width: 3, alpha: 0.7 });
+      }
+      unclip(v);
+      v.arrow(0, 0, A.x, A.y, { color: S.col.ink, width: 2.5 }); v.text("a", A.x, A.y, { dx: 8, dy: -4 });
+      v.arrow(0, 0, B.x, B.y, { color: S.col.purple, width: 2.5 }); v.text("b", B.x, B.y, { dx: 8, dy: -4, color: S.col.purple });
+      v.dot(A.x, A.y, { color: S.col.ink, r: 6 }); v.dot(B.x, B.y, { color: S.col.purple, r: 6 });
+      var tol = 1e-9, npos = (lp > tol ? 1 : 0) + (lm > tol ? 1 : 0), nneg = (lp < -tol ? 1 : 0) + (lm < -tol ? 1 : 0);
+      out.textContent = "H = abᵀ + baᵀ = [[2a₁b₁, a₁b₂ + a₂b₁], [a₁b₂ + a₂b₁, 2a₂b₂]] = [[" + fm(H[0][0], 2) + ", " + fm(H[0][1], 2) + "], [" + fm(H[1][0], 2) + ", " + fm(H[1][1], 2) + "]]\n" +
+        "a·b = " + fm(ab, 3) + "   ‖a‖‖b‖ = " + fm(la * lb, 4) + "   formula: λ = a·b ± ‖a‖‖b‖ = " + fm(lp, 4) + ", " + fm(lm, 4) + "\n" +
+        "computed eigenvalues of H: " + fm(E.vals[0], 4) + ", " + fm(E.vals[1], 4) + "   inertia (n₊, n₋, n₀) = (" + npos + ", " + nneg + ", " + (2 - npos - nneg) + ")   rank " + (npos + nneg);
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

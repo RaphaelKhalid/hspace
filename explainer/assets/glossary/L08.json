@@ -1,0 +1,12 @@
+{
+  "local inverse": {"t": "local inverse", "a": ["locally invertible", "local invertibility"], "l": 8, "d": "A map that undoes a function near one point only. The inverse function theorem gives one wherever the Jacobian determinant is not zero."},
+  "global inverse": {"t": "global inverse", "a": ["globally invertible", "global invertibility"], "l": 8, "d": "A map that undoes a function everywhere at once. It needs every output to come from exactly one input, which local information alone cannot guarantee."},
+  "polar coordinates": {"t": "polar coordinates", "a": [], "l": 8, "d": "Describing a point by its distance from the origin and its angle, instead of across and up. Angles that differ by a full turn (360°, or 2π radians) give the same point."},
+  "complex number": {"t": "complex number", "a": ["complex numbers"], "l": 8, "d": "A number x + iy where i² = −1. One complex number is like a point in a plane; ℂ³ is triples of them."},
+  "counterexample": {"t": "counterexample", "a": ["counterexamples"], "l": 8, "d": "One explicit case that shows a general claim is false. A single counterexample settles the question."},
+  "peer review": {"t": "peer review", "a": ["peer-reviewed"], "l": 8, "d": "Checking of a research claim by independent experts before a journal publishes it."},
+  "polynomial map": {"t": "polynomial map", "a": ["polynomial maps"], "l": 8, "d": "A map whose every output is a polynomial in the inputs, such as (x, y) ↦ (x, y + x²)."},
+  "averaged Jacobian": {"t": "averaged Jacobian", "a": ["average Jacobian"], "l": 8, "d": "The entry-by-entry average of a function's Jacobian over many points. It keeps what all the points share and can hide what varies between them. The J-lens is one."},
+  "neighbourhood": {"t": "neighbourhood", "a": ["neighbourhoods", "neighborhood"], "l": 8, "d": "All points within some small distance of a given point: “near p”, made precise."},
+  "change of variables": {"t": "change of variables", "a": ["change-of-variables rule"], "l": 8, "d": "The rule that the area of a region's image equals the average of the Jacobian determinant over the region, times the region's area (when the determinant keeps one sign)."}
+}

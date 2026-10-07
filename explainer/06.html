@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 6: Interaction: the mixed partial derivative</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="6">
+<div class="page">
+
+<h1>Level 6: Interaction: the mixed partial derivative</h1>
+<p class="subtitle">Some effects exist only in combination. This page measures them with four numbers, shrinks the measurement down to a derivative, and shows that this is exactly what the v9 test measured inside a language model.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>split the effect of a joint change into two main effects and an interaction, with all four corner values written out;</li>
+<li>prove that an additive function has zero interaction, and see it in a picture;</li>
+<li>tell complements (positive interaction) from substitutes (negative interaction), and see how interaction moves the best plan;</li>
+<li>derive the mixed partial derivative as the limit of the four-point interaction, and explain why the order of differentiation does not matter;</li>
+<li>show, with a non-quadratic function, that the finite interaction depends on move size and starting point, and that the derivative at one corner can badly mispredict it;</li>
+<li>explain why testing one direction at a time can never find an interaction, and read the v9 result as a four-point interaction measured in nats.</li>
+</ul>
+<p class="small">Prerequisites: <a href="04.html">Level 4</a> (Taylor approximation, natural move size) and <a href="05.html">Level 5</a> (partial derivatives, the farm). The farm \(Y(W, F)\) and its partials from Level 5 are used throughout.</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first. Nothing appears out of nowhere.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(W,\ F\)</td><td>“W, F”</td><td>water and fertiliser (Level 5)</td><td>buckets, bags</td><td>\((W, F) = (4, 2)\)</td></tr>
+<tr><td>\(Y(W, F)\)</td><td>“Y of W and F”</td><td>the farm's yield, \(2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\)</td><td>bushels</td><td>\(Y(4, 2) = 12\)</td></tr>
+<tr><td>\(\Delta W,\ \Delta F\)</td><td>“delta W, delta F”</td><td>the size of the water move and of the fertiliser move</td><td>buckets, bags</td><td>\(\Delta W = 1\)</td></tr>
+<tr><td>\(f(x, y)\)</td><td>“f of x and y”</td><td>a general function of two inputs</td><td>depends on the example</td><td>\(f = xy\)</td></tr>
+<tr><td>\(x,\ y\)</td><td>“x, y”</td><td>its two inputs (the starting point is \((x, y)\))</td><td>depends on the example</td><td>\((0, 0)\)</td></tr>
+<tr><td>\(\Delta x,\ \Delta y\)</td><td>“delta x, delta y”</td><td>the two moves</td><td>units of \(x\), of \(y\)</td><td>\(\Delta x = 1\)</td></tr>
+<tr><td>\(\Delta\)</td><td>“delta”</td><td>one common move size, when \(\Delta x = \Delta y = \Delta\)</td><td>units of \(x\) (same as \(y\))</td><td>\(\Delta = 0.1\)</td></tr>
+<tr><td>\(f''\)</td><td>“f double prime”</td><td>second derivative of a one-input function (Level 3); used only in the reminder of section 6.6</td><td>unit of \(f\) per unit of input squared</td><td>\(f''(x) = 2\) for \(f = x^2\)</td></tr>
+<tr><td>\(f_{00},\ f_{10},\ f_{01},\ f_{11}\)</td><td>“f nought nought”, …</td><td>the four corner values: no move; first move only; second move only; both moves. The first digit says whether \(x\) moved, the second whether \(y\) moved.</td><td>unit of \(f\)</td><td>farm: 12, 12.75, 14.5, 15.75</td></tr>
+<tr><td>\(M_x,\ M_y\)</td><td>“M x, M y”</td><td>main effects: \(M_x = f_{10} - f_{00}\), \(M_y = f_{01} - f_{00}\). For the farm, \(M_W\) and \(M_F\).</td><td>unit of \(f\)</td><td>\(M_W = 0.75\) bushels</td></tr>
+<tr><td>\(I\)</td><td>“I”</td><td>the interaction (mixed difference): \(I = f_{11} - f_{10} - f_{01} + f_{00}\)</td><td>unit of \(f\)</td><td>\(I = 0.5\) bushels</td></tr>
+<tr><td>\(I(\Delta x, \Delta y)\)</td><td>“I of delta x, delta y”</td><td>the same, when we want to show which moves were used</td><td>unit of \(f\)</td><td>\(I(1, 1) = 0.5\)</td></tr>
+<tr><td>\(\partial f/\partial x\)</td><td>“partial f, partial x”</td><td>partial derivative (Level 5)</td><td>unit of \(f\) per unit of \(x\)</td><td>\(\partial Y/\partial W = 1\)</td></tr>
+<tr><td>\(\partial^2 f/\partial x^2\)</td><td>“second partial in x”</td><td>curvature along \(x\) alone, \(y\) held fixed</td><td>unit of \(f\) per unit of \(x\) squared</td><td>\(\partial^2 Y/\partial W^2 = -0.5\)</td></tr>
+<tr><td>\(\partial^2 f/\partial x\,\partial y\)</td><td>“mixed partial of f in x and y”</td><td>how fast the slope in \(x\) changes as \(y\) changes (or the other way round: section 6.7)</td><td>unit of \(f\) per unit of \(x\) per unit of \(y\)</td><td>\(\partial^2 Y/\partial W\,\partial F = 0.5\) bushels per bucket per bag</td></tr>
+<tr><td>\(\lim\)</td><td>“the limit as … goes to 0”</td><td>the value a quantity settles on as the moves shrink towards zero (Level 2)</td><td>same as the quantity</td><td>\(\lim I/(\Delta x\Delta y)\)</td></tr>
+<tr><td>\(p(x),\ q(y)\)</td><td>“p of x, q of y”</td><td>the two parts of an additive function \(f = p(x) + q(y)\)</td><td>unit of \(f\)</td><td>\(p(W) = 2W - 0.25W^2\)</td></tr>
+<tr><td>\(c\)</td><td>“c”</td><td>an adjustable interaction strength in a modified farm, \(Y_c\)</td><td>bushels per bucket per bag</td><td>\(c = 0.5\) (the real farm)</td></tr>
+<tr><td>\(Y_c(W, F)\)</td><td>“Y c”</td><td>the farm with \(0.5\,WF\) replaced by \(c\,WF\)</td><td>bushels</td><td>\(Y_0\) is the additive farm</td></tr>
+<tr><td>\(W^*,\ F^*\)</td><td>“W star, F star”</td><td>the best plan for \(Y_c\): where both partials are zero</td><td>buckets, bags</td><td>\((14, 10)\) when \(c = 0.5\)</td></tr>
+<tr><td>\(g(z)\)</td><td>“g of z”</td><td>a gate (sigmoid): \(g(z) = 1/(1 + e^{-z})\), a soft switch from 0 to 1</td><td>none (pure number)</td><td>\(g(0) = 0.5\)</td></tr>
+<tr><td>\(g'(z)\)</td><td>“g prime”</td><td>its slope, \(g'(z) = g(z)\,(1 - g(z))\) (the gate of Level 4)</td><td>per unit of \(z\)</td><td>\(g'(0) = 0.25\)</td></tr>
+<tr><td>\(z\)</td><td>“z”</td><td>the input of the gate</td><td>none (pure number)</td><td>\(z = 1\)</td></tr>
+<tr><td>\(e\)</td><td>“e”</td><td>Euler's number, 2.71828…</td><td>none (pure number)</td><td>\(e^{-1} \approx 0.368\)</td></tr>
+<tr><td>\(\mathbf{a},\ \mathbf{b}\)</td><td>“a, b” (bold: vectors)</td><td>two moves given as arrows: each says how far to move in every input at once</td><td>units of the inputs</td><td>\(\mathbf{a} = (1, 0)\)</td></tr>
+<tr><td>\(I(\mathbf{a}, \mathbf{b})\)</td><td>“I of a, b”</td><td>the interaction of two arrow moves: \(f(\text{start} + \mathbf{a} + \mathbf{b}) - f(\text{start} + \mathbf{a}) - f(\text{start} + \mathbf{b}) + f(\text{start})\)</td><td>unit of \(f\)</td><td>\(I = m^2\) for \(f = xy\), \(\theta = 0°\)</td></tr>
+<tr><td>\(\theta\)</td><td>“theta”</td><td>the angle by which the pair of move directions is turned (section 6.9)</td><td>degrees</td><td>\(\theta = 45°\)</td></tr>
+<tr><td>\(\cos\theta,\ \sin\theta\)</td><td>“cosine, sine”</td><td>across and up parts of a length-1 arrow at angle \(\theta\) (Level 5)</td><td>none (pure number)</td><td>\(\cos 0° = 1\)</td></tr>
+<tr><td>\(\mathbf{0}\)</td><td>“zero” (bold)</td><td>the starting point \((0, 0)\) in section 6.9</td><td>units of the inputs</td><td>\(f(\mathbf{0}) = 0\)</td></tr>
+<tr><td>\(s\)</td><td>“s”</td><td>a distance walked along one direction (section 6.9)</td><td>units of the inputs</td><td>\(s = 1\)</td></tr>
+<tr><td>\(m\)</td><td>“m”</td><td>the length of each move in section 6.9</td><td>units of the inputs</td><td>\(m = 1\)</td></tr>
+<tr><td>\(d\)</td><td>“d”</td><td>the number of directions (dimensions) a state has</td><td>none (a count)</td><td>\(d = 5{,}120\)</td></tr>
+<tr><td>\(\mathbf{h}\)</td><td>“h” (bold)</td><td>the residual state of a language model at one position: a list of \(d\) numbers (Level 14). Level 15 writes it plain, \(h\).</td><td>activation units</td><td>5,120 numbers at layer 16</td></tr>
+<tr><td>\(\sigma\)</td><td>“sigma”</td><td>a standard deviation: the typical size of a change (Level 13)</td><td>same as the quantity</td><td>a “1σ move”</td></tr>
+<tr><td>nat</td><td>“nat”</td><td>the unit of log-likelihood with natural logarithms (Level 14)</td><td>(a unit)</td><td>\(2.2 \times 10^{-3}\) nats</td></tr>
+<tr><td>\(I_\text{trunk}\)</td><td>“I trunk”</td><td>a variant of v9's \(I\) with the model's final normalisation and softmax removed (section 6.10 only)</td><td>nats</td><td>6.0× at layer 16</td></tr>
+<tr><td>\(\Rightarrow\)</td><td>“so”, “which gives”</td><td>the line on the left leads to the line on the right</td><td>none</td><td>\(2 - 0.5W = 0 \Rightarrow W = 4\)</td></tr>
+<tr><td>\(k\)</td><td>“k”</td><td>the power in a big-O statement (Level 4)</td><td>none (pure number)</td><td>\(k = 1\)</td></tr>
+<tr><td>\(|I|\)</td><td>“size of I”</td><td>the absolute value of \(I\): its size, ignoring the sign</td><td>unit of \(I\)</td><td>\(|-0.5| = 0.5\)</td></tr>
+<tr><td>\(\approx\)</td><td>“is approximately”</td><td>close to, but not exactly equal</td><td>none</td><td>\(I \approx 0.0625\,\Delta x\,\Delta y\)</td></tr>
+</table>
+</div>
+
+<h2>6.1 Two keys: effects that exist only together</h2>
+<p>A bank vault has two locks. Alice holds one key, Bob the other. Alice turning her key alone does nothing: the door stays shut. Bob turning his key alone does nothing. Both together: the door opens.</p>
+<p>Write the door as a function. Let it be 1 when open and 0 when shut. Then</p>
+<div class="tablewrap">
+<table>
+<tr><th></th><th>Bob does not turn</th><th>Bob turns</th></tr>
+<tr><th>Alice does not turn</th><td>0 (none)</td><td>0 (Bob only)</td></tr>
+<tr><th>Alice turns</th><td>0 (Alice only)</td><td>1 (both)</td></tr>
+</table>
+</div>
+<p>Suppose you are an investigator who may only test one key at a time. Alice's key: no change. Bob's key: no change. You would write in your report: “Neither key does anything.” You would be completely wrong. The entire effect lives in the combination.</p>
+<p>That is an interaction: an effect of a joint change that is not the sum of the effects of the separate changes. The vault is the purest case, because the separate effects are zero and the joint effect is everything. Other examples:</p>
+<ul>
+<li>Water and fertiliser on a field (the farm from Level 5): each helps alone, but together they help more than the sum.</li>
+<li>A job-training programme in a town with no jobs, versus the same programme in a town that is hiring.</li>
+<li>Two medicines that are each safe, but dangerous together.</li>
+<li>Two backup generators: each alone powers the building, so the second adds nothing once the first runs. Here the joint effect is <i>less</i> than the sum (section 6.5).</li>
+</ul>
+<div class="box key">
+<span class="boxtitle">Why this page is the heart of the site</span>
+H-space is a search for directions inside a language model that behave like the vault's keys: directions whose effects show up mainly in combination. First-order tools (the gradient, the Jacobian, the J-lens) test one direction at a time. Like the one-key investigator, they cannot see these effects. This page builds the tool that can.
+</div>
+
+<h2>6.2 Main effects and the interaction, with the farm</h2>
+<p>Take the farm from Level 5, \(Y(W, F) = 2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\) bushels. Start at the plan \((4, 2)\). Consider two moves: one more bucket (\(\Delta W = 1\)) and one more bag (\(\Delta F = 1\)). There are four plans to compare. Compute each one term by term.</p>
+<p><b>No move,</b> \((4, 2)\): \(8 + 6 + 4 - 4 - 2 = 12\) bushels.</p>
+<p><b>Water only,</b> \((5, 2)\): \(2(5) + 3(2) + 0.5(5)(2) - 0.25(25) - 0.5(4) = 10 + 6 + 5 - 6.25 - 2 = 12.75\) bushels.</p>
+<p><b>Fertiliser only,</b> \((4, 3)\): \(2(4) + 3(3) + 0.5(4)(3) - 0.25(16) - 0.5(9) = 8 + 9 + 6 - 4 - 4.5 = 14.5\) bushels.</p>
+<p><b>Both,</b> \((5, 3)\): \(2(5) + 3(3) + 0.5(5)(3) - 0.25(25) - 0.5(9) = 10 + 9 + 7.5 - 6.25 - 4.5 = 15.75\) bushels.</p>
+<div class="tablewrap">
+<table>
+<tr><th>yield (bushels)</th><th>\(W = 4\) (no extra water)</th><th>\(W = 5\) (+1 bucket)</th></tr>
+<tr><th>\(F = 2\) (no extra fertiliser)</th><td>\(f_{00} = 12\)</td><td>\(f_{10} = 12.75\)</td></tr>
+<tr><th>\(F = 3\) (+1 bag)</th><td>\(f_{01} = 14.5\)</td><td>\(f_{11} = 15.75\)</td></tr>
+</table>
+</div>
+<p>The subscripts are a code: the first digit is 1 if water moved, the second is 1 if fertiliser moved. Now split the joint change into pieces.</p>
+<p><b>Main effect of water</b> (water alone, fertiliser at its start): \(M_W = f_{10} - f_{00} = 12.75 - 12 = 0.75\) bushels.</p>
+<p><b>Main effect of fertiliser</b> (fertiliser alone, water at its start): \(M_F = f_{01} - f_{00} = 14.5 - 12 = 2.5\) bushels.</p>
+<p><b>Joint effect</b> (both moves): \(f_{11} - f_{00} = 15.75 - 12 = 3.75\) bushels.</p>
+<p>If the moves did not interact, the joint effect would be the sum of the main effects, \(0.75 + 2.5 = 3.25\). It is 3.75. The extra 0.5 bushels is the interaction:</p>
+$$ I = (f_{11} - f_{00}) - M_W - M_F = 3.75 - 0.75 - 2.5 = 0.5\ \text{bushels}. $$
+
+<h3>Two more ways to read the same number</h3>
+<p><b>Reading 1: what did the bag do to the bucket?</b> With the extra bag, the bucket adds \(f_{11} - f_{01} = 15.75 - 14.5 = 1.25\) bushels. Without it, the bucket adds \(f_{10} - f_{00} = 12.75 - 12 = 0.75\). The bag raised the bucket's value by</p>
+$$ 1.25 - 0.75 = 0.5\ \text{bushels}. $$
+<p><b>Reading 2: what did the bucket do to the bag?</b> With the extra bucket, the bag adds \(f_{11} - f_{10} = 15.75 - 12.75 = 3\) bushels. Without it, the bag adds \(f_{01} - f_{00} = 14.5 - 12 = 2.5\). The bucket raised the bag's value by</p>
+$$ 3 - 2.5 = 0.5\ \text{bushels}. $$
+<p>All three readings give 0.5. That is not a coincidence. Expand each one and you get the same four corners with the same signs:</p>
+$$ (f_{11} - f_{01}) - (f_{10} - f_{00}) \;=\; (f_{11} - f_{10}) - (f_{01} - f_{00}) \;=\; f_{11} - f_{10} - f_{01} + f_{00}. $$
+<p>It is a difference of differences. Social scientists know it as the difference-in-differences estimate of a policy effect: (treated place after − treated place before) − (comparison place after − comparison place before). The two “inputs” there are time and treatment, and the policy effect is their interaction.</p>
+
+<h2>6.3 The four-corner formula</h2>
+<div class="box key">
+<span class="boxtitle">The interaction of two moves</span>
+For a function \(f(x, y)\), a starting point \((x, y)\) and moves \(\Delta x\), \(\Delta y\):
+$$ I(\Delta x, \Delta y) = \underbrace{f(x + \Delta x,\, y + \Delta y)}_{f_{11}\ \text{both}} - \underbrace{f(x + \Delta x,\, y)}_{f_{10}\ x\ \text{only}} - \underbrace{f(x,\, y + \Delta y)}_{f_{01}\ y\ \text{only}} + \underbrace{f(x,\, y)}_{f_{00}\ \text{none}}. $$
+Signs: plus for “both” and “none”, minus for each single move (like the colours of a chessboard). Unit: the unit of \(f\). It is also called the mixed difference or the 2×2 interaction.
+</div>
+
+<figure class="sim" id="sim-corners">
+<figcaption><b>Figure 6.1.</b> The four corners on the farm's contour map. The rectangle's corners are the four plans: none (bottom left), water only (bottom right), fertiliser only (top left), both (top right), each labelled with its yield in bushels. Change the start and the move sizes. The <span class="nogl">readout</span> computes \(I = f_{11} - f_{10} - f_{01} + f_{00}\) live. Notice two things: moving the start does not change \(I\) at all, and \(I \div (\Delta W \times \Delta F)\) is always 0.5. Try a negative move too.</figcaption>
+</figure>
+
+<h3>Mechanics: change one move size and nothing else</h3>
+<p>Start at \((4, 2)\) every time. Each row lists the four corners in bushels.</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(\Delta W\) (buckets)</th><th>\(\Delta F\) (bags)</th><th>\(f_{00}\)</th><th>\(f_{10}\)</th><th>\(f_{01}\)</th><th>\(f_{11}\)</th><th>\(I\) (bushels)</th><th>\(I / (\Delta W \Delta F)\)</th></tr>
+<tr><td>1</td><td>1</td><td>12</td><td>12.75</td><td>14.5</td><td>15.75</td><td>0.5</td><td>0.5</td></tr>
+<tr><td>2</td><td>1</td><td>12</td><td>13</td><td>14.5</td><td>16.5</td><td>1</td><td>0.5</td></tr>
+<tr><td>1</td><td>2</td><td>12</td><td>12.75</td><td>16</td><td>17.75</td><td>1</td><td>0.5</td></tr>
+<tr><td>2</td><td>2</td><td>12</td><td>13</td><td>16</td><td>19</td><td>2</td><td>0.5</td></tr>
+<tr><td>−1</td><td>1</td><td>12</td><td>10.75</td><td>14.5</td><td>12.75</td><td>−0.5</td><td>0.5</td></tr>
+<tr><td>0.1</td><td>0.1</td><td>12</td><td>12.0975</td><td>12.295</td><td>12.3975</td><td>0.005</td><td>0.5</td></tr>
+</table>
+</div>
+<p>Double one move: \(I\) doubles. Double both: \(I\) quadruples. Flip the sign of one move: \(I\) flips sign. Shrink both by 10: \(I\) shrinks by 100. In every row, \(I = 0.5 \times \Delta W \times \Delta F\). And from a different start, \((10, 8)\), with one bucket and one bag: \(27.75 - 27.75 - 26.5 + 27 = 0.5\) again. For the farm, the interaction depends on the move sizes but not on where you stand. Section 6.4 proves this; section 6.8 shows a function where it is not true.</p>
+
+<h2>6.4 Additive functions have zero interaction</h2>
+<p>A function is additive if it splits into a part that depends only on \(x\) plus a part that depends only on \(y\):</p>
+$$ f(x, y) = p(x) + q(y). $$
+<p>For example \(3x^2 + 5y\), or \(e^x + \sin y\). Compute its four corners:</p>
+$$ f_{11} = p(x + \Delta x) + q(y + \Delta y) $$
+$$ f_{10} = p(x + \Delta x) + q(y) $$
+$$ f_{01} = p(x) + q(y + \Delta y) $$
+$$ f_{00} = p(x) + q(y) $$
+<p>Now form \(f_{11} - f_{10} - f_{01} + f_{00}\) and collect the \(p\) terms and the \(q\) terms separately:</p>
+$$ p\text{ terms: } p(x + \Delta x) - p(x + \Delta x) - p(x) + p(x) = 0, $$
+$$ q\text{ terms: } q(y + \Delta y) - q(y) - q(y + \Delta y) + q(y) = 0. $$
+<p>So \(I = 0\), for every start and every move size. Each part appears twice with opposite signs and cancels. The mechanism in words: in an additive function, what \(x\) does is never affected by where \(y\) is.</p>
+
+<h3>The farm, split into an additive part and an interaction part</h3>
+$$ Y(W, F) = \underbrace{(2W - 0.25W^2)}_{p(W)} + \underbrace{(3F - 0.5F^2)}_{q(F)} + \underbrace{0.5\,WF}_{\text{interaction part}}. $$
+<p>The first two brackets are additive, so they contribute zero to \(I\). Only \(0.5\,WF\) is left. Compute its four corners and expand every product:</p>
+$$ 0.5(W + \Delta W)(F + \Delta F) = 0.5\,(WF + W\Delta F + \Delta W F + \Delta W\Delta F) $$
+$$ 0.5(W + \Delta W)F = 0.5\,(WF + \Delta W F) $$
+$$ 0.5\,W(F + \Delta F) = 0.5\,(WF + W\Delta F) $$
+$$ 0.5\,WF = 0.5\,(WF) $$
+<p>Take the first, subtract the second and third, add the fourth. Inside the brackets: \(WF\) appears \(+1 - 1 - 1 + 1 = 0\) times; \(W\Delta F\) appears \(+1 - 1 = 0\) times; \(\Delta W F\) appears \(+1 - 1 = 0\) times; \(\Delta W \Delta F\) appears once. So</p>
+$$ I = 0.5\,\Delta W\,\Delta F. $$
+<p>Units: \(0.5\ \tfrac{\text{bushels}}{\text{bucket}\cdot\text{bag}} \times \text{buckets} \times \text{bags} = \text{bushels}\). The start \((W, F)\) has cancelled out completely, which is why Figure 6.1 never changed when you moved the start.</p>
+
+<h3>The picture: parallel slices</h3>
+<p>Draw the W-slice (yield against water) for two amounts of fertiliser, say 2 bags and 3 bags. If the function is additive, the second curve is the first one lifted straight up by \(q(3) - q(2)\). Same shape, same slope at every \(W\): the curves are parallel. With an interaction, the extra bag also tilts the curve: the slope at every \(W\) rises by 0.5 bushels per bucket.</p>
+
+<figure class="sim" id="sim-coef">
+<figcaption><b>Figure 6.2.</b> The farm with an adjustable interaction, \(Y_c(W, F) = 2W + 3F + c\,WF - 0.25W^2 - 0.5F^2\). Red: the W-slice at \(F\) bags. Blue: the W-slice at \(F + 1\) bags. The short black segments are tangent lines at the chosen \(W\). Press “additive” and the two curves become parallel: same slope, \(I = 0\). Press “farm”: the blue curve is steeper by exactly \(c = 0.5\) bushels per bucket. Press “substitutes”: it is less steep. Watch the best plan in the <span class="nogl">readout</span> move as \(c\) changes.</figcaption>
+</figure>
+
+<div class="box plain">
+<span class="boxtitle">The converse</span>
+If a function has zero interaction for every start and every pair of moves, it is additive (on a rectangle-shaped region of inputs). The reason, using section 6.6: zero mixed partial everywhere means \(\partial f/\partial x\) does not depend on \(y\). So the part of \(f\) that changes with \(x\) is the same at every \(y\), and \(f\) is “a function of \(x\)” plus “a function of \(y\)”. So “no interaction” and “additive” are the same thing.
+</div>
+
+<h2>6.5 Complements and substitutes: the sign of the interaction</h2>
+<p>An interaction can be positive or negative. Economists have names for both.</p>
+<ul>
+<li><b>Complements</b> (\(I \gt 0\)): each makes the other more valuable. Water and fertiliser. Left shoe and right shoe. The vault's two keys.</li>
+<li><b>Substitutes</b> (\(I \lt 0\)): each makes the other less valuable, because they do the same job. Two backup generators. Tea and coffee for someone who drinks one hot drink a day.</li>
+</ul>
+
+<h3>Worked example: two backup generators</h3>
+<p>A building needs 100 kW. Generator A can supply 100 kW. So can generator B. Power delivered, in kW:</p>
+<div class="tablewrap">
+<table>
+<tr><th>power (kW)</th><th>B off</th><th>B on</th></tr>
+<tr><th>A off</th><td>\(f_{00} = 0\)</td><td>\(f_{01} = 100\)</td></tr>
+<tr><th>A on</th><td>\(f_{10} = 100\)</td><td>\(f_{11} = 100\)</td></tr>
+</table>
+</div>
+$$ I = f_{11} - f_{10} - f_{01} + f_{00} = 100 - 100 - 100 + 0 = -100\ \text{kW}. $$
+<p>Main effects: 100 kW each, so their sum is 200 kW. The joint effect is only 100 kW. The interaction is −100 kW: the “missing” half. Compare with the vault, where the main effects were 0 and the interaction was +1. The vault is an AND (both needed). The generators are an OR (either is enough).</p>
+
+<h3>Mechanics: how the interaction moves the best plan</h3>
+<p>Replace the farm's 0.5 by an adjustable number \(c\) (bushels per bucket per bag):</p>
+$$ Y_c(W, F) = 2W + 3F + c\,WF - 0.25\,W^2 - 0.5\,F^2. $$
+<p>By section 6.4, \(I = c\,\Delta W\,\Delta F\). The best plan is where both partials are zero (Level 5):</p>
+$$ \frac{\partial Y_c}{\partial W} = 2 + cF - 0.5W = 0 \;\Rightarrow\; W = 4 + 2cF, $$
+$$ \frac{\partial Y_c}{\partial F} = 3 + cW - F = 0 \;\Rightarrow\; F = 3 + cW. $$
+<p>Put the second into the first: \(W = 4 + 2c(3 + cW) = 4 + 6c + 2c^2 W\). Move the \(W\) terms to the left: \(W(1 - 2c^2) = 4 + 6c\). So</p>
+$$ W^* = \frac{4 + 6c}{1 - 2c^2}, \qquad F^* = 3 + c\,W^*. $$
+<div class="tablewrap">
+<table>
+<tr><th>\(c\) (bushels per bucket per bag)</th><th>kind</th><th>\(W^*\) (buckets)</th><th>\(F^*\) (bags)</th><th>best yield (bushels)</th></tr>
+<tr><td>−0.5</td><td>substitutes</td><td>2</td><td>2</td><td>5</td></tr>
+<tr><td>−0.25</td><td>substitutes</td><td>2.857</td><td>2.286</td><td>6.286</td></tr>
+<tr><td>0</td><td>additive</td><td>4</td><td>3</td><td>8.5</td></tr>
+<tr><td>0.25</td><td>complements</td><td>6.286</td><td>4.571</td><td>13.143</td></tr>
+<tr><td>0.5</td><td>complements (the real farm)</td><td>14</td><td>10</td><td>29</td></tr>
+</table>
+</div>
+<p>With complements, use more of both: each one makes the other worth buying. With substitutes, use less of both. And here is the cost of ignoring an interaction. A farmer who models the real farm as additive (\(c = 0\)) plans \((4, 3)\). On the real farm that plan yields \(Y(4, 3) = 14.5\) bushels, half of the 29 that was available. The formula needs \(1 - 2c^2 \gt 0\), that is \(|c| \lt 0.707\); with a stronger interaction there is no top at all (Level 9 explains why).</p>
+
+<h2>6.6 Shrinking the moves: the mixed partial derivative</h2>
+<p>Level 2 turned a finite slope into a derivative by shrinking the step. Do the same here. Divide the interaction by both move sizes, then shrink them.</p>
+<div class="box key">
+<span class="boxtitle">Mixed partial derivative</span>
+$$ \frac{\partial^2 f}{\partial x\,\partial y}(x, y) = \lim_{\Delta x,\ \Delta y\ \to\ 0} \frac{I(\Delta x, \Delta y)}{\Delta x\,\Delta y}. $$
+Unit: unit of \(f\) per unit of \(x\) per unit of \(y\). It is the interaction per unit of each move, for very small moves.
+</div>
+
+<h3>Why this is “the derivative of a derivative”</h3>
+<p>Regroup the four corners into two slopes. Divide by \(\Delta x\) inside and by \(\Delta y\) outside:</p>
+$$ \frac{I}{\Delta x\,\Delta y} = \frac{1}{\Delta y}\left[ \frac{f(x + \Delta x, y + \Delta y) - f(x, y + \Delta y)}{\Delta x} - \frac{f(x + \Delta x, y) - f(x, y)}{\Delta x} \right]. $$
+<p>Look at the two fractions inside the bracket. The first is the slope in \(x\) measured at height \(y + \Delta y\). The second is the slope in \(x\) at height \(y\). Shrink \(\Delta x\) first. They become partial derivatives:</p>
+$$ \frac{I}{\Delta x\,\Delta y} \;\to\; \frac{1}{\Delta y}\left[ \frac{\partial f}{\partial x}(x, y + \Delta y) - \frac{\partial f}{\partial x}(x, y) \right]. $$
+<p>That is “change in the x-slope, divided by the change in \(y\)”. Now shrink \(\Delta y\). It becomes the derivative in \(y\) of the slope in \(x\):</p>
+$$ \frac{\partial}{\partial y}\left( \frac{\partial f}{\partial x} \right). $$
+<p>So the mixed partial answers: how much does the slope in \(x\) change when you nudge \(y\)? For the farm, how much is a bucket's value raised by one more bag?</p>
+
+<h3>Worked example: the farm</h3>
+<p>From Level 5, \(\partial Y/\partial W = 2 + 0.5F - 0.5W\). Differentiate in \(F\), treating \(W\) as a number: the 2 gives 0, \(0.5F\) gives 0.5, \(-0.5W\) gives 0. So</p>
+$$ \frac{\partial^2 Y}{\partial W\,\partial F} = 0.5\ \text{bushels per bucket per bag}. $$
+<p>Check with real numbers: \(\partial Y/\partial W\) at \((4, 3)\) is \(2 + 1.5 - 2 = 1.5\); at \((4, 2)\) it is 1. One more bag raised the bucket's value by \(1.5 - 1 = 0.5\) bushels per bucket. For the farm, \(I/(\Delta W\Delta F) = 0.5\) for every move size, so the limit is 0.5 too. For a quadratic the finite interaction and the mixed partial agree exactly. Section 6.8 shows a function where they do not.</p>
+
+<h3>Worked example: a cubic term</h3>
+<p>Let \(f(x, y) = x^2 y^3\), with pure-number inputs. Treat \(y\) as a number: \(\partial f/\partial x = 2x\,y^3\). Now treat \(x\) as a number and differentiate in \(y\): \(\partial/\partial y\,(2x\,y^3) = 6x\,y^2\). At \((1, 2)\): \(6 \times 1 \times 4 = 24\). Check with the four corners, \(\Delta x = \Delta y = \Delta\):</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(\Delta\)</th><th>0.1</th><th>0.01</th><th>0.001</th></tr>
+<tr><td>\(I / \Delta^2\)</td><td>26.48</td><td>24.24</td><td>24.024</td></tr>
+</table>
+</div>
+<p>It approaches 24, with an error that shrinks about ten times for each ten-times smaller move (Level 4's big-O, with \(k = 1\) here).</p>
+
+<div class="box warn">
+<span class="boxtitle">No ½ in front of the cross term</span>
+In Level 4 the curvature term was \(\tfrac12 f''\Delta x^2\). In two inputs the small-move expansion is
+$$ \Delta f \approx \frac{\partial f}{\partial x}\Delta x + \frac{\partial f}{\partial y}\Delta y + \tfrac12\frac{\partial^2 f}{\partial x^2}\Delta x^2 + \tfrac12\frac{\partial^2 f}{\partial y^2}\Delta y^2 + \frac{\partial^2 f}{\partial x\,\partial y}\Delta x\,\Delta y. $$
+The cross term has no ½: it appears twice (once as “x then y”, once as “y then x”), and the two halves add. Check with the farm's exact expansion in Level 5, section 5.6: the cross term was \(+0.5\,\Delta W\,\Delta F\), and the mixed partial is 0.5. The diagonal terms were \(-0.25\Delta W^2 = \tfrac12(-0.5)\Delta W^2\) and \(-0.5\Delta F^2 = \tfrac12(-1)\Delta F^2\).
+</div>
+
+<h2>6.7 The order does not matter</h2>
+<p>We differentiated in \(W\) first, then in \(F\). Try the other order. From Level 5, \(\partial Y/\partial F = 3 + 0.5W - F\). Differentiate in \(W\): \(0.5\). The same 0.5. For \(x^2 y^3\): \(\partial f/\partial y = 3x^2 y^2\), then \(\partial/\partial x\) gives \(6x\,y^2\). The same as before.</p>
+<p>Why must it be so? Look at the four-corner formula. It treats the two moves identically: swap the roles of \(x\) and \(y\), and you get the same four corners with the same signs. Reading 1 and Reading 2 of section 6.2 were exactly the two orders, done with finite moves, and they agreed. Each order of differentiation is the same \(I/(\Delta x\Delta y)\), taken to zero in a different sequence. For smooth functions the sequence does not matter, so</p>
+$$ \frac{\partial}{\partial y}\left(\frac{\partial f}{\partial x}\right) = \frac{\partial}{\partial x}\left(\frac{\partial f}{\partial y}\right). $$
+<p>This is the symmetry of mixed partials (also called Schwarz's or Clairaut's theorem). In words: <i>the effect of fertiliser on the value of water equals the effect of water on the value of fertiliser</i>, both in bushels per bucket per bag. Interaction is mutual. It is also why a Hessian matrix is symmetric (<a href="09.html">Level 9</a>).</p>
+<div class="box plain">
+<span class="boxtitle">When it can fail</span>
+There are functions where the two orders give different answers at a point. A standard example is \(f(x, y) = xy\,(x^2 - y^2)/(x^2 + y^2)\) with \(f(0, 0) = 0\): at \((0, 0)\) one order gives −1 and the other +1. This can happen only when the second derivatives jump around near that point (they are not continuous). Every function used on the rest of this site is smooth enough that the order never matters.
+</div>
+
+<h2>6.8 Beyond quadratics: interaction depends on move size and position</h2>
+<p>For the farm, \(I = 0.5\,\Delta W\,\Delta F\) everywhere. That is special to quadratics. Real systems, including neural networks, are full of soft switches. Here the interaction behaves very differently.</p>
+
+<h3>The soft vault</h3>
+<p>Make the vault soft. Let \(x\) be how far Alice turns her key and \(y\) how far Bob turns his (pure numbers in this toy). Each lock is a gate (a sigmoid, Level 4): \(g(z) = 1/(1 + e^{-z})\), which goes smoothly from 0 (locked) to 1 (open). The door opens only if both locks open, so</p>
+$$ f(x, y) = g(x)\,g(y), $$
+<p>the probability the door opens (a pure number). This is a toy, not a model of anything specific.</p>
+<p><b>Its mixed partial.</b> Treat \(y\) as a number: \(\partial f/\partial x = g'(x)\,g(y)\). Differentiate in \(y\): \(\partial^2 f/\partial x\,\partial y = g'(x)\,g'(y)\), where \(g'(z) = g(z)(1 - g(z))\). At \((0, 0)\): \(g(0) = 0.5\), \(g'(0) = 0.5 \times 0.5 = 0.25\), so the mixed partial is \(0.25 \times 0.25 = 0.0625\).</p>
+<p><b>Its finite interaction factorises.</b> Write out the four corners and group:</p>
+$$ I = g(x{+}\Delta x)\,g(y{+}\Delta y) - g(x{+}\Delta x)\,g(y) - g(x)\,g(y{+}\Delta y) + g(x)\,g(y) $$
+$$ = g(x{+}\Delta x)\,\big[g(y{+}\Delta y) - g(y)\big] - g(x)\,\big[g(y{+}\Delta y) - g(y)\big] $$
+$$ = \big[g(x{+}\Delta x) - g(x)\big]\,\big[g(y{+}\Delta y) - g(y)\big]. $$
+<p>The interaction is (how much Alice's lock changed) × (how much Bob's lock changed). Both always have the same sign as their moves, so for moves in the same direction \(I \gt 0\): the locks are complements.</p>
+
+<h3>Mechanics 1: shrink the moves at a fixed start</h3>
+<p>Start at \((0, 0)\). Use equal moves \(\Delta x = \Delta y = \Delta\). Then \(I = [g(\Delta) - 0.5]^2\). For \(\Delta = 1\): \(g(1) = 1/(1 + e^{-1}) = 0.731059\), so \(I = 0.231059^2 = 0.053388\).</p>
+<div class="tablewrap">
+<table>
+<tr><th>move \(\Delta\)</th><th>4</th><th>2</th><th>1</th><th>0.5</th><th>0.1</th></tr>
+<tr><td>\(I\)</td><td>0.2323</td><td>0.1450</td><td>0.05339</td><td>0.01500</td><td>0.000624</td></tr>
+<tr><td>\(I / \Delta^2\)</td><td>0.0145</td><td>0.0363</td><td>0.0534</td><td>0.0600</td><td>0.0624</td></tr>
+</table>
+</div>
+<p>As the moves shrink, \(I/\Delta^2\) climbs to the mixed partial, 0.0625, exactly as section 6.6 promised. For big moves it is far from it: at \(\Delta = 4\) it is 0.0145, less than a quarter. The interaction per unit of move depends on the move size. For the farm it did not.</p>
+
+<h3>Mechanics 2: same move, different starts</h3>
+<p>Now fix \(\Delta = 1\) and move the start. The “corner” column is the mixed partial at the start point, \(g'(x)\,g'(y)\).</p>
+<div class="tablewrap">
+<table>
+<tr><th>start \((x, y)\)</th><th>\((-4, -4)\)</th><th>\((-2, -2)\)</th><th>\((0, 0)\)</th><th>\((2, 2)\)</th><th>\((4, 4)\)</th><th>\((-4, 2)\)</th></tr>
+<tr><td>\(I\) for \(\Delta = 1\)</td><td>0.00087</td><td>0.0224</td><td>0.0534</td><td>0.00515</td><td>0.00013</td><td>0.00211</td></tr>
+<tr><td>mixed partial at the start</td><td>0.00031</td><td>0.0110</td><td>0.0625</td><td>0.0110</td><td>0.00031</td><td>0.00185</td></tr>
+</table>
+</div>
+<p>The interaction is strongest where both locks are mid-turn, and nearly zero where either lock is already fully shut or fully open. Where you stand matters as much as how far you move.</p>
+
+<h3>Mechanics 3: the derivative at the corner can be badly wrong</h3>
+<p>Start at \((-3, -3)\), both locks almost shut, and turn both keys by 3. The true interaction is \(I = [g(0) - g(-3)]^2 = (0.5 - 0.047426)^2 = 0.2048\). The derivative at the starting corner predicts \(g'(-3)^2 \times 3 \times 3 = 0.002041 \times 9 = 0.0184\): eleven times too small. The derivative at the centre of the rectangle, \((-1.5, -1.5)\), predicts \(g'(-1.5)^2 \times 9 = 0.022245 \times 9 = 0.2002\): about 2% low.</p>
+<p>This is Level 4's warning, now for interactions. The second derivative at one point describes small moves near that point. A move as big as the region where the switch happens sees a different function. In fact \(I\) equals the mixed partial <i>averaged over the whole rectangle</i>, times \(\Delta x\,\Delta y\); <a href="12.html">Level 12</a> proves this (the rectangle identity). Here the centre is a much better single guess than the corner. Figure 6.3 lets you compare the two for any start and move.</p>
+
+<figure class="sim" id="sim-gate2">
+<figcaption><b>Figure 6.3.</b> The soft vault \(f = g(x)\,g(y)\). Top: the probability the door opens (white 0, red 1), with the rectangle of your two moves. Drag the black corner to change the start; use the slider to change the move \(\Delta\) (the same for both keys). Bottom: \(I/\Delta^2\) for every move size from this start (black curve), the mixed partial at the starting corner (red dashed line) and at the centre of the rectangle (green dashed curve). The black curve meets the red line only as \(\Delta \to 0\). Drag the corner to \((-3, -3)\) and set \(\Delta = 3\) to reproduce Mechanics 3.</figcaption>
+</figure>
+
+<h2>6.9 Testing one direction at a time cannot see interaction</h2>
+<p>Back to the hard vault, now with turning amounts: \(f(x, y) = x\,y\). Its second derivatives are</p>
+$$ \frac{\partial^2 f}{\partial x^2} = 0, \qquad \frac{\partial^2 f}{\partial y^2} = 0, \qquad \frac{\partial^2 f}{\partial x\,\partial y} = 1. $$
+<p>Scan along \(x\) alone from \((0, 0)\): \(f(x, 0) = 0\) for every \(x\). Flat. Scan along \(y\) alone: flat. A test that measures the value, slope and curvature along each input separately reports “nothing here”. The four corners with \(\Delta x = \Delta y = 1\) report \(1 - 0 - 0 + 0 = 1\).</p>
+
+<h3>Which pair you test matters</h3>
+<p>Now turn the pair of test directions by an angle \(\theta\). Let the two moves be arrows of length \(m\):</p>
+$$ \mathbf{a} = m\,(\cos\theta,\ \sin\theta), \qquad \mathbf{b} = m\,(-\sin\theta,\ \cos\theta). $$
+<p>They are at right angles to each other. Start at \((0, 0)\) and compute the four corners of \(f = xy\) (multiply the two coordinates of each point):</p>
+$$ f(\mathbf{0}) = 0, \quad f(\mathbf{a}) = m^2\cos\theta\sin\theta, \quad f(\mathbf{b}) = -m^2\sin\theta\cos\theta, $$
+$$ f(\mathbf{a} + \mathbf{b}) = m^2(\cos\theta - \sin\theta)(\sin\theta + \cos\theta) = m^2(\cos^2\theta - \sin^2\theta). $$
+$$ I(\mathbf{a}, \mathbf{b}) = m^2(\cos^2\theta - \sin^2\theta) - m^2\cos\theta\sin\theta + m^2\sin\theta\cos\theta - 0 = m^2(\cos^2\theta - \sin^2\theta). $$
+<p>At \(\theta = 0°\) (the two keys): \(I = m^2\). At \(\theta = 45°\): \(\cos 45° = \sin 45°\), so \(I = 0\). The same function, tested along a different pair of directions, shows no interaction at all. Instead, the single directions now bend. Walk a distance \(s\) along \(\mathbf{a}\) at 45°: \(f(s\cos 45°,\ s\sin 45°) = s \times 0.7071 \times s \times 0.7071 = s^2/2\). Its second derivative in \(s\) is 1: a curvature of +1 per unit². Along \(\mathbf{b}\) the same calculation gives −1. The interaction has turned into curvature along single directions.</p>
+<div class="box key">
+<span class="boxtitle">Interaction belongs to a pair of directions</span>
+Whether you see interaction or curvature depends on the axes you test along. Level 9 shows that every smooth function has, at each point and for small moves, special axes along which all interaction vanishes (the eigenvectors of the Hessian). For H-space the lesson is the other way round: the effect you care about may be visible only for the right <i>pairs</i> of directions. You have to find them.
+</div>
+
+<figure class="sim" id="sim-turn">
+<figcaption><b>Figure 6.4.</b> The hard vault \(f = xy\) (red where positive, blue where negative). The red arrow is move \(\mathbf{a}\), the blue arrow move \(\mathbf{b}\), at right angles, turned by \(\theta\). The <span class="nogl">readout</span> gives the four corners, the interaction \(I(\mathbf{a}, \mathbf{b})\) and the curvature along each arrow alone. Turn from 0° to 45°: the interaction drains away to zero while the single-direction curvatures grow from 0 to ±1. Drag the start: \(I\) does not change (\(f\) is a quadratic), but the corner values do.</figcaption>
+</figure>
+
+<h3>Counting pairs</h3>
+<p>If a state has \(d\) directions, the number of different pairs is \(d(d - 1)/2\) (each of \(d\) directions pairs with \(d - 1\) others, and each pair is counted twice). For \(d = 2\): 1 pair. For \(d = 5\): \(5 \times 4 / 2 = 10\) pairs. For the residual stream of Qwen3.6-27B, \(d = 5{,}120\): \(5{,}120 \times 5{,}119 / 2 = 13{,}104{,}640\) pairs, at every position and layer. Each pair needs its own joint-move run of the model. Testing them all is out of reach. So H-space first estimates a small set of directions where interaction is likely to live (the H-lens, Level 15), and only then tests pairs inside it.</p>
+
+<h2>6.10 Why this matters for H-space: the v9 test</h2>
+<p>The v9 test is a preregistered experiment on Qwen3.6-27B that passed at both layers it tested. It measures exactly the quantity on this page. Here is the translation.</p>
+<div class="tablewrap">
+<table>
+<tr><th>on this page</th><th>in v9 (<code>../hlens/paper/hspace-paper.md</code> §4d)</th></tr>
+<tr><td>the plan \((W, F)\)</td><td>the residual state \(\mathbf{h}\) of Qwen3.6-27B at one punctuation position, at layer 16 or layer 40 (\(d = 5{,}120\) numbers)</td></tr>
+<tr><td>the yield \(Y\), in bushels</td><td>\(f\) = the model's log-likelihood of the next 16 tokens, summed, in nats</td></tr>
+<tr><td>one bucket, \(\Delta W = 1\)</td><td>move \(\mathbf{a}\): a 1σ move along one direction (a natural-sized change, Level 4 section 4.8)</td></tr>
+<tr><td>one bag, \(\Delta F = 1\)</td><td>move \(\mathbf{b}\): a 1σ move along a second direction, at the same position</td></tr>
+<tr><td>\(I = f_{11} - f_{10} - f_{01} + f_{00}\)</td><td>\(I(\mathbf{a}, \mathbf{b}) = f(\mathbf{h} + \mathbf{a} + \mathbf{b}) - f(\mathbf{h} + \mathbf{a}) - f(\mathbf{h} + \mathbf{b}) + f(\mathbf{h})\): four runs of the model</td></tr>
+<tr><td>the keys vs a random pair of knobs</td><td>pairs of directions from EX (a 5-direction subspace found by the H-lens at punctuation positions) vs pairs from Σ-orbit twins (control subspaces with the same variance profile, but different directions)</td></tr>
+</table>
+</div>
+<p>Each piece of this page appears in the design:</p>
+<ul>
+<li><b>Finite moves, not the derivative at a point.</b> v9 moves the state by a full 1σ and measures what happens. Section 6.8 and Level 4 explain why: at natural move sizes, the derivative at the start can mispredict the interaction by a factor of ten.</li>
+<li><b>Pairs, not single directions.</b> Section 6.9: single-direction tests cannot see interaction. v9 tests pairs.</li>
+<li><b>Size, not sign.</b> Interactions can be complements or substitutes (section 6.5). Both count, so v9 compares the size \(|I|\).</li>
+<li><b>A matched control.</b> Any large move has some interaction. The question is whether EX pairs have more than pairs that are equally large in natural spread. The Σ-orbit twins are that control.</li>
+<li><b>Interaction per main effect.</b> EX directions might just have bigger effects of every kind. So v9 also compared the interaction <i>per unit of single-move (main) effect</i> (section 6.2's \(M_x\), \(M_y\)). EX won on that too (the paper's T3 statistic).</li>
+</ul>
+<h3>The result</h3>
+<p>From <code>../hlens/paper/hspace-paper.md</code> §4d (the numbers are also in <code>assets/hspace_numbers.js</code> as <code>HS.v9</code>):</p>
+<ul>
+<li>Pairs of EX directions showed <b>5.8× at layer 16 and 2.5× at layer 40 more interaction than matched controls</b>. Each ratio is computed on a log scale. In each of 89 windows of text, take the mean \(|I|\) over 3 matched EX pairs, divide by the same mean for each of the 8 twins, and take the log. Average over the 8 twins, then over the 89 windows, then take exp (<code>T1</code> in <code>../hlens/hs_v9.py</code>). So the ratios are not the ratio of the two means below.</li>
+<li>In absolute terms the interactions are small. At layer 16, the mean \(|I|\) along EX pairs was \(2.2 \times 10^{-3}\) nats, against \(3.3 \times 10^{-4}\) nats for the twins. At layer 40: \(1.0 \times 10^{-3}\) against \(3.0 \times 10^{-4}\).</li>
+<li>A version that removes the model's final normalisation and softmax (called \(I_\text{trunk}\) in the paper) gave 6.0× and 2.5×.</li>
+</ul>
+<p>What this does and does not show, in the paper's own terms: it is a perturbation test. It shows that EX predicts <i>where</i> natural-scale pairwise interaction lives at punctuation positions. It does not show what the directions represent, or that the model relies on them. Level 15 gives the full list.</p>
+<p>In one sentence: <b>the v9 test is the farm's four-corner table, computed inside a 27-billion-parameter model, with nats instead of bushels and 1σ moves instead of buckets and bags.</b></p>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="1" data-tol="0.001" data-unit="bushels">
+<p><b>Exercise 6.1.</b> On the farm, start at \((2, 6)\) and use \(\Delta W = 2\), \(\Delta F = 1\). Compute all four corners and the interaction. Check against \(I = 0.5\,\Delta W\,\Delta F\).</p>
+<details><summary>Show answer</summary>
+<p>\(f_{00} = Y(2, 6) = 4 + 18 + 6 - 1 - 18 = 9\). \(f_{10} = Y(4, 6) = 8 + 18 + 12 - 4 - 18 = 16\). \(f_{01} = Y(2, 7) = 4 + 21 + 7 - 1 - 24.5 = 6.5\). \(f_{11} = Y(4, 7) = 8 + 21 + 14 - 4 - 24.5 = 14.5\).</p>
+<p>\(I = 14.5 - 16 - 6.5 + 9 = 1\) bushel. Formula: \(0.5 \times 2 \times 1 = 1\). They agree.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0" data-tol="0.001">
+<p><b>Exercise 6.2.</b> Let \(f(x, y) = 3x^2 + 5y\). Start at \((1, 1)\) with \(\Delta x = \Delta y = 1\). Compute the interaction.</p>
+<details><summary>Show answer</summary>
+<p>\(f(1, 1) = 8\), \(f(2, 1) = 17\), \(f(1, 2) = 13\), \(f(2, 2) = 22\). \(I = 22 - 17 - 13 + 8 = 0\). The function is additive (\(p(x) = 3x^2\), \(q(y) = 5y\)), so this had to be zero.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1" data-tol="0.001">
+<p><b>Exercise 6.3.</b> Let \(f(x, y) = xy\). Start at \((2, 3)\) with \(\Delta x = 0.5\) and \(\Delta y = 2\). Compute the interaction.</p>
+<details><summary>Show answer</summary>
+<p>\(f(2, 3) = 6\), \(f(2.5, 3) = 7.5\), \(f(2, 5) = 10\), \(f(2.5, 5) = 12.5\). \(I = 12.5 - 7.5 - 10 + 6 = 1\). This equals \(\Delta x\,\Delta y = 0.5 \times 2\), because the mixed partial of \(xy\) is 1 everywhere and \(xy\) is a quadratic.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="24" data-tol="0.001">
+<p><b>Exercise 6.4.</b> Compute \(\partial^2 f/\partial x\,\partial y\) for \(f(x, y) = x^2 y^3\) at \((1, 2)\), in both orders.</p>
+<details><summary>Show answer</summary>
+<p>\(x\) first: \(\partial f/\partial x = 2xy^3\), then \(\partial/\partial y\) gives \(6xy^2 = 6 \times 1 \times 4 = 24\). \(y\) first: \(\partial f/\partial y = 3x^2y^2\), then \(\partial/\partial x\) gives \(6xy^2 = 24\). Same.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="9" data-tol="0.001">
+<p><b>Exercise 6.5.</b> Let \(f(x, y) = x^2 y^2\). Start at \((1, 1)\) with \(\Delta x = \Delta y = 1\). Compute \(I\). Then compute the mixed partial \(4xy\) at the starting corner and at the centre of the rectangle, \((1.5, 1.5)\), each times \(\Delta x\,\Delta y\). Which predicts \(I\)?</p>
+<details><summary>Show answer</summary>
+<p>Corners: \(f(1, 1) = 1\), \(f(2, 1) = 4\), \(f(1, 2) = 4\), \(f(2, 2) = 16\). \(I = 16 - 4 - 4 + 1 = 9\).</p>
+<p>Corner: \(4 \times 1 \times 1 \times 1 = 4\), less than half. Centre: \(4 \times 1.5 \times 1.5 \times 1 = 9\), exact. (It is exact here because the mixed partial \(4xy\) averaged over the square equals its value at the centre. Level 12 explains the general rule.)</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-100" data-tol="0.001" data-unit="kW">
+<p><b>Exercise 6.6.</b> Two backup generators each supply 100 kW to a building that needs 100 kW. What is the interaction of “switch on A” and “switch on B”? Are they complements or substitutes?</p>
+<details><summary>Show answer</summary>
+<p>\(f_{00} = 0\), \(f_{10} = 100\), \(f_{01} = 100\), \(f_{11} = 100\). \(I = 100 - 100 - 100 + 0 = -100\) kW. Negative: substitutes.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.053388" data-tol="0.002">
+<p><b>Exercise 6.7.</b> For the soft vault \(f = g(x)\,g(y)\), start at \((0, 0)\) with \(\Delta x = \Delta y = 1\). You are given \(g(0) = 0.5\) and \(g(1) = 0.731059\). Compute \(I\), and compare it with the mixed partial at the start, 0.0625.</p>
+<details><summary>Show answer</summary>
+<p>\(I = [g(1) - g(0)]\,[g(1) - g(0)] = 0.231059^2 = 0.053388\). That is about 15% below the corner's 0.0625 × 1 × 1. With \(\Delta = 0.1\) the two would agree to within 0.2%.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1" data-tol="0.001" data-unit="bushels">
+<p><b>Exercise 6.8.</b> On the farm, you add 5 litres of water (1 bucket = 10 litres) and 4 bags of fertiliser. What is the interaction?</p>
+<details><summary>Show answer</summary>
+<p>5 litres is 0.5 bucket. \(I = 0.5\ \tfrac{\text{bushels}}{\text{bucket}\cdot\text{bag}} \times 0.5\ \text{bucket} \times 4\ \text{bags} = 1\) bushel. Converting litres to buckets first keeps the units consistent.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="10" data-tol="0.001" data-unit="pairs">
+<p><b>Exercise 6.9.</b> EX has 5 directions. How many different pairs of EX directions are there? (The paper reports that all of them agree with its 3 preregistered pairs.)</p>
+<details><summary>Show answer</summary>
+<p>\(5 \times 4 / 2 = 10\) pairs.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 6.10.</b> A colleague proposes to replace v9 by a cheaper test: compute the Hessian of \(f\) at \(\mathbf{h}\) along each EX direction separately, and report how large those single-direction curvatures are. Give two reasons from this page why that test would not answer v9's question.</p>
+<details><summary>Show answer</summary>
+<p>First, single-direction curvatures can miss interaction completely: the hard vault \(xy\) has zero curvature along both keys and an interaction of 1 (section 6.9). The question is about pairs. Second, a derivative at one point can badly mispredict what a natural-sized (1σ) move does: in section 6.8 the corner derivative was eleven times too small. v9 measures the finite four-point \(I\) at 1σ for that reason. (A third: without matched controls, a large number says nothing about whether EX is special.)</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  function Yc(W, F, c) { return 2 * W + 3 * F + c * W * F - 0.25 * W * W - 0.5 * F * F; }
+  function Y(W, F) { return Yc(W, F, 0.5); }
+  function gate(z) { return 1 / (1 + Math.exp(-z)); }
+  function gp(z) { var s = gate(z); return s * (1 - s); }
+  function setup(host) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    return wrap;
+  }
+  function equalScale(v, xmin, xmax, yc) {
+    var b = v.box(), h = (xmax - xmin) * (b.b - b.t) / (b.r - b.l);
+    v.set({ xmin: xmin, xmax: xmax, ymin: yc - h / 2, ymax: yc + h / 2 });
+  }
+
+  /* Figure 6.1: the four corners on the farm */
+  (function () {
+    var wrap = setup(document.getElementById("sim-corners"));
+    var c = S.canvas(wrap, { aspect: 0.58 });
+    var v = S.view(c, { xmin: 0, xmax: 12, ymin: 0, ymax: 8, padLeft: 40, padBottom: 30 });
+    function rd() { c.redraw(); }
+    var w0 = S.slider(wrap, { label: "start W", min: 1, max: 9, step: 0.5, value: 4, unit: "buckets", digits: 1, oninput: rd });
+    var f0 = S.slider(wrap, { label: "start F", min: 1, max: 6, step: 0.5, value: 2, unit: "bags", digits: 1, oninput: rd });
+    var dw = S.slider(wrap, { label: "move ΔW", min: -2, max: 3, step: 0.1, value: 1, unit: "buckets", digits: 1, oninput: rd });
+    var df = S.slider(wrap, { label: "move ΔF", min: -2, max: 3, step: 0.1, value: 1, unit: "bags", digits: 1, oninput: rd });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      equalScale(v, -0.5, 13, 4.5);
+      var lv = []; for (var k = -10; k <= 28; k += 2) lv.push(k);
+      v.heat(Y, { min: -30, max: 30, step: 5 });
+      v.contour(Y, lv, { color: S.col.gray, width: 0.7, res: 60 });
+      v.axes({ xlabel: "water W (buckets)", ylabel: "fertiliser F (bags)", xticks: 1, yticks: 1, grid: false });
+      var W = w0.get(), F = f0.get(), a = dw.get(), b = df.get();
+      var f00 = Y(W, F), f10 = Y(W + a, F), f01 = Y(W, F + b), f11 = Y(W + a, F + b), I = f11 - f10 - f01 + f00;
+      v.poly([[W, F], [W + a, F], [W + a, F + b], [W, F + b]], { color: S.col.ink, width: 1.5, fill: "#ffffff", fillAlpha: 0.35 });
+      v.arrow(W, F, W + a, F, { color: S.col.red, width: 2.5 });
+      v.arrow(W, F, W, F + b, { color: S.col.blue, width: 2.5 });
+      var pts = [[W, F, "none", f00], [W + a, F, "W only", f10], [W, F + b, "F only", f01], [W + a, F + b, "both", f11]];
+      pts.forEach(function (p) {
+        v.dot(p[0], p[1], { color: S.col.ink, r: 4.5 });
+        var right = p[0] >= W + a / 2 ? 1 : -1, up = p[1] >= F + b / 2 ? 1 : -1;
+        if (a === 0) right = p[2] === "none" ? -1 : 1;
+        v.text(p[2] + ": " + S.fmt(p[3], 3), p[0], p[1], { dx: right * 8, dy: up > 0 ? -8 : 16, align: right > 0 ? "left" : "right", font: S.fontSmall });
+      });
+      var M_W = f10 - f00, M_F = f01 - f00;
+      out.textContent =
+        "f00 = Y(" + S.fmt(W, 1) + ", " + S.fmt(F, 1) + ") = " + S.fmt(f00, 4) + "    f10 = Y(" + S.fmt(W + a, 1) + ", " + S.fmt(F, 1) + ") = " + S.fmt(f10, 4) + "\n" +
+        "f01 = Y(" + S.fmt(W, 1) + ", " + S.fmt(F + b, 1) + ") = " + S.fmt(f01, 4) + "    f11 = Y(" + S.fmt(W + a, 1) + ", " + S.fmt(F + b, 1) + ") = " + S.fmt(f11, 4) + "   (bushels)\n" +
+        "main effects M_W = " + S.fmt(M_W, 4) + ", M_F = " + S.fmt(M_F, 4) + ", sum " + S.fmt(M_W + M_F, 4) + ";  joint effect f11 − f00 = " + S.fmt(f11 - f00, 4) + "\n" +
+        "I = f11 − f10 − f01 + f00 = " + S.fmt(f11, 4) + " − " + S.fmt(f10, 4) + " − " + S.fmt(f01, 4) + " + " + S.fmt(f00, 4) + " = " + S.fmt(I, 4) + " bushels\n" +
+        (Math.abs(a * b) > 1e-9 ? "I ÷ (ΔW × ΔF) = " + S.fmt(I, 4) + " ÷ (" + S.fmt(a, 1) + " × " + S.fmt(b, 1) + ") = " + S.fmt(I / (a * b), 4) + " bushels per bucket per bag" : "one move is zero, so there is nothing to interact: I = 0");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 6.2: interaction strength c and the slices */
+  (function () {
+    var wrap = setup(document.getElementById("sim-coef"));
+    var c = S.canvas(wrap, { aspect: 0.58 });
+    var v = S.view(c, { xmin: 0, xmax: 16, ymin: -10, ymax: 32, padLeft: 40, padBottom: 30 });
+    function rd() { c.redraw(); }
+    var cc = S.slider(wrap, { label: "interaction c", min: -0.6, max: 0.6, step: 0.05, value: 0.5, unit: "bu/(bucket·bag)", digits: 2, oninput: rd });
+    var ff = S.slider(wrap, { label: "fertiliser F", min: 0, max: 8, step: 1, value: 2, unit: "bags", digits: 0, oninput: rd });
+    var ww = S.slider(wrap, { label: "tangents at W", min: 1, max: 12, step: 0.5, value: 4, unit: "buckets", digits: 1, oninput: rd });
+    S.button(wrap, "additive (c = 0)", function () { cc.set(0); rd(); });
+    S.button(wrap, "farm (c = 0.5)", function () { cc.set(0.5); rd(); });
+    S.button(wrap, "substitutes (c = −0.5)", function () { cc.set(-0.5); rd(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var C = cc.get(), F = ff.get(), W = ww.get();
+      v.axes({ xlabel: "water W (buckets)", ylabel: "yield Y_c (bushels)", xticks: 2, yticks: 5 });
+      var curves = [[F, S.col.red], [F + 1, S.col.blue]], slopes = [];
+      curves.forEach(function (cv) {
+        var Fv = cv[0], col = cv[1];
+        v.fn(function (w) { return Yc(w, Fv, C); }, { color: col, width: 2.2 });
+        var y0 = Yc(W, Fv, C), s = 2 + C * Fv - 0.5 * W;
+        slopes.push(s);
+        v.line(W - 2, y0 - 2 * s, W + 2, y0 + 2 * s, { color: S.col.ink, width: 1.3 });
+        v.dot(W, y0, { color: col, r: 4.5 });
+        v.text("F = " + Fv + " bags", 9, Yc(9, Fv, C), { dy: Fv === F ? 18 : -10, color: col, font: S.fontSmall });
+      });
+      var I = Yc(W + 1, F + 1, C) - Yc(W + 1, F, C) - Yc(W, F + 1, C) + Yc(W, F, C);
+      var den = 1 - 2 * C * C, Ws = (4 + 6 * C) / den, Fs = 3 + C * Ws;
+      out.textContent =
+        "slope of red at W = " + S.fmt(W, 1) + ":  2 + c·F − 0.5W = " + S.fmt(slopes[0], 3) + " bushels per bucket\n" +
+        "slope of blue at W = " + S.fmt(W, 1) + ": 2 + c·(F+1) − 0.5W = " + S.fmt(slopes[1], 3) + " bushels per bucket\n" +
+        "difference = " + S.fmt(slopes[1] - slopes[0], 3) + " = c   (one extra bag changed each bucket's value by c)\n" +
+        "four corners from (" + S.fmt(W, 1) + ", " + F + ") with 1 bucket and 1 bag: I = " + S.fmt(I, 3) + " bushels   (" +
+        (Math.abs(C) < 1e-9 ? "additive" : C > 0 ? "complements" : "substitutes") + ")\n" +
+        "best plan W* = (4 + 6c)/(1 − 2c²) = " + S.fmt(Ws, 2) + " buckets, F* = 3 + c·W* = " + S.fmt(Fs, 2) + " bags, best yield " + S.fmt(Yc(Ws, Fs, C), 2) + " bushels";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 6.3: the soft vault f = g(x) g(y) */
+  (function () {
+    var wrap = setup(document.getElementById("sim-gate2"));
+    function f(x, y) { return gate(x) * gate(y); }
+    var cm = S.canvas(wrap, { aspect: 0.55 });
+    var vm = S.view(cm, { xmin: -7, xmax: 7, ymin: -4, ymax: 4, padLeft: 36, padBottom: 30 });
+    var cp = S.canvas(wrap, { aspect: 0.4 });
+    var vp = S.view(cp, { xmin: 0, xmax: 6, ymin: 0, ymax: 0.08, padLeft: 50, padBottom: 30 });
+    var corner = { x: 0, y: 0 };
+    function rd() { cm.redraw(); cp.redraw(); }
+    var D = S.slider(wrap, { label: "move Δ (both keys)", min: 0.05, max: 6, step: 0.05, value: 1, digits: 2, oninput: rd });
+    var out = S.readout(wrap);
+    S.drag(cm, vm, [corner], rd);
+    function Iof(x, y, d) { return (gate(x + d) - gate(x)) * (gate(y + d) - gate(y)); }
+    cm.draw = function () {
+      equalScale(vm, -7, 7, 0);
+      vm.heat(f, { min: -1, max: 1, step: 5 });
+      vm.contour(f, [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9], { color: S.col.gray, width: 0.7, res: 60 });
+      vm.axes({ xlabel: "Alice's key x", ylabel: "Bob's key y", xticks: 1, yticks: 1, grid: false });
+      var x = corner.x, y = corner.y, d = D.get();
+      vm.rect(x, y, d, d, { color: S.col.ink, width: 1.5 });
+      vm.dot(x + d / 2, y + d / 2, { color: S.col.green, r: 4, hollow: true });
+      vm.dot(x, y, { color: S.col.ink, r: 6 });
+      vm.text("start (drag)", x, y, { dx: -8, dy: 16, align: "right", font: S.fontSmall });
+    };
+    cp.draw = function () {
+      var x = corner.x, y = corner.y, d = D.get(), k;
+      var gc = gp(x) * gp(y), top = gc;
+      for (k = 1; k <= 120; k++) { var dd = 6 * k / 120; top = Math.max(top, Iof(x, y, dd) / (dd * dd), gp(x + dd / 2) * gp(y + dd / 2)); }
+      top = top * 1.15 || 0.01;
+      vp.set({ ymax: top });
+      vp.axes({ xlabel: "move Δ", ylabel: "I / Δ²", xticks: 1, ydigits: top < 0.01 ? 4 : 3 });
+      vp.line(0, gc, 6, gc, { color: S.col.red, dash: [6, 4], width: 1.5 });
+      vp.fn(function (dd) { return gp(x + dd / 2) * gp(y + dd / 2); }, { color: S.col.green, dash: [3, 3], width: 1.5, from: 0.01 });
+      vp.fn(function (dd) { return Iof(x, y, dd) / (dd * dd); }, { color: S.col.ink, width: 2.2, from: 0.01 });
+      var I = Iof(x, y, d);
+      vp.dot(d, I / (d * d), { color: S.col.ink, r: 5 });
+      var f00 = f(x, y), f10 = f(x + d, y), f01 = f(x, y + d), f11 = f(x + d, y + d), gm = gp(x + d / 2) * gp(y + d / 2);
+      out.textContent =
+        "start (" + S.fmt(x, 2) + ", " + S.fmt(y, 2) + "), Δ = " + S.fmt(d, 2) + ":  f00 = " + S.fmt(f00, 4) + ", f10 = " + S.fmt(f10, 4) + ", f01 = " + S.fmt(f01, 4) + ", f11 = " + S.fmt(f11, 4) + "\n" +
+        "I = f11 − f10 − f01 + f00 = " + I.toPrecision(4) + "    I / Δ² = " + (I / (d * d)).toPrecision(4) + "\n" +
+        "mixed partial at the start g′(x)g′(y) = " + gc.toPrecision(4) + "  →  predicts I ≈ " + (gc * d * d).toPrecision(4) + "  (true I ÷ prediction = " + S.fmt(I / (gc * d * d), 2) + ")\n" +
+        "mixed partial at the centre            = " + gm.toPrecision(4) + "  →  predicts I ≈ " + (gm * d * d).toPrecision(4) + "  (true I ÷ prediction = " + S.fmt(I / (gm * d * d), 2) + ")";
+    };
+    rd();
+  })();
+
+  /* Figure 6.4: turning the pair of directions for f = xy */
+  (function () {
+    var wrap = setup(document.getElementById("sim-turn"));
+    function f(x, y) { return x * y; }
+    var c = S.canvas(wrap, { aspect: 0.6 });
+    var v = S.view(c, { xmin: -3, xmax: 3, ymin: -2, ymax: 2, padLeft: 36, padBottom: 30 });
+    var st = { x: 0, y: 0 };
+    function rd() { c.redraw(); }
+    var th = S.slider(wrap, { label: "turn θ", min: 0, max: 90, step: 1, value: 0, unit: "°", digits: 0, oninput: rd });
+    var mm = S.slider(wrap, { label: "move length m", min: 0.2, max: 1.5, step: 0.05, value: 1, digits: 2, oninput: rd });
+    var out = S.readout(wrap);
+    S.drag(c, v, [st], rd);
+    c.draw = function () {
+      equalScale(v, -3.2, 3.2, 0);
+      v.heat(f, { min: -3, max: 3, step: 5 });
+      v.contour(f, [-2, -1, -0.5, 0.5, 1, 2], { color: S.col.gray, width: 0.7, res: 60 });
+      v.axes({ xlabel: "key x", ylabel: "key y", xticks: 1, yticks: 1, grid: false });
+      var t = th.get() * Math.PI / 180, m = mm.get(), co = Math.cos(t), si = Math.sin(t);
+      var x = st.x, y = st.y, ax = m * co, ay = m * si, bx = -m * si, by = m * co;
+      v.poly([[x, y], [x + ax, y + ay], [x + ax + bx, y + ay + by], [x + bx, y + by]], { color: S.col.ink, width: 1, dash: [4, 3] });
+      v.arrow(x, y, x + ax, y + ay, { color: S.col.red, width: 2.5 });
+      v.arrow(x, y, x + bx, y + by, { color: S.col.blue, width: 2.5 });
+      v.text("a", x + ax, y + ay, { dx: 6, dy: 4, color: S.col.red });
+      v.text("b", x + bx, y + by, { dx: -14, dy: 4, color: S.col.blue });
+      v.dot(x, y, { color: S.col.ink, r: 5.5 });
+      var f00 = f(x, y), f10 = f(x + ax, y + ay), f01 = f(x + bx, y + by), f11 = f(x + ax + bx, y + ay + by), I = f11 - f10 - f01 + f00;
+      out.textContent =
+        "corners: f(start) = " + S.fmt(f00, 4) + ", f(start + a) = " + S.fmt(f10, 4) + ", f(start + b) = " + S.fmt(f01, 4) + ", f(start + a + b) = " + S.fmt(f11, 4) + "\n" +
+        "I(a, b) = " + S.fmt(I, 4) + "    formula m²(cos²θ − sin²θ) = " + S.fmt(m * m * (co * co - si * si), 4) + "\n" +
+        "curvature along a alone (per unit²) = 2 cosθ sinθ = " + S.fmt(2 * co * si, 3) + "    along b alone = " + S.fmt(-2 * co * si, 3);
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

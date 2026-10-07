@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 8: The Jacobian</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="8">
+<div class="page">
+
+<h1>Level 8: The Jacobian</h1>
+<p class="subtitle">Zoom in far enough on any smooth bending map and it looks like a matrix. That matrix is the Jacobian.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>write down the Jacobian of a map with several inputs and several outputs, and give every entry its unit;</li>
+<li>explain local linearity with numbers: how fast the error of the straight-line copy shrinks as you zoom in;</li>
+<li>compute a Jacobian-vector product and say what it predicts;</li>
+<li>read the Jacobian determinant as local area scaling and orientation;</li>
+<li>state the inverse function theorem and explain why it is only a local promise;</li>
+<li>say exactly what the 2026 Jacobian conjecture counterexample shows, and what was reported about it.</li>
+</ul>
+<p class="small">Prerequisites: partial derivatives and the gradient (<a href="05.html">Level 5</a>), linear approximation (<a href="04.html">Level 4</a>), and matrices, the matrix-vector product and the determinant (<a href="07.html">Level 7</a>).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Bold letters are vectors or vector-valued maps. Watch one clash: bold \(\mathbf{F}\) is the rubber-sheet map, while plain \(F\) (only in 8.3) is bags of fertiliser, as on the farm.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(x, y\)</td><td>“x”, “y”</td><td>position of a point on the flat (unstretched) rubber sheet</td><td>centimetres (cm)</td><td>\((x, y) = (1, 2)\)</td></tr>
+<tr><td>\(\mathbf{p}\)</td><td>“p”</td><td>the input point \((x, y)\) as one vector</td><td>cm</td><td>\(\mathbf{p} = (1, 2)\)</td></tr>
+<tr><td>\(\mathbf{F}\)</td><td>“bold F”</td><td>the rubber-sheet map: \(\mathbf{F}(x, y) = (x + 0.3y^2,\ y + 0.2xy)\)</td><td>cm in, cm out</td><td>\(\mathbf{F}(1, 2) = (2.2, 2.4)\)</td></tr>
+<tr><td>\(F_1, F_2\)</td><td>“F one”, “F two”</td><td>the two output components of \(\mathbf{F}\): where the point ends up, across and up</td><td>cm</td><td>\(F_1(1, 2) = 2.2\)</td></tr>
+<tr><td>\(0.3,\ 0.2\)</td><td></td><td>the two fixed constants inside \(\mathbf{F}\)</td><td>per cm (so \(0.3y^2\) is in cm)</td><td></td></tr>
+<tr><td>\(\partial F_1/\partial x\)</td><td>“partial F one by partial x”</td><td>how fast output 1 changes as \(x\) changes with \(y\) held fixed</td><td>cm of output per cm of input</td><td>\(1\)</td></tr>
+<tr><td>\(J, J(\mathbf{p})\)</td><td>“J”, “J at p”</td><td>the Jacobian: the matrix of all first partial derivatives, at the point \(\mathbf{p}\)</td><td>entry \((i, j)\): unit of output \(i\) per unit of input \(j\)</td><td>\(J(1,2) = \begin{pmatrix} 1 & 1.2 \\ 0.4 & 1.2\end{pmatrix}\)</td></tr>
+<tr><td>\(J_{ij}\)</td><td>“J i j”</td><td>row \(i\) (output \(i\)), column \(j\) (input \(j\)) of the Jacobian</td><td>as above</td><td>\(J_{12} = \partial F_1/\partial y\)</td></tr>
+<tr><td>\(i, j\)</td><td>“i”, “j”</td><td>counters: which output, which input</td><td>none (pure number)</td><td>\(i = 1\)</td></tr>
+<tr><td>\(\Delta x, \Delta y\)</td><td>“delta x”, “delta y”</td><td>small finite changes of the inputs</td><td>cm</td><td>\(\Delta x = 0.1\) cm</td></tr>
+<tr><td>\(\Delta\mathbf{p}\)</td><td>“delta p”</td><td>the input move \((\Delta x, \Delta y)\) as a vector</td><td>cm</td><td>\((0.1, 0.1)\)</td></tr>
+<tr><td>\(\mathbf{v}\)</td><td>“v”</td><td>a direction (or velocity) in which the input moves</td><td>cm (or cm per second)</td><td>\(\mathbf{v} = (1, -1)\)</td></tr>
+<tr><td>\(J\mathbf{v}\)</td><td>“J v”, “the Jacobian-vector product”</td><td>predicted output move when the input moves by \(\mathbf{v}\)</td><td>output units</td><td>\((-0.2, -0.8)\)</td></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>how far along \(\mathbf{v}\) we go: input \(\mathbf{p} + t\mathbf{v}\)</td><td>none (pure number), or seconds if \(\mathbf{v}\) is a velocity</td><td>\(t = 0.1\)</td></tr>
+<tr><td>\(\det J\)</td><td>“det J”</td><td>the Jacobian determinant: local area scaling factor, with sign for orientation</td><td>output area per input area (cm² per cm²)</td><td>\(\det J(1,2) = 0.72\)</td></tr>
+<tr><td>\(s\)</td><td>“s”</td><td>side length (or half-width) of a small square of inputs</td><td>cm</td><td>\(s = 0.1\) cm</td></tr>
+<tr><td>\(J^{-1}\)</td><td>“J inverse”</td><td>the inverse matrix of \(J\): turns an output move into the input move that causes it</td><td>input unit per output unit</td><td>see 8.7</td></tr>
+<tr><td>\(\mathbf{F}^{-1}\)</td><td>“F inverse”</td><td>a map that undoes \(\mathbf{F}\), if one exists</td><td>cm in, cm out</td><td></td></tr>
+<tr><td>\(W, F, Y, C\)</td><td>“W”, “F”, “Y”, “C”</td><td>farm (8.3 only): water, fertiliser, yield, cost</td><td>buckets, bags, bushels, dollars</td><td>\(W = 4\), \(F = 2\)</td></tr>
+<tr><td>\(\mathbf{G}\)</td><td>“bold G”</td><td>the farm map \(\mathbf{G}(W, F) = (Y, C)\)</td><td>(buckets, bags) in; (bushels, dollars) out</td><td>\(\mathbf{G}(4, 2) = (12, 10.8)\)</td></tr>
+<tr><td>\(\mathbf{E}\)</td><td>“bold E”</td><td>the exponential map \(\mathbf{E}(x, y) = (e^x\cos y,\ e^x \sin y)\)</td><td>none (pure numbers); \(y\) in radians</td><td>\(\mathbf{E}(0, 0) = (1, 0)\)</td></tr>
+<tr><td>\(e, e^x\)</td><td>“e”, “e to the x”</td><td>the number 2.71828… and the exponential function</td><td>none</td><td>\(e^0 = 1\)</td></tr>
+<tr><td>\(\cos y, \sin y\)</td><td>“cos y”, “sine y”</td><td>across and up coordinates of the point at angle \(y\) on a circle of radius 1</td><td>none; \(y\) in radians</td><td>\(\cos 0 = 1\), \(\sin 0 = 0\)</td></tr>
+<tr><td>\(\pi\)</td><td>“pi”</td><td>3.14159…; a full turn is \(2\pi\) radians (360°)</td><td>none</td><td>\(2\pi \approx 6.2832\)</td></tr>
+<tr><td>\(\mathbb{R}^2\)</td><td>“R two”</td><td>all pairs of real numbers: the flat plane</td><td>none</td><td></td></tr>
+<tr><td>\(\mathrm{i}\)</td><td>“i” (upright)</td><td>the imaginary unit, with \(\mathrm{i}^2 = -1\) (8.8 and 8.9 only)</td><td>none</td><td>\(z = x + \mathrm{i}y\)</td></tr>
+<tr><td>\(\mathbb{C}, \mathbb{C}^3, \mathbb{C}^n\)</td><td>“C”, “C three”, “C n”</td><td>complex numbers; triples of them; \(n\)-tuples of them</td><td>none</td><td>\((1, \mathrm{i}, 0) \in \mathbb{C}^3\)</td></tr>
+<tr><td>\(n\)</td><td>“n”</td><td>a number of dimensions in the general statement</td><td>none (pure number)</td><td>\(n = 3\)</td></tr>
+<tr><td>\(\bar J\)</td><td>“J bar”</td><td>an averaged Jacobian: the mean of \(J(\mathbf{p})\) over many points</td><td>as \(J\)</td><td>see 8.10</td></tr>
+<tr><td>\(\lVert \cdot \rVert\)</td><td>“the length of”</td><td>norm of a vector (Level 7)</td><td>as the vector</td><td>\(\lVert (0.3, 0.4)\rVert = 0.5\)</td></tr>
+<tr><td>\(\approx\)</td><td>“is approximately”</td><td>equal up to a small error</td><td>none</td><td></td></tr>
+<tr><td>\(\mapsto\)</td><td>“is sent to”</td><td>what a map does to one input</td><td>none</td><td>\((x, y) \mapsto (x + 0.3y^2, \dots)\)</td></tr>
+<tr><td>\(\mathbf{h}, \ell, J_\ell, \mathbf{u}_t\)</td><td>“h”, “ell”, “J ell”, “u t”</td><td>used only in 8.11, defined at Level 14: a residual state, a layer number, the J-lens at layer \(\ell\), a token's readout direction</td><td>see Level 14</td><td></td></tr>
+<tr><td>\(\nabla F_1\)</td><td>“grad F one”</td><td>the gradient of output 1 (Level 5): row 1 of \(J\)</td><td>cm per cm</td><td>\((1, 1.2)\) at \((1, 2)\)</td></tr>
+<tr><td>\(\partial_x\)</td><td>“partial x”</td><td>short for \(\partial/\partial x\)</td><td>per unit of \(x\)</td><td>\(\partial_x e^x = e^x\)</td></tr>
+<tr><td>\(J_{\mathbf{G}}, J_{\mathbf{E}}\)</td><td>“J of G”, “J of E”</td><td>the Jacobians of the farm map and of the exponential map</td><td>as their entries</td><td></td></tr>
+<tr><td>\(\partial^2 Y/\partial F^2\)</td><td>“second partial of Y by F”</td><td>the farm's curvature in fertiliser (Level 6)</td><td>bushels per bag²</td><td>\(-1\)</td></tr>
+<tr><td>\(\partial^2 F_1/\partial y^2\)</td><td>“second partial of F one by y”</td><td>8.4 only: the curvature of output 1 along \(y\) (Level 9 collects these into the Hessian)</td><td>cm per cm²</td><td>\(0.6\)</td></tr>
+<tr><td>\(a, b\)</td><td>“a”, “b”</td><td>8.9 only: the two outputs of the example \((x, y) \mapsto (x, y + x^2)\), fed back in to undo it</td><td>none</td><td></td></tr>
+<tr><td>\(\mathbf{y}, \varphi\)</td><td>“y”, “phi”</td><td>8.11 only: a residual state and a sublayer's branch, defined at Level 14</td><td>see Level 14</td><td></td></tr>
+<tr><td>\(Q, g, T, M\)</td><td>“Q”, “g”, “T”, “M”</td><td>Exercise 8.2 only: heater power, window gap, temperature, humidity</td><td>watts, cm, °C, %</td><td></td></tr>
+<tr><td>\(\mathbf{P}, r, \alpha, \Delta r, \Delta\alpha\)</td><td>“bold P”, “r”, “alpha”, “delta r”, “delta alpha”</td><td>Exercise 8.5 only: the polar map, a radius, an angle, and small changes of each</td><td>map; metres; radians</td><td>\(r = 2\) m</td></tr>
+<tr><td>\(\mathbf{K}, \mathbf{L}, \mathbf{z}, w\)</td><td>“K”, “L”, “z”, “w”</td><td>Exercise 8.7 only: a map on \(\mathbb{C}^3\), a map on \(\mathbb{C}^4\), three complex inputs, one more complex input</td><td>none</td><td></td></tr>
+<tr><td>\(\ln 2, k\)</td><td>“log of 2”, “k”</td><td>Exercise 8.9 only: the number whose exponential is 2 (≈ 0.6931); a whole number of extra turns</td><td>none</td><td>\(e^{\ln 2} = 2\)</td></tr>
+</table>
+</div>
+
+<h2>8.1 Maps that output vectors</h2>
+<p>Take a sheet of rubber with a grid drawn on it. Pin it to a table and stretch it unevenly. Every point of the sheet moves somewhere new. The rule “this point goes there” is a function with two inputs (where the point was) and two outputs (where it is now). A function whose output is a vector is a vector-valued function, and it is the object of this level.</p>
+<p>Let \(x\) and \(y\) be the position of a point on the flat sheet, in centimetres. We use one fixed stretch for the whole page:</p>
+$$ \mathbf{F}(x, y) = \big(F_1(x, y),\ F_2(x, y)\big) = \big(x + 0.3\,y^2,\ \ y + 0.2\,x\,y\big). $$
+<p>The constants 0.3 and 0.2 have unit “per centimetre”, so that \(0.3y^2\) (cm⁻¹ × cm²) is in centimetres, as a position must be. This map is a toy: it was chosen because its numbers are easy, not because any real sheet stretches this way.</p>
+<h3>Worked example: where does (1, 2) go?</h3>
+$$ F_1(1, 2) = 1 + 0.3 \times 2^2 = 1 + 0.3\times4 = 1 + 1.2 = 2.2\ \text{cm}, $$
+$$ F_2(1, 2) = 2 + 0.2 \times 1 \times 2 = 2 + 0.4 = 2.4\ \text{cm}. $$
+<p>So \(\mathbf{F}(1, 2) = (2.2, 2.4)\). The origin stays put: \(\mathbf{F}(0, 0) = (0, 0)\). The point \((0, 2)\) slides sideways to \((1.2, 2)\): the higher up the sheet, the more it is pushed to the right.</p>
+<p><b>Real-world examples.</b> A map projection takes (longitude, latitude) in degrees and returns (across, up) on paper in centimetres. A camera lens takes where light enters and returns where it hits the sensor. A farm turns (water, fertiliser) into (yield, cost). All are vector-valued functions.</p>
+<figure class="sim" id="sim-warp">
+<figcaption><b>Figure 8.1.</b> Left: the flat sheet with its grid, in cm. Right: the same grid after the stretch \(\mathbf{F}\). Drag the point \(\mathbf{p}\) on the left. The red line (only \(x\) varies) lands on the red curve; the blue line (only \(y\) varies) lands on the blue curve. The red and blue arrows on the right are the two columns of the Jacobian, introduced in 8.3. Notice that each arrow is tangent to its curve.</figcaption>
+</figure>
+<p>Look at the right panel. Straight grid lines have become curves, and the little cells have different sizes and slants in different places. This is not a linear map: Level 7's rule “grids stay straight” fails. Yet each small cell still looks like a parallelogram. That observation is the whole level.</p>
+
+<h2>8.2 One input at a time</h2>
+<p>Use the method of <a href="05.html">Level 5</a>: move one input, freeze the other, and see how each output responds. Start at \(\mathbf{p} = (1, 2)\), where \(\mathbf{F} = (2.2, 2.4)\).</p>
+<h3>Move \(x\) by \(\Delta x = 0.1\) cm, keep \(y = 2\)</h3>
+$$ \mathbf{F}(1.1, 2) = (1.1 + 0.3\times4,\ 2 + 0.2\times1.1\times2) = (1.1 + 1.2,\ 2 + 0.44) = (2.3,\ 2.44). $$
+<p>Changes: \(\Delta F_1 = 2.3 - 2.2 = 0.1\) cm and \(\Delta F_2 = 2.44 - 2.4 = 0.04\) cm. Rates: \(0.1/0.1 = 1\) and \(0.04/0.1 = 0.4\), each in cm of output per cm of input.</p>
+<h3>Move \(y\) by \(\Delta y = 0.1\) cm, keep \(x = 1\)</h3>
+$$ \mathbf{F}(1, 2.1) = (1 + 0.3\times4.41,\ 2.1 + 0.2\times1\times2.1) = (1 + 1.323,\ 2.1 + 0.42) = (2.323,\ 2.52). $$
+<p>Changes: \(\Delta F_1 = 0.123\) cm and \(\Delta F_2 = 0.12\) cm. Rates: \(1.23\) and \(1.2\).</p>
+<h3>The exact partial derivatives</h3>
+<p>Differentiate each output with respect to each input, treating the other input as a constant:</p>
+$$ \frac{\partial F_1}{\partial x} = 1, \qquad \frac{\partial F_1}{\partial y} = 0.6\,y, \qquad \frac{\partial F_2}{\partial x} = 0.2\,y, \qquad \frac{\partial F_2}{\partial y} = 1 + 0.2\,x. $$
+<p>At \((1, 2)\): \(1\), \(1.2\), \(0.4\), \(1.2\). Compare with the finite rates: \(1, 1.23, 0.4, 1.2\). Three match exactly, because those outputs are straight-line functions of the input being moved. The fourth, \(\partial F_1/\partial y\), is off by 0.03: \(F_1\) bends as \(y\) changes (it contains \(y^2\)), and the finite step picks up some of that bend. Shrink \(\Delta y\) to 0.01 and the finite rate becomes \(1.203\); the gap shrinks with the step, as at <a href="02.html">Level 2</a>.</p>
+
+<h2>8.3 The Jacobian matrix</h2>
+<p>We now have four rates: two outputs times two inputs. Arrange them in a grid with <b>one row per output and one column per input</b>. That grid is the Jacobian:</p>
+$$ J(x, y) = \begin{pmatrix} \dfrac{\partial F_1}{\partial x} & \dfrac{\partial F_1}{\partial y} \\[2ex] \dfrac{\partial F_2}{\partial x} & \dfrac{\partial F_2}{\partial y} \end{pmatrix} = \begin{pmatrix} 1 & 0.6\,y \\ 0.2\,y & 1 + 0.2\,x \end{pmatrix}, \qquad J(1, 2) = \begin{pmatrix} 1 & 1.2 \\ 0.4 & 1.2 \end{pmatrix}. $$
+<div class="box key">
+<span class="boxtitle">The Jacobian</span>
+For a map with \(n\) inputs and \(m\) outputs, the Jacobian is the \(m \times n\) matrix with entry \(J_{ij} = \partial(\text{output } i)/\partial(\text{input } j)\). Rows are outputs. Columns are inputs. Each entry's unit is <b>output \(i\)'s unit per input \(j\)'s unit</b>. It changes from point to point, so always say where it is evaluated: \(J(\mathbf{p})\).
+</div>
+<p>Two readings, matching the two views of a matrix in <a href="07.html">Level 7</a>:</p>
+<ul>
+<li><b>Row \(i\) is the gradient of output \(i\).</b> Row 1 of \(J(1,2)\), \((1, 1.2)\), is \(\nabla F_1\): the direction in which output 1 grows fastest.</li>
+<li><b>Column \(j\) is where a step in input \(j\) sends you.</b> Column 1, \((1, 0.4)\), says a 1 cm nudge in \(x\) moves the output about 1 cm across and 0.4 cm up. In Figure 8.1 it is the red arrow, tangent to the image of the red line.</li>
+</ul>
+<h3>Units, with a map whose inputs and outputs differ</h3>
+<p>On the rubber sheet every entry is “cm per cm”, a pure number. Units become informative when inputs and outputs differ. Extend the farm from <a href="05.html">Level 5</a>. Let \(W\) be buckets of water and \(F\) bags of fertiliser. The outputs are the yield \(Y(W, F) = 2W + 3F + 0.5WF - 0.25W^2 - 0.5F^2\) bushels and a toy cost \(C(W, F) = 0.2W + 5F\) dollars (0.2 $ per bucket, 5 $ per bag; made-up prices). The farm map is \(\mathbf{G}(W, F) = (Y, C)\). Its Jacobian is</p>
+$$ J_{\mathbf{G}} = \begin{pmatrix} \partial Y/\partial W & \partial Y/\partial F \\ \partial C/\partial W & \partial C/\partial F \end{pmatrix} = \begin{pmatrix} 2 + 0.5F - 0.5W & 3 + 0.5W - F \\ 0.2 & 5 \end{pmatrix}. $$
+<p>At the plan \((W, F) = (4, 2)\): \(\partial Y/\partial W = 2 + 1 - 2 = 1\) and \(\partial Y/\partial F = 3 + 2 - 2 = 3\), so</p>
+$$ J_{\mathbf{G}}(4, 2) = \begin{pmatrix} 1 & 3 \\ 0.2 & 5 \end{pmatrix}. $$
+<div class="tablewrap">
+<table>
+<tr><th>Entry</th><th>Value at (4, 2)</th><th>Unit</th><th>Meaning</th></tr>
+<tr><td>\(J_{11} = \partial Y/\partial W\)</td><td>1</td><td>bushels per bucket</td><td>one more bucket adds about 1 bushel</td></tr>
+<tr><td>\(J_{12} = \partial Y/\partial F\)</td><td>3</td><td>bushels per bag</td><td>one more bag adds about 3 bushels</td></tr>
+<tr><td>\(J_{21} = \partial C/\partial W\)</td><td>0.2</td><td>dollars per bucket</td><td>one more bucket costs 0.2 $</td></tr>
+<tr><td>\(J_{22} = \partial C/\partial F\)</td><td>5</td><td>dollars per bag</td><td>one more bag costs 5 $</td></tr>
+</table>
+</div>
+<p><b>Mechanics.</b> Add one whole bag: \(F\) goes 2 → 3, \(W\) stays 4. Then \(Y(4, 2) = 8 + 6 + 4 - 4 - 2 = 12\) and \(Y(4, 3) = 8 + 9 + 6 - 4 - 4.5 = 14.5\) bushels, a change of 2.5, not the predicted 3. Cost goes from 10.8 $ to 15.8 $, exactly the predicted 5 $. The yield misses because \(Y\) is curved in \(F\) (\(\partial^2 Y/\partial F^2 = -1\) bushel per bag², from <a href="06.html">Level 6</a>): the Jacobian only knows the slope at the starting point. The cost is a straight-line function, so its row of the Jacobian is exact for any step.</p>
+<p>Notice row 1 of \(J_{\mathbf{G}}(4, 2)\) is the farm gradient at that plan, \(\nabla Y = (1, 3)\), from Level 5. A Jacobian is a stack of gradients, one per output.</p>
+<div class="box plain">
+<span class="boxtitle">Intuition pump: the mixing desk</span>
+A sound engineer's desk has input sliders (microphones) and output meters (speakers). The Jacobian is a card taped to the desk: “at the current settings, nudging slider \(j\) by one notch moves meter \(i\) by \(J_{ij}\) decibels”. The card is only valid near the current settings. Move the sliders a long way and you need a new card.
+</div>
+
+<h2>8.4 Zoom in: local linearity</h2>
+<p>The Jacobian gives a straight-line copy of \(\mathbf{F}\) near \(\mathbf{p}\). For a small input move \(\Delta\mathbf{p} = (\Delta x, \Delta y)\),</p>
+$$ \mathbf{F}(\mathbf{p} + \Delta\mathbf{p}) \approx \mathbf{F}(\mathbf{p}) + J(\mathbf{p})\,\Delta\mathbf{p}. $$
+<p>This is the linear approximation of <a href="04.html">Level 4</a>, with the slope replaced by a matrix. How good is it? For our \(\mathbf{F}\) we can compute the error exactly. Expand each output at \((x + \Delta x, y + \Delta y)\):</p>
+$$ F_1 = x + \Delta x + 0.3(y + \Delta y)^2 = \underbrace{x + 0.3y^2}_{F_1(\mathbf{p})} + \underbrace{\Delta x + 0.6y\,\Delta y}_{\text{row 1 of } J\Delta\mathbf{p}} + 0.3\,\Delta y^2, $$
+$$ F_2 = y + \Delta y + 0.2(x + \Delta x)(y + \Delta y) = \underbrace{y + 0.2xy}_{F_2(\mathbf{p})} + \underbrace{0.2y\,\Delta x + (1 + 0.2x)\Delta y}_{\text{row 2 of } J\Delta\mathbf{p}} + 0.2\,\Delta x\,\Delta y. $$
+<p>So the error of the straight-line copy is exactly</p>
+$$ \mathbf{F}(\mathbf{p} + \Delta\mathbf{p}) - \mathbf{F}(\mathbf{p}) - J(\mathbf{p})\Delta\mathbf{p} = \big(0.3\,\Delta y^2,\ \ 0.2\,\Delta x\,\Delta y\big). $$
+<p>Every term is a product of two small moves. Check it at \(\mathbf{p} = (1, 2)\) with numbers:</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(\Delta x = \Delta y\)</th><th>exact \(\mathbf{F}(\mathbf{p} + \Delta\mathbf{p})\)</th><th>straight-line copy</th><th>error</th></tr>
+<tr><td>0.1 cm</td><td>(2.423, 2.562)</td><td>(2.2, 2.4) + (0.22, 0.16) = (2.42, 2.56)</td><td>(0.003, 0.002)</td></tr>
+<tr><td>0.01 cm</td><td>(2.22203, 2.41602)</td><td>(2.222, 2.416)</td><td>(0.00003, 0.00002)</td></tr>
+<tr><td>0.001 cm</td><td>(2.2022003, 2.4016002)</td><td>(2.2022, 2.4016)</td><td>(0.0000003, 0.0000002)</td></tr>
+</table>
+</div>
+<p>Each time the move shrinks 10 times, the error shrinks 100 times. Relative to the size of the move, the error shrinks 10 times. That is what “locally linear” means: inside a window of width \(s\) the mismatch is about \(s^2\), so as a fraction of the window it is about \(s\), which vanishes as you zoom in. The bend is still there; it just becomes too small to see at that scale.</p>
+<p>(The two error terms are second derivatives in disguise: \(0.3\Delta y^2 = \tfrac12 \times 0.6 \times \Delta y^2\) uses \(\partial^2 F_1/\partial y^2 = 0.6\). <a href="09.html">Level 9</a> organises these into the Hessian.)</p>
+<figure class="sim" id="sim-zoom">
+<figcaption><b>Figure 8.2.</b> Left: the flat sheet. Drag \(\mathbf{p}\); the small square around it is the zoom window, of half-width \(s\). Right: that window after the stretch, magnified to fill the panel. Black is the true image of the window's grid (\(\mathbf{F}\)); blue dashed is the straight-line copy \(\mathbf{F}(\mathbf{p}) + J\Delta\mathbf{p}\). Shrink \(s\) with the slider: the black grid straightens and lies on the blue one. The readout shows the worst mismatch, which falls like \(s^2\), so the mismatch as a fraction of the window falls like \(s\).</figcaption>
+</figure>
+<div class="box plain">
+<span class="boxtitle">Intuition pump: the Earth looks flat</span>
+The Earth is a ball, but a football pitch looks perfectly flat. Over 100 m the ground drops below a flat line by less than a millimetre. Over a town you might notice it; over an ocean you cannot miss it. A smooth map is the same: flat (linear) up close, curved at a distance. The Jacobian is the flat street map of one neighbourhood.
+</div>
+
+<h2>8.5 The Jacobian-vector product: how outputs move</h2>
+<p>Suppose the input moves along a direction \(\mathbf{v}\): the inputs visited are \(\mathbf{p} + t\mathbf{v}\) for a small number \(t\). By the approximation above, the output moves by about \(t\,J\mathbf{v}\). So \(J\mathbf{v}\) is the output's direction and speed of travel when the input travels along \(\mathbf{v}\). It is called a Jacobian-vector product. If \(\mathbf{v}\) is a velocity in cm per second, \(J\mathbf{v}\) is the output velocity in cm per second.</p>
+<h3>Worked example</h3>
+<p>At \(\mathbf{p} = (1, 2)\) with \(\mathbf{v} = (1, -1)\): one step right, one step down.</p>
+<p>Row view (each output is a dot product with a row):</p>
+$$ J\mathbf{v} = \begin{pmatrix} 1\times1 + 1.2\times(-1) \\ 0.4\times1 + 1.2\times(-1) \end{pmatrix} = \begin{pmatrix} -0.2 \\ -0.8 \end{pmatrix}. $$
+<p>Column view (a mix of the columns): \(1\times(1, 0.4) + (-1)\times(1.2, 1.2) = (1 - 1.2,\ 0.4 - 1.2) = (-0.2, -0.8)\). Same answer.</p>
+<p><b>Mechanics: check against the real map.</b> Take \(t = 0.1\), so the input goes to \((1.1, 1.9)\):</p>
+$$ \mathbf{F}(1.1, 1.9) = (1.1 + 0.3\times3.61,\ 1.9 + 0.2\times1.1\times1.9) = (1.1 + 1.083,\ 1.9 + 0.418) = (2.183,\ 2.318). $$
+<p>The real change is \((2.183 - 2.2,\ 2.318 - 2.4) = (-0.017, -0.082)\). The prediction \(t\,J\mathbf{v} = 0.1\times(-0.2, -0.8) = (-0.02, -0.08)\). The gap \((0.003, -0.002)\) is exactly \((0.3\Delta y^2, 0.2\Delta x\Delta y)\) with \(\Delta x = 0.1\), \(\Delta y = -0.1\).</p>
+<p>Notice the input moved diagonally, but the output moves almost straight down. The map turns directions, not only stretches them. A Jacobian-vector product tells you the turned direction without building anything but the one product. At <a href="10.html">Level 10</a> you will see that software can compute \(J\mathbf{v}\) without ever writing \(J\) down.</p>
+<figure class="sim" id="sim-jvp">
+<figcaption><b>Figure 8.3.</b> Left: drag \(\mathbf{p}\) (black) and the tip of the input step \(\mathbf{v}\) (green). Right: the black curve is the true path \(\mathbf{F}(\mathbf{p} + t\mathbf{v})\) for \(t\) from 0 to 1; the blue arrow is the prediction \(J\mathbf{v}\). For a short \(\mathbf{v}\) the arrow and the curve agree; for a long one they part ways. The readout does the product row by row and compares it with the real move.</figcaption>
+</figure>
+
+<h2>8.6 The Jacobian determinant: local area and orientation</h2>
+<p>At Level 7 the determinant of a matrix was the factor by which it scales area. Apply that to the Jacobian. A tiny square of inputs near \(\mathbf{p}\) is mapped, almost exactly, by the linear map \(J(\mathbf{p})\). So its image is almost a parallelogram, with area multiplied by \(\det J(\mathbf{p})\).</p>
+$$ \det J(x, y) = \underbrace{1 \times (1 + 0.2x)}_{\text{top-left} \times \text{bottom-right}} - \underbrace{0.6y \times 0.2y}_{\text{top-right} \times \text{bottom-left}} = 1 + 0.2x - 0.12\,y^2. $$
+<p>At \((1, 2)\): \(1 + 0.2 - 0.12\times4 = 1.2 - 0.48 = 0.72\). Check against the matrix directly: \(1\times1.2 - 1.2\times0.4 = 1.2 - 0.48 = 0.72\). So near \((1, 2)\) the sheet is <i>compressed</i> to 72% of its area. The unit is output area per input area, here cm² per cm².</p>
+<p><b>Mechanics: an actual square.</b> Take the square of side \(s = 0.1\) cm centred at \((1, 2)\) (area 0.01 cm²). Its exact image has area 0.007199 cm², a ratio of 0.7199. The tiny difference from 0.72 is because \(\det J\) varies across the square; the exact area is the average of \(\det J\) over the square (the change-of-variables rule), which here works out as \(0.72 - 0.01\,s^2\). Make the square smaller and the ratio closes on \(\det J(\mathbf{p})\).</p>
+<h3>Sign and folds</h3>
+<p>\(\det J\) is negative where \(1 + 0.2x - 0.12y^2 \lt 0\), that is where \(x \lt 0.6y^2 - 5\). On that side of the curve \(x = 0.6y^2 - 5\) the sheet has been folded over onto itself: a small square comes out mirrored, its corners running clockwise. Along the curve itself, \(\det J = 0\): small squares are squashed flat, as at a crease in paper. Example: at \((-3, 2.5)\), \(\det J = 1 - 0.6 - 0.12\times6.25 = -0.35\).</p>
+<figure class="sim" id="sim-area">
+<figcaption><b>Figure 8.4.</b> Left: the flat sheet. The pink region is where \(\det J \lt 0\); the dashed curve is the crease \(\det J = 0\). Drag \(\mathbf{p}\) and set the square's side \(s\). Right: the square's image under \(\mathbf{F}\), with its corners numbered. The readout compares the image's area with the square's area. Notice the ratio tracks \(\det J(\mathbf{p})\), and that the corner order turns clockwise when you drag \(\mathbf{p}\) into the pink region.</figcaption>
+</figure>
+<div class="box plain">
+<span class="boxtitle">Real-world example: a world map</span>
+On a world map in the Mercator projection, Greenland looks roughly as big as Africa, though Africa is many times larger. The projection's Jacobian determinant is much bigger near the poles: each square kilometre of Greenland gets more square centimetres of paper. The determinant is the “exchange rate” between areas, and it changes with place.
+</div>
+
+<h2>8.7 The inverse function theorem</h2>
+<p>When can we undo a map, at least near one point? If \(\det J(\mathbf{p}) \ne 0\), the linear copy \(J(\mathbf{p})\) has an inverse matrix. The inverse function theorem says the map itself then inherits a local inverse.</p>
+<div class="box key">
+<span class="boxtitle">Inverse function theorem</span>
+Let \(\mathbf{F}\) have continuous partial derivatives near \(\mathbf{p}\), and suppose \(\det J(\mathbf{p}) \ne 0\). Then there is a small region around \(\mathbf{p}\) and a small region around \(\mathbf{F}(\mathbf{p})\) such that \(\mathbf{F}\) matches them up one-to-one, and the matching can be undone by a smooth map \(\mathbf{F}^{-1}\). Its Jacobian at \(\mathbf{F}(\mathbf{p})\) is \(J(\mathbf{p})^{-1}\).<br>
+It promises nothing about what happens far from \(\mathbf{p}\).
+</div>
+<h3>Mechanics: steering the output</h3>
+<p>At \(\mathbf{p} = (1, 2)\), suppose we want the output to move 0.01 cm across and not at all up. Which input move does that? Use the 2×2 inverse from Level 7 with \(\det J = 0.72\):</p>
+$$ J^{-1} = \frac{1}{0.72}\begin{pmatrix} 1.2 & -1.2 \\ -0.4 & 1 \end{pmatrix} = \begin{pmatrix} 1.6667 & -1.6667 \\ -0.5556 & 1.3889 \end{pmatrix}, \qquad J^{-1}\begin{pmatrix} 0.01 \\ 0 \end{pmatrix} = \begin{pmatrix} 0.016667 \\ -0.005556 \end{pmatrix}. $$
+<p>Check with the real map: \(\mathbf{F}(1.016667, 1.994444) \approx (2.210009, 2.399981)\). The target was \((2.21, 2.4)\). The error is about 0.00002 cm: a second-order leftover, as in 8.4. To steer across, you must move the input right and slightly down; the inverse Jacobian found that for you. Its entries are in “input cm per output cm”.</p>
+<p>Where \(\det J = 0\) (the crease in Figure 8.4), the theorem does not apply. There, two nearby inputs on either side of the fold land on the same output, and no local inverse exists.</p>
+
+<h2>8.8 Locally invertible, globally not</h2>
+<p>Here is a map whose Jacobian determinant is never zero, anywhere, and which still fails to be invertible. Let</p>
+$$ \mathbf{E}(x, y) = \big(e^x\cos y,\ \ e^x\sin y\big). $$
+<p>Read it as polar coordinates: \(e^x\) is a distance from the origin and \(y\) is an angle in radians. A full turn is \(2\pi \approx 6.2832\) radians. (For readers who know complex numbers: this is \(z \mapsto e^z\) with \(z = x + \mathrm{i}y\). You do not need that.)</p>
+<h3>The Jacobian, every step</h3>
+<p>The derivative of \(e^x\) is \(e^x\); the derivative of \(\cos y\) is \(-\sin y\); the derivative of \(\sin y\) is \(\cos y\). So</p>
+$$ J_{\mathbf{E}}(x, y) = \begin{pmatrix} \partial_x(e^x\cos y) & \partial_y(e^x\cos y) \\ \partial_x(e^x\sin y) & \partial_y(e^x\sin y) \end{pmatrix} = \begin{pmatrix} e^x\cos y & -e^x\sin y \\ e^x\sin y & e^x\cos y \end{pmatrix}. $$
+<p>Here \(\partial_x\) is short for \(\partial/\partial x\). The determinant:</p>
+$$ \det J_{\mathbf{E}} = e^x\cos y \cdot e^x\cos y - (-e^x\sin y)\cdot e^x\sin y = e^{2x}(\cos^2 y + \sin^2 y) = e^{2x}. $$
+<p>The last step uses \(\cos^2 y + \sin^2 y = 1\) (Pythagoras on the unit circle). Since \(e^{2x} \gt 0\) for every \(x\), the determinant is never zero. By the inverse function theorem, every point has a neighbourhood on which \(\mathbf{E}\) can be undone.</p>
+<h3>The collision</h3>
+<p>Now compare two inputs that differ by a full turn in \(y\):</p>
+$$ \mathbf{E}(0, 0) = (e^0\cos 0,\ e^0\sin 0) = (1, 0), \qquad \mathbf{E}(0, 2\pi) = (e^0 \cos 2\pi,\ e^0\sin 2\pi) = (1, 0). $$
+<p>Different inputs, same output. In fact \((x, y)\), \((x, y + 2\pi)\), \((x, y + 4\pi)\), and so on all land on one point. So \(\mathbf{E}\) is not injective, and no global inverse exists. Each little patch is mapped one-to-one, but the patches overlap once you go round.</p>
+<figure class="sim" id="sim-exp">
+<figcaption><b>Figure 8.5.</b> Top: the input plane, drawn on its side (angle \(y\) runs left to right from 0 to \(4\pi\); \(x\) runs up). The blue band is the first full turn, \(0 \le y \lt 2\pi\); the red band is the second. Bottom: the output of \(\mathbf{E}\). Drag the black point \(\mathbf{p}\). The hollow point is \(\mathbf{p}\) shifted by \(2\pi\); both land on the same output dot. The small square around \(\mathbf{p}\) maps to a small curved square of area about \(e^{2x}\) times larger: locally one-to-one everywhere. Notice the blue and red bands cover exactly the same ring: globally two-to-one.</figcaption>
+</figure>
+<div class="box plain">
+<span class="boxtitle">Real-world example and intuition pump: the clock</span>
+A clock's hour hand at “1 o'clock” could mean 1:00 or 13:00. Near any moment, the hand's position tells you the time exactly (a few minutes later, the hand has moved a bit further). Globally it cannot tell 1 from 13. Or: wind a long ribbon round a pole. Every short piece lies flat on the pole without overlap, but the ribbon as a whole covers the pole many times.
+</div>
+<div class="box warn">
+<span class="boxtitle">Common mistake</span>
+“\(\det J \ne 0\) everywhere, so the map is invertible.” False. Non-zero determinant everywhere gives local invertibility at every point. It does not give global invertibility. The exponential map is the simplest example.
+</div>
+
+<h2>8.9 The Jacobian conjecture and the 2026 counterexample</h2>
+<p>The exponential map is not a polynomial (it uses \(e^x\), \(\cos\) and \(\sin\)), and its determinant \(e^{2x}\) is not constant. Mathematicians long asked whether these two loopholes are needed. A polynomial map is one whose every output is a polynomial in the inputs: sums of numbers times products of inputs, like our \(\mathbf{F}\). They are usually studied over the complex numbers \(\mathbb{C}\): numbers \(x + \mathrm{i}y\) with \(\mathrm{i}^2 = -1\). A map from \(\mathbb{C}^n\) to \(\mathbb{C}^n\) takes \(n\) complex inputs to \(n\) complex outputs.</p>
+<div class="box key">
+<span class="boxtitle">The Jacobian conjecture</span>
+If a polynomial map from \(\mathbb{C}^n\) to \(\mathbb{C}^n\) has a Jacobian determinant that is the same non-zero constant at every point, then the map is globally invertible: no two inputs share an output.
+</div>
+<p>Why it is plausible. A constant non-zero determinant says the map scales every tiny region by the same factor everywhere, and polynomials cannot do anything as wild as wrapping round forever like \(e^x\). Simple examples obey it. Take \((x, y) \mapsto (x,\ y + x^2)\). Its Jacobian is \(\begin{pmatrix} 1 & 0 \\ 2x & 1\end{pmatrix}\), with determinant \(1\cdot1 - 0\cdot2x = 1\) everywhere. And it has the inverse \((a, b) \mapsto (a,\ b - a^2)\): put in \((a, b) = (x,\ y + x^2)\) and get \((x,\ (y + x^2) - x^2) = (x, y)\).</p>
+<h3>What was reported in 2026</h3>
+<p>Keeping exactly to the reported facts:</p>
+<ul>
+<li>In July 2026, Levent Alpöge announced a counterexample in dimension three.</li>
+<li>It was reportedly found with the AI model Claude Fable 5.</li>
+<li>It is an explicit polynomial map from \(\mathbb{C}^3\) to \(\mathbb{C}^3\) whose Jacobian determinant is the constant −2 at every point.</li>
+<li>It sends three distinct points to the same output.</li>
+<li>The determinant and the collision were independently checked.</li>
+<li>It was reported as pending peer review.</li>
+</ul>
+<p>This page does not reproduce the polynomial. Its exact form is not needed for the lesson, and it has not been checked for this page. The reports concern dimension three; this page makes no claim about dimension two.</p>
+<p><b>Why checking was quick even if finding was hard.</b> Both claims are finite calculations. The determinant claim means: take the nine partial derivatives (each a polynomial), form the 3×3 determinant, expand, and confirm every term cancels except the constant −2. The collision claim means: plug three given points into the map and compare outputs. Neither needs any new theory.</p>
+<div class="box key">
+<span class="boxtitle">The lesson</span>
+A non-zero Jacobian determinant at every point guarantees, through the inverse function theorem, that the map can be undone near every point. It does not guarantee the map can be undone globally. The exponential map shows this with a non-constant determinant. The reported counterexample shows it even for a polynomial map whose determinant is a constant: local information, however uniform, does not settle a global question.
+</div>
+
+<h2>8.10 Averaging Jacobians: a preview of the J-lens</h2>
+<p>The Jacobian changes from point to point. Sometimes we want one matrix that summarises a map over many points. The simplest summary is the average: compute \(J\) at many points and average each entry. Call the result \(\bar J\).</p>
+<p><b>Worked example.</b> Average the rubber-sheet Jacobian over the square of inputs with \(-1 \le x \le 1\) and \(-1 \le y \le 1\). The entries \(1\), \(0.6y\), \(0.2y\) and \(1 + 0.2x\) are straight-line functions of position, and the average of \(x\) and of \(y\) over this square is 0. So</p>
+$$ \bar J = \begin{pmatrix} 1 & 0.6\times0 \\ 0.2\times0 & 1 + 0.2\times0 \end{pmatrix} = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} = I. $$
+<p>The average says “nothing happens”, yet at the corner \((1, 1)\) the Jacobian is \(\begin{pmatrix} 1 & 0.6 \\ 0.2 & 1.2 \end{pmatrix}\) and at \((-1, -1)\) it is \(\begin{pmatrix} 1 & -0.6 \\ -0.2 & 0.8 \end{pmatrix}\). The bending in opposite directions cancelled in the average. An averaged Jacobian keeps what is common to all points and can hide what varies.</p>
+<p>The J-lens at <a href="14.html">Level 14</a> is exactly such an average: of the Jacobian of a language model's final state with respect to an earlier layer's state, over many texts and positions.</p>
+
+<h2>8.11 Why this matters for H-space</h2>
+<ol>
+<li><b>The J-lens is an averaged Jacobian.</b> In <code>hlens/paper/theory-v2.md</code> §0, \(J_\ell\) is the average, over texts and positions, of the Jacobian of the summed final residual state with respect to the layer-\(\ell\) residual state. For Qwen3.6-27B it is a 5,120 × 5,120 matrix. Entry \((i, j)\) has unit “final-state units per layer-\(\ell\) unit”, just like the bakery and the farm.</li>
+<li><b>Decoding is a Jacobian-vector product.</b> The J-lens decodes a state \(\mathbf{h}\) as \(\mathbf{u}_t^\top J_\ell\,\mathbf{h}\): push \(\mathbf{h}\) through the averaged Jacobian (a product like \(J\mathbf{v}\) in 8.5), then read the result along token \(t\)'s readout direction \(\mathbf{u}_t\) (a dot product).</li>
+<li><b>Local linearity is the J-lens's bet.</b> Using \(J\) assumes the straight-line copy of 8.4 is good enough at the move sizes that matter. The H-lens asks what the next term, the curvature, adds. That term is the subject of <a href="09.html">Level 9</a>, and <a href="12.html">Level 12</a> shows that at natural move sizes the curvature at a single point can mislead.</li>
+<li><b>Residual layers have Jacobians near the identity.</b> Each sublayer of the model has the form \(\mathbf{y} \mapsto \mathbf{y} + \varphi(\mathbf{y})\) (Level 14), so its Jacobian is \(I\) plus the branch's Jacobian. theory-v2 Lemma 1 chains these together, which is <a href="10.html">Level 10</a>'s chain rule.</li>
+<li><b>Averaging hides things.</b> The toy in 8.10 averaged to \(I\). At Level 15 the same issue appears one derivative up: theory-v2 Proposition 0 shows that averaging Hessians before squaring them loses energy, so different averaging choices give different “H-spaces”.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="1.28" data-tol="0.001" data-unit="cm² per cm²">
+<p><b>Exercise 8.1.</b> Compute \(\mathbf{F}(2, 1)\), the Jacobian \(J(2, 1)\) and \(\det J(2, 1)\). Is the sheet stretched or compressed near \((2, 1)\)?</p>
+<details><summary>Show answer</summary>
+<p>\(\mathbf{F}(2, 1) = (2 + 0.3\times1,\ 1 + 0.2\times2\times1) = (2.3, 1.4)\). \(J(2,1) = \begin{pmatrix} 1 & 0.6\times1 \\ 0.2\times1 & 1 + 0.2\times2 \end{pmatrix} = \begin{pmatrix} 1 & 0.6 \\ 0.2 & 1.4 \end{pmatrix}\). \(\det = 1\times1.4 - 0.6\times0.2 = 1.4 - 0.12 = 1.28\). Areas grow by 28%: stretched. Check with the formula: \(1 + 0.2\times2 - 0.12\times1 = 1.28\).</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 8.2.</b> A thermostat model has inputs heater power \(Q\) (watts) and window gap \(g\) (cm), and outputs room temperature \(T\) (°C) and humidity \(M\) (%). Write the shape of the Jacobian (which entry goes where) and the unit of each entry. What does the entry in row 2, column 1 mean in plain words?</p>
+<details><summary>Show answer</summary>
+<p>Rows are outputs \((T, M)\), columns are inputs \((Q, g)\): \(J = \begin{pmatrix} \partial T/\partial Q & \partial T/\partial g \\ \partial M/\partial Q & \partial M/\partial g \end{pmatrix}\), with units °C per watt, °C per cm, % per watt, % per cm. Row 2, column 1 is \(\partial M/\partial Q\): how many percentage points the humidity changes for one more watt of heating, with the window held where it is.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2.6" data-tol="0.001" data-unit="cm (first component)">
+<p><b>Exercise 8.3.</b> At \(\mathbf{p} = (0, 1)\), compute \(J\mathbf{v}\) for \(\mathbf{v} = (2, 1)\). Then check it with a finite step \(t = 0.01\): compute \((\mathbf{F}(\mathbf{p} + t\mathbf{v}) - \mathbf{F}(\mathbf{p}))/t\).</p>
+<details><summary>Show answer</summary>
+<p>\(J(0, 1) = \begin{pmatrix} 1 & 0.6 \\ 0.2 & 1 \end{pmatrix}\), so \(J\mathbf{v} = (1\times2 + 0.6\times1,\ 0.2\times2 + 1\times1) = (2.6, 1.4)\). Finite step: \(\mathbf{p} + t\mathbf{v} = (0.02, 1.01)\). \(\mathbf{F}(0.02, 1.01) = (0.02 + 0.3\times1.0201,\ 1.01 + 0.2\times0.02\times1.01) = (0.32603, 1.01404)\), and \(\mathbf{F}(0, 1) = (0.3, 1)\). Difference \((0.02603, 0.01404)\), divided by 0.01: \((2.603, 1.404)\). Close to \((2.6, 1.4)\); the leftover 0.003 and 0.004 shrink if you shrink \(t\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-2.6" data-tol="0.001" data-unit="cm">
+<p><b>Exercise 8.4.</b> On the line \(y = 2\), at which \(x\) is the sheet creased (\(\det J = 0\))? What is \(\det J\) a little to the left, at \(x = -3\)?</p>
+<details><summary>Show answer</summary>
+<p>\(1 + 0.2x - 0.12\times4 = 0 \Rightarrow 0.2x = 0.48 - 1 = -0.52 \Rightarrow x = -2.6\) cm. At \(x = -3\): \(1 - 0.6 - 0.48 = -0.08\). Negative: the sheet is folded over there and small squares come out mirrored.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2" data-tol="0.001" data-unit="m per radian">
+<p><b>Exercise 8.5.</b> Polar coordinates: \(\mathbf{P}(r, \alpha) = (r\cos\alpha,\ r\sin\alpha)\), with \(r\) in metres and the angle \(\alpha\) in radians. Find the Jacobian, its determinant, the unit of each entry, and the determinant at \(r = 2\) m. Where does the inverse function theorem fail?</p>
+<details><summary>Show answer</summary>
+<p>\(J = \begin{pmatrix} \cos\alpha & -r\sin\alpha \\ \sin\alpha & r\cos\alpha \end{pmatrix}\). Units: column 1 is metres of output per metre of \(r\) (pure number); column 2 is metres per radian. \(\det = r\cos^2\alpha + r\sin^2\alpha = r\), so 2 m per radian at \(r = 2\): a small patch of size \(\Delta r \times \Delta\alpha\) covers about \(r\,\Delta r\,\Delta\alpha\) square metres. It fails at \(r = 0\), where every angle gives the origin. (Here \(\mathbf{P}\) and \(\alpha\) are used only in this exercise.)</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-0.016667" data-tol="0.002" data-unit="cm (first component)">
+<p><b>Exercise 8.6.</b> At \(\mathbf{p} = (1, 2)\), which small input move makes the output go 0.01 cm straight up, \((0, 0.01)\)? Use \(J^{-1}\) from 8.7.</p>
+<details><summary>Show answer</summary>
+<p>\(J^{-1}(0, 0.01) = (1.6667\times0 - 1.6667\times0.01,\ -0.5556\times0 + 1.3889\times0.01) = (-0.016667, 0.013889)\). To go straight up you move left and up. Check: \(\mathbf{F}(0.983333, 2.013889) \approx (0.983333 + 1.216725,\ 2.013889 + 0.396065) = (2.200058, 2.409954)\), within about 0.00006 of the target \((2.2, 2.41)\).</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 8.7.</b> Suppose \(\mathbf{K}\) is a polynomial map from \(\mathbb{C}^3\) to \(\mathbb{C}^3\) with constant Jacobian determinant −2 that sends three distinct points to one output. Define a map on \(\mathbb{C}^4\) by \(\mathbf{L}(\mathbf{z}, w) = (\mathbf{K}(\mathbf{z}), w)\), where \(\mathbf{z}\) is the first three inputs and \(w\) the fourth. Show that \(\mathbf{L}\) is also a counterexample to the Jacobian conjecture. (\(\mathbf{K}, \mathbf{L}, \mathbf{z}, w\) are used only here.)</p>
+<details><summary>Show answer</summary>
+<p>\(\mathbf{L}\) is a polynomial map. Its Jacobian has the 3×3 Jacobian of \(\mathbf{K}\) in the top-left corner, a 1 in the bottom-right (the last output is \(w\) itself), and zeros elsewhere, because the first three outputs do not depend on \(w\) and the last does not depend on \(\mathbf{z}\). The determinant of such a block matrix is the product of the blocks' determinants: \(-2\times1 = -2\), constant. If \(\mathbf{z}_1, \mathbf{z}_2, \mathbf{z}_3\) collide under \(\mathbf{K}\), then \((\mathbf{z}_1, 0), (\mathbf{z}_2, 0), (\mathbf{z}_3, 0)\) collide under \(\mathbf{L}\). So a counterexample in dimension 3 gives one in every higher dimension.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.68" data-tol="0.002" data-unit="cm² per cm²">
+<p><b>Exercise 8.8.</b> Average \(\det J\) over the square \(0 \le x \le 2\), \(1 \le y \le 3\). Compare it with \(\det \bar J\), the determinant of the averaged Jacobian over the same square. (Hint: the average of \(y^2\) for \(y\) spread evenly from 1 to 3 is \((3^3 - 1^3)/(3\times(3 - 1)) = 26/6\).)</p>
+<details><summary>Show answer</summary>
+<p>The entries of \(J\) are straight-line in position, so \(\bar J = J(\text{centre}) = J(1, 2)\) and \(\det\bar J = 0.72\). But \(\det J = 1 + 0.2x - 0.12y^2\) contains \(y^2\): its average is \(1 + 0.2\times1 - 0.12\times26/6 = 1.2 - 0.52 = 0.68\). They differ: the determinant of the average is not the average of the determinant. Averaging before or after a non-linear step gives different answers, a theme that returns at Level 15.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="4" data-tol="0.001" data-unit="(area factor)">
+<p><b>Exercise 8.9.</b> Compute \(\mathbf{E}(\ln 2, \pi/2)\), where \(\ln 2 \approx 0.6931\) is the number with \(e^{\ln 2} = 2\). Find a different input with the same output. What is \(\det J_{\mathbf{E}}\) there?</p>
+<details><summary>Show answer</summary>
+<p>\(\mathbf{E}(\ln 2, \pi/2) = (2\cos(\pi/2),\ 2\sin(\pi/2)) = (2\times0, 2\times1) = (0, 2)\). Any \((\ln 2,\ \pi/2 + 2\pi k)\) for a whole number \(k\) gives the same, for example \((0.6931, 7.854)\). The determinant is \(e^{2\ln 2} = (e^{\ln 2})^2 = 4\): small areas are multiplied by 4, at both inputs.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  var fm = S.fmt;
+  /* the rubber-sheet map and its Jacobian */
+  function Fm(x, y) { return [x + 0.3 * y * y, y + 0.2 * x * y]; }
+  function Jm(x, y) { return [[1, 0.6 * y], [0.2 * y, 1 + 0.2 * x]]; }
+  function mount(host, aspect) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: aspect, maxH: 480 });
+    return { wrap: wrap, c: c };
+  }
+  /* equal scale on both axes: centre (cx, cy), at least +-half in the shorter direction */
+  function fitEqual(v, cx, cy, half) {
+    var b = v.box(), w = b.r - b.l, h = b.b - b.t, s = Math.min(w, h) / (2 * half);
+    v.set({ xmin: cx - w / (2 * s), xmax: cx + w / (2 * s), ymin: cy - h / (2 * s), ymax: cy + h / (2 * s) });
+  }
+  function clip(v) { var b = v.box(), x = v.ctx; x.save(); x.beginPath(); x.rect(b.l, b.t, b.r - b.l, b.b - b.t); x.clip(); }
+  function unclip(v) { v.ctx.restore(); }
+  function frame(v) { var b = v.box(), x = v.ctx; x.strokeStyle = S.col.ink; x.lineWidth = 1; x.strokeRect(b.l, b.t, b.r - b.l, b.b - b.t); }
+  /* draw the image under map m of the segment from (x1,y1) to (x2,y2) */
+  function curve(v, m, x1, y1, x2, y2, o) {
+    var pts = [], n = o && o.n || 60;
+    for (var k = 0; k <= n; k++) { var t = k / n; pts.push(m(x1 + t * (x2 - x1), y1 + t * (y2 - y1))); }
+    v.poly(pts, { close: false, color: o && o.color || S.col.gray, width: o && o.width || 1, dash: o && o.dash });
+  }
+  function shoelace(P) { var a = 0; for (var i = 0; i < P.length; i++) { var j = (i + 1) % P.length; a += P[i][0] * P[j][1] - P[j][0] * P[i][1]; } return a / 2; }
+  /* boundary of the square centred at (cx,cy), side s, anticlockwise, mapped by m */
+  function squareImage(m, cx, cy, s, n) {
+    var P = [], h = s / 2, k, t;
+    var C = [[cx - h, cy - h], [cx + h, cy - h], [cx + h, cy + h], [cx - h, cy + h]];
+    for (var e = 0; e < 4; e++) for (k = 0; k < n; k++) { t = k / n; var a = C[e], b = C[(e + 1) % 4]; P.push(m(a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))); }
+    return P;
+  }
+  function mat(J, d) { return "[[" + fm(J[0][0], d) + ", " + fm(J[0][1], d) + "], [" + fm(J[1][0], d) + ", " + fm(J[1][1], d) + "]]"; }
+  /* two side-by-side panels in one canvas */
+  function twoPanels(c) {
+    var L = S.view(c, { xmin: -3, xmax: 3, ymin: -3, ymax: 3, padLeft: 30, padRight: 14, padTop: 22, padBottom: 26 });
+    var R = S.view(c, { xmin: -3, xmax: 3, ymin: -3, ymax: 3, padLeft: 30, padRight: 10, padTop: 22, padBottom: 26 });
+    return { L: L, R: R, size: function () { L.set({ left: 0, width: c.W / 2 }); R.set({ left: c.W / 2, width: c.W / 2 }); } };
+  }
+  function title(v, s) { var b = v.box(); v.ctx.font = S.font; v.ctx.fillStyle = S.col.ink; v.ctx.textAlign = "left"; v.ctx.textBaseline = "bottom"; v.ctx.fillText(s, b.l, b.t - 4); }
+
+  /* Figure 8.1: the warp, with the images of the two grid lines through p */
+  (function () {
+    var m = mount(document.getElementById("sim-warp"), 0.52), c = m.c, pn = twoPanels(c);
+    var P = { x: 1, y: 2 };
+    var out = S.readout(m.wrap);
+    S.drag(c, pn.L, [P], function (p) { p.x = Math.round(p.x * 10) / 10; p.y = Math.round(p.y * 10) / 10; c.redraw(); });
+    c.draw = function () {
+      pn.size(); fitEqual(pn.L, 0, 0, 3.2); fitEqual(pn.R, 1.3, 0, 4.9);
+      var L = pn.L, R = pn.R, k;
+      L.axes({ xlabel: "x (cm)", ylabel: "y (cm)", xticks: 1, yticks: 1 }); title(L, "flat sheet (input)");
+      R.axes({ xlabel: "F₁ (cm)", ylabel: "F₂ (cm)", xticks: 1, yticks: 1 }); title(R, "stretched sheet (output)");
+      clip(L);
+      L.line(-9, P.y, 9, P.y, { color: S.col.red, width: 2 }); L.line(P.x, -9, P.x, 9, { color: S.col.blue, width: 2 });
+      unclip(L);
+      clip(R);
+      for (k = -3; k <= 3; k += 0.5) { curve(R, Fm, k, -3, k, 3, { color: "#aaa" }); curve(R, Fm, -3, k, 3, k, { color: "#aaa" }); }
+      curve(R, Fm, -3, P.y, 3, P.y, { color: S.col.red, width: 2 }); curve(R, Fm, P.x, -3, P.x, 3, { color: S.col.blue, width: 2 });
+      var f = Fm(P.x, P.y), J = Jm(P.x, P.y);
+      R.arrow(f[0], f[1], f[0] + J[0][0], f[1] + J[1][0], { color: S.col.red, width: 3 });
+      R.arrow(f[0], f[1], f[0] + J[0][1], f[1] + J[1][1], { color: S.col.blue, width: 3 });
+      R.dot(f[0], f[1], { color: S.col.ink, r: 5 });
+      unclip(R);
+      L.dot(P.x, P.y, { color: S.col.ink, r: 6 }); L.text("p", P.x, P.y, { dx: 8, dy: -6 });
+      out.textContent = "p = (" + fm(P.x, 1) + ", " + fm(P.y, 1) + ") cm\n" +
+        "F₁ = x + 0.3y² = " + fm(P.x, 1) + " + 0.3×" + fm(P.y * P.y, 2) + " = " + fm(f[0], 3) + " cm\n" +
+        "F₂ = y + 0.2xy = " + fm(P.y, 1) + " + 0.2×" + fm(P.x, 1) + "×" + fm(P.y, 1) + " = " + fm(f[1], 3) + " cm\n" +
+        "J(p) = [[1, 0.6y], [0.2y, 1 + 0.2x]] = " + mat(J, 2) + "\n" +
+        "red arrow = column 1 = (" + fm(J[0][0], 2) + ", " + fm(J[1][0], 2) + ")   blue arrow = column 2 = (" + fm(J[0][1], 2) + ", " + fm(J[1][1], 2) + ")";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 8.2: zoom window, true image vs straight-line copy */
+  (function () {
+    var m = mount(document.getElementById("sim-zoom"), 0.52), c = m.c, pn = twoPanels(c);
+    var P = { x: 1, y: 2 };
+    var ls = S.slider(m.wrap, { label: "window half-width s", min: -2, max: 0.3, step: 0.01, value: 0, unit: "", digits: 2, oninput: function () { c.redraw(); } });
+    ls.label("log₁₀ of half-width s");
+    var out = S.readout(m.wrap);
+    S.drag(c, pn.L, [P], function () { c.redraw(); });
+    c.draw = function () {
+      pn.size(); fitEqual(pn.L, 0, 0, 3.2);
+      var s = Math.pow(10, ls.get()), L = pn.L, R = pn.R, f = Fm(P.x, P.y), J = Jm(P.x, P.y), k, n = 6;
+      L.axes({ xlabel: "x (cm)", ylabel: "y (cm)", xticks: 1, yticks: 1 }); title(L, "flat sheet: window around p");
+      L.rect(P.x - s, P.y - s, 2 * s, 2 * s, { color: S.col.red, fill: S.col.red, fillAlpha: 0.12, width: 1.5 });
+      L.dot(P.x, P.y, { color: S.col.ink, r: 6 }); L.text("p", P.x, P.y, { dx: 8, dy: -6 });
+      /* fit the right view to the image of the window */
+      var xs = [], ys = [];
+      [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(function (q) { var g = Fm(P.x + q[0] * s, P.y + q[1] * s); xs.push(g[0]); ys.push(g[1]); });
+      var half = 0.62 * Math.max(Math.max.apply(null, xs) - Math.min.apply(null, xs), Math.max.apply(null, ys) - Math.min.apply(null, ys));
+      fitEqual(R, f[0], f[1], half);
+      frame(R); title(R, "zoomed output (window width " + fm(2 * s, 3) + " cm)");
+      function lin(x, y) { var dx = x - P.x, dy = y - P.y; return [f[0] + J[0][0] * dx + J[0][1] * dy, f[1] + J[1][0] * dx + J[1][1] * dy]; }
+      clip(R);
+      for (k = 0; k <= n; k++) {
+        var t = -s + 2 * s * k / n;
+        curve(R, lin, P.x + t, P.y - s, P.x + t, P.y + s, { color: S.col.blue, dash: [6, 4], width: 1.5, n: 2 });
+        curve(R, lin, P.x - s, P.y + t, P.x + s, P.y + t, { color: S.col.blue, dash: [6, 4], width: 1.5, n: 2 });
+        curve(R, Fm, P.x + t, P.y - s, P.x + t, P.y + s, { color: S.col.ink, width: 1.2 });
+        curve(R, Fm, P.x - s, P.y + t, P.x + s, P.y + t, { color: S.col.ink, width: 1.2 });
+      }
+      R.dot(f[0], f[1], { color: S.col.red, r: 4 });
+      unclip(R);
+      var gap = Math.sqrt(0.09 + 0.04) * s * s;
+      out.textContent = "p = (" + fm(P.x, 2) + ", " + fm(P.y, 2) + ")   s = " + fm(s, 4) + " cm   J(p) = " + mat(J, 2) + "\n" +
+        "worst mismatch (at a corner, Δx = Δy = s): ‖(0.3s², 0.2s²)‖ = " + fm(gap, 6) + " cm\n" +
+        "mismatch ÷ s  = " + fm(gap / s, 5) + "   (relative to the window: shrinks like s)\n" +
+        "mismatch ÷ s² = " + fm(gap / (s * s), 4) + "   (constant: the error is second order)";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 8.3: Jacobian-vector product */
+  (function () {
+    var m = mount(document.getElementById("sim-jvp"), 0.52), c = m.c, pn = twoPanels(c);
+    var P = { x: 1, y: 2 }, T = { x: 1.5, y: 1.5 }, last = { x: 1, y: 2 };
+    var out = S.readout(m.wrap);
+    S.drag(c, pn.L, [P, T], function (p) {
+      if (p === P) { T.x += P.x - last.x; T.y += P.y - last.y; }
+      last.x = P.x; last.y = P.y; c.redraw();
+    });
+    c.draw = function () {
+      pn.size(); fitEqual(pn.L, 0, 0, 3.2); fitEqual(pn.R, 1.3, 0, 4.9);
+      var L = pn.L, R = pn.R, v = [T.x - P.x, T.y - P.y], f = Fm(P.x, P.y), J = Jm(P.x, P.y);
+      var Jv = [J[0][0] * v[0] + J[0][1] * v[1], J[1][0] * v[0] + J[1][1] * v[1]], g = Fm(T.x, T.y);
+      L.axes({ xlabel: "x (cm)", ylabel: "y (cm)", xticks: 1, yticks: 1 }); title(L, "input: p and step v");
+      R.axes({ xlabel: "F₁ (cm)", ylabel: "F₂ (cm)", xticks: 1, yticks: 1 }); title(R, "output: true path and Jv");
+      clip(R);
+      for (var k = -3; k <= 3; k += 1) { curve(R, Fm, k, -3, k, 3, { color: "#ccc" }); curve(R, Fm, -3, k, 3, k, { color: "#ccc" }); }
+      curve(R, Fm, P.x, P.y, T.x, T.y, { color: S.col.ink, width: 2.5 });
+      R.arrow(f[0], f[1], f[0] + Jv[0], f[1] + Jv[1], { color: S.col.blue, width: 2.5 });
+      R.dot(g[0], g[1], { color: S.col.green, r: 5 }); R.dot(f[0], f[1], { color: S.col.ink, r: 5 });
+      unclip(R);
+      L.arrow(P.x, P.y, T.x, T.y, { color: S.col.green, width: 2.5 });
+      L.dot(P.x, P.y, { color: S.col.ink, r: 6 }); L.text("p", P.x, P.y, { dx: -16, dy: -6 });
+      L.dot(T.x, T.y, { color: S.col.green, r: 6 }); L.text("p + v", T.x, T.y, { dx: 8, dy: -6, color: S.col.green });
+      var real = [g[0] - f[0], g[1] - f[1]];
+      out.textContent = "p = (" + fm(P.x, 2) + ", " + fm(P.y, 2) + ")   v = (" + fm(v[0], 2) + ", " + fm(v[1], 2) + ")   J(p) = " + mat(J, 2) + "\n" +
+        "Jv row 1 = " + fm(J[0][0], 2) + "×" + fm(v[0], 2) + " + " + fm(J[0][1], 2) + "×" + fm(v[1], 2) + " = " + fm(Jv[0], 4) + "\n" +
+        "Jv row 2 = " + fm(J[1][0], 2) + "×" + fm(v[0], 2) + " + " + fm(J[1][1], 2) + "×" + fm(v[1], 2) + " = " + fm(Jv[1], 4) + "\n" +
+        "real move F(p + v) − F(p) = (" + fm(real[0], 4) + ", " + fm(real[1], 4) + ")   gap = (0.3Δy², 0.2ΔxΔy) = (" + fm(real[0] - Jv[0], 4) + ", " + fm(real[1] - Jv[1], 4) + ")";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 8.4: local area scaling and orientation */
+  (function () {
+    var m = mount(document.getElementById("sim-area"), 0.52), c = m.c, pn = twoPanels(c);
+    var P = { x: 1, y: 2 };
+    var ss = S.slider(m.wrap, { label: "square side s", min: 0.1, max: 1, step: 0.05, value: 0.5, unit: "cm", digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(m.wrap);
+    S.drag(c, pn.L, [P], function (p) { p.x = Math.round(p.x * 10) / 10; p.y = Math.round(p.y * 10) / 10; c.redraw(); });
+    function det(x, y) { return 1 + 0.2 * x - 0.12 * y * y; }
+    c.draw = function () {
+      pn.size(); fitEqual(pn.L, -1.6, 0, 3.6); fitEqual(pn.R, 0.6, 0, 5.4);
+      var L = pn.L, R = pn.R, s = ss.get(), k;
+      L.heat(function (x, y) { return det(x, y) < 0 ? 0.35 : 0; }, { min: -1, max: 1, step: 5 });
+      L.axes({ xlabel: "x (cm)", ylabel: "y (cm)", xticks: 1, yticks: 1 }); title(L, "input (pink: det J < 0)");
+      L.contour(det, [0], { color: S.col.ink, dash: [5, 4], width: 1.2, res: 80 });
+      R.axes({ xlabel: "F₁ (cm)", ylabel: "F₂ (cm)", xticks: 2, yticks: 2 }); title(R, "output");
+      clip(R);
+      for (k = -6; k <= 3; k += 1) curve(R, Fm, k, -3.6, k, 3.6, { color: "#ccc" });
+      for (k = -3.5; k <= 3.5; k += 1) curve(R, Fm, -6, k, 3, k, { color: "#ccc" });
+      var img = squareImage(Fm, P.x, P.y, s, 40), area = shoelace(img), D = det(P.x, P.y);
+      var col = area >= 0 ? S.col.blue : S.col.red;
+      R.poly(img, { color: col, fill: col, fillAlpha: 0.3, width: 1.5 });
+      unclip(R);
+      var h = s / 2, C = [[P.x - h, P.y - h], [P.x + h, P.y - h], [P.x + h, P.y + h], [P.x - h, P.y + h]];
+      L.rect(P.x - h, P.y - h, s, s, { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.3, width: 1.5 });
+      C.forEach(function (q, i) {
+        L.text(String(i + 1), q[0], q[1], { dx: q[0] < P.x ? -11 : 3, dy: q[1] < P.y ? 13 : -3, font: S.fontSmall, color: S.col.green });
+        var g = Fm(q[0], q[1]); R.dot(g[0], g[1], { color: S.col.ink, r: 2.5 }); R.text(String(i + 1), g[0], g[1], { dx: 3, dy: -3, font: S.fontSmall, color: S.col.green });
+      });
+      L.dot(P.x, P.y, { color: S.col.ink, r: 4 });
+      out.textContent = "p = (" + fm(P.x, 1) + ", " + fm(P.y, 1) + ")   det J(p) = 1 + 0.2x − 0.12y² = 1 + " + fm(0.2 * P.x, 2) + " − " + fm(0.12 * P.y * P.y, 4) + " = " + fm(D, 4) + "\n" +
+        "square area = s² = " + fm(s * s, 4) + " cm²   image area (signed) = " + fm(area, 5) + " cm²\n" +
+        "ratio = " + fm(area / (s * s), 4) + "   vs det J(p) = " + fm(D, 4) + "   orientation: " + (area > 0 ? "kept (1→2→3→4 anticlockwise)" : "flipped (1→2→3→4 clockwise)");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 8.5: the exponential map, locally invertible but not globally */
+  (function () {
+    var m = mount(document.getElementById("sim-exp"), 0.82), c = m.c, TWO = 2 * Math.PI;
+    function Em(x, y) { var r = Math.exp(x); return [r * Math.cos(y), r * Math.sin(y)]; }
+    /* top strip: horizontal = angle y, vertical = x */
+    var T = S.view(c, { xmin: -0.3, xmax: 2 * TWO + 0.3, ymin: -1.4, ymax: 1.15, padLeft: 30, padRight: 12, padTop: 22, padBottom: 0 });
+    var B = S.view(c, { xmin: -3, xmax: 3, ymin: -3, ymax: 3, padLeft: 30, padRight: 12, padTop: 0, padBottom: 18 });
+    var P = { x: 1.2, y: 0.3 }; /* P.x = angle y, P.y = x (strip coordinates) */
+    var out = S.readout(m.wrap);
+    S.drag(c, T, [P], function () { c.redraw(); });
+    c.draw = function () {
+      var stripH = Math.max(60, (c.W - 42) * 2.55 / (2 * TWO + 0.6));
+      T.set({ padBottom: c.H - 22 - stripH }); B.set({ padTop: 22 + stripH + 40 });
+      fitEqual(B, 0, 0, 3.05);
+      var ang = P.x, xx = P.y, ctx = c.ctx, k;
+      /* bands */
+      T.rect(0, -1.4, TWO, 2.55, { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.10, stroke: false });
+      T.rect(TWO, -1.4, TWO, 2.55, { color: S.col.red, fill: S.col.red, fillAlpha: 0.10, stroke: false });
+      for (k = 0; k <= 8; k++) T.line(k * Math.PI / 2, -1.4, k * Math.PI / 2, 1.15, { color: "#bbb", width: 0.8 });
+      [-1, -0.5, 0, 0.5, 1].forEach(function (q) { T.line(-0.3, q, 2 * TWO + 0.3, q, { color: "#bbb", width: 0.8 }); });
+      T.axes({ grid: false, xticks: Math.PI, yticks: 0.5, xnums: false, frame: true });
+      ["0", "π", "2π", "3π", "4π"].forEach(function (s, i) { T.text(s, i * Math.PI, -1.4, { dy: 14, align: "center", font: S.fontSmall }); });
+      T.text("angle y (radians) →", 2 * TWO + 0.3, 1.15, { dy: -6, align: "right", font: S.fontSmall });
+      T.text("x ↑", -0.3, 1.15, { dy: -6, font: S.fontSmall });
+      /* output */
+      B.axes({ xlabel: "first output", ylabel: "second output", xticks: 1, yticks: 1 });
+      clip(B);
+      [-1, -0.5, 0, 0.5, 1].forEach(function (q) { var r = Math.exp(q); ctx.strokeStyle = "#bbb"; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.arc(B.X(0), B.Y(0), B.X(r) - B.X(0), 0, 2 * Math.PI); ctx.stroke(); });
+      var r0 = Math.exp(-1.4), r1 = Math.exp(1.15);
+      for (k = 0; k < 8; k++) {
+        var a = k * Math.PI / 4;
+        B.line(r0 * Math.cos(a), r0 * Math.sin(a), r1 * Math.cos(a), r1 * Math.sin(a), { color: S.col.blue, width: 1, alpha: 0.6 });
+        B.line(r0 * Math.cos(a), r0 * Math.sin(a), r1 * Math.cos(a), r1 * Math.sin(a), { color: S.col.red, width: 1, dash: [3, 5], alpha: 0.8 });
+      }
+      /* small square around p and its image */
+      var h = 0.18, sq = [[ang - h, xx - h], [ang + h, xx - h], [ang + h, xx + h], [ang - h, xx + h]];
+      var img = squareImage(function (yy, x2) { return Em(x2, yy); }, ang, xx, 2 * h, 30);
+      B.poly(img, { color: S.col.green, fill: S.col.green, fillAlpha: 0.3, width: 1.5 });
+      var e = Em(xx, ang);
+      B.dot(e[0], e[1], { color: S.col.ink, r: 6 });
+      unclip(B);
+      T.poly(sq, { color: S.col.green, fill: S.col.green, fillAlpha: 0.3, width: 1.5 });
+      var twin = ang < TWO ? ang + TWO : ang - TWO;
+      T.dot(twin, xx, { color: S.col.ink, r: 6, hollow: true, width: 2 });
+      T.dot(ang, xx, { color: S.col.ink, r: 6 }); T.text("p", ang, xx, { dx: 8, dy: -8 });
+      var e2 = Em(xx, twin), D = Math.exp(2 * xx);
+      var ratio = Math.abs(shoelace(squareImage(function (yy, x2) { return Em(x2, yy); }, ang, xx, 0.02, 20))) / 0.0004;
+      out.textContent = "p = (x, y) = (" + fm(xx, 3) + ", " + fm(ang, 3) + ")   E(p) = (eˣ cos y, eˣ sin y) = (" + fm(e[0], 4) + ", " + fm(e[1], 4) + ")\n" +
+        "twin = (x, y " + (twin > ang ? "+" : "−") + " 2π) = (" + fm(xx, 3) + ", " + fm(twin, 3) + ")   E(twin) = (" + fm(e2[0], 4) + ", " + fm(e2[1], 4) + ")   same output\n" +
+        "det J = e^(2x) = " + fm(D, 4) + "   (never 0)   measured area ratio of a tiny square = " + fm(ratio, 4);
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

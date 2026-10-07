@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 3: The second derivative: curvature</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="3">
+<div class="page">
+
+<h1>Level 3: The second derivative: curvature</h1>
+<p class="subtitle">The derivative of the derivative says how fast the slope itself changes. That is how much a graph bends, and how wrong a straight line is.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>take the derivative of a derivative, read \(f''(x)\) and \(d^2 f/dx^2\) aloud, and state the unit (like m/s²);</li>
+<li>read position, speed and acceleration off three linked graphs, each the slope of the one above;</li>
+<li>say whether a graph is concave up or concave down from the sign of \(f''\), and find inflection points;</li>
+<li>measure curvature as the gap between a curve and its tangent line, about \(\tfrac12 f''(x)\,\Delta x^2\);</li>
+<li>compute a second difference from three function values, and know when it is exact and when rounding ruins it;</li>
+<li>find critical points and classify them with the second-derivative test.</li>
+</ul>
+<p class="small">Prerequisites: <a href="01.html">Level 1</a> (functions, the car, parabolas) and <a href="02.html">Level 2</a> (difference quotients, the derivative, the tangent line, the power rule).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first.</p>
+<div class="tablewrap" style="position: relative">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>time since the start</td><td>seconds (s)</td><td>\(t = 3\) s</td></tr>
+<tr><td>\(s(t)\)</td><td>“s of t”</td><td>the car's position, \(s(t) = t^2\)</td><td>metres (m)</td><td>\(s(3) = 9\) m</td></tr>
+<tr><td>\(s'(t)\)</td><td>“s prime of t”</td><td>the car's speed: the derivative of position (Level 2)</td><td>metres per second (m/s)</td><td>\(s'(3) = 6\) m/s</td></tr>
+<tr><td>\(s''(t)\)</td><td>“s double prime of t”</td><td>the car's acceleration: the derivative of speed</td><td>metres per second per second (m/s²)</td><td>\(s''(3) = 2\) m/s²</td></tr>
+<tr><td>\(a\)</td><td>“a”</td><td>the car's constant acceleration in \(s(t) = \tfrac12 a t^2\)</td><td>m/s²</td><td>\(a = 2\) m/s²</td></tr>
+<tr><td>\(q(t)\)</td><td>“q of t”</td><td>position on a toy trip between two stop signs, \(q(t) = 1.5t^2 - 0.1t^3\)</td><td>metres (m)</td><td>\(q(5) = 25\) m</td></tr>
+<tr><td>\(q'(t),\ q''(t)\)</td><td>“q prime”, “q double prime”</td><td>speed and acceleration on that trip</td><td>m/s and m/s²</td><td>\(q''(5) = 0\) m/s²</td></tr>
+<tr><td>\(z(t)\)</td><td>“z of t”</td><td>height of a thrown ball (a toy)</td><td>metres (m)</td><td>\(z(2) = 20\) m</td></tr>
+<tr><td>\(z'(t),\ z''(t)\)</td><td>“z prime”, “z double prime”</td><td>the ball's upward speed and acceleration</td><td>m/s and m/s²</td><td>\(z''(2) = -10\) m/s²</td></tr>
+<tr><td>\(x\)</td><td>“x”</td><td>a general input</td><td>depends; none (pure number) in toys</td><td>\(x = 2\)</td></tr>
+<tr><td>\(y\)</td><td>“y”</td><td>a general output, on the vertical axis</td><td>depends; none (pure number) in toys</td><td>\(y = x^2\)</td></tr>
+<tr><td>\(m,\ b\)</td><td>“m”, “b”</td><td>slope and value at 0 of a straight line \(m x + b\) (Level 1)</td><td>output per input; output</td><td>\(m = 6,\ b = -9\)</td></tr>
+<tr><td>\(c\)</td><td>“c”</td><td>the constant in a parabola \(y = c\,x^2\) (Level 1)</td><td>output unit per (input unit)²</td><td>\(c = 1\) m/s² for the car</td></tr>
+<tr><td>\(n\)</td><td>“n”</td><td>a whole-number exponent</td><td>none (pure number)</td><td>\(x^n\) with \(n = 4\)</td></tr>
+<tr><td>\(f\)</td><td>“f”</td><td>the name of a function</td><td>no unit of its own</td><td>\(f(x) = x^3 - 3x\)</td></tr>
+<tr><td>\(f'(x)\)</td><td>“f prime of x”</td><td>the derivative: slope of the graph at \(x\)</td><td>output unit per input unit</td><td>\(f'(2) = 9\)</td></tr>
+<tr><td>\(f''(x)\)</td><td>“f double prime of x”</td><td>the second derivative: the rate of change of the slope at \(x\)</td><td>output unit per input unit per input unit</td><td>\(f''(2) = 12\)</td></tr>
+<tr><td>\(\dfrac{d^2 f}{dx^2}\)</td><td>“d two f d x squared”</td><td>another way to write \(f''(x)\): differentiate twice. It is short for \(\dfrac{d}{dx}\Big(\dfrac{df}{dx}\Big)\), where \(\dfrac{df}{dx}\) is \(f'(x)\) and \(\dfrac{d}{dx}\) means “the derivative with respect to \(x\) of what follows” (Level 2)</td><td>output unit per (input unit)²</td><td>\(\dfrac{d^2 s}{dt^2} = 2\) m/s²</td></tr>
+<tr><td>\(\Delta x,\ \Delta t,\ \Delta s\)</td><td>“delta x”, “delta t”, “delta s”</td><td>a finite step in the input (\(\Delta x\), \(\Delta t\)), or the change in position it causes (\(\Delta s\))</td><td>the input's unit; \(\Delta s\) in metres (m)</td><td>\(\Delta t = 0.1\) s</td></tr>
+<tr><td>\(T(t)\)</td><td>“T of t”</td><td>the tangent line at a chosen point (Level 2)</td><td>the output's unit</td><td>\(T(t) = 9 + 6(t-3)\)</td></tr>
+<tr><td>\(\kappa\)</td><td>“kappa”</td><td>geometric curvature of a graph (one box only, Section 3.5)</td><td>one over the unit of the axes (e.g. 1/m)</td><td>\(\kappa = 2\) for \(x^2\) at 0</td></tr>
+<tr><td>\(e^x\)</td><td>“e to the x”</td><td>the exponential function, \(e \approx 2.71828\) (Level 1)</td><td>none (pure number)</td><td>\(e^0 = 1\)</td></tr>
+<tr><td>\(\lvert x \rvert\)</td><td>“absolute value of x”</td><td>size of \(x\) ignoring its sign</td><td>same as \(x\)</td><td>\(\lvert -3 \rvert = 3\)</td></tr>
+<tr><td>\(\gt,\ \lt,\ \le\)</td><td>“greater than”, “less than”, “less than or equal to”</td><td>comparison</td><td>none</td><td>\(f''(1) \gt 0\)</td></tr>
+<tr><td>\(\to\)</td><td>“goes to”</td><td>gets as close as you like to (Level 2)</td><td>none</td><td>\(\Delta x \to 0\)</td></tr>
+<tr><td>\(\approx\), \(\cdot\), \(\times\)</td><td>“approximately”, “times”, “times”</td><td>rounded equality; multiplication</td><td>none</td><td>\(e \approx 2.718\)</td></tr>
+</table>
+</div>
+
+<h2>3.1 The derivative of the derivative</h2>
+<p>At <a href="02.html">Level 2</a> the derivative of the car's position \(s(t) = t^2\) was its speed, \(s'(t) = 2t\) m/s. That speed is itself a function of time. So we can ask how fast <i>it</i> changes. Take its derivative, using the same difference quotient as before:</p>
+$$ \frac{s'(t + \Delta t) - s'(t)}{\Delta t} = \frac{2(t + \Delta t) - 2t}{\Delta t} = \frac{2t + 2\Delta t - 2t}{\Delta t} = \frac{2\,\Delta t}{\Delta t} = 2 . $$
+<p>There is not even a leftover \(\Delta t\) to send to zero: the answer is 2 for every step. So</p>
+$$ s''(t) = 2\ \text{m/s}^2 \quad \text{at every time } t. $$
+<p>This is the second derivative: the derivative of the derivative. For the car it is the acceleration, the rate of change of speed. Check with a table of speeds from Level 2: 0, 2, 4, 6, 8 m/s at \(t = 0, 1, 2, 3, 4\) s. Each second the speed rises by 2 m/s. That is what “2 m/s²” means: 2 metres per second, gained every second.</p>
+<p>With the physicists' form \(s(t) = \tfrac12 a t^2\), Level 2 gave \(s'(t) = a t\). One more derivative gives \(s''(t) = a\). So the \(a = 2\) m/s² of Level 1 is exactly the second derivative. That is why it is called the acceleration.</p>
+
+<h3>Notation</h3>
+<ul>
+<li>\(f''(x)\), read “f double prime of x”: two prime marks, two derivatives.</li>
+<li>\(\dfrac{d^2 f}{dx^2}\), read “d two f d x squared”. It is shorthand for \(\dfrac{d}{dx}\Big(\dfrac{df}{dx}\Big)\). The 2 on the top says “differentiate twice”. The \(dx^2\) on the bottom means \((dx)^2\): you divided by an input step twice. That is where the unit comes from.</li>
+</ul>
+
+<div class="box plain">
+<span class="boxtitle">Intuition pump: what you feel in a car</span>
+In a car at a steady 100 km/h on a straight motorway you feel nothing; you could pour a cup of tea. You feel pushed into your seat only while the car speeds up, and thrown forward only while it brakes. Your body measures the second derivative of position, not the first. Our car presses you back with the same steady push for all ten seconds, because \(s''\) is the constant 2 m/s².
+</div>
+
+<h2>3.2 The unit of a second derivative</h2>
+<p>A derivative has unit “output per input”. A second derivative divides by the input once more: “output per input per input”.</p>
+$$ s''(t):\quad \frac{\text{m/s}}{\text{s}} = \frac{\text{m}}{\text{s}\cdot\text{s}} = \frac{\text{m}}{\text{s}^2} . $$
+<p>Other examples: if a cost in dollars depends on a number of items, its second derivative is in dollars per item per item. If a crop yield in bushels depends on water in buckets, its second derivative is in bushels per bucket² (<a href="05.html">Level 5</a> uses exactly this farm).</p>
+
+<h3>Mechanics: what the number does</h3>
+<p>An acceleration of 2 m/s² changes the speed by 2 m/s for each second. Over a step \(\Delta t\) the speed changes by about \(s''\cdot\Delta t\). With \(\Delta t = 0.5\) s: \(2\ \text{m/s}^2 \times 0.5\ \text{s} = 1\ \text{m/s}\). Check: \(s'(3) = 6\) and \(s'(3.5) = 7\) m/s. The seconds cancel once and leave m/s.</p>
+
+<h3>Mechanics: change the unit of the input</h3>
+<p>Measure time in minutes instead of seconds. One second is \(\tfrac{1}{60}\) minute, so “per second” is “60 per minute”, and “per second per second” is “\(60 \times 60 = 3600\) per minute per minute”:</p>
+$$ 6\ \frac{\text{m}}{\text{s}} = 6 \times 60\ \frac{\text{m}}{\text{min}} = 360\ \frac{\text{m}}{\text{min}}, \qquad 2\ \frac{\text{m}}{\text{s}^2} = 2 \times 60^2\ \frac{\text{m}}{\text{min}^2} = 7200\ \frac{\text{m}}{\text{min}^2} . $$
+<p>The motion did not change. The numbers did. Stretch the input unit by a factor of 60 and the first derivative is multiplied by 60, but the second derivative by \(60^2\). This is not a curiosity. At <a href="13.html">Level 13</a> and <a href="15.html">Level 15</a>, H-space measures curvature in units of each direction's natural spread instead of raw units, and this squared rescaling is exactly what changes which directions look most curved.</p>
+
+<h2>3.3 Position, speed and acceleration together</h2>
+<p>For the car, the acceleration never changes, which makes its third graph a flat line. To see a second derivative that changes, here is a second toy trip. A car leaves one stop sign, speeds up, then brakes and stops exactly at the next stop sign, 50 m away, after 10 s. Its position is</p>
+$$ q(t) = 1.5\,t^2 - 0.1\,t^3 \quad \text{metres}, \qquad 0 \le t \le 10\ \text{s}. $$
+<p>(Hidden units, as with the car: the 1.5 is in m/s² and the 0.1 is in m/s³, so that each term comes out in metres.) Differentiate term by term with the power rule of Level 2:</p>
+$$ q'(t) = 1.5\cdot 2t - 0.1\cdot 3t^2 = 3t - 0.3\,t^2 \ \text{m/s}, \qquad q''(t) = 3 - 0.3\cdot 2t = 3 - 0.6\,t \ \text{m/s}^2 . $$
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(t\) (s)</th><th>position \(q\) (m)</th><th>speed \(q'\) (m/s)</th><th>acceleration \(q''\) (m/s²)</th><th>what the driver is doing</th></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>3</td><td>pulling away hard</td></tr>
+<tr><td>2</td><td>6 − 0.8 = 5.2</td><td>6 − 1.2 = 4.8</td><td>3 − 1.2 = 1.8</td><td>still speeding up, less hard</td></tr>
+<tr><td>5</td><td>37.5 − 12.5 = 25</td><td>15 − 7.5 = 7.5</td><td>3 − 3 = 0</td><td>top speed: neither speeding up nor slowing</td></tr>
+<tr><td>8</td><td>96 − 51.2 = 44.8</td><td>24 − 19.2 = 4.8</td><td>3 − 4.8 = −1.8</td><td>braking</td></tr>
+<tr><td>10</td><td>150 − 100 = 50</td><td>30 − 30 = 0</td><td>3 − 6 = −3</td><td>stopped at the sign</td></tr>
+</table>
+</div>
+<p>Read the rows. A positive acceleration means the speed is rising; a negative one means it is falling. At \(t = 5\) s the acceleration is zero, and that is exactly when the speed is at its peak, 7.5 m/s. Halfway in time, halfway in distance: 25 m.</p>
+
+<div class="box key">
+<span class="boxtitle">Reading stacked graphs</span>
+The height of each graph is the slope of the graph above it. Speed is the slope of position. Acceleration is the slope of speed, and so it is the rate at which the slope of position changes.
+</div>
+
+<figure class="sim" id="sim-stack">
+<figcaption><b>Figure 3.1.</b> Three linked graphs: position (top), speed (middle), acceleration (bottom), with a shared time cursor. The red segments are tangent lines; the slope of each one equals the height of the dot in the graph below. Choose the car first: the acceleration is flat at 2 m/s². Then choose the stop-to-stop trip and drag the time to 5 s: the speed peaks exactly where the acceleration crosses zero, and the position graph changes from bending up to bending down.</figcaption>
+</figure>
+
+<h2>3.4 Concave up and concave down</h2>
+<p>The sign of the second derivative says which way a graph bends.</p>
+<ul>
+<li>If \(f''(x) \gt 0\), the slope is increasing. The graph bends upward like a cup that holds water. This is called concave up.</li>
+<li>If \(f''(x) \lt 0\), the slope is decreasing. The graph bends downward like a cap. This is called concave down.</li>
+<li>If \(f''(x) = 0\) on a whole stretch, the slope does not change there. The graph is straight on that stretch.</li>
+</ul>
+
+<h3>Mechanics: watch the slope change</h3>
+<p>For \(f(x) = x^2\), the slope is \(f'(x) = 2x\). At \(x = -2, -1, 0, 1, 2\) the slopes are \(-4, -2, 0, 2, 4\): rising by 2 per unit step, because \(f''(x) = 2\). Downhill, then less downhill, then flat, then uphill: a cup.</p>
+<p>For \(f(x) = -x^2\), the slopes at the same points are \(4, 2, 0, -2, -4\): falling by 2 per unit step, \(f''(x) = -2\). A cap.</p>
+
+<h3>Worked example: a curve that does both</h3>
+<p>Let \(f(x) = x^3 - 3x\) (toy, pure numbers). Then</p>
+$$ f'(x) = 3x^2 - 3, \qquad f''(x) = 6x . $$
+<p>For negative \(x\), \(6x\) is negative: concave down. For positive \(x\), \(6x\) is positive: concave up. At \(x = 1.5\): \(f'(1.5) = 3 \cdot 2.25 - 3 = 3.75\) and \(f''(1.5) = 9\). Step 0.1 to the right: \(f'(1.6) = 3\cdot 2.56 - 3 = 4.68\). The slope rose by \(4.68 - 3.75 = 0.93\), close to \(f''(1.5) \times 0.1 = 0.9\).</p>
+<p><b>Which side of the tangent line?</b> On a concave-up stretch the curve lies above its tangent lines. On a concave-down stretch it lies below them. Section 3.5 turns that gap into a number.</p>
+
+<p><b>Real-world examples.</b> Revising for an exam: the first hour helps a lot, the tenth hour helps less. The score as a function of hours is concave down, a pattern called diminishing returns. Savings with compound interest: each year adds more than the year before. The balance as a function of time is concave up.</p>
+
+<div class="box plain">
+<span class="boxtitle">Intuition pump: driving along the graph</span>
+Imagine driving along the graph from left to right. On a concave-up stretch the road bends to your left. On a concave-down stretch it bends to your right. On a straight stretch you hold the wheel still. The second derivative says which way, and how hard, the road is turning.
+</div>
+
+<figure class="sim" id="sim-concave">
+<figcaption><b>Figure 3.2.</b> \(f(x) = x^3 - 3x\) (toy, pure numbers). Drag the dot along the curve. The dashed line is the tangent line, whose slope is \(f'(x)\). The shading shows the sign of \(f''(x) = 6x\): red where concave down, blue where concave up. Notice that in the red region the tangent turns clockwise as you drag right and the curve sits below it; in the blue region it turns anticlockwise and the curve sits above it. Press the step buttons and compare the change in slope with \(f''(x) \times 0.1\).</figcaption>
+</figure>
+
+<h2>3.5 Curvature: how wrong a straight line is</h2>
+<p>At Level 2 we compared the car's curve with its tangent line at \(t = 3\) s, \(T(t) = 9 + 6(t - 3)\). After a step \(\Delta t\) the gap was</p>
+$$ s(3 + \Delta t) - T(3 + \Delta t) = (9 + 6\Delta t + \Delta t^2) - (9 + 6\Delta t) = \Delta t^2 \ \text{m}. $$
+<p>Now look at that gap with the second derivative in hand. \(s'' = 2\) m/s², and \(\tfrac12 s''\,\Delta t^2 = \tfrac12 \cdot 2 \cdot \Delta t^2 = \Delta t^2\). The gap is exactly \(\tfrac12 s''\,\Delta t^2\). Units: \(\text{m/s}^2 \times \text{s}^2 = \text{m}\), as a gap in position should be.</p>
+
+<h3>Worked example: the cubic at \(x = 2\)</h3>
+<p>Take \(f(x) = x^3 - 3x\) again. At \(x = 2\): \(f(2) = 8 - 6 = 2\), \(f'(2) = 12 - 3 = 9\), \(f''(2) = 12\). The tangent line is \(2 + 9\,\Delta x\) after a step \(\Delta x\). Feed \(2 + \Delta x\) into \(f\), using \((2 + \Delta x)^3 = 8 + 12\Delta x + 6\Delta x^2 + \Delta x^3\) (the expansion of Level 2 with \(t = 2\)):</p>
+$$ f(2 + \Delta x) = 8 + 12\Delta x + 6\Delta x^2 + \Delta x^3 - 6 - 3\Delta x = 2 + 9\,\Delta x + 6\,\Delta x^2 + \Delta x^3 . $$
+<p>Subtract the tangent line \(2 + 9\,\Delta x\):</p>
+$$ \text{gap} = 6\,\Delta x^2 + \Delta x^3 . $$
+<p>The main part is \(6\,\Delta x^2\), and \(6 = \tfrac12 \cdot 12 = \tfrac12 f''(2)\). The extra \(\Delta x^3\) is smaller still for small steps:</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(\Delta x\)</th><td>1</td><td>0.1</td><td>0.01</td></tr>
+<tr><th>gap \(= 6\Delta x^2 + \Delta x^3\)</th><td>7</td><td>0.061</td><td>0.000601</td></tr>
+<tr><th>gap ÷ \(\Delta x^2\)</th><td>7</td><td>6.1</td><td>6.01</td></tr>
+</table>
+</div>
+<p>The ratio settles on \(6 = \tfrac12 f''(2)\). The same happens for \(e^x\) at 0, where \(f''(0) = e^0 = 1\): with \(\Delta x = 0.1\), the gap is \(e^{0.1} - 1 - 0.1 \approx 0.005171\), and \(0.005171 / 0.01 \approx 0.517\), close to \(\tfrac12\).</p>
+
+<div class="box key">
+<span class="boxtitle">Curvature as the error of the tangent line</span>
+For a small step \(\Delta x\),
+$$ f(x + \Delta x) - \big(f(x) + f'(x)\,\Delta x\big) \approx \tfrac12\, f''(x)\, \Delta x^2 . $$
+The second derivative measures how wrong the best straight line is, per step squared. A straight line has \(f'' = 0\) everywhere, so its tangent line is never wrong. <a href="04.html">Level 4</a> proves the \(\tfrac12\) in general and adds the next correction, the \(\Delta x^3\) term.
+</div>
+
+<p><b>Mechanics.</b> Halve the step and the gap shrinks to about a quarter. Double the curvature and the gap doubles. The car's gap is exact at any step size, because \(t^2\) has nothing beyond the \(\Delta t^2\) term. The cubic's is only approximate, because of its \(\Delta x^3\) term.</p>
+
+<div class="box plain">
+<span class="boxtitle">A note on the word “curvature”</span>
+Geometers use a stricter curvature, \(\kappa = f''(x) / \big(1 + f'(x)^2\big)^{3/2}\), measured in one over the unit of the axes. A circle that hugs the curve at that point has radius \(1/\kappa\). Where the graph is flat (\(f'(x) = 0\)) the two agree: for \(y = x^2\) at 0, \(\kappa = 2\) and the hugging circle has radius 0.5. Where the graph is steep, \(\kappa\) is smaller in size than \(f''\). On this site, as in the study of Hessians, “curvature” means the second derivative itself.
+</div>
+
+<figure class="sim" id="sim-gap">
+<figcaption><b>Figure 3.3.</b> How wrong is the tangent line? Choose a function and a point, then drag the step. The red segment is the gap between the curve (blue dot) and the tangent line (grey dot). Watch the last line of numbers: gap ÷ step² stays at exactly 1 m/s² for the car (that is \(\tfrac12 s''\)), and settles on \(\tfrac12 f''\) for the cubic as the step shrinks. Halve the step and the red segment shrinks to a quarter.</figcaption>
+</figure>
+
+<h2>3.6 The second difference: curvature you can measure</h2>
+<p>Level 2 approximated a derivative with function values only. The same can be done for the second derivative. Use three values, one step either side:</p>
+$$ \frac{f(x + \Delta x) - 2f(x) + f(x - \Delta x)}{\Delta x^2} . $$
+<p>This is called the second difference. Where does it come from? It is a difference of two difference quotients: the slope just ahead minus the slope just behind, per step.</p>
+$$ \frac{1}{\Delta x}\left( \frac{f(x+\Delta x) - f(x)}{\Delta x} - \frac{f(x) - f(x - \Delta x)}{\Delta x} \right) = \frac{\big(f(x+\Delta x) - f(x)\big) - \big(f(x) - f(x - \Delta x)\big)}{\Delta x^2} = \frac{f(x+\Delta x) - 2f(x) + f(x-\Delta x)}{\Delta x^2}. $$
+<p>The slope changing per unit of input is exactly what \(f''\) measures, so as \(\Delta x \to 0\) this settles on \(f''(x)\) (for a smooth function).</p>
+
+<h3>Worked example: the car, exact at any step</h3>
+<p>Expand both squares:</p>
+$$ (t + \Delta t)^2 - 2t^2 + (t - \Delta t)^2 = (t^2 + 2t\Delta t + \Delta t^2) - 2t^2 + (t^2 - 2t\Delta t + \Delta t^2) = 2\,\Delta t^2 . $$
+<p>The \(t^2\) terms cancel (\(1 - 2 + 1 = 0\)), the \(2t\Delta t\) terms cancel (one plus, one minus), and \(2\Delta t^2\) is left. Divide by \(\Delta t^2\): the second difference is 2 m/s², for every step.</p>
+<p>You have seen this before. In the Level 1 table with \(\Delta t = 1\) s, the column “growth of \(\Delta s\)” was 2 m every time. That column was \(s(t+1) - 2s(t) + s(t-1)\). Dividing by \((1\ \text{s})^2\) gives 2 m/s². The acceleration was hiding in the table from the start.</p>
+
+<h3>Worked example: the cubic at \(x = 2\)</h3>
+<p>With \(\Delta x = 0.1\): \(f(2.1) = 9.261 - 6.3 = 2.961\), \(f(2) = 2\), \(f(1.9) = 6.859 - 5.7 = 1.159\).</p>
+$$ \frac{2.961 - 2\cdot 2 + 1.159}{0.1^2} = \frac{2.961 - 4 + 1.159}{0.01} = \frac{0.12}{0.01} = 12 . $$
+<p>Exactly \(f''(2) = 12\). Why exact? In \(f(x+\Delta x) + f(x - \Delta x)\), every odd power of \(\Delta x\) appears once with a plus and once with a minus, and cancels. For \(x^3\): \((x+\Delta x)^3 - 2x^3 + (x - \Delta x)^3 = 6x\,\Delta x^2\), and \(6x\) is the exact second derivative. So for any polynomial up to \(x^3\) the second difference has no step error at all.</p>
+
+<h3>Worked example: \(e^x\) at 0, where it is not exact</h3>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(\Delta x\)</th><td>1</td><td>0.5</td><td>0.1</td><td>0.01</td></tr>
+<tr><th>\(\dfrac{e^{\Delta x} - 2 + e^{-\Delta x}}{\Delta x^2}\)</th><td>1.08616</td><td>1.02101</td><td>1.00083</td><td>1.0000083</td></tr>
+</table>
+</div>
+<p>It settles on \(e^0 = 1\). The error shrinks about 100 times when the step shrinks 10 times: it goes like \(\Delta x^2\), like the central difference of Level 2.</p>
+
+<h3>Rounding is worse here</h3>
+<p>Now the tiny difference of three nearly equal numbers is divided by \(\Delta x^2\), not \(\Delta x\). Rounding noise is blown up much sooner. For \(e^x\) at \(x = 1\) in ordinary double precision, the error is smallest near \(\Delta x = 10^{-4}\), about \(4\times10^{-8}\). At \(\Delta x = 10^{-8}\) the computed value is off by about 2.7: as large as the answer itself. Figure 3.4 shows this live.</p>
+
+<div class="box plain">
+<span class="boxtitle">Intuition pump: the tight string</span>
+Pin a string to the curve at \(x - \Delta x\) and \(x + \Delta x\) and pull it straight. Its midpoint is at height \(\tfrac12\big(f(x - \Delta x) + f(x + \Delta x)\big)\). The second difference is \(2/\Delta x^2\) times how far that midpoint sits above the curve at \(x\). If the curve sags below the string, it is concave up and the second difference is positive. If the curve bulges above the string, it is negative.
+</div>
+
+<figure class="sim" id="sim-second">
+<figcaption><b>Figure 3.4.</b> The second difference. The three blue dots are \(f(x - \Delta x)\), \(f(x)\), \(f(x + \Delta x)\). The red line is the secant line through the outer two, like a string pulled tight; the green segment is the gap between its midpoint and the curve. Drag \(\Delta x\) and watch the second difference approach \(f''(x)\). The table under the figure repeats the computation for \(\Delta x = 1, 0.1, \dots, 10^{-8}\): it improves, then rounding destroys it. Choose \(\lvert x \rvert\) at 0 to see a second difference that grows without limit: all the bending is packed into the corner.</figcaption>
+</figure>
+
+<h2>3.7 Critical points and the second-derivative test</h2>
+<p>A critical point is an input where \(f'(x) = 0\): the tangent line is flat. The top of a hill and the bottom of a valley are both critical points. The second derivative tells them apart.</p>
+<div class="box key">
+<span class="boxtitle">The second-derivative test</span>
+At a critical point \(x\) (where \(f'(x) = 0\)):
+<ul>
+<li>if \(f''(x) \gt 0\), the graph is a cup there: \(x\) is a local minimum;</li>
+<li>if \(f''(x) \lt 0\), the graph is a cap there: \(x\) is a local maximum;</li>
+<li>if \(f''(x) = 0\), the test says nothing. Look closer.</li>
+</ul>
+</div>
+<p><b>Why it works.</b> Section 3.5 with \(f'(x) = 0\) says \(f(x + \Delta x) \approx f(x) + \tfrac12 f''(x)\,\Delta x^2\). Near the point the graph looks like a small copy of the Level 1 parabola \(y = c\,x^2\), moved to sit at the critical point, with \(c = \tfrac12 f''(x)\). If \(c \gt 0\), every nearby value is higher: a minimum. If \(c \lt 0\), every nearby value is lower: a maximum.</p>
+
+<h3>Worked example: a ball thrown straight up</h3>
+<p>Let \(z(t) = 20t - 5t^2\) metres be the height of a ball thrown up at 20 m/s (a toy: gravity is rounded to 10 m/s², and air is ignored). The hidden units: 20 m/s and 5 m/s². Then</p>
+$$ z'(t) = 20 - 10t\ \ \text{m/s}, \qquad z''(t) = -10\ \text{m/s}^2 . $$
+<p>Critical point: \(20 - 10t = 0\), so \(t = 2\) s. There \(z''(2) = -10 \lt 0\): a maximum. The highest point is \(z(2) = 40 - 20 = 20\) m. The second derivative is the pull of gravity, the same at every moment, and negative because it points down.</p>
+
+<h3>Worked example: the cubic</h3>
+<p>For \(f(x) = x^3 - 3x\): \(f'(x) = 3x^2 - 3 = 0\) gives \(x^2 = 1\), so \(x = 1\) or \(x = -1\).</p>
+<ul>
+<li>At \(x = 1\): \(f''(1) = 6 \gt 0\), a local minimum, with \(f(1) = 1 - 3 = -2\).</li>
+<li>At \(x = -1\): \(f''(-1) = -6 \lt 0\), a local maximum, with \(f(-1) = -1 + 3 = 2\).</li>
+</ul>
+<p>“Local” matters: far to the right the cubic climbs above 2, and far to the left it falls below −2. The test only describes the neighbourhood.</p>
+
+<h3>When the test is silent</h3>
+<p>Three functions with \(f'(0) = 0\) and \(f''(0) = 0\): \(x^3\) has neither a minimum nor a maximum at 0 (it keeps climbing). \(x^4\) has a minimum at 0. \(-x^4\) has a maximum at 0. Same first and second derivatives, three different answers. When \(f'' = 0\), the bending is decided by higher derivatives (<a href="04.html">Level 4</a>).</p>
+
+<h2>3.8 Inflection points</h2>
+<p>An inflection point is where the graph switches from concave up to concave down, or back. There \(f''\) changes sign.</p>
+<ul>
+<li>The cubic \(x^3 - 3x\) has \(f''(x) = 6x\), negative to the left of 0 and positive to the right. Inflection at \(x = 0\).</li>
+<li>The stop-to-stop trip has \(q''(t) = 3 - 0.6t\), positive before 5 s and negative after. Inflection at \(t = 5\) s, the moment the driver moves from the accelerator to the brake. There the slope of the position stops rising and starts falling, so the speed peaks there: 7.5 m/s.</li>
+</ul>
+<div class="box warn">
+<span class="boxtitle">A common mistake</span>
+\(f''(x) = 0\) does not by itself make an inflection point. \(x^4\) has \(f''(x) = 12x^2\), which is 0 at \(x = 0\) but positive on both sides. No sign change, no inflection: \(x = 0\) is a minimum.
+</div>
+
+<h2>3.9 Second derivatives of the standard functions</h2>
+<p>Apply the rules of Level 2 twice.</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>function</th><th>first derivative</th><th>second derivative</th><th>what that says</th></tr>
+<tr><td>\(m x + b\)</td><td>\(m\)</td><td>\(0\)</td><td>straight lines have no curvature</td></tr>
+<tr><td>\(c\,x^2\)</td><td>\(2c\,x\)</td><td>\(2c\)</td><td>a parabola bends the same amount everywhere; \(c = \tfrac12 f''\)</td></tr>
+<tr><td>\(x^3\)</td><td>\(3x^2\)</td><td>\(6x\)</td><td>bending grows with \(x\), changes sign at 0</td></tr>
+<tr><td>\(x^n\)</td><td>\(n\,x^{n-1}\)</td><td>\(n(n-1)\,x^{n-2}\)</td><td>the power rule, twice</td></tr>
+<tr><td>\(e^x\)</td><td>\(e^x\)</td><td>\(e^x\)</td><td>always positive: concave up everywhere</td></tr>
+<tr><td>\(\lvert x \rvert\)</td><td>\(-1\) for \(x \lt 0\), \(1\) for \(x \gt 0\); none at 0</td><td>0 away from 0; none at 0</td><td>all its bending sits in the corner</td></tr>
+</table>
+</div>
+<p>The parabola row explains Level 1's mechanics. There, \(y = c\,x^2\) had steps that grew by \(2c\) per unit step. That growth was the second difference, and it equals the second derivative \(2c\) exactly, because a parabola has no \(\Delta x^3\) term. For the car, \(c = 1\) m/s² and \(s'' = 2c = 2\) m/s².</p>
+<p>The last row matters later. For \(\lvert x \rvert\) at 0 the second difference is \(\dfrac{\lvert \Delta x\rvert - 0 + \lvert -\Delta x \rvert}{\Delta x^2} = \dfrac{2}{\lvert \Delta x \rvert}\), which grows without limit as the step shrinks. A function with a corner has zero curvature everywhere except at one point, where the curvature is, in effect, infinitely concentrated. Neural networks built from ReLU have such corners (<a href="10.html">Level 10</a>).</p>
+
+<h2>3.10 Why this matters for H-space</h2>
+<ol>
+<li><b>The Hessian is a table of second derivatives.</b> With many inputs, each input has its own second derivative along it, and each pair of inputs has a mixed one (<a href="06.html">Level 6</a>, <a href="09.html">Level 9</a>). The entries on the Hessian's diagonal are exactly this level's \(f''\), one per input direction.</li>
+<li><b>The second difference grows into the 2×2 test.</b> Section 3.6 measured curvature from three function values. <a href="06.html">Level 6</a> measures interaction from four: \(f(\text{both moves}) - f(\text{first only}) - f(\text{second only}) + f(\text{neither})\). That four-point quantity is what the v9 run measures, in nats, with moves of one standard deviation (<a href="15.html">Level 15</a>).</li>
+<li><b>“About \(\tfrac12 f''\,\Delta x^2\)” is only about.</b> For small steps the second derivative at one point predicts the gap well. For large steps the \(\Delta x^3\) and higher terms take over (<a href="04.html">Level 4</a>). In a small check on the 0.8B model at natural move sizes, the Hessian at one corner point predicted the measured interactions with a correlation of −0.09 (about 8 independent draws): no better than chance. A larger run of 32 draws gave 0.29, still poor. The Hessian averaged over the whole rectangle of moves gave 0.98, as an exact theorem says it should (theory-v2 §3, <a href="12.html">Level 12</a>).</li>
+<li><b>Units are squared.</b> Section 3.2 showed that stretching the input unit by a factor multiplies the second derivative by that factor squared. Whitening measures each direction in units of its natural spread, “curvature per unit of natural activation scale” (theory-v2 §0). That choice changes which directions have the largest curvature.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="9" data-tol="0.001" data-unit="m/s">
+<p><b>Exercise 3.1.</b> The car's speed at \(t = 4\) s is 8 m/s and its acceleration is 2 m/s². Using only the acceleration, predict its speed at \(t = 4.5\) s. Check with \(s'(t) = 2t\).</p>
+<details><summary>Show answer</summary>
+<p>Change in speed \(\approx s'' \cdot \Delta t = 2\ \text{m/s}^2 \times 0.5\ \text{s} = 1\) m/s, so the speed is \(8 + 1 = 9\) m/s. Check: \(s'(4.5) = 9\) m/s. Exact here because \(s''\) is constant.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="22" data-tol="0.001">
+<p><b>Exercise 3.2.</b> Let \(f(x) = 4x^3 - x^2\) (pure numbers). Find \(f''(x)\) and then \(f''(1)\). Is the graph concave up or down at \(x = 1\)?</p>
+<details><summary>Show answer</summary>
+<p>\(f'(x) = 12x^2 - 2x\) and \(f''(x) = 24x - 2\). At \(x = 1\): \(24 - 2 = 22 \gt 0\), so concave up.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="45" data-tol="0.001" data-unit="m">
+<p><b>Exercise 3.3.</b> A ball is thrown up at 30 m/s, so its height is \(z(t) = 30t - 5t^2\) metres (same toy gravity). When is it highest, how do you know it is a maximum, and how high does it go?</p>
+<details><summary>Show answer</summary>
+<p>\(z'(t) = 30 - 10t = 0\) at \(t = 3\) s. \(z''(t) = -10\ \text{m/s}^2 \lt 0\), so it is a maximum. \(z(3) = 90 - 45 = 45\) m.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-8" data-tol="0.001">
+<p><b>Exercise 3.4.</b> Let \(f(x) = x^2 - 6x + 1\). Find its critical point, classify it with the second-derivative test, and give \(f\) there.</p>
+<details><summary>Show answer</summary>
+<p>\(f'(x) = 2x - 6 = 0\) at \(x = 3\). \(f''(x) = 2 \gt 0\): a minimum. \(f(3) = 9 - 18 + 1 = -8\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2" data-tol="0.001">
+<p><b>Exercise 3.5.</b> Compute the second difference of \(f(x) = x^2\) at \(x = 3\) with \(\Delta x = 0.5\).</p>
+<details><summary>Show answer</summary>
+<p>\(f(3.5) = 12.25\), \(f(3) = 9\), \(f(2.5) = 6.25\). \(\dfrac{12.25 - 18 + 6.25}{0.25} = \dfrac{0.5}{0.25} = 2\). Exactly \(f''(x) = 2\), as Section 3.6 predicts for any parabola.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1.000834" data-tol="0.0001">
+<p><b>Exercise 3.6.</b> Compute the second difference of \(e^x\) at 0 with \(\Delta x = 0.1\), using \(e^{0.1} \approx 1.105171\) and \(e^{-0.1} \approx 0.904837\). How far is it from the true \(f''(0)\)?</p>
+<details><summary>Show answer</summary>
+<p>\(\dfrac{1.105171 - 2 + 0.904837}{0.01} = \dfrac{0.010008}{0.01} = 1.0008\) (with more digits, 1.000834). The true value is \(e^0 = 1\), so the error is about 0.0008. With \(\Delta x = 0.01\) it would be about 100 times smaller.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2" data-tol="0.001">
+<p><b>Exercise 3.7.</b> Where does \(f(x) = x^3 - 6x^2 + 9x\) have an inflection point?</p>
+<details><summary>Show answer</summary>
+<p>\(f'(x) = 3x^2 - 12x + 9\) and \(f''(x) = 6x - 12\). This is 0 at \(x = 2\), negative to the left and positive to the right, so it changes sign: an inflection point at \(x = 2\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="7200" data-tol="0.001" data-unit="m/min²">
+<p><b>Exercise 3.8.</b> Express the car's acceleration, 2 m/s², in metres per minute per minute.</p>
+<details><summary>Show answer</summary>
+<p>1 s = 1/60 min, so 1/s² = 3600/min². \(2\ \text{m/s}^2 = 2 \times 3600\ \text{m/min}^2 = 7200\ \text{m/min}^2\). The input unit grew 60 times; the second derivative grew \(60^2\) times.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.04" data-tol="0.001" data-unit="m">
+<p><b>Exercise 3.9.</b> How far above its tangent line at \(t = 5\) s is the car's curve at \(t = 5.2\) s? Use the second derivative, then check directly.</p>
+<details><summary>Show answer</summary>
+<p>Gap \(= \tfrac12 s''\,\Delta t^2 = \tfrac12 \cdot 2\ \text{m/s}^2 \cdot (0.2\ \text{s})^2 = 0.04\) m. Direct: \(s(5.2) = 27.04\) m, and the tangent gives \(25 + 10 \cdot 0.2 = 27\) m. Gap 0.04 m.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="7.5" data-tol="0.001" data-unit="m/s">
+<p><b>Exercise 3.10.</b> On the stop-to-stop trip, \(q(t) = 1.5t^2 - 0.1t^3\), at what time is the acceleration zero, and what is the speed then? Why is that the top speed?</p>
+<details><summary>Show answer</summary>
+<p>\(q''(t) = 3 - 0.6t = 0\) at \(t = 5\) s. Speed \(q'(5) = 15 - 7.5 = 7.5\) m/s. Before 5 s the acceleration is positive (speed rising); after, negative (speed falling). So the speed rises up to 5 s and falls after it: 5 s is a critical point of the speed \(q'\), and it is a maximum. In the language of Section 3.8, \(t = 5\) s is the inflection point of the position.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  /* The shared glossary defines "position" as a token position (Level 14).
+     On this page it means the car's position, so drop that pop-up here. */
+  Array.prototype.forEach.call(document.querySelectorAll('.g[data-g="position"]'), function (g) {
+    g.parentNode.replaceChild(document.createTextNode(g.textContent), g);
+  });
+
+  function fig(host, aspect, maxH) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    return { wrap: wrap, c: S.canvas(wrap, { aspect: aspect || 0.55, maxH: maxH }) };
+  }
+  function select(wrap, label, names, onchange) {
+    var ctl = wrap.querySelector(":scope > .controls");
+    if (!ctl) { ctl = document.createElement("div"); ctl.className = "controls"; wrap.appendChild(ctl); }
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = label + " ";
+    var sel = document.createElement("select");
+    names.forEach(function (s, i) { var o = document.createElement("option"); o.value = i; o.textContent = s; sel.appendChild(o); });
+    lab.appendChild(sel); ctl.appendChild(lab);
+    sel.addEventListener("change", onchange);
+    return sel;
+  }
+  function cubic(x) { return x * x * x - 3 * x; }
+  function cubic1(x) { return 3 * x * x - 3; }
+  function cubic2(x) { return 6 * x; }
+
+  /* Figure 3.1: position, speed, acceleration */
+  (function () {
+    var host = document.getElementById("sim-stack"), F = fig(host, host.clientWidth < 520 ? 1.5 : 1.05, 660), c = F.c, wrap = F.wrap;
+    var M = [
+      { L: "s", f: function (t) { return t * t; }, d1: function (t) { return 2 * t; }, d2: function () { return 2; },
+        r: [[0, 105, 20], [0, 22, 5], [-1, 3.5, 1]],
+        txt: function (t) {
+          return "position s = t² = " + S.fmt(t, 1) + "² = " + S.fmt(t * t, 2) + " m\n" +
+            "speed s′ = 2t = " + S.fmt(2 * t, 2) + " m/s   (slope of the top graph)\n" +
+            "acceleration s″ = 2 m/s²   (slope of the middle graph; the same at every time)";
+        } },
+      { L: "q", f: function (t) { return 1.5 * t * t - 0.1 * t * t * t; }, d1: function (t) { return 3 * t - 0.3 * t * t; }, d2: function (t) { return 3 - 0.6 * t; },
+        r: [[0, 55, 10], [0, 8.5, 2], [-3.5, 3.5, 1]],
+        txt: function (t) {
+          var a = 3 - 0.6 * t, what = Math.abs(a) < 1e-9 ? "zero: top speed, the switch from accelerator to brake" : a > 0 ? "positive: speeding up" : "negative: braking";
+          return "position q = 1.5t² − 0.1t³ = " + S.fmt(1.5 * t * t, 3) + " − " + S.fmt(0.1 * t * t * t, 3) + " = " + S.fmt(1.5 * t * t - 0.1 * t * t * t, 3) + " m\n" +
+            "speed q′ = 3t − 0.3t² = " + S.fmt(3 * t - 0.3 * t * t, 3) + " m/s   (slope of the top graph)\n" +
+            "acceleration q″ = 3 − 0.6t = " + S.fmt(a, 2) + " m/s², " + what;
+        } }
+    ];
+    var sel = select(wrap, "Motion:", ["the car: s(t) = t²", "stop-to-stop trip: q(t) = 1.5t² − 0.1t³ (toy)"], function () { c.redraw(); });
+    var ts = S.slider(wrap, { label: "t", min: 0, max: 10, step: 0.1, value: 3, unit: "s", digits: 1, oninput: function () { c.redraw(); } });
+    var timer = null;
+    S.button(wrap, "Play", function () {
+      clearInterval(timer); ts.set(0);
+      timer = setInterval(function () { var t = Math.min(10, ts.get() + 0.1); ts.set(t); c.redraw(); if (t >= 10) clearInterval(timer); }, 50);
+    });
+    var out = S.readout(wrap);
+    var V = [0, 1, 2].map(function () { return S.view(c, { xmin: 0, xmax: 10, ymin: 0, ymax: 1, padLeft: 46 }); });
+    c.draw = function () {
+      var m = M[+sel.value], T = ts.get(), H = c.H, band = H / 3, L = m.L;
+      var labels = ["position " + L + " (m)", "speed " + L + "′ (m/s)", "acceleration " + L + "″ (m/s²)"];
+      var fs = [m.f, m.d1, m.d2], slopes = [m.d1, m.d2, null];
+      V.forEach(function (v, k) {
+        v.set({ ymin: m.r[k][0], ymax: m.r[k][1], padTop: k * band + 14, padBottom: H - (k + 1) * band + 24 });
+        v.axes({ xlabel: "t (s)", ylabel: labels[k], xticks: 1, yticks: m.r[k][2] });
+        v.fn(fs[k], { color: S.col.blue, width: 2 });
+        v.line(T, m.r[k][0], T, m.r[k][1], { color: S.col.gray, dash: [3, 3], width: 1 });
+        var y = fs[k](T);
+        if (slopes[k]) {
+          var w = 1.0, sl = slopes[k](T);
+          v.line(T - w, y - sl * w, T + w, y + sl * w, { color: S.col.red, width: 2.5 });
+        }
+        v.dot(T, y, { color: S.col.red });
+      });
+      out.textContent = "t = " + S.fmt(T, 1) + " s\n" + m.txt(T);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 3.2: concave up and down on x^3 - 3x */
+  (function () {
+    var F = fig(document.getElementById("sim-concave"), 0.62), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: -2.4, xmax: 2.4, ymin: -7.5, ymax: 7.5, padLeft: 30, padBottom: 26, padTop: 14 });
+    var P = { x: 1.5, y: cubic(1.5) };
+    S.drag(c, v, [P], function (pt) { pt.x = Math.round(pt.x * 100) / 100; pt.y = cubic(pt.x); c.redraw(); });
+    function move(d) { P.x = Math.max(-2.4, Math.min(2.4, Math.round((P.x + d) * 100) / 100)); P.y = cubic(P.x); c.redraw(); }
+    S.button(wrap, "step left 0.1", function () { move(-0.1); });
+    S.button(wrap, "step right 0.1", function () { move(0.1); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      v.rect(-2.4, -7.5, 2.4, 15, { fill: S.col.red, fillAlpha: 0.07, stroke: false });
+      v.rect(0, -7.5, 2.4, 15, { fill: S.col.blue, fillAlpha: 0.07, stroke: false });
+      v.axes({ xlabel: "x", ylabel: "f(x)", xticks: 0.5, yticks: 1 });
+      v.text("concave down: f″ < 0", -1.2, 6.6, { align: "center", color: S.col.red, font: S.fontSmall });
+      v.text("concave up: f″ > 0", 1.2, 6.6, { align: "center", color: S.col.blue, font: S.fontSmall });
+      v.fn(cubic, { color: S.col.ink, width: 2 });
+      var X = P.x, Y = cubic(X), sl = cubic1(X);
+      v.fn(function (x) { return Y + sl * (x - X); }, { color: S.col.gray, dash: [6, 4], width: 1.5 });
+      v.dot(-1, 2, { color: S.col.green, r: 3.5 }); v.text("max", -1, 2, { dy: -9, align: "center", color: S.col.green, font: S.fontSmall });
+      v.dot(1, -2, { color: S.col.green, r: 3.5 }); v.text("min", 1, -2, { dy: 18, align: "center", color: S.col.green, font: S.fontSmall });
+      v.dot(0, 0, { color: S.col.green, r: 3.5, hollow: true }); v.text("inflection", 0, 0, { dx: 8, dy: -8, color: S.col.green, font: S.fontSmall });
+      v.dot(X, Y, { color: X >= 0 ? S.col.blue : S.col.red, r: 6 });
+      var f2 = cubic2(X), nxt = cubic1(X + 0.1);
+      var kind = Math.abs(f2) < 1e-9 ? "= 0: inflection point, the bending switches sign here" :
+        f2 > 0 ? "> 0: concave up. Slope increasing; curve above its tangent." :
+        "< 0: concave down. Slope decreasing; curve below its tangent.";
+      out.textContent =
+        "x = " + S.fmt(X, 2) + ":   f(x) = x³ − 3x = " + S.fmt(X * X * X, 3) + " − " + S.fmt(3 * X, 3) + " = " + S.fmt(Y, 3) + "\n" +
+        "slope f′(x) = 3x² − 3 = " + S.fmt(sl, 3) + "\n" +
+        "f″(x) = 6x = " + S.fmt(f2, 2) + " " + kind + "\n" +
+        "0.1 to the right: f′(" + S.fmt(X + 0.1, 2) + ") = " + S.fmt(nxt, 3) + ", a change of " + S.fmt(nxt - sl, 3) + "\n" +
+        "compare f″(x) × 0.1 = " + S.fmt(f2 * 0.1, 3);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 3.3: the gap between curve and tangent line */
+  (function () {
+    var F = fig(document.getElementById("sim-gap"), 0.6), c = F.c, wrap = F.wrap;
+    var M = [
+      { f: function (t) { return t * t; }, d1: function (t) { return 2 * t; }, d2: function () { return 2; }, r: { xmin: 0, xmax: 10, ymin: 0, ymax: 100 }, xl: "t (s)", yl: "s (m)", xt: 1, yt: 10, iu: " s", ou: " m", pt: [2, 8, 0.5, 3, 2], name: "s" },
+      { f: cubic, d1: cubic1, d2: cubic2, r: { xmin: -2.5, xmax: 2.5, ymin: -8, ymax: 8 }, xl: "x", yl: "f(x)", xt: 0.5, yt: 2, iu: "", ou: "", pt: [-1.5, 1.5, 0.1, 1.5, 1], name: "f" }
+    ];
+    var sel = select(wrap, "Function:", ["the car s(t) = t²", "the cubic f(x) = x³ − 3x (toy)"], function () {
+      var m = M[+sel.value]; x0.el.min = m.pt[0]; x0.el.max = m.pt[1]; x0.el.step = m.pt[2]; x0.set(m.pt[3]);
+      st.el.min = -m.pt[4]; st.el.max = m.pt[4]; st.set(Math.max(-m.pt[4], Math.min(m.pt[4], st.get()))); c.redraw();
+    });
+    var v = S.view(c, { xmin: 0, xmax: 10, ymin: 0, ymax: 100, padLeft: 40, padBottom: 26, padTop: 14 });
+    var x0 = S.slider(wrap, { label: "point", min: 2, max: 8, step: 0.5, value: 3, digits: 2, oninput: function () { c.redraw(); } });
+    var st = S.slider(wrap, { label: "step", min: -2, max: 2, step: 0.01, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var m = M[+sel.value], X = x0.get(), D = st.get(), N = m.name;
+      v.set(m.r);
+      v.axes({ xlabel: m.xl, ylabel: m.yl, xticks: m.xt, yticks: m.yt });
+      var y0 = m.f(X), sl = m.d1(X), yc = m.f(X + D), yt = y0 + sl * D, gap = yc - yt;
+      v.fn(function (x) { return y0 + sl * (x - X); }, { color: S.col.gray, dash: [6, 4], width: 1.5 });
+      v.fn(m.f, { color: S.col.blue, width: 2 });
+      v.line(X + D, yt, X + D, yc, { color: S.col.red, width: 3 });
+      v.dot(X, y0, { color: S.col.ink });
+      v.dot(X + D, yc, { color: S.col.blue }); v.dot(X + D, yt, { color: S.col.gray });
+      var arg = N === "s" ? "t" : "x", stepName = N === "s" ? "Δt" : "Δx";
+      var l1 = "curve:   " + N + "(" + S.fmt(X, 2) + " + " + S.fmt(D, 2) + ") = " + S.fmt(yc, 4) + m.ou + "\n" +
+        "tangent: " + N + "(" + S.fmt(X, 2) + ") + " + N + "′(" + S.fmt(X, 2) + ")·" + stepName + " = " + S.fmt(y0, 3) + " + " + S.fmt(sl, 3) + "·" + S.fmt(D, 2) + " = " + S.fmt(yt, 4) + m.ou;
+      var l2 = "gap = " + S.fmt(gap, 5) + m.ou + "     ½·" + N + "″(" + arg + ")·" + stepName + "² = ½·" + S.fmt(m.d2(X), 2) + "·" + S.fmt(D * D, 4) + " = " + S.fmt(0.5 * m.d2(X) * D * D, 5) + m.ou;
+      var l3 = Math.abs(D) < 1e-9 ? "step = 0: no gap, and gap ÷ step² is undefined" :
+        "gap ÷ " + stepName + "² = " + S.fmt(gap / (D * D), 4) + (N === "s" ? " m/s²" : "") + "     ½·" + N + "″ = " + S.fmt(0.5 * m.d2(X), 4) + (N === "s" ? " m/s²" : "") + (N === "s" ? "   (exactly equal at every step)" : "   (equal in the limit of a small step)");
+      out.textContent = l1 + "\n" + l2 + "\n" + l3;
+    };
+    c.redraw();
+  })();
+
+  /* Figure 3.4: the second difference */
+  (function () {
+    var F = fig(document.getElementById("sim-second"), 0.6), c = F.c, wrap = F.wrap;
+    var M = [
+      { f: Math.exp, x: 1, d2: Math.E, d2txt: "e ≈ 2.718281828", r: { xmin: -0.6, xmax: 2.6, ymin: -0.5, ymax: 10 }, yt: 2 },
+      { f: function (x) { return x * x * x * x; }, x: 1, d2: 12, d2txt: "12", r: { xmin: -0.6, xmax: 2.6, ymin: -1, ymax: 22 }, yt: 5 },
+      { f: function (t) { return t * t; }, x: 3, d2: 2, d2txt: "2 (m/s²)", r: { xmin: 1, xmax: 5, ymin: 0, ymax: 26 }, yt: 5 },
+      { f: Math.abs, x: 0, d2: null, d2txt: "none (corner)", r: { xmin: -2, xmax: 2, ymin: -0.5, ymax: 2 }, yt: 0.5 }
+    ];
+    var sel = select(wrap, "Function:", ["eˣ at x = 1", "x⁴ at x = 1", "the car t² at t = 3 s", "|x| at x = 0"], function () { c.redraw(); });
+    var dx = S.slider(wrap, { label: "Δx", min: 0.05, max: 1.2, step: 0.01, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    var v = S.view(c, { xmin: -1, xmax: 3, ymin: -1, ymax: 21, padLeft: 36, padBottom: 26, padTop: 14 });
+    function d2(m, h) { return (m.f(m.x + h) - 2 * m.f(m.x) + m.f(m.x - h)) / (h * h); }
+    function pad(s, n) { while (s.length < n) s += " "; return s; }
+    c.draw = function () {
+      var m = M[+sel.value], D = dx.get(), X = m.x;
+      v.set(m.r);
+      v.axes({ xlabel: "x", ylabel: "f(x)", xticks: 0.5, yticks: m.yt });
+      v.fn(m.f, { color: S.col.blue, width: 2 });
+      var a = m.f(X - D), b = m.f(X), cc = m.f(X + D), mid = (a + cc) / 2;
+      v.line(X - D, a, X + D, cc, { color: S.col.red, width: 1.5 });
+      v.line(X, b, X, mid, { color: S.col.green, width: 3 });
+      [[X - D, a], [X, b], [X + D, cc]].forEach(function (p) { v.dot(p[0], p[1], { color: S.col.blue }); });
+      v.dot(X, mid, { color: S.col.red, hollow: true });
+      var val = d2(m, D);
+      var lines = [
+        "f(x − Δx) = " + a.toPrecision(7) + "   f(x) = " + b.toPrecision(7) + "   f(x + Δx) = " + cc.toPrecision(7),
+        "second difference = (" + cc.toPrecision(7) + " − 2·" + b.toPrecision(7) + " + " + a.toPrecision(7) + ") / " + S.fmt(D, 2) + "² = " + val.toPrecision(8),
+        "  = 2 × (midpoint of red line − curve) / Δx² = 2 × " + (mid - b).toPrecision(6) + " / " + (D * D).toPrecision(4),
+        "exact f″ = " + m.d2txt,
+        "",
+        pad("Δx", 9) + pad("second difference", 24) + (m.d2 != null ? "error" : "")
+      ];
+      for (var k = 0; k >= -8; k--) {
+        var h = Math.pow(10, k), q = d2(m, h);
+        lines.push(pad(h.toExponential(0), 9) + pad(q.toPrecision(10), 24) + (m.d2 != null ? Math.abs(q - m.d2).toExponential(1) : ""));
+      }
+      out.textContent = lines.join("\n");
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

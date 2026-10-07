@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 12: The second-order chain rule and the rectangle identity</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="12">
+<div class="page">
+
+<h1>Level 12: The second-order chain rule and the rectangle identity</h1>
+<p class="subtitle">Where a network's curvature is created, how it is carried back to the layer you study, and what a finite interaction really measures.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>take the second derivative of a function of a function, and name its two sources of curvature, with units;</li>
+<li>write the vector second-order chain rule and use it on the tiny network;</li>
+<li>state the second-order adjoint (theory-v2 Lemma 1), prove it in one dimension, and run it by hand;</li>
+<li>say where curvature is created inside a network: threshold sites and product sites (Lemma 2);</li>
+<li>prove that a four-corner interaction equals the Hessian averaged over a parallelogram (Lemma 3), and compute both sides;</li>
+<li>explain why the Hessian at one corner can badly mispredict an interaction at natural move sizes, and read the 0.8B check in theory-v2 §3.</li>
+</ul>
+<p class="small">Prerequisites: <a href="04.html">Level 4</a> (Taylor, third derivative), <a href="06.html">Level 6</a> (the four-corner interaction), <a href="09.html">Level 9</a> (the Hessian, eigenvalues, inertia), <a href="10.html">Level 10</a> (chain rule, product rule, adjoints, the tiny network) and <a href="11.html">Level 11</a> (Hessian-vector products).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first. Vectors are bold. Where this page renames a letter used in theory-v2 (to avoid two meanings on one page), the table says so.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(f,\ g\)</td><td>“f”, “g”</td><td>in 12.1: outer and inner one-input functions, composed as \(f(g(x))\). From 12.6 on, \(f\) is the many-input function whose interactions we measure (here the tiny network's output)</td><td>depends</td><td>\(g(x) = x + \alpha x^2\)</td></tr>
+<tr><td>\(f', f'', g', g''\)</td><td>“f prime” …</td><td>first and second derivatives (one input)</td><td>output per input, per input²</td><td>\(g'' = 2\alpha\)</td></tr>
+<tr><td>\(x\), \(u\)</td><td>“x”, “u”</td><td>in 12.1: the input, and the middle value \(u = g(x)\)</td><td>depends</td><td>\(u = g(1)\)</td></tr>
+<tr><td>\(\alpha,\ \beta\)</td><td>“alpha”, “beta”</td><td>curvature knobs of Figure 12.1: \(g(x) = x + \alpha x^2\), \(f(u) = u + \beta u^2\)</td><td>none (pure numbers)</td><td>\(\alpha = 0.3\)</td></tr>
+<tr><td>\(\tau\)</td><td>“tau”</td><td>time in the balloon example</td><td>seconds (s)</td><td>\(\tau = 2\) s</td></tr>
+<tr><td>\(R\), \(V\), \(\pi\)</td><td>“R”, “V”, “pi”</td><td>balloon radius, balloon volume \(V = \tfrac43\pi R^3\), the circle constant</td><td>cm, cm³, none</td><td>\(R = 3\) cm</td></tr>
+<tr><td>\(\mathbf{x}\); \(x_1, x_2\)</td><td>“bold x”</td><td>a point with two inputs (the tiny network's input)</td><td>none (pure numbers)</td><td>\((1, 2)\)</td></tr>
+<tr><td>\(\mathbf{p}(\mathbf{x})\), \(p_i\)</td><td>“bold p”</td><td>in 12.2: an inner function with several outputs \(p_i\)</td><td>depends</td><td>\(p_i = \operatorname{silu}(z_i)\)</td></tr>
+<tr><td>\(G\)</td><td>“capital g”</td><td>an outer function with one output. In 12.4, \(G_k\) is the objective seen as a function of the state after sublayer \(k\)</td><td>depends</td><td>\(G(\mathbf{p}) = c_1p_1 + c_2p_2\)</td></tr>
+<tr><td>\(J\)</td><td>“J”</td><td>a Jacobian (rows outputs, columns inputs)</td><td>output per input</td><td>\(J = A_0\)</td></tr>
+<tr><td>\(\nabla G\), \(\nabla^2 G\), \(\nabla^2 p_i\)</td><td>“grad”, “Hessian of”</td><td>gradient and Hessian (matrix of second partials). A subscript, as in \(\nabla^2_{\mathbf{h}}\), names the variable being differentiated</td><td>per input, per input²</td><td>\(\nabla^2 G = 0\) for linear \(G\)</td></tr>
+<tr><td>\(H\), \(H_{jk}\)</td><td>“H”</td><td>the Hessian of the function under study; entry \((j, k)\)</td><td>output per input²</td><td>\(H_{12} = -0.7399\)</td></tr>
+<tr><td>\(W, \mathbf{w}_i, z_i, c_i\)</td><td>“W”, “w i” …</td><td>the tiny network (Level 10): weight matrix, its row \(i\) written as a column, pre-activations, output weights. \(z_1 = x_1 - x_2 + 0.5\), \(z_2 = 0.5x_1 + x_2 - 1\), \(y = c_1\operatorname{silu}(z_1) + c_2\operatorname{silu}(z_2)\), \(\mathbf{c} = (1.5, -1)\)</td><td>none (pure numbers)</td><td>\(\mathbf{w}_2 = (0.5, 1)\)</td></tr>
+<tr><td>\(\sigma\), \(\operatorname{silu}\), \(\sigma', \sigma''\), \(\operatorname{silu}', \operatorname{silu}''\)</td><td>“sigma”, “silu”</td><td>sigmoid, SiLU and their derivatives (Levels 10 and 11)</td><td>none (pure numbers)</td><td>\(\operatorname{silu}''(-0.5) = 0.4412\)</td></tr>
+<tr><td>\(y\), \(y^\ast\), \(\mathcal{L}\)</td><td>“y”, “y star”, “script L”</td><td>network output, target, loss \(\tfrac12(y-y^\ast)^2\)</td><td>none (pure numbers)</td><td>\(\mathcal{L} = 1.1393\)</td></tr>
+<tr><td>\(k\), \(K\)</td><td>“k”, “capital k”</td><td>sublayer number (0, 1, …) and how many sublayers there are. theory-v2 writes \(s\) and \(S\)</td><td>counts</td><td>\(K = 2\)</td></tr>
+<tr><td>\(\mathbf{y}_k\), \(y_k\)</td><td>“y k”</td><td>the state (residual stream) after \(k\) sublayers; plain in the 1-D example</td><td>as the state</td><td>\(y_1 = 1.5\)</td></tr>
+<tr><td>\(\varphi_k\)</td><td>“phi k”</td><td>sublayer \(k\)'s branch: \(\mathbf{y}_{k+1} = \mathbf{y}_k + \varphi_k(\mathbf{y}_k)\)</td><td>as the state</td><td>\(\varphi_0(y) = 0.5y^2\)</td></tr>
+<tr><td>\(\kappa_0, \kappa_1\)</td><td>“kappa”</td><td>knobs of the 1-D example: \(\varphi_k(y) = \kappa_k y^2\)</td><td>per unit of state</td><td>\(\kappa_0 = 0.5\)</td></tr>
+<tr><td>\(\mathbf{h}\)</td><td>“bold h”</td><td>the starting state \(\mathbf{y}_0\) (theory-v2: \(h_\ell\), the layer-\(\ell\) residual). In 12.6 on, the corner of the rectangle</td><td>as the state</td><td>\(\mathbf{h} = (1, 2)\)</td></tr>
+<tr><td>\(\ell\)</td><td>“ell”</td><td>the layer whose residual stream is perturbed</td><td>a layer number</td><td>\(\ell = 12\)</td></tr>
+<tr><td>\(F\), \(F_c\)</td><td>“F”, “F c”</td><td>the objective: one number read linearly from the last state. \(F_c\) is the H-space version (<a href="14.html">Level 14</a>)</td><td>output unit</td><td>\(F = y_2\)</td></tr>
+<tr><td>\(D\varphi_k\)</td><td>“D phi k”</td><td>the Jacobian of the branch \(\varphi_k\) at \(\mathbf{y}_k\)</td><td>none here</td><td>\(\varphi_0' = 2\kappa_0 y_0\)</td></tr>
+<tr><td>\(\mathrm{Id}\)</td><td>“identity”</td><td>the identity matrix (1 on the diagonal, 0 elsewhere). theory-v2 writes \(I\); here \(I\) is the interaction</td><td>none</td><td>\(\mathrm{Id}\,\mathbf{v} = \mathbf{v}\)</td></tr>
+<tr><td>\(A_k\)</td><td>“A k”</td><td>sublayer \(k\)'s full Jacobian, \(\mathrm{Id} + D\varphi_k\)</td><td>none here</td><td>\(A_0 = 2\)</td></tr>
+<tr><td>\(J_k\)</td><td>“J k”</td><td>transport from the start to sublayer \(k\): \(A_{k-1}\cdots A_0\) (\(J_0 = \mathrm{Id}\)). theory-v2: \(J_{s\leftarrow\ell}\)</td><td>none here</td><td>\(J_1 = 2\)</td></tr>
+<tr><td>\(\mathbf{g}_k\)</td><td>“g k”</td><td>adjoint: \(\partial F/\partial\mathbf{y}_k\); \(\mathbf{g}_k = A_k^\top\mathbf{g}_{k+1}\)</td><td>\(F\) per unit of state</td><td>\(g_1 = 1.75\)</td></tr>
+<tr><td>\(C_k\)</td><td>“C k”</td><td>curvature created at sublayer \(k\): \(\nabla^2_{\mathbf{y}}\langle\mathbf{g}_{k+1}, \varphi_k(\mathbf{y})\rangle\) at \(\mathbf{y}_k\), with \(\mathbf{g}_{k+1}\) held fixed</td><td>\(F\) per state unit²</td><td>\(C_0 = 1.75\)</td></tr>
+<tr><td>\(\langle\cdot, \cdot\rangle\)</td><td>“dot product of”</td><td>dot product of two vectors: \(\langle\mathbf{g}, \varphi\rangle = \mathbf{g}^\top\varphi\)</td><td>product of units</td><td>\(\langle(1,2),(3,4)\rangle = 11\)</td></tr>
+<tr><td>\(\mathbf{v}\); \(\dot{\mathbf{y}}_k\), \(\dot{\mathbf{g}}_k\)</td><td>“v”, “y k dot”, “g k dot”</td><td>a direction; the tangent values of the state and of the adjoint along it (Levels 10, 11)</td><td>as the state; as the adjoint</td><td>\(\dot{y}_1 = 2\)</td></tr>
+<tr><td>\(n\); \(\theta_n\), \(z_n\), \(\bar{g}_n\)</td><td>“n”, “theta n”</td><td>a node of a computational graph; a one-input node's function, its input value, and the adjoint at its output. theory-v2 writes \(\sigma_n\) for \(\theta_n\)</td><td>depends</td><td>\(\theta = \operatorname{silu}\)</td></tr>
+<tr><td>\(\mathbf{a}_n, \mathbf{b}_n\)</td><td>“a n”, “b n”</td><td>reads: the gradients of a node's inputs with respect to the sublayer input</td><td>per input</td><td>\(\mathbf{a}_n = \mathbf{w}_1\)</td></tr>
+<tr><td>\(\operatorname{sym}(M)\)</td><td>“sym of M”</td><td>\(M + M^\top\) (theory-v2's convention: no factor ½)</td><td>as \(M\)</td><td>\(\operatorname{sym}(\mathbf{a}\mathbf{b}^\top) = \mathbf{a}\mathbf{b}^\top + \mathbf{b}\mathbf{a}^\top\)</td></tr>
+<tr><td>\(\mathbf{a}, \mathbf{b}\)</td><td>“bold a, bold b”</td><td>from 12.6 on: the two moves of an interaction test (no subscript)</td><td>input units</td><td>\(\mathbf{a} = (1, -1)\)</td></tr>
+<tr><td>\(I(\mathbf{a}, \mathbf{b})\)</td><td>“I of a, b”</td><td>four-corner interaction: \(f(\mathbf{h}) - f(\mathbf{h}-\mathbf{a}) - f(\mathbf{h}-\mathbf{b}) + f(\mathbf{h}-\mathbf{a}-\mathbf{b})\)</td><td>output unit</td><td>\(-0.7606\)</td></tr>
+<tr><td>\(P\)</td><td>“P”</td><td>the parallelogram with corners \(\mathbf{h}, \mathbf{h}-\mathbf{a}, \mathbf{h}-\mathbf{b}, \mathbf{h}-\mathbf{a}-\mathbf{b}\) (theory-v2 calls it the rectangle)</td><td>a region</td><td></td></tr>
+<tr><td>\(s,\ t\)</td><td>“s, t”</td><td>coordinates inside \(P\): the point \(\mathbf{h} - \mathbf{a} - \mathbf{b} + s\mathbf{a} + t\mathbf{b}\), with \(0\le s,t\le 1\)</td><td>none (fractions)</td><td>\(s = t = 0.5\) is the centre</td></tr>
+<tr><td>\(\psi(s,t)\)</td><td>“psi”</td><td>\(f\) at that point. theory-v2 writes \(\varphi(s,t)\)</td><td>output unit</td><td>\(\psi(1,1) = f(\mathbf{h})\)</td></tr>
+<tr><td>\(q\), \(q'\); \(\Delta s\)</td><td>“q”, “delta s”</td><td>in 12.7 only: any smooth function of one variable and its derivative; a small width of interval</td><td>depends</td><td>\(q(s) = s^2\)</td></tr>
+<tr><td>\(\mu,\ \nu\)</td><td>“mu”, “nu”</td><td>in 12.8 only: how much of \(\mathbf{a}\) and of \(\mathbf{b}\) has been removed, in \(f(\mathbf{h} - \mu\mathbf{a} - \nu\mathbf{b})\)</td><td>none (pure numbers)</td><td>\(\mu = \nu = 1\): far corner</td></tr>
+<tr><td>\(\operatorname{gap}(t)\)</td><td>“gap of t”</td><td>\(\psi(1,t) - \psi(0,t)\), used in the proof</td><td>output unit</td><td></td></tr>
+<tr><td>\(\partial_s\), \(\partial_t\)</td><td>“d by d s”</td><td>partial derivative with respect to \(s\), to \(t\)</td><td>per unit of \(s\), \(t\)</td><td></td></tr>
+<tr><td>\(\displaystyle\int_0^1 \ldots\,ds\)</td><td>“integral from 0 to 1, d s”</td><td>the continuous sum over \(s\) from 0 to 1; over a length-1 interval it is the average</td><td>unit of the integrand</td><td>\(\int_0^1 2s\,ds = 1\)</td></tr>
+<tr><td>\(\bar{H}_P\)</td><td>“H bar P”</td><td>the Hessian averaged over \(P\)</td><td>as \(H\)</td><td></td></tr>
+<tr><td>\(\mathbf{m}\)</td><td>“bold m”</td><td>the centre of \(P\): \(\mathbf{h} - (\mathbf{a}+\mathbf{b})/2\). theory-v2 writes \(c\)</td><td>input units</td><td>\((0.5, 2)\)</td></tr>
+<tr><td>\(D^3f(\mathbf{h})[\mathbf{a},\mathbf{a},\mathbf{b}]\)</td><td>“third derivative along a, a, b”</td><td>\(\sum_{i,j,l}\frac{\partial^3 f}{\partial x_i\partial x_j\partial x_l}a_ia_jb_l\): the third derivative read along three directions</td><td>output unit</td><td></td></tr>
+<tr><td>\(O(\cdot)\)</td><td>“order”</td><td>big-O (Level 4): a remainder no bigger than a constant times the bracket</td><td>as the quantity</td><td>\(O(\lVert(\mathbf{a},\mathbf{b})\rVert^4)\)</td></tr>
+<tr><td>\(\lVert\cdot\rVert\)</td><td>“norm”</td><td>length of a vector (or of the pair \((\mathbf{a}, \mathbf{b})\) stacked)</td><td>as the entries</td><td>\(\lVert(3,4)\rVert = 5\)</td></tr>
+<tr><td>\(n_q\)</td><td>“n q”</td><td>number of Gauss–Legendre nodes per side; the rectangle rule uses \(n_q\times n_q\) points</td><td>count</td><td>\(n_q = 5\): 25 points</td></tr>
+<tr><td>\(\lambda\)</td><td>“lambda”</td><td>move size: the scale of \(\mathbf{a}\) and \(\mathbf{b}\) (toy: their standard deviation; theory-v2: \(\lambda = 1\) means the moves add up to the whole deviation of a token from the mean)</td><td>input units</td><td>\(\lambda = 1\)</td></tr>
+<tr><td>\(r\)</td><td>“r”</td><td>Pearson correlation between predicted and true interactions: 1 perfect, 0 none, negative backwards</td><td>none (pure number)</td><td>\(r = 0.98\)</td></tr>
+</table>
+</div>
+
+<h2>12.1 Two sources of curvature: the second-order chain rule in one dimension</h2>
+<p>Level 10 gave the first derivative of a chain. Now differentiate once more. In this section \(f\) is the outer machine and \(g\) the inner one, so the chain is \(f(g(x))\).</p>
+<div class="box key">
+<span class="boxtitle">The second-order chain rule</span>
+$$ \big(f(g(x))\big)'' = f''\big(g(x)\big)\,g'(x)^2 \;+\; f'\big(g(x)\big)\,g''(x). $$
+Two sources of curvature: the outer curvature, seen through the inner stretch squared; plus the inner curvature, weighted by the outer slope.
+</div>
+<h3>Derivation, every step</h3>
+<ol>
+<li>First derivative (chain rule): \(\big(f(g(x))\big)' = f'(g(x))\cdot g'(x)\). This is a product of two functions of \(x\).</li>
+<li>Product rule (Level 10): differentiate the first factor and keep the second, then keep the first and differentiate the second:
+$$ \big(f(g(x))\big)'' = \big[f'(g(x))\big]'\cdot g'(x) + f'(g(x))\cdot g''(x). $$</li>
+<li>The bracket is again a chain: outer \(f'\), inner \(g\). So \(\big[f'(g(x))\big]' = f''(g(x))\cdot g'(x)\).</li>
+<li>Substitute: \(f''(g(x))\,g'(x)\cdot g'(x) + f'(g(x))\,g''(x)\). The two \(g'\) factors give \(g'(x)^2\). Done.</li>
+</ol>
+
+<h3>Intuition pump: a photocopier and a warped sheet</h3>
+<ul>
+<li><b>Stretch only.</b> Draw the parabola \(y = u^2\) and enlarge the horizontal axis on a photocopier by a factor 2, so \(u = 2x\). Then \(y = 4x^2\) and \(y'' = 8\). The original curvature was \(f'' = 2\); it became \(2\times2^2\). Curvature is “per input unit, per input unit”, so a stretch of the input enters twice. That is the \(g'^2\).</li>
+<li><b>Bend only.</b> Take a straight outer machine, \(y = 3u\) (no curvature: \(f'' = 0\)), and feed it a bent inner machine, \(u = x^2\). The output \(y = 3x^2\) is curved anyway: \(y'' = 6 = 3\times2\), outer slope times inner curvature. That is the \(f'g''\) term.</li>
+</ul>
+<p>In a network both happen at once, at every layer. This is the whole of Lemma 1 in miniature.</p>
+
+<h3>Worked example: an accelerating balloon, every unit</h3>
+<p>Let the radius grow faster and faster: \(R(\tau) = 2 + 0.25\,\tau^2\) cm, at time \(\tau\) in seconds. The volume is \(V(R) = \tfrac43\pi R^3\) cm³. Take \(\tau = 2\) s.</p>
+<ol>
+<li>Inner value and rates: \(R = 2 + 0.25\times4 = 3\) cm; \(R' = 0.5\tau = 1\) cm/s; \(R'' = 0.5\) cm/s².</li>
+<li>Outer rates at \(R = 3\) cm: \(V'(R) = 4\pi R^2 = 36\pi = 113.10\) cm³/cm; \(V''(R) = 8\pi R = 24\pi = 75.40\) cm³/cm².</li>
+<li>First term: \(V''\cdot R'^2 = 75.40\ \tfrac{\text{cm}^3}{\text{cm}^2}\times\big(1\ \tfrac{\text{cm}}{\text{s}}\big)^2 = 75.40\ \tfrac{\text{cm}^3}{\text{s}^2}\). The cm² on the bottom cancels the cm² from squaring the rate.</li>
+<li>Second term: \(V'\cdot R'' = 113.10\ \tfrac{\text{cm}^3}{\text{cm}}\times0.5\ \tfrac{\text{cm}}{\text{s}^2} = 56.55\ \tfrac{\text{cm}^3}{\text{s}^2}\).</li>
+<li>Sum: \(\dfrac{d^2V}{d\tau^2} = 75.40 + 56.55 = 131.95\) cm³/s² (that is \(42\pi\)).</li>
+</ol>
+<p><b>Mechanics check.</b> The second difference \(\big(V(\tau{+}0.001) - 2V(\tau) + V(\tau{-}0.001)\big)/0.001^2\) at \(\tau = 2\) s is 131.95 cm³/s². Both units agree: a rate of change of a filling rate, “cm³ per second, per second”.</p>
+<div class="box warn">
+<span class="boxtitle">The common mistake</span>
+Writing \(f''(g(x))\cdot g''(x)\), by analogy with the first-order rule. It is wrong in units (cm³/cm² × cm/s² is not cm³/s²) and wrong in value. Units catch it immediately.
+</div>
+
+<figure class="sim" id="sim-two">
+<figcaption><b>Figure 12.1.</b> The two sources of curvature. Inner \(g(x) = x + \alpha x^2\), outer \(f(u) = u + \beta u^2\). Left: the blue curve is \(f(g(x))\); the red dashed parabola is its quadratic approximation at the chosen \(x\), built from the second derivative of the rule. Right: the two terms as bars (blue: \(f''(g)\,g'^2\); red: \(f'(g)\,g''\); black: their sum). Set \(\alpha = 0\) and the red bar vanishes (straight inner machine). Set \(\beta = 0\) and the blue bar vanishes (straight outer machine). The readout checks the sum against a measured second difference.</figcaption>
+</figure>
+
+<h2>12.2 Many inputs: the vector second-order chain rule</h2>
+<p>Now let an inner function \(\mathbf{p}(\mathbf{x})\) have several outputs \(p_1, p_2, \ldots\), and an outer function \(G\) turn them into one number. Let \(J\) be the Jacobian of \(\mathbf{p}\) at \(\mathbf{x}\).</p>
+<div class="box key">
+<span class="boxtitle">Vector form</span>
+$$ \nabla^2(G\circ\mathbf{p})(\mathbf{x}) = J^\top\,\nabla^2G\big(\mathbf{p}(\mathbf{x})\big)\,J \;+\; \sum_i \frac{\partial G}{\partial p_i}\big(\mathbf{p}(\mathbf{x})\big)\,\nabla^2 p_i(\mathbf{x}). $$
+The same two sources: the outer curvature, transported by the inner Jacobian on both sides; plus each inner output's curvature, weighted by how much the outer function cares about that output.
+</div>
+<h3>Derivation, entry by entry</h3>
+<ol>
+<li>First derivative (chain rule with paths, Level 10): \(\dfrac{\partial (G\circ\mathbf{p})}{\partial x_j} = \sum_i \dfrac{\partial G}{\partial p_i}\,\dfrac{\partial p_i}{\partial x_j}\).</li>
+<li>Differentiate with respect to \(x_k\). Each term is a product, so use the product rule:
+$$ \frac{\partial^2 (G\circ\mathbf{p})}{\partial x_j\,\partial x_k} = \sum_i \Big[\frac{\partial}{\partial x_k}\frac{\partial G}{\partial p_i}\Big]\frac{\partial p_i}{\partial x_j} + \sum_i \frac{\partial G}{\partial p_i}\,\frac{\partial^2 p_i}{\partial x_j\,\partial x_k}. $$</li>
+<li>The bracket is a chain again: \(\frac{\partial}{\partial x_k}\frac{\partial G}{\partial p_i} = \sum_l \frac{\partial^2 G}{\partial p_i\,\partial p_l}\frac{\partial p_l}{\partial x_k}\).</li>
+<li>So the first sum is \(\sum_{i,l} J_{ij}\,(\nabla^2G)_{il}\,J_{lk}\), which is entry \((j,k)\) of \(J^\top\nabla^2G\,J\). The second sum is entry \((j,k)\) of \(\sum_i \frac{\partial G}{\partial p_i}\nabla^2p_i\). Done.</li>
+</ol>
+<p>Units check: (output per \(p_i\) per \(p_l\)) × (\(p_i\) per \(x_j\)) × (\(p_l\) per \(x_k\)) = output per \(x_j\) per \(x_k\), the unit of a Hessian entry.</p>
+
+<h3>Worked example: the tiny network's Hessian, a third way</h3>
+<p>Take \(p_i = \operatorname{silu}(z_i)\) with \(z_1 = x_1 - x_2 + 0.5\) and \(z_2 = 0.5x_1 + x_2 - 1\), and \(G(\mathbf{p}) = c_1p_1 + c_2p_2\) with \(\mathbf{c} = (1.5, -1)\).</p>
+<ul>
+<li>\(G\) is linear, so \(\nabla^2G = 0\): the first term vanishes.</li>
+<li>\(\partial G/\partial p_i = c_i\).</li>
+<li>\(\nabla^2 p_i\): \(\partial p_i/\partial x_j = \operatorname{silu}'(z_i)\,W_{ij}\), and once more \(\partial^2p_i/\partial x_j\partial x_k = \operatorname{silu}''(z_i)\,W_{ij}W_{ik}\). In matrix form \(\nabla^2p_i = \operatorname{silu}''(z_i)\,\mathbf{w}_i\mathbf{w}_i^\top\), where \(\mathbf{w}_1 = (1, -1)\) and \(\mathbf{w}_2 = (0.5, 1)\) are the rows of \(W\).</li>
+</ul>
+<p>At \(\mathbf{x} = (1,2)\): \(c_1\operatorname{silu}''(z_1) = 1.5\times0.4412 = 0.6618\) and \(c_2\operatorname{silu}''(z_2) = -1\times0.1562 = -0.1562\). So</p>
+$$ H = 0.6618\begin{pmatrix}1 &amp; -1\\ -1 &amp; 1\end{pmatrix} - 0.1562\begin{pmatrix}0.25 &amp; 0.5\\ 0.5 &amp; 1\end{pmatrix} = \begin{pmatrix}0.6228 &amp; -0.7399\\ -0.7399 &amp; 0.5056\end{pmatrix}, $$
+<p>the same matrix Level 11 got by double backward. Each piece is rank 1: neuron 1 adds upward curvature along \(\mathbf{w}_1\), neuron 2 adds downward curvature along \(\mathbf{w}_2\).</p>
+
+<h3>Worked example: when the outer function curves too</h3>
+<p>Train against a target \(y^\ast = 0\) with \(\mathcal{L} = \tfrac12(y - y^\ast)^2\). The outer function is \(G(y) = \tfrac12(y-y^\ast)^2\), with \(G' = y - y^\ast = -1.5095\) and \(G'' = 1\). The inner function is the network, Jacobian \(\nabla y^\top = (-0.1306, -1.4314)\). The rule gives</p>
+$$ \nabla^2\mathcal{L} = \nabla y\,\nabla y^\top + (y - y^\ast)\,H = \begin{pmatrix}0.0171 &amp; 0.1869\\ 0.1869 &amp; 2.0488\end{pmatrix} + \begin{pmatrix}-0.9401 &amp; 1.1170\\ 1.1170 &amp; -0.7633\end{pmatrix} = \begin{pmatrix}-0.9231 &amp; 1.3039\\ 1.3039 &amp; 1.2855\end{pmatrix}. $$
+<p>The first piece is the Gauss–Newton term (outer curvature carried through the Jacobian; it is never negative along any direction). The second is the network's own curvature, weighted by how far off the output is. Here the two pieces are about the same size (Frobenius norms 2.07 and 1.99). The second one decides the shape: the Gauss–Newton piece alone has eigenvalues 2.07 and 0, but the sum has eigenvalues 1.89 and −1.53, a saddle.</p>
+
+<h2>12.3 Residual sublayers, and why the identity adds no curvature</h2>
+<p>A transformer (<a href="14.html">Level 14</a>) is a chain of residual sublayers. Each one keeps its input and adds a correction computed from it:</p>
+$$ \mathbf{y}_{k+1} = \mathbf{y}_k + \varphi_k(\mathbf{y}_k). $$
+<p><b>Real-world example.</b> A shared notebook passed round a team. Each person reads the page and writes an addition; nobody erases. The page after person \(k\) is the page before, plus their note.</p>
+<p>The Jacobian of one sublayer is \(A_k = \mathrm{Id} + D\varphi_k\): the identity (the copy) plus the branch's Jacobian. Now its curvature. Component \(i\) of the output is \(y_i + \varphi_{k,i}(\mathbf{y})\). Its Hessian is \(\nabla^2 y_i + \nabla^2\varphi_{k,i}\). The first term is zero: \(y_i\) is linear in \(\mathbf{y}\), and a linear function has no curvature. So:</p>
+<div class="box key">
+<span class="boxtitle">The skip connection is a straight pipe</span>
+The identity path copies the state forward and contributes to every Jacobian, but it creates no curvature. All curvature at sublayer \(k\) is created by the branch \(\varphi_k\).
+</div>
+
+<h2>12.4 The second-order adjoint (theory-v2 Lemma 1)</h2>
+<p>Put 12.2 and 12.3 together over many sublayers. theory-v2 §1 states this as Lemma 1 and labels it standard: the discrete second-order adjoint, or Hessian backpropagation (it cites Christianson 1992, Pearlmutter 1994 and Griewank &amp; Walther 2008, among others). It claims no novelty.</p>
+
+<h3>One dimension first, with every step</h3>
+<p>Take \(K\) sublayers with one number of state, \(y_{k+1} = y_k + \varphi_k(y_k)\), starting from \(y_0 = h\). The objective is the last state, \(F = y_K\) (a linear readout, so it has no curvature of its own). Define:</p>
+<ul>
+<li>\(A_k = 1 + \varphi_k'(y_k)\): sublayer \(k\)'s slope.</li>
+<li>\(J_k = A_{k-1}\cdots A_0\), with \(J_0 = 1\): how much \(y_k\) moves per unit move of \(h\) (chain rule).</li>
+<li>Adjoints, run backwards: \(g_K = 1\), \(g_k = A_k\,g_{k+1}\). So \(g_k = \partial F/\partial y_k\).</li>
+<li>\(C_k = g_{k+1}\,\varphi_k''(y_k)\): curvature created at sublayer \(k\), measured in units of the objective.</li>
+</ul>
+<p>Let \(G_k(y)\) be the objective as a function of the state after \(k\) sublayers. Then \(G_k(y) = G_{k+1}\big(y + \varphi_k(y)\big)\): a chain with outer \(G_{k+1}\) and inner \(y + \varphi_k(y)\). Apply the 1-D second-order chain rule of 12.1. The inner slope is \(A_k\), the inner curvature is \(\varphi_k''\) (the \(y\) part adds none), and the outer slope is \(G_{k+1}' = g_{k+1}\):</p>
+$$ G_k'' = G_{k+1}''\,A_k^2 + g_{k+1}\,\varphi_k'' = A_k^2\,G_{k+1}'' + C_k . $$
+<p>Start at the end: \(G_K'' = 0\), because \(F\) is linear in \(y_K\). Unroll one step at a time: \(G_{K-1}'' = C_{K-1}\); \(G_{K-2}'' = A_{K-2}^2C_{K-1} + C_{K-2}\); and so on. Each \(C_k\) collects one factor \(A^2\) for every sublayer between it and the start. At the start:</p>
+$$ F''(h) = G_0'' = \sum_{k=0}^{K-1} J_k^2\,C_k . $$
+
+<h3>Worked example by hand</h3>
+<p>Two sublayers, \(\varphi_0(y) = 0.5\,y^2\) and \(\varphi_1(y) = 0.25\,y^2\) (so \(\kappa_0 = 0.5\), \(\kappa_1 = 0.25\)), starting at \(h = y_0 = 1\).</p>
+<ol>
+<li>Forward: \(y_1 = 1 + 0.5(1)^2 = 1.5\); \(y_2 = 1.5 + 0.25(1.5)^2 = 1.5 + 0.5625 = 2.0625\). So \(F = 2.0625\).</li>
+<li>Slopes: \(\varphi_0' = 2\kappa_0y = y\), so \(A_0 = 1 + 1 = 2\). \(\varphi_1' = 2\kappa_1y = 0.5y\), so \(A_1 = 1 + 0.75 = 1.75\).</li>
+<li>Adjoints (backward): \(g_2 = 1\); \(g_1 = A_1g_2 = 1.75\); \(g_0 = A_0g_1 = 3.5\). So \(F'(h) = 3.5\).</li>
+<li>Curvature created: \(\varphi_0'' = 2\kappa_0 = 1\), so \(C_0 = g_1\times1 = 1.75\). \(\varphi_1'' = 2\kappa_1 = 0.5\), so \(C_1 = g_2\times0.5 = 0.5\).</li>
+<li>Transports: \(J_0 = 1\); \(J_1 = A_0 = 2\).</li>
+<li>Sum: \(F''(h) = J_0^2C_0 + J_1^2C_1 = 1\times1.75 + 4\times0.5 = 1.75 + 2 = 3.75\).</li>
+</ol>
+<p><b>Check directly.</b> \(F(y) = y + 0.5y^2 + 0.25(y + 0.5y^2)^2\). Then \(F' = 1 + y + 0.5(y + 0.5y^2)(1 + y)\), which is 3.5 at \(y = 1\). And \(F'' = 1 + 0.5\big[(1+y)^2 + (y + 0.5y^2)\big]\), which at \(y = 1\) is \(1 + 0.5(4 + 1.5) = 3.75\). Same.</p>
+<p><b>Reading the numbers.</b> Sublayer 1 creates less curvature (\(C_1 = 0.5\)) than sublayer 0 (\(C_0 = 1.75\)), yet contributes more (2 against 1.75). It sits after sublayer 0, so a nudge at the start reaches it doubled (\(J_1 = 2\)), and curvature is per unit², so the doubling counts twice. Meanwhile sublayer 0's curvature is weighted by \(g_1 = 1.75\): how much the rest of the chain amplifies its output.</p>
+
+<figure class="sim" id="sim-adj">
+<figcaption><b>Figure 12.2.</b> Lemma 1 on a two-sublayer chain, \(\varphi_k(y) = \kappa_k y^2\). Each bar is one sublayer's contribution \(J_k^2C_k\): curvature created there (\(C_k\)), carried back to the start through the slopes in between (\(J_k^2\)). The black bar is their sum; the dashed orange line across it is a measured second difference of \(F\), and it sits exactly on the top of the black bar. Set \(\kappa_1 = 0\): sublayer 1 becomes a plain copy (\(A_1 = 1\), so \(g_1 = 1\)), its bar vanishes, and sublayer 0's bar drops to \(2\kappa_0\). Raise \(\kappa_1\) again: sublayer 1 now changes sublayer 0's bar too, through the adjoint \(g_1\). Set \(\kappa_0 = 0\): sublayer 0 creates nothing and passes nudges through unchanged (\(J_1 = 1\)).</figcaption>
+</figure>
+
+<h3>The statement in theory-v2 (vector form)</h3>
+<p>With vectors the squares become transposes on both sides (12.2). In this page's letters (theory-v2 uses \(s, S, I\) for \(k, K, \mathrm{Id}\)): sublayers \(\mathbf{y}_{k+1} = \mathbf{y}_k + \varphi_k(\mathbf{y}_k)\) from \(\mathbf{y}_0 = \mathbf{h}\); \(A_k = \mathrm{Id} + D\varphi_k(\mathbf{y}_k)\); \(J_k = A_{k-1}\cdots A_0\); \(\mathbf{g}_K = \partial F/\partial\mathbf{y}_K\), \(\mathbf{g}_k = A_k^\top\mathbf{g}_{k+1}\); \(C_k = \nabla^2_{\mathbf{y}}\langle\mathbf{g}_{k+1}, \varphi_k(\mathbf{y})\rangle\) at \(\mathbf{y} = \mathbf{y}_k\), with \(\mathbf{g}_{k+1}\) held at its value on the actual run. Then, for every input,</p>
+$$ \nabla^2_{\mathbf{h}}F = \sum_{k=0}^{K-1} J_k^\top\,C_k\,J_k . $$
+<p>The proof is the 1-D one with the vector rule: \(\nabla^2G_k = A_k^\top\,\nabla^2G_{k+1}\,A_k + C_k\), because the identity has no curvature and \(\sum_i (\partial G_{k+1}/\partial y_i)\nabla^2\varphi_{k,i} = \nabla^2\langle\mathbf{g}_{k+1},\varphi_k\rangle = C_k\). Unroll from \(\nabla^2G_K = 0\).</p>
+<p><b>As an HVP.</b> theory-v2 also gives the forward-over-reverse form (Level 11) for a direction \(\mathbf{v}\): forward \(\dot{\mathbf{y}}_0 = \mathbf{v}\), \(\dot{\mathbf{y}}_{k+1} = A_k\dot{\mathbf{y}}_k\); backward \(\dot{\mathbf{g}}_K = \mathbf{0}\), \(\dot{\mathbf{g}}_k = A_k^\top\dot{\mathbf{g}}_{k+1} + C_k\dot{\mathbf{y}}_k\); output \(\nabla^2F\,\mathbf{v} = \dot{\mathbf{g}}_0\). In the 1-D example with \(v = 1\): \(\dot{y}_0 = 1\), \(\dot{y}_1 = A_0 = 2\); \(\dot{g}_2 = 0\), \(\dot{g}_1 = 1.75\times0 + C_1\dot{y}_1 = 0.5\times2 = 1\), \(\dot{g}_0 = A_0\dot{g}_1 + C_0\dot{y}_0 = 2 + 1.75 = 3.75\). Same 3.75.</p>
+<p>If the readout passes through the final RMSNorm (a true logit, <a href="14.html">Level 14</a>), theory-v2 adds one more term for that norm's own curvature. The H-space objective \(F_c\) is linear in the last state, so it does not need it.</p>
+
+<div class="box warn">
+<span class="boxtitle">What Lemma 1 does and does not say (theory-v2 §1, Scope)</span>
+<ul>
+<li>It is exact for each input separately.</li>
+<li>Averaging over contexts and positions only works term by term, as a sum of averages. It is never “average \(J\)” times “average \(C\)” times “average \(J\)”. Formulas built that way (theory-v2 §§4 to 6) are approximations, not consequences of the lemma.</li>
+<li>The split into “curvature created at sublayer \(k\)” depends on how you cut the model into sublayers. The total does not.</li>
+</ul>
+</div>
+<p><b>Implementation check.</b> theory-v2 §1 checked the code, not the mathematics: on Qwen3.5-0.8B, the sum of per-sublayer HVP pieces (<code>hs_anatomy.py</code>) against one full double-backward HVP, largest relative error over 24 batches: \(8.8\times10^{-7}\), \(1.1\times10^{-6}\), \(1.2\times10^{-6}\), \(1.3\times10^{-6}\) and \(1.45\times10^{-6}\) at layers 20, 16, 12, 8 and 4 (<code>results/anatomy_08b.json</code>). For scale: fp32 keeps about 7 significant digits (Level 11), and a missing or wrong term would show up as an error near 1.</p>
+
+<h2>12.5 Where curvature is created: threshold sites and product sites (Lemma 2)</h2>
+<p>Zoom into one sublayer and draw it as a computational graph (Level 10). theory-v2 §2 Lemma 2 (standard second-order reverse-mode differentiation) says every node is one of three kinds, and only two of them create curvature:</p>
+<ul>
+<li><b>Linear nodes</b> (weighted sums): no curvature.</li>
+<li><b>One-input nodes</b> \(\theta_n\) (SiLU, sigmoid, exp, …), called threshold sites: each adds \(\bar{g}_n\,\theta_n''(z_n)\,\mathbf{a}_n\mathbf{a}_n^\top\).</li>
+<li><b>Products of two inputs</b>, called product sites: each adds \(\bar{g}_n\,\operatorname{sym}(\mathbf{a}_n\mathbf{b}_n^\top) = \bar{g}_n(\mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top)\).</li>
+</ul>
+<p>Here \(\bar{g}_n\) is the adjoint at the node's output (how much the objective cares about it), and \(\mathbf{a}_n\), \(\mathbf{b}_n\) are the reads: the gradients of the node's inputs with respect to the sublayer input. Exactly:</p>
+$$ \nabla^2_{\mathbf{y}}\big[\mathbf{g}\cdot\varphi(\mathbf{y})\big] = \sum_{\text{one-input } n}\bar{g}_n\,\theta_n''(z_n)\,\mathbf{a}_n\mathbf{a}_n^\top + \sum_{\text{product } n}\bar{g}_n\,\operatorname{sym}(\mathbf{a}_n\mathbf{b}_n^\top). $$
+<p><b>Why these forms.</b> Near the current point, a one-input node computes \(\theta_n(\mathbf{a}_n\cdot\mathbf{y} + \text{const})\); by the chain rule twice its Hessian is \(\theta_n''\,\mathbf{a}_n\mathbf{a}_n^\top\) (curvature of the input itself belongs to the nodes upstream). A product node computes \((\mathbf{a}_n\cdot\mathbf{y} + \text{const})(\mathbf{b}_n\cdot\mathbf{y} + \text{const})\); by the product rule twice its Hessian is \(\mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top\).</p>
+
+<h3>The tiny network is two threshold sites</h3>
+<p>The network's nodes are: a linear map (\(W\)), two SiLUs, and a linear readout (\(\mathbf{c}\)). The SiLUs are the only threshold sites. For SiLU \(i\): the adjoint at its output is \(c_i\), its read is \(\mathbf{w}_i\). So \(H = \sum_i c_i\operatorname{silu}''(z_i)\,\mathbf{w}_i\mathbf{w}_i^\top\): exactly the two rank-1 pieces of 12.2.</p>
+
+<h3>A product site, with numbers</h3>
+<p>Let the reads be \(\mathbf{a}_n = (1, 0)\) and \(\mathbf{b}_n = (1, 1)\), with adjoint \(\bar{g}_n = 1\). The site computes \((\mathbf{a}_n\cdot\mathbf{x})(\mathbf{b}_n\cdot\mathbf{x}) = x_1(x_1 + x_2) = x_1^2 + x_1x_2\). Its Hessian is \(\begin{pmatrix}2 &amp; 1\\ 1 &amp; 0\end{pmatrix} = \mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top\). Its eigenvalues are \(\mathbf{a}_n\cdot\mathbf{b}_n \pm \lVert\mathbf{a}_n\rVert\lVert\mathbf{b}_n\rVert = 1 \pm \sqrt2\), that is 2.414 and −0.414 (check: trace 2, determinant −1). One up, one down: a saddle.</p>
+
+<h3>What is fixed and what is a convention (theory-v2 Remark 2.1)</h3>
+<ul>
+<li><b>Fixed under any change of basis</b> (Sylvester's law of inertia, Level 9): a threshold site is rank 1 and one-signed; a product site has eigenvalues \(\bar{g}_n(\mathbf{a}_n\cdot\mathbf{b}_n \pm \lVert\mathbf{a}_n\rVert\lVert\mathbf{b}_n\rVert)\), one positive and one negative (inertia (1,1)); it is rank 1 if \(\mathbf{a}_n\) and \(\mathbf{b}_n\) are parallel.</li>
+<li><b>A convention:</b> which curvature you call “product” and which “threshold”. Write SiLU as the product \(z\cdot\sigma(z)\) and the same curvature splits differently: \(\operatorname{silu}'' = 2\sigma' + z\sigma''\), a product part \(2\sigma'\) plus a threshold part \(z\sigma''\). At \(z_1 = -0.5\): \(2\times0.2350 = 0.4700\) plus \(-0.5\times0.0576 = -0.0288\), total 0.4412. Same total, different labels. theory-v2 uses the native graph of the weights for SwiGLU (next point) and says so.</li>
+<li><b>SwiGLU</b> (theory-v2 §2.1; <a href="14.html">Level 14</a>): each MLP neuron computes \(\operatorname{silu}(\text{gate read})\times(\text{up read})\), a single product site. Its curvature has a gate×up block with coefficient involving \(\operatorname{silu}'\), and a rank-1 gate×gate block whose coefficient involves \(\operatorname{silu}''\) times the up read. The directions are fixed by the weights; the coefficients depend on the input.</li>
+</ul>
+
+<h2>12.6 Interactions at finite size: the four corners</h2>
+<p>Level 6 measured an interaction with four corners. theory-v2 §3 writes it with the “both moves applied” point as the corner \(\mathbf{h}\), and the moves \(\mathbf{a}\), \(\mathbf{b}\) taken away from it:</p>
+$$ I(\mathbf{a}, \mathbf{b}) = f(\mathbf{h}) - f(\mathbf{h}-\mathbf{a}) - f(\mathbf{h}-\mathbf{b}) + f(\mathbf{h}-\mathbf{a}-\mathbf{b}). $$
+<p>Read it as: (effect of \(\mathbf{a}\) when \(\mathbf{b}\) is present) minus (effect of \(\mathbf{a}\) when \(\mathbf{b}\) is absent). <b>Farm check</b> (Level 6): \(\mathbf{h} = (5\ \text{buckets}, 3\ \text{bags})\), \(\mathbf{a} = (1\ \text{bucket}, 0)\), \(\mathbf{b} = (0, 1\ \text{bag})\) gives \(Y(5,3) - Y(4,3) - Y(5,2) + Y(4,2) = 0.5\) bushels, the same as Level 6, because the four corners are the same.</p>
+<p>For a quadratic function, \(I = \mathbf{a}^\top H\mathbf{b}\) exactly. For anything else, which Hessian? At \(\mathbf{h}\)? At the far corner? In the middle? Lemma 3 answers: none of them; the average over the whole parallelogram.</p>
+
+<h2>12.7 The rectangle identity (theory-v2 Lemma 3)</h2>
+<h3>Two tools: integrals as averages, and the fundamental theorem</h3>
+<p>An integral \(\int_0^1 q(s)\,ds\) is the continuous version of a sum: chop \([0,1]\) into many thin pieces of width \(\Delta s\), add up \(q(s)\,\Delta s\) over the pieces, and shrink \(\Delta s\). Over an interval of length 1, that is exactly the average value of \(q\). (Here \(q\) is any smooth function of one variable.)</p>
+<p>The fundamental theorem of calculus says: adding up a rate gives the total change. For any smooth function \(q\) of one variable,</p>
+$$ \int_0^1 q'(s)\,ds = q(1) - q(0). $$
+<p><b>Real-world example.</b> The car of Level 2 has position \(t^2\) metres and speed \(2t\) m/s. Adding up its speed over 3 seconds, \(\int_0^3 2t\,dt\), gives 9 metres, which is exactly \(3^2 - 0^2\): how far it went. The odometer integrates the speedometer. A double integral over the unit square, \(\int_0^1\!\int_0^1 \ldots\,ds\,dt\), is likewise the average over the square, whose area is 1.</p>
+
+<div class="box key">
+<span class="boxtitle">Lemma 3 (the rectangle identity) [standard; proved]</span>
+Let \(f\) have continuous second derivatives near the parallelogram \(P = \{\mathbf{h} - \mathbf{a} - \mathbf{b} + s\mathbf{a} + t\mathbf{b} : 0\le s,t\le1\}\). Then
+$$ I(\mathbf{a},\mathbf{b}) = \int_0^1\!\!\int_0^1 \mathbf{a}^\top\,\nabla^2 f(\mathbf{h} - \mathbf{a} - \mathbf{b} + s\mathbf{a} + t\mathbf{b})\,\mathbf{b}\;ds\,dt \;=\; \mathbf{a}^\top\bar{H}_P\,\mathbf{b}. $$
+The four-corner interaction equals the Hessian averaged over the parallelogram, read along \(\mathbf{a}\) and \(\mathbf{b}\). Exactly: no Taylor series, no small-move assumption.
+</div>
+<p>theory-v2 §3 is explicit that this is not new: it is the integral form of the classical mixed-difference mean-value theorem (Rudin, <i>Principles of Mathematical Analysis</i>, Thm 9.40), and the second-order analogue of the completeness property of Integrated Gradients (Sundararajan et al. 2017). “It is a tool here, not a contribution.”</p>
+
+<h3>The proof, every step</h3>
+<ol>
+<li>Walk around the parallelogram with two numbers. Let \(\psi(s,t) = f(\mathbf{h} - \mathbf{a} - \mathbf{b} + s\mathbf{a} + t\mathbf{b})\). The corners are \(\psi(1,1) = f(\mathbf{h})\), \(\psi(0,1) = f(\mathbf{h}-\mathbf{a})\), \(\psi(1,0) = f(\mathbf{h}-\mathbf{b})\), \(\psi(0,0) = f(\mathbf{h}-\mathbf{a}-\mathbf{b})\). So
+$$ I = \big[\psi(1,1) - \psi(0,1)\big] - \big[\psi(1,0) - \psi(0,0)\big]. $$</li>
+<li>Name the bracket: \(\operatorname{gap}(t) = \psi(1,t) - \psi(0,t)\), the difference between the right and left edges at height \(t\). Then \(I = \operatorname{gap}(1) - \operatorname{gap}(0)\).</li>
+<li>Fundamental theorem in \(t\): \(I = \int_0^1 \operatorname{gap}'(t)\,dt = \int_0^1\big[\partial_t\psi(1,t) - \partial_t\psi(0,t)\big]dt\).</li>
+<li>Fundamental theorem again, now in \(s\), on the bracket: \(\partial_t\psi(1,t) - \partial_t\psi(0,t) = \int_0^1 \partial_s\partial_t\psi(s,t)\,ds\). So \(I = \int_0^1\!\int_0^1 \partial_s\partial_t\psi\,ds\,dt\).</li>
+<li>Compute \(\partial_t\psi\) by the chain rule. Moving \(t\) moves the point along \(\mathbf{b}\), so \(\partial_t\psi = \nabla f(\text{point})\cdot\mathbf{b} = \sum_l \frac{\partial f}{\partial x_l}\,b_l\).</li>
+<li>Compute \(\partial_s\) of that. Moving \(s\) moves the point along \(\mathbf{a}\), so each \(\frac{\partial f}{\partial x_l}\) changes at rate \(\sum_i \frac{\partial^2 f}{\partial x_i\partial x_l}a_i\). Hence \(\partial_s\partial_t\psi = \sum_{i,l}a_i\,\frac{\partial^2 f}{\partial x_i\,\partial x_l}\,b_l = \mathbf{a}^\top\nabla^2 f(\text{point})\,\mathbf{b}\).</li>
+<li>Substitute into step 4. ∎</li>
+</ol>
+
+<h3>Worked example on the tiny network</h3>
+<p>Let \(f\) be the tiny network's output, with corner \(\mathbf{h} = (1, 2)\), \(\mathbf{a} = (1, -1)\), \(\mathbf{b} = (0, 1)\). These are large moves for this network.</p>
+<ol>
+<li>The corners: \(\mathbf{h} = (1,2)\), \(\mathbf{h}-\mathbf{a} = (0,3)\), \(\mathbf{h}-\mathbf{b} = (1,1)\), \(\mathbf{h}-\mathbf{a}-\mathbf{b} = (0,2)\). Forward passes (Level 10) give \(f = -1.5095,\ -2.0461,\ 0.1556,\ -1.1415\).</li>
+<li>Interaction: \(I = -1.5095 - (-2.0461) - 0.1556 + (-1.1415) = -0.7606\).</li>
+<li>The reads: \(\mathbf{w}_1\cdot\mathbf{a} = 1 + 1 = 2\), \(\mathbf{w}_1\cdot\mathbf{b} = -1\), \(\mathbf{w}_2\cdot\mathbf{a} = 0.5 - 1 = -0.5\), \(\mathbf{w}_2\cdot\mathbf{b} = 1\). With \(H = \sum_i c_i\operatorname{silu}''(z_i)\mathbf{w}_i\mathbf{w}_i^\top\):
+$$ \mathbf{a}^\top H(\mathbf{x})\,\mathbf{b} = 1.5\operatorname{silu}''(z_1)(2)(-1) + (-1)\operatorname{silu}''(z_2)(-0.5)(1) = -3\operatorname{silu}''(z_1) + 0.5\operatorname{silu}''(z_2). $$</li>
+<li>Hessian at the corner \(\mathbf{h}\) (\(z = (-0.5, 1.5)\)): \(-3(0.4412) + 0.5(0.1562) = -1.3237 + 0.0781 = -1.2456\). It misses \(I\) by 64%.</li>
+<li>Hessian at the centre \(\mathbf{m} = \mathbf{h} - (\mathbf{a}+\mathbf{b})/2 = (0.5, 2)\) (\(z = (-1, 1.25)\), \(\operatorname{silu}''(-1) = 0.3024\), \(\operatorname{silu}''(1.25) = 0.2262\)): \(-0.9071 + 0.1131 = -0.7940\). It misses by 4%.</li>
+<li>Average over \(P\): along \(P\), \(z_1 = -1.5 + 2s - t\) and \(z_2 = 1 - 0.5s + t\). A 5×5 Gauss–Legendre rule (below) gives \(-0.760585\), against \(I = -0.760586\). Equal to the rule's accuracy.</li>
+</ol>
+
+<h3>Computing the average: Gauss–Legendre quadrature</h3>
+<p>The average over \(P\) is an integral, and a computer approximates it with a weighted sum at a few points. Gauss–Legendre places \(n_q\) nodes per side at special positions with special weights, chosen so that the sum is exact whenever the integrand is a polynomial of degree up to \(2n_q - 1\) in each variable. On \([0,1]\): one node sits at 0.5 (weight 1); two nodes sit at 0.2113 and 0.7887 (weights 0.5 each); three at 0.1127, 0.5 and 0.8873 (weights 5/18, 8/18, 5/18). The rectangle rule uses the \(n_q\times n_q\) grid of node pairs and multiplies the weights. Each point costs one Hessian evaluation along \(\mathbf{a}\) and \(\mathbf{b}\), which in a real model means an HVP. <b>Real-world example:</b> estimating a field's average height from a few stakes placed where they tell you the most.</p>
+<p>Note the one-node rule: a single point at \(s = t = 0.5\). That is the centre Hessian. For the worked example the rules give \(-0.7940\) (1×1), \(-0.7635\) (2×2), \(-0.7603\) (3×3), \(-0.760585\) (5×5).</p>
+
+<figure class="sim" id="sim-rect">
+<figcaption><b>Figure 12.3.</b> The rectangle identity on the tiny network. The shading is \(\mathbf{a}^\top\nabla^2 f(\mathbf{x})\,\mathbf{b}\) at every point \(\mathbf{x}\) (red positive, blue negative, white zero): the quantity being averaged. Drag the black corner \(\mathbf{h}\) (moves the whole parallelogram), or the hollow corners \(\mathbf{h}-\mathbf{a}\) and \(\mathbf{h}-\mathbf{b}\) (change the moves). The red dot is the corner, the green dot the centre, the small grey dots the Gauss–Legendre nodes. Compare the readout lines with \(I\): the corner Hessian is off whenever the shading changes across \(P\); the centre is better; the rectangle average matches \(I\) once \(n_q\) is large enough. Shrink the moves and all of them agree.</figcaption>
+</figure>
+
+<h2>12.8 Corner against centre: what the gap is made of</h2>
+<p>theory-v2 §3 gives two expansions of \(I\) for moves that are small but not tiny.</p>
+<ul>
+<li><b>Corner expansion:</b>
+$$ I = \mathbf{a}^\top\nabla^2f(\mathbf{h})\,\mathbf{b} - \tfrac12\Big(D^3f(\mathbf{h})[\mathbf{a},\mathbf{a},\mathbf{b}] + D^3f(\mathbf{h})[\mathbf{a},\mathbf{b},\mathbf{b}]\Big) + O\big(\lVert(\mathbf{a},\mathbf{b})\rVert^4\big). $$
+Where it comes from: Taylor-expand \(f(\mathbf{h} - \mu\mathbf{a} - \nu\mathbf{b})\) around \(\mathbf{h}\) in the two numbers \(\mu\) and \(\nu\) (Level 4). The four corners are \((\mu,\nu) = (0,0), (1,0), (0,1), (1,1)\) with signs \(+, -, -, +\). Every term that lacks \(\mu\) or lacks \(\nu\) cancels, because it takes the same value on two corners with opposite signs. The surviving \(\mu\nu\) term gives \(\mathbf{a}^\top\nabla^2f\,\mathbf{b}\) (the two minus signs inside \((-\mu\mathbf{a}-\nu\mathbf{b})^2\) cancel). The cubic terms \(\mu^2\nu\) and \(\mu\nu^2\) survive too, each with coefficient \(-\tfrac16\times3\) (the cube keeps the minus sign), giving the \(-\tfrac12\) bracket.</li>
+<li><b>Centre expansion:</b>
+$$ I = \mathbf{a}^\top\nabla^2 f(\mathbf{m})\,\mathbf{b} + O\big(\lVert(\mathbf{a},\mathbf{b})\rVert^4\big). $$
+Why the cubic terms vanish: written around \(\mathbf{m}\), the corners are \(\mathbf{m} \pm \tfrac12\mathbf{a} \pm \tfrac12\mathbf{b}\). Replacing \((\mathbf{a},\mathbf{b})\) by \((-\mathbf{a},-\mathbf{b})\) only swaps corners with equal signs, so \(I\) is unchanged. Every odd-order term changes sign under that swap, so it must be zero.</li>
+</ul>
+<p>So the gap between the corner Hessian and the true interaction is exactly the third- and higher-order content of \(f\) over \(P\) (theory-v2: “the gap between \(\nabla^2f(h)\) and \(\bar{H}_P\) is exactly the third- and higher-order content”). <b>Smallest example</b> (Exercise 12.8): for \(f = x_1^2x_2\), corner \(\mathbf{h} = (0,0)\), \(\mathbf{a} = (1,0)\), \(\mathbf{b} = (0,1)\), the true \(I\) is −1, the corner Hessian says 0, and the centre Hessian says −1 exactly, because \(f\) is cubic.</p>
+<div class="box plain">
+<span class="boxtitle">Intuition pump: judging a hill from one stake</span>
+You want the average tilt-change over a field. Standing in one corner and measuring there is fine if the field is a perfect bowl. If the field's shape changes across it, the corner is the worst place to stand: you are as far as possible from most of the field. The middle is better. Walking the whole field is exact.
+</div>
+
+<h2>12.9 The toy pattern, and the 0.8B check</h2>
+<figure class="sim" id="sim-scatter">
+<figcaption><b>Figure 12.4 (toy).</b> Forty random draws on the tiny network: a corner \(\mathbf{h}\) scattered around the origin (spread 1.5 per input) and two random moves \(\mathbf{a}\), \(\mathbf{b}\) of size \(\lambda\) per input. Horizontal: the true interaction \(I\). Vertical: each prediction. Red: Hessian at the corner. Blue: Hessian at the centre. Black: rectangle average, 5×5 Gauss–Legendre. Points on the dashed diagonal are perfect. The readout gives Pearson \(r\) and the relative L1 error for each, plus the uniform diagonal average used in theory-v2. Slide \(\lambda\) from small to large: at small \(\lambda\) everything is near perfect; at large \(\lambda\) the corner degrades first, the centre next, and the rectangle stays on the line. This is a toy; its numbers are not the model's.</figcaption>
+</figure>
+
+<h3>The real check (theory-v2 §3, <code>hs_rectangle.py</code>, <code>results/rectangle_08b_L12.json</code>)</h3>
+<p>Setup, as theory-v2 §3 reports it: Qwen3.5-0.8B with fp32 blocks, layer \(\ell = 12\), objective \(F_c\). The moves are single-position: two complementary random halves (in whitened coordinates, <a href="13.html">Level 13</a>) of one token's deviation from the mean, so \(\mathbf{a} + \mathbf{b}\) is that whole deviation (\(\lambda = 1\): natural move size). 8 draws × 4 covectors; the covectors share each draw, so the effective sample size is about 8. Confidence intervals are a bootstrap over draws. Relative L1 error is the sum of absolute misses divided by the sum of absolute interactions (as computed in <code>hs_rectangle.py</code>). Explained variance below zero means a predictor does worse than always guessing the average interaction.</p>
+<div class="tablewrap">
+<table>
+<tr><th>predictor</th><th>Pearson \(r\) (95% CI)</th><th>rel. L1 error</th><th>explained var.</th></tr>
+<tr><td>rectangle average, 5×5 Gauss–Legendre (25 HVPs)</td><td>0.98 (0.97 to 1.00)</td><td>0.16 (per draw 0.005 to 0.36)</td><td>0.95</td></tr>
+<tr><td>uniform diagonal average, 5 nodes</td><td>0.13 (−0.55 to 0.75)</td><td>1.62</td><td>−3.3</td></tr>
+<tr><td>Hessian at the corner \(\mathbf{h}\)</td><td>−0.09 (−0.29 to 0.54)</td><td>1.42</td><td>−3.2</td></tr>
+</table>
+</div>
+<p>How to read it, keeping to what theory-v2 says:</p>
+<ul>
+<li><b>The rectangle row tests the code, not the model.</b> Lemma 3 is exact, so 0.98 checks that the HVP code and the quadrature are right.</li>
+<li><b>The 5×5 rule looks under-resolved.</b> The two worst draws carry 74% of the absolute error. A 9×9 rule on those two draws cuts their error from 0.35 to 0.04 (\(r\) 0.970 to 0.999), and there the centre Hessian gives \(r = 0.89\) against −0.58 at the corner. theory-v2 marks these [open: review scratch]. A node sweep on all draws has not been run.</li>
+<li><b>A larger run agrees on sign.</b> With 32 draws at the same layer and move size (<code>hs_integrated.py</code>), the corner Hessian gave \(r = 0.29\) and a uniform 4-node diagonal \(r = 0.57\), both with negative explained variance.</li>
+<li><b>The conclusion</b> (theory-v2 §3): at feature scale the Hessian varies too much over the rectangle for any single point or single segment to predict the interaction. Only the full 2-D average does, at 25 or more HVPs per pair and context.</li>
+</ul>
+<p>In plain words: <b>the Hessian at one point is a bad predictor of interactions at natural move sizes.</b> This is the warning seeded at <a href="04.html">Level 4</a>. theory-v2 adds (Implication 2) that the earlier v1 failure of the quadratic model at natural move sizes is the same statement as “third- and higher-order terms are large over the rectangle”; the lemma restates the failure, it does not explain it, and v1's own setting was not re-tested.</p>
+
+<h2>12.10 Why this matters for H-space</h2>
+<ol>
+<li><b>Lemma 1 defines what is being measured.</b> The per-position H-lens (<a href="15.html">Level 15</a>) is built from the diagonal block, for one position, of \(\nabla^2_{\mathbf{h}}F_c = \sum_k J_k^\top C_kJ_k\), exact for each context. Its averages over contexts are sums of averages, not products of averaged pieces. Splitting it by sublayer is how theory-v2 §2.4 measures which parts of the model create the curvature.</li>
+<li><b>Lemma 2 says where to look.</b> Each SwiGLU neuron is a product site, silu(gate read) × (up read), whose directions are fixed by the weights. That is why the MLP is a natural place to look for interpretable curvature (<a href="14.html">Level 14</a>).</li>
+<li><b>Lemma 3 says what an interaction is.</b> A finite 2×2 interaction of moves that add at layer \(\ell\) equals a pair-specific, rectangle-averaged Hessian (theory-v2 §3, Implication 1; it needs the joint move to equal \(\mathbf{a} + \mathbf{b}\) exactly). The v9 test (Level 15) measures four-corner interactions of one-standard-deviation moves: numbers of this kind, not Hessians at a point.</li>
+<li><b>And what it does not license.</b> theory-v2 §3 Implication 4: the lemma is exact only for the pair-specific average; it does not imply that removing H-space removes interaction energy. That is an empirical question, settled (or not) by the runs on Level 15.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="-2.2853" data-tol="0.002" data-unit="">
+<p><b>Exercise 12.1.</b> Find the second derivative of \(\sin(x^2)\) at \(x = 1\) with the second-order chain rule. (Outer \(f = \sin\), inner \(g = x^2\).)</p>
+<details><summary>Show answer</summary>
+<p>\(g = 1\), \(g' = 2x = 2\), \(g'' = 2\). \(f'(g) = \cos 1 = 0.5403\), \(f''(g) = -\sin 1 = -0.8415\). So \(f''g'^2 + f'g'' = -0.8415\times4 + 0.5403\times2 = -3.3659 + 1.0806 = -2.2853\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="301.59" data-tol="0.002" data-unit="cm³/s²">
+<p><b>Exercise 12.2.</b> A balloon's radius is \(R(\tau) = 1 + \tau^2\) cm. Find \(d^2V/d\tau^2\) at \(\tau = 1\) s, with units for both terms.</p>
+<details><summary>Show answer</summary>
+<p>\(R = 2\) cm, \(R' = 2\tau = 2\) cm/s, \(R'' = 2\) cm/s². \(V' = 4\pi R^2 = 16\pi\) cm³/cm; \(V'' = 8\pi R = 16\pi\) cm³/cm². Terms: \(16\pi\times2^2 = 64\pi\) cm³/s² and \(16\pi\times2 = 32\pi\) cm³/s². Sum \(96\pi = 301.59\) cm³/s².</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1.5" data-tol="0.001" data-unit="">
+<p><b>Exercise 12.3.</b> Use Lemma 1 on the two-sublayer chain of 12.4 (\(\kappa_0 = 0.5\), \(\kappa_1 = 0.25\)), but start at \(h = 0\). Find \(F''(0)\), and check it in Figure 12.2.</p>
+<details><summary>Show answer</summary>
+<p>\(y_1 = 0\). \(A_0 = 1 + 0 = 1\), \(A_1 = 1 + 0 = 1\). \(g_2 = 1\), \(g_1 = 1\). \(C_0 = g_1\times1 = 1\), \(C_1 = g_2\times0.5 = 0.5\). \(J_0 = J_1 = 1\). \(F'' = 1 + 0.5 = 1.5\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="7.5" data-tol="0.001" data-unit="">
+<p><b>Exercise 12.4.</b> Run the HVP recursion of Lemma 1 on the 12.4 example (\(h = 1\)) with direction \(v = 2\). What is \(\dot{g}_0\)?</p>
+<details><summary>Show answer</summary>
+<p>\(\dot{y}_0 = 2\), \(\dot{y}_1 = A_0\dot{y}_0 = 4\). \(\dot{g}_2 = 0\); \(\dot{g}_1 = A_1\cdot0 + C_1\dot{y}_1 = 0.5\times4 = 2\); \(\dot{g}_0 = A_0\dot{g}_1 + C_0\dot{y}_0 = 2\times2 + 1.75\times2 = 7.5\). That is \(F''\times v = 3.75\times2\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="4.2361" data-tol="0.001" data-unit="">
+<p><b>Exercise 12.5.</b> A product site has reads \(\mathbf{a}_n = (1, 0)\), \(\mathbf{b}_n = (2, 1)\) and adjoint \(\bar{g}_n = 1\). What is its larger eigenvalue? What is its inertia?</p>
+<details><summary>Show answer</summary>
+<p>\(\mathbf{a}_n\cdot\mathbf{b}_n = 2\), \(\lVert\mathbf{a}_n\rVert\lVert\mathbf{b}_n\rVert = 1\times\sqrt5 = 2.2361\). Eigenvalues \(2\pm2.2361\): 4.2361 and −0.2361. Inertia (1, 1): one positive, one negative. Check: the matrix is \(\mathbf{a}_n\mathbf{b}_n^\top + \mathbf{b}_n\mathbf{a}_n^\top = \begin{pmatrix}4 &amp; 1\\ 1 &amp; 0\end{pmatrix}\), trace 4, determinant −1, and \(4.2361 + (-0.2361) = 4\), \(4.2361\times(-0.2361) = -1\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="5" data-tol="0.001" data-unit="">
+<p><b>Exercise 12.6.</b> A SiLU threshold site has input \(z_n = 0\), adjoint \(\bar{g}_n = 2\) and read \(\mathbf{a}_n = (1, 2)\). Using \(\operatorname{silu}''(0) = 0.5\), write its curvature matrix and give its trace.</p>
+<details><summary>Show answer</summary>
+<p>\(\bar{g}_n\operatorname{silu}''(0)\,\mathbf{a}_n\mathbf{a}_n^\top = 2\times0.5\times\begin{pmatrix}1 &amp; 2\\ 2 &amp; 4\end{pmatrix} = \begin{pmatrix}1 &amp; 2\\ 2 &amp; 4\end{pmatrix}\). Trace 5. Rank 1: its only non-zero eigenvalue is 5, along \(\mathbf{a}_n\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="6" data-tol="0.001" data-unit="">
+<p><b>Exercise 12.7.</b> Let \(f(x_1, x_2) = 3x_1x_2 + x_1^2\), \(\mathbf{h} = (0,0)\), \(\mathbf{a} = (1, 0)\), \(\mathbf{b} = (0, 2)\). Compute \(I(\mathbf{a},\mathbf{b})\) from the four corners, and compare with \(\mathbf{a}^\top H\mathbf{b}\).</p>
+<details><summary>Show answer</summary>
+<p>\(f(0,0) = 0\); \(f(-1,0) = 1\); \(f(0,-2) = 0\); \(f(-1,-2) = 6 + 1 = 7\). \(I = 0 - 1 - 0 + 7 = 6\). \(H = \begin{pmatrix}2 &amp; 3\\ 3 &amp; 0\end{pmatrix}\), so \(\mathbf{a}^\top H\mathbf{b} = (1,0)\cdot(6, 0) = 6\). Equal, because \(f\) is quadratic: its Hessian is the same everywhere in \(P\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-1" data-tol="0.001" data-unit="">
+<p><b>Exercise 12.8.</b> Let \(f(x_1,x_2) = x_1^2x_2\), \(\mathbf{h} = (0,0)\), \(\mathbf{a} = (1,0)\), \(\mathbf{b} = (0,1)\). Compute \(I\). Then the corner prediction \(\partial^2 f/\partial x_1\partial x_2\) at \(\mathbf{h}\), and the centre prediction at \(\mathbf{m}\).</p>
+<details><summary>Show answer</summary>
+<p>Corners: \(f(0,0) = 0\), \(f(-1,0) = 0\), \(f(0,-1) = 0\), \(f(-1,-1) = 1\times(-1) = -1\). \(I = 0 - 0 - 0 + (-1) = -1\). The mixed partial is \(2x_1\). At the corner \((0,0)\) it is 0: wrong. At the centre \(\mathbf{m} = (-0.5, -0.5)\) it is −1: exact, because \(f\) is cubic and the centre expansion's error starts at fourth order. The corner expansion's cubic term: \(D^3f[\mathbf{a},\mathbf{a},\mathbf{b}] = \partial^3f/\partial x_1^2\partial x_2 = 2\) and \(D^3f[\mathbf{a},\mathbf{b},\mathbf{b}] = 0\), so \(I = 0 - \tfrac12(2 + 0) = -1\). Also right.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 12.9.</b> In Figure 12.3, set \(n_q = 1\). Which readout line does the rectangle average now equal, and why? Then explain in two sentences why theory-v2 says the 0.98 row “tests code, not the model”.</p>
+<details><summary>Show answer</summary>
+<p>With one node per side, the only node is \(s = t = 0.5\), the centre, with weight 1; so the “rectangle average” is the centre Hessian. Lemma 3 is a proved identity, so a correct implementation must reproduce \(I\) up to quadrature and rounding error; a high \(r\) shows the HVP code and the quadrature work, and says nothing about the model. The model-level finding is in the other two rows: single-point and single-segment predictors fail at natural move sizes.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+/* ---- the tiny network (identical definition on Levels 10, 11 and 12) ---- */
+var NET = { W: [[1.0, -1.0], [0.5, 1.0]], b: [0.5, -1.0], c: [1.5, -1.0] };
+function sig(z) { return 1 / (1 + Math.exp(-z)); }
+function silu(z) { return z * sig(z); }
+function silu1(z) { var s = sig(z); return s * (1 + z * (1 - s)); }                 /* silu'  */
+function silu2(z) { var s = sig(z); return s * (1 - s) * (2 + z * (1 - 2 * s)); }   /* silu'' */
+function netForward(x) {
+  var W = NET.W, z = [W[0][0] * x[0] + W[0][1] * x[1] + NET.b[0], W[1][0] * x[0] + W[1][1] * x[1] + NET.b[1]];
+  var a = [silu(z[0]), silu(z[1])];
+  return { z: z, a: a, y: NET.c[0] * a[0] + NET.c[1] * a[1] };
+}
+function netHessian(x) {    /* H = W^T diag(c * silu''(z)) W, from the second-order chain rule */
+  var f = netForward(x), W = NET.W, dd = [NET.c[0] * silu2(f.z[0]), NET.c[1] * silu2(f.z[1])], H = [[0, 0], [0, 0]];
+  for (var j = 0; j < 2; j++) for (var k = 0; k < 2; k++) H[j][k] = dd[0] * W[0][j] * W[0][k] + dd[1] * W[1][j] * W[1][k];
+  return H;
+}
+/* a^T H(x) b for the tiny network */
+function aHb(x, a, b) { var H = netHessian(x); return a[0] * (H[0][0] * b[0] + H[0][1] * b[1]) + a[1] * (H[1][0] * b[0] + H[1][1] * b[1]); }
+/* Gauss-Legendre nodes and weights on [0, 1] (Newton iteration on the Legendre polynomial) */
+var GLCACHE = {};
+function gaussLegendre(n) {
+  if (GLCACHE[n]) return GLCACHE[n];
+  var X = [], Wt = [];
+  if (n === 1) { X = [0.5]; Wt = [1]; }
+  else for (var i = 1; i <= n; i++) {
+    var x = Math.cos(Math.PI * (i - 0.25) / (n + 0.5)), dp = 1;
+    for (var it = 0; it < 100; it++) {
+      var p0 = 1, p1 = x;
+      for (var k = 2; k <= n; k++) { var p2 = ((2 * k - 1) * x * p1 - (k - 1) * p0) / k; p0 = p1; p1 = p2; }
+      dp = n * (x * p1 - p0) / (x * x - 1);
+      var dx = p1 / dp; x -= dx; if (Math.abs(dx) < 1e-15) break;
+    }
+    X.push((1 - x) / 2); Wt.push(1 / ((1 - x * x) * dp * dp));
+  }
+  GLCACHE[n] = { x: X, w: Wt }; return GLCACHE[n];
+}
+function interaction(h, a, b) {
+  return netForward(h).y - netForward([h[0] - a[0], h[1] - a[1]]).y - netForward([h[0] - b[0], h[1] - b[1]]).y + netForward([h[0] - a[0] - b[0], h[1] - a[1] - b[1]]).y;
+}
+function rectAverage(h, a, b, n) {
+  var g = gaussLegendre(n), s = 0;
+  for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+    var p = [h[0] - a[0] - b[0] + g.x[i] * a[0] + g.x[j] * b[0], h[1] - a[1] - b[1] + g.x[i] * a[1] + g.x[j] * b[1]];
+    s += g.w[i] * g.w[j] * aHb(p, a, b);
+  }
+  return s;
+}
+function diagAverage(h, a, b, n) {
+  var g = gaussLegendre(n), s = 0;
+  for (var i = 0; i < n; i++) {
+    var p = [h[0] - a[0] - b[0] + g.x[i] * (a[0] + b[0]), h[1] - a[1] - b[1] + g.x[i] * (a[1] + b[1])];
+    s += g.w[i] * aHb(p, a, b);
+  }
+  return s;
+}
+
+S.ready(function () {
+  /* Figure 12.1: two sources of curvature */
+  (function () {
+    var host = document.getElementById("sim-two");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.55 });
+    var vl = S.view(c, { xmin: -2, xmax: 2, ymin: -3, ymax: 6, padLeft: 34, padBottom: 26, width: 0, left: 0 });
+    var vr = S.view(c, { xmin: 0, xmax: 4, ymin: -4, ymax: 4, padLeft: 10, padRight: 10, padBottom: 26, left: 0, width: 0 });
+    var al = S.slider(wrap, { label: "α (inner curvature)", min: -1, max: 1, step: 0.05, value: 0.3, digits: 2, oninput: function () { c.redraw(); } });
+    var be = S.slider(wrap, { label: "β (outer curvature)", min: -1, max: 1, step: 0.05, value: 0.4, digits: 2, oninput: function () { c.redraw(); } });
+    var xs = S.slider(wrap, { label: "x", min: -1.5, max: 1.5, step: 0.05, value: 0.5, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var wl = Math.round(c.W * 0.66);
+      vl.set({ left: 0, width: wl }); vr.set({ left: wl, width: c.W - wl });
+      var A = al.get(), B = be.get(), x = xs.get();
+      function g(t) { return t + A * t * t; }
+      function f(u) { return u + B * u * u; }
+      function comp(t) { return f(g(t)); }
+      var u = g(x), g1 = 1 + 2 * A * x, g2 = 2 * A, f1 = 1 + 2 * B * u, f2 = 2 * B;
+      var t1 = f2 * g1 * g1, t2 = f1 * g2, tot = t1 + t2, y0 = comp(x), y1 = f1 * g1;
+      vl.axes({ xlabel: "x", ylabel: "f(g(x))", xticks: 1, yticks: 1 });
+      vl.fn(comp, { color: S.col.blue, width: 2.5 });
+      vl.fn(function (t) { return y0 + y1 * (t - x) + 0.5 * tot * (t - x) * (t - x); }, { color: S.col.red, dash: [6, 4], width: 1.5, from: x - 1.2, to: x + 1.2 });
+      vl.dot(x, y0, { color: S.col.ink });
+      var M = Math.max(2, Math.abs(t1), Math.abs(t2), Math.abs(tot)) * 1.15;
+      vr.set({ ymin: -M, ymax: M });
+      vr.line(0.2, 0, 3.8, 0, { color: S.col.ink, width: 1 });
+      [[t1, S.col.blue, "f''g'²"], [t2, S.col.red, "f'g''"], [tot, S.col.ink, "sum"]].forEach(function (bb, i) {
+        var xx = 0.4 + i * 1.15;
+        vr.rect(xx, 0, 0.8, bb[0], { color: bb[1], fill: bb[1], fillAlpha: 0.45 });
+        vr.text(bb[2], xx + 0.4, -M, { align: "center", baseline: "bottom", dy: -2, font: S.fontSmall, color: bb[1] });
+        vr.text(S.fmt(bb[0], 2), xx + 0.4, bb[0], { align: "center", baseline: bb[0] >= 0 ? "bottom" : "top", dy: bb[0] >= 0 ? -2 : 2, font: S.fontSmall });
+      });
+      var d = 1e-3, sd = (comp(x + d) - 2 * comp(x) + comp(x - d)) / (d * d);
+      out.textContent = "u = g(x) = " + S.fmt(u, 4) + "   g' = 1 + 2αx = " + S.fmt(g1, 4) + "   g'' = 2α = " + S.fmt(g2, 4) +
+        "   f'(u) = 1 + 2βu = " + S.fmt(f1, 4) + "   f''(u) = 2β = " + S.fmt(f2, 4) + "\n" +
+        "outer curvature through the stretch: f''(u)·g'² = " + S.fmt(f2, 4) + " × " + S.fmt(g1, 4) + "² = " + S.fmt(t1, 4) + "\n" +
+        "inner curvature times outer slope:   f'(u)·g''  = " + S.fmt(f1, 4) + " × " + S.fmt(g2, 4) + " = " + S.fmt(t2, 4) + "\n" +
+        "sum = " + S.fmt(tot, 4) + "      measured second difference (Δx = 0.001) = " + S.fmt(sd, 4);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 12.2: Lemma 1 on a 1-D residual chain */
+  (function () {
+    var host = document.getElementById("sim-adj");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.45, maxH: 340 });
+    var v = S.view(c, { xmin: 0, xmax: 3.4, ymin: -4, ymax: 4, padLeft: 16, padRight: 16, padBottom: 26, padTop: 18 });
+    var hs = S.slider(wrap, { label: "start h = y₀", min: -1.5, max: 1.5, step: 0.05, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    var k0 = S.slider(wrap, { label: "κ₀", min: -1, max: 1, step: 0.05, value: 0.5, digits: 2, oninput: function () { c.redraw(); } });
+    var k1 = S.slider(wrap, { label: "κ₁", min: -1, max: 1, step: 0.05, value: 0.25, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    function F(y, K0, K1) { var y1 = y + K0 * y * y; return y1 + K1 * y1 * y1; }
+    c.draw = function () {
+      var h = hs.get(), K0 = k0.get(), K1 = k1.get();
+      var y1 = h + K0 * h * h, y2 = y1 + K1 * y1 * y1;
+      var A0 = 1 + 2 * K0 * h, A1 = 1 + 2 * K1 * y1;
+      var g2 = 1, g1 = A1 * g2, g0 = A0 * g1;
+      var C0 = g1 * 2 * K0, C1 = g2 * 2 * K1, J0 = 1, J1 = A0;
+      var b0 = J0 * J0 * C0, b1 = J1 * J1 * C1, tot = b0 + b1;
+      var d = 1e-3, sd = (F(h + d, K0, K1) - 2 * F(h, K0, K1) + F(h - d, K0, K1)) / (d * d);
+      var M = Math.max(2, Math.abs(b0), Math.abs(b1), Math.abs(tot), Math.abs(sd)) * 1.2;
+      v.set({ ymin: -M, ymax: M });
+      v.line(0.1, 0, 3.3, 0, { color: S.col.ink, width: 1 });
+      [[b0, S.col.blue, "sublayer 0: J₀²C₀"], [b1, S.col.red, "sublayer 1: J₁²C₁"], [tot, S.col.ink, "sum = F''(h)"]].forEach(function (bb, i) {
+        var xx = 0.25 + i * 1.05;
+        v.rect(xx, 0, 0.8, bb[0], { color: bb[1], fill: bb[1], fillAlpha: 0.45 });
+        v.text(bb[2], xx + 0.4, -M, { align: "center", baseline: "bottom", dy: -2, font: S.fontSmall, color: bb[1] });
+        v.text(S.fmt(bb[0], 3), xx + 0.4, bb[0], { align: "center", baseline: bb[0] >= 0 ? "bottom" : "top", dy: bb[0] >= 0 ? -2 : 2, font: S.fontSmall });
+      });
+      v.line(2.2, sd, 3.3, sd, { color: S.col.orange, width: 2.5, dash: [6, 3] });
+      v.text("measured", 3.3, sd, { align: "right", baseline: "top", dy: 3, font: S.fontSmall, color: S.col.orange });
+      var f = function (z) { return S.fmt(z, 4); };
+      out.textContent = "forward:  y₀ = " + f(h) + "   y₁ = " + f(y1) + "   y₂ = F = " + f(y2) + "\n" +
+        "slopes:   A₀ = 1 + 2κ₀y₀ = " + f(A0) + "   A₁ = 1 + 2κ₁y₁ = " + f(A1) + "\n" +
+        "adjoints: g₂ = 1   g₁ = A₁g₂ = " + f(g1) + "   g₀ = A₀g₁ = " + f(g0) + " (= F'(h))\n" +
+        "created:  C₀ = g₁·2κ₀ = " + f(C0) + "   C₁ = g₂·2κ₁ = " + f(C1) + "   transports J₀ = 1, J₁ = A₀ = " + f(J1) + "\n" +
+        "F''(h) = J₀²C₀ + J₁²C₁ = " + f(b0) + " + " + f(b1) + " = " + f(tot) + "    second difference: " + f(sd);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 12.3: the rectangle identity */
+  (function () {
+    var host = document.getElementById("sim-rect");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.8, maxH: 540 });
+    var v = S.view(c, { xmin: -2.5, xmax: 3.5, ymin: -1, ymax: 4.5, padLeft: 34, padBottom: 28 });
+    var st = { h: [1, 2], a: [1, -1], b: [0, 1] };
+    var P = [{ x: 1, y: 2, r: 18 }, { x: 0, y: 3, r: 16 }, { x: 1, y: 1, r: 16 }];
+    function sync() { P[0].x = st.h[0]; P[0].y = st.h[1]; P[1].x = st.h[0] - st.a[0]; P[1].y = st.h[1] - st.a[1]; P[2].x = st.h[0] - st.b[0]; P[2].y = st.h[1] - st.b[1]; }
+    S.drag(c, v, P, function (pt) {
+      if (pt === P[0]) { st.h = [pt.x, pt.y]; }
+      else if (pt === P[1]) { st.a = [st.h[0] - pt.x, st.h[1] - pt.y]; }
+      else { st.b = [st.h[0] - pt.x, st.h[1] - pt.y]; }
+      sync(); c.redraw();
+    });
+    var nq = S.slider(wrap, { label: "nodes per side n_q", min: 1, max: 9, step: 1, value: 5, digits: 0, oninput: function () { c.redraw(); } });
+    S.button(wrap, "Reset to the worked example", function () { st = { h: [1, 2], a: [1, -1], b: [0, 1] }; sync(); c.redraw(); });
+    S.button(wrap, "Shrink moves ×0.5", function () { st.a = [st.a[0] * 0.5, st.a[1] * 0.5]; st.b = [st.b[0] * 0.5, st.b[1] * 0.5]; sync(); c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var h = st.h, a = st.a, b = st.b, n = nq.get();
+      var M = 1e-6;
+      for (var i = 0; i <= 12; i++) for (var j = 0; j <= 12; j++) M = Math.max(M, Math.abs(aHb([v.r.xmin + i * (v.r.xmax - v.r.xmin) / 12, v.r.ymin + j * (v.r.ymax - v.r.ymin) / 12], a, b)));
+      v.heat(function (x1, x2) { return aHb([x1, x2], a, b); }, { min: -M, max: M, step: 6 });
+      v.axes({ xlabel: "x₁", ylabel: "x₂", xticks: 1, yticks: 1, grid: false });
+      var C = [h, [h[0] - a[0], h[1] - a[1]], [h[0] - a[0] - b[0], h[1] - a[1] - b[1]], [h[0] - b[0], h[1] - b[1]]];
+      v.poly(C, { color: S.col.ink, width: 1.5 });
+      var g = gaussLegendre(n);
+      for (i = 0; i < n; i++) for (j = 0; j < n; j++) v.dot(C[2][0] + g.x[i] * a[0] + g.x[j] * b[0], C[2][1] + g.x[i] * a[1] + g.x[j] * b[1], { color: S.col.gray, r: 2.2 });
+      var m = [h[0] - (a[0] + b[0]) / 2, h[1] - (a[1] + b[1]) / 2];
+      v.dot(m[0], m[1], { color: S.col.green, r: 5 });
+      v.dot(P[1].x, P[1].y, { color: S.col.ink, r: 6, hollow: true, width: 2 });
+      v.dot(P[2].x, P[2].y, { color: S.col.ink, r: 6, hollow: true, width: 2 });
+      v.dot(h[0], h[1], { color: S.col.ink, r: 7 });
+      v.dot(h[0], h[1], { color: S.col.red, r: 3.5 });
+      v.text("h", h[0], h[1], { dx: 9, dy: -8 });
+      v.text("h − a", P[1].x, P[1].y, { dx: 9, dy: -8, font: S.fontSmall });
+      v.text("h − b", P[2].x, P[2].y, { dx: 9, dy: -8, font: S.fontSmall });
+      v.text("h − a − b", C[2][0], C[2][1], { align: "right", dx: -9, dy: 14, font: S.fontSmall });
+      var yv = [netForward(C[0]).y, netForward(C[1]).y, netForward(C[3]).y, netForward(C[2]).y];
+      var I = yv[0] - yv[1] - yv[2] + yv[3], co = aHb(h, a, b), ce = aHb(m, a, b), di = diagAverage(h, a, b, n), re = rectAverage(h, a, b, n);
+      function miss(p) { return Math.abs(I) < 1e-9 ? "" : "   miss " + S.fmt(100 * (p - I) / Math.abs(I), 1) + "%"; }
+      var f = function (z) { return S.fmt(z, 6); };
+      out.textContent = "h = (" + S.fmt(h[0], 2) + ", " + S.fmt(h[1], 2) + ")   a = (" + S.fmt(a[0], 2) + ", " + S.fmt(a[1], 2) + ")   b = (" + S.fmt(b[0], 2) + ", " + S.fmt(b[1], 2) + ")\n" +
+        "I = f(h) − f(h−a) − f(h−b) + f(h−a−b) = " + S.fmt(yv[0], 4) + " − (" + S.fmt(yv[1], 4) + ") − (" + S.fmt(yv[2], 4) + ") + (" + S.fmt(yv[3], 4) + ") = " + f(I) + "\n" +
+        "Hessian at the corner h:         aᵀ∇²f(h)b = " + f(co) + miss(co) + "\n" +
+        "Hessian at the centre m:         aᵀ∇²f(m)b = " + f(ce) + miss(ce) + "\n" +
+        "uniform diagonal average (" + n + " nodes):    " + f(di) + miss(di) + "\n" +
+        "rectangle average (" + n + "×" + n + " nodes):       " + f(re) + miss(re);
+    };
+    sync(); c.redraw();
+  })();
+
+  /* Figure 12.4: toy scatter of predictors */
+  (function () {
+    var host = document.getElementById("sim-scatter");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.8, maxH: 520 });
+    var v = S.view(c, { xmin: -1, xmax: 1, ymin: -1, ymax: 1, padLeft: 46, padBottom: 30 });
+    var seed = 7, draws = [];
+    var lam = S.slider(wrap, { label: "move size λ", min: 0.1, max: 3, step: 0.05, value: 1.5, digits: 2, oninput: function () { make(); c.redraw(); } });
+    S.button(wrap, "New draws", function () { seed += 1; make(); c.redraw(); });
+    var out = S.readout(wrap);
+    function make() {
+      var R = S.rng(seed), L = lam.get(); draws = [];
+      for (var k = 0; k < 40; k++) {
+        var h = [1.5 * R.n(), 1.5 * R.n()], a = [L * R.n(), L * R.n()], b = [L * R.n(), L * R.n()];
+        var m = [h[0] - (a[0] + b[0]) / 2, h[1] - (a[1] + b[1]) / 2];
+        draws.push({ I: interaction(h, a, b), co: aHb(h, a, b), ce: aHb(m, a, b), di: diagAverage(h, a, b, 5), re: rectAverage(h, a, b, 5) });
+      }
+    }
+    function pearson(key) {
+      var n = draws.length, mx = 0, my = 0, sxy = 0, sxx = 0, syy = 0, i;
+      for (i = 0; i < n; i++) { mx += draws[i][key]; my += draws[i].I; }
+      mx /= n; my /= n;
+      for (i = 0; i < n; i++) { var dx = draws[i][key] - mx, dy = draws[i].I - my; sxy += dx * dy; sxx += dx * dx; syy += dy * dy; }
+      return sxy / Math.sqrt(sxx * syy);
+    }
+    function relL1(key) { var num = 0, den = 0; draws.forEach(function (d) { num += Math.abs(d[key] - d.I); den += Math.abs(d.I); }); return num / den; }
+    c.draw = function () {
+      var M = 1e-6; draws.forEach(function (d) { M = Math.max(M, Math.abs(d.I)); });
+      M *= 1.3;
+      v.set({ xmin: -M, xmax: M, ymin: -M, ymax: M });
+      v.axes({ xlabel: "true interaction I", ylabel: "prediction", grid: true });
+      v.line(-M, -M, M, M, { color: S.col.gray, dash: [5, 4] });
+      function cl(z) { return Math.max(-M, Math.min(M, z)); }
+      draws.forEach(function (d) { v.dot(d.I, cl(d.co), { color: S.col.red, r: 3.5 }); });
+      draws.forEach(function (d) { v.dot(d.I, cl(d.ce), { color: S.col.blue, r: 3.5 }); });
+      draws.forEach(function (d) { v.dot(d.I, cl(d.re), { color: S.col.ink, r: 3.5, hollow: true, width: 1.5 }); });
+      out.textContent = "toy: tiny network, 40 draws, move size λ = " + S.fmt(lam.get(), 2) + "\n" +
+        "predictor                           Pearson r    rel. L1 error\n" +
+        "Hessian at the corner (red)         " + S.fmt(pearson("co"), 3) + "        " + S.fmt(relL1("co"), 3) + "\n" +
+        "Hessian at the centre (blue)        " + S.fmt(pearson("ce"), 3) + "        " + S.fmt(relL1("ce"), 3) + "\n" +
+        "uniform diagonal average, 5 nodes   " + S.fmt(pearson("di"), 3) + "        " + S.fmt(relL1("di"), 3) + "\n" +
+        "rectangle average, 5×5 (black)      " + S.fmt(pearson("re"), 3) + "        " + S.fmt(relL1("re"), 3) + "\n" +
+        "(points outside the frame are drawn on its edge)";
+    };
+    make(); c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

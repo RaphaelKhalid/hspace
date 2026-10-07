@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 1: Variables, functions and graphs</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="1">
+<div class="page">
+
+<h1>Level 1: Variables, functions and graphs</h1>
+<p class="subtitle">A function is a machine: one number in, exactly one number out. A graph is a picture of every input and its output at once.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>say what a variable, a constant and a function are, and read \(f(x)\) aloud correctly;</li>
+<li>put an expression like \(x + 1\) into a function and expand the result, a skill Level 2 needs on every page;</li>
+<li>turn a table of inputs and outputs into a graph, and read a graph back as a table;</li>
+<li>read a straight line \(f(x) = m x + b\) and say what \(m\) and \(b\) do, with their units;</li>
+<li>work with powers, square roots, \(e^x\) and \(\log\), and say what doubling the input does to each;</li>
+<li>read the car's position table and graph, which Levels 2, 3 and 4 use again and again.</li>
+</ul>
+<p class="small">Prerequisites: <a href="00.html">Level 0</a> (quantities with units, rates, and the symbol \(\Delta\) for “change in”).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first. Toy examples with no real-world meaning use pure numbers, and the page says so.</p>
+<div class="tablewrap" style="position: relative">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(x\)</td><td>“x”</td><td>a general input to a function, placed on the horizontal axis</td><td>depends on the example; none (pure number) in toys</td><td>\(x = 3\)</td></tr>
+<tr><td>\(y\)</td><td>“y”</td><td>a general output, placed on the vertical axis</td><td>depends on the example; none (pure number) in toys</td><td>\(y = 9\)</td></tr>
+<tr><td>\(f\)</td><td>“f”</td><td>the name of a function: the machine itself, not a number</td><td>no unit of its own</td><td>\(f(x) = 2x + 1\)</td></tr>
+<tr><td>\(f(x)\)</td><td>“f of x”</td><td>the output of \(f\) when the input is \(x\). It is <i>not</i> \(f\) times \(x\).</td><td>the unit of the output</td><td>\(f(3) = 7\)</td></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>time since the car started</td><td>seconds (s)</td><td>\(t = 4\) s</td></tr>
+<tr><td>\(s\)</td><td>“s”</td><td>the car's position: how far it is past the start line</td><td>metres (m)</td><td>\(s = 16\) m</td></tr>
+<tr><td>\(s(t)\)</td><td>“s of t”</td><td>the car's position at time \(t\)</td><td>metres (m)</td><td>\(s(4) = 16\) m</td></tr>
+<tr><td>\(a\)</td><td>“a”</td><td>the car's acceleration, a constant (explained at Level 3)</td><td>metres per second per second (m/s²)</td><td>\(a = 2\) m/s²</td></tr>
+<tr><td>\(m\)</td><td>“m”</td><td>in a straight line \(f(x) = m x + b\): how much the output goes up for each one-unit step of the input</td><td>output unit per input unit</td><td>\(m = 1.8\) °F per °C</td></tr>
+<tr><td>\(b\)</td><td>“b”</td><td>in \(f(x) = m x + b\): the output when the input is 0</td><td>output unit</td><td>\(b = 32\) °F</td></tr>
+<tr><td>\(c\)</td><td>“c”</td><td>the number in front of \(x^2\) in a parabola \(y = c\,x^2\)</td><td>output unit per (input unit)²; none in toys</td><td>\(c = 0.5\)</td></tr>
+<tr><td>\(\lvert c \rvert\)</td><td>“absolute value of c”</td><td>the size of \(c\), ignoring its sign</td><td>same as \(c\)</td><td>\(\lvert -2 \rvert = 2\)</td></tr>
+<tr><td>\(x^n\)</td><td>“x to the n”</td><td>\(n\) copies of \(x\) multiplied together; \(n\) is the exponent</td><td>the unit of \(x\), to the power \(n\)</td><td>\(3^2 = 9\)</td></tr>
+<tr><td>\(n\)</td><td>“n”</td><td>a whole-number exponent: how many copies are multiplied</td><td>none (pure number)</td><td>\(n = 3\) in \(x^3\)</td></tr>
+<tr><td>\(p,\ q\)</td><td>“p”, “q”</td><td>any two exponents, used to state the rules for powers</td><td>none (pure number)</td><td>\(p = 2,\ q = 3\)</td></tr>
+<tr><td>\(\sqrt{x}\)</td><td>“square root of x”</td><td>the number that is not negative and whose square is \(x\)</td><td>the square root of the unit of \(x\)</td><td>\(\sqrt{49} = 7\)</td></tr>
+<tr><td>\(e\)</td><td>“e”</td><td>Euler's number, a fixed constant</td><td>none (pure number)</td><td>\(e \approx 2.71828\)</td></tr>
+<tr><td>\(e^x\) or \(\exp(x)\)</td><td>“e to the x”, “exp of x”</td><td>the exponential function: for a whole number \(x\), \(x\) copies of \(e\) multiplied together</td><td>none; \(x\) must be a pure number</td><td>\(e^2 \approx 7.389\)</td></tr>
+<tr><td>\(\log(x)\)</td><td>“log of x”</td><td>the natural logarithm: the power you must raise \(e\) to in order to get \(x\)</td><td>none; \(x\) must be a positive pure number</td><td>\(\log(e^2) = 2\)</td></tr>
+<tr><td>\(A(w, d)\)</td><td>“A of w and d”</td><td>area of a rectangular garden bed of width \(w\) and depth \(d\)</td><td>square metres (m²)</td><td>\(A(3, 2) = 6\) m²</td></tr>
+<tr><td>\(w,\ d\)</td><td>“w”, “d”</td><td>width and depth of the garden bed</td><td>metres (m)</td><td>\(w = 3\) m</td></tr>
+<tr><td>\(\Delta\)</td><td>“delta”</td><td>“change in” (from Level 0). \(\Delta s\) is a change in position, not \(\Delta\) times \(s\).</td><td>same as what follows it</td><td>\(\Delta s = 7\) m</td></tr>
+<tr><td>\(\approx\)</td><td>“is approximately”</td><td>equal after rounding</td><td>none</td><td>\(\sqrt{20} \approx 4.47\)</td></tr>
+<tr><td>\(\le\), \(\ge\)</td><td>“is less than or equal to”, “is greater than or equal to”</td><td>\(0 \le t \le 10\) means \(t\) is between 0 and 10, ends included</td><td>none</td><td>\(t \ge 0\)</td></tr>
+<tr><td>\(\cdot\)</td><td>“times”</td><td>multiplication, the same as \(\times\)</td><td>none</td><td>\(2 \cdot 3 = 6\)</td></tr>
+</table>
+</div>
+
+<h2>1.1 Variables and constants</h2>
+<p>A variable is a letter that stands for a quantity that can change. Let \(t\) be the time since a car started moving, in seconds. As the clock runs, \(t\) takes the values 0 s, 1 s, 2.5 s, and so on.</p>
+<p>A constant is a quantity that stays fixed while the variables change. Think back to the taxi of <a href="00.html">Level 0</a>: the fare was a 3 $ start fee plus 2 $ per kilometre. During one ride the distance changes, so distance is a variable. The start fee and the price per kilometre do not change during the ride. They are constants.</p>
+
+<div class="box plain">
+<span class="boxtitle">Intuition pump: labelled jars</span>
+Picture a row of jars on a shelf. Each jar has a label that says what is inside and in what unit: “time, seconds”. A variable is a jar whose contents you may swap. A constant is a jar with the lid glued on. Algebra is just a set of rules for combining jars without opening them.
+</div>
+
+<h3>Mechanics: change one variable, keep the constants</h3>
+<p>Write the taxi fare in words: fare = 3 $ + (2 $/km × distance). Change only the distance, from 4 km to 5 km:</p>
+$$ 3\ \$ + 2\ \tfrac{\$}{\text{km}} \times 4\ \text{km} = 3\ \$ + 8\ \$ = 11\ \$, \qquad 3\ \$ + 2\ \tfrac{\$}{\text{km}} \times 5\ \text{km} = 3\ \$ + 10\ \$ = 13\ \$. $$
+<p>The fare went up by 2 $. The constants did not move. Now do the opposite: keep the distance at 4 km and change a constant, the start fee, from 3 $ to 4 $. The fare becomes 12 $. Every fare, for every distance, goes up by 1 $. That is not a different ride. It is a different taxi company, a different rule.</p>
+<p>So “variable” and “constant” describe roles, not letters. A constant that you are allowed to slide, to compare one rule with another, is called a parameter. On this page \(m\), \(b\) and \(c\) are parameters: fixed inside one example, adjustable between examples.</p>
+
+<div class="box warn">
+<span class="boxtitle">A common mistake</span>
+A letter is not a number until someone says what it stands for and in what unit. On this site every letter is defined, with its unit, before it is used. If you meet one that is not, that is a bug in the page, not a gap in your knowledge.
+</div>
+
+<h2>1.2 Functions: one output for each input</h2>
+<p>A function is a rule that takes an input and gives back exactly one output. The same input always gives the same output.</p>
+<p>We give a function a name, usually a single letter such as \(f\). We write \(f(x)\) for “the output of \(f\) when the input is \(x\)”. Read it aloud as “f of x”. The brackets here are not multiplication. \(f(3)\) means “feed 3 into the machine \(f\)”, not “\(f\) times 3”.</p>
+
+<h3>Worked example: feeding numbers in</h3>
+<p>Let \(f(x) = 2x + 1\). In words: double the input, then add 1. To find an output, replace every \(x\) by the input, in brackets, and then calculate.</p>
+$$ f(3) = 2\cdot(3) + 1 = 6 + 1 = 7. $$
+$$ f(-1) = 2\cdot(-1) + 1 = -2 + 1 = -1. $$
+$$ f(0) = 2\cdot(0) + 1 = 0 + 1 = 1. $$
+<p>Feed in 3 a second time and you get 7 again. A function has no memory and no mood. It does not care how often you ask or what you asked before.</p>
+
+<h3>Worked example: feeding in an expression</h3>
+<p>The input does not have to be a plain number. It can be an expression. This is the single most important skill for <a href="02.html">Level 2</a>, so here it is slowly. Feed \(x + 1\) into the same \(f\):</p>
+$$ f(x+1) = 2\cdot(x+1) + 1. $$
+<p>Multiply out the bracket: \(2\cdot(x+1) = 2x + 2\). Then add the 1:</p>
+$$ f(x+1) = 2x + 2 + 1 = 2x + 3. $$
+<p>Check with a number. Take \(x = 2\). Then \(x + 1 = 3\), and we already know \(f(3) = 7\). The formula gives \(2\cdot 2 + 3 = 7\). They agree. Notice \(f(x+1)\) is <i>not</i> \(f(x) + 1\): that would be \(2x + 2\), which is 6 at \(x = 2\), not 7.</p>
+
+<h3>Real-world examples and non-examples</h3>
+<ul>
+<li><b>A vending machine.</b> Press B4 and you get the same snack every time. Input: a button. Output: a snack. That is a function.</li>
+<li><b>Temperature conversion.</b> A reading in degrees Celsius gives exactly one reading in degrees Fahrenheit. Section 1.5 writes this rule out.</li>
+<li><b>Not a function: a person to “their phone number”.</b> Some people have two numbers. One input, two outputs: the rule breaks.</li>
+<li><b>Not a function, until we fix it: “the number whose square is 9”.</b> Both 3 and −3 work. Section 1.8 shows how the square root is defined to pick just one.</li>
+</ul>
+
+<h3>Allowed inputs</h3>
+<p>Some rules only make sense for some inputs. The car below is only described for \(0 \le t \le 10\) seconds. The set of allowed inputs is called the domain. Feeding in \(t = 12\) s is not wrong arithmetic; it is a question the rule does not answer.</p>
+
+<figure class="sim" id="sim-machine">
+<figcaption><b>Figure 1.1.</b> A function machine. Choose a machine, type an input and press “Feed in”. The left side shows the number going in and the single number coming out. The right side puts a dot at (input, output). Feed in several inputs and watch the dots line up into a graph. Feed in the same input twice: you get the same dot, never a second one. For the car, try an input above 10 s.</figcaption>
+</figure>
+
+<h2>1.3 Graphs, axes and coordinates</h2>
+<p>A graph is a picture of a function. It has two axes. The horizontal axis carries the input; the vertical axis carries the output. Each axis is a number line, and each has a unit.</p>
+<p>A point on the picture is named by two numbers in brackets, its coordinates: \((x, y)\) means “go \(x\) across, then \(y\) up”. Negative numbers go left or down. The point \((0, 0)\), where the axes cross, is the origin.</p>
+<p>The graph of \(f\) is the collection of all points \((x, f(x))\). To draw it by hand, make a table, then plot each row as a dot. For \(f(x) = 2x + 1\):</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>input \(x\)</th><td>−2</td><td>−1</td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><th>output \(f(x) = 2x + 1\)</th><td>−3</td><td>−1</td><td>1</td><td>3</td><td>5</td><td>7</td></tr>
+<tr><th>point</th><td>(−2, −3)</td><td>(−1, −1)</td><td>(0, 1)</td><td>(1, 3)</td><td>(2, 5)</td><td>(3, 7)</td></tr>
+</table>
+</div>
+<p>Six questions, six answers, six dots. Joining them gives a straight line. Every point on that line is one question with its answer.</p>
+
+<div class="box key">
+<span class="boxtitle">The vertical line test</span>
+Because a function gives one output per input, any vertical line crosses its graph at most once. A circle fails this test: the vertical line through its centre crosses it twice, at the top and the bottom. So a circle is not the graph of a function of \(x\).
+</div>
+
+<p>Units belong on the axes too. On the car's graph the horizontal axis reads “\(t\) (s)” and the vertical axis reads “\(s\) (m)”. The point \((4, 16)\) then means: at 4 seconds, the car is 16 metres past the start line.</p>
+
+<h2>1.4 The car: a table and a graph</h2>
+<p>Here is the running example for Levels 1 to 4. A car waits at a start line. At time \(t = 0\) it pulls away with the pedal held steady. Its position, in metres past the start line, is</p>
+$$ s(t) = t^2 \quad \text{metres, for } 0 \le t \le 10 \text{ seconds}. $$
+
+<h3>A unit puzzle, and its answer</h3>
+<p>Look at the units. \(t\) is in seconds, so \(t^2\) is in seconds squared (s²). But \(s\) is in metres. Something is hiding. The full rule is</p>
+$$ s(t) = \left(1\ \tfrac{\text{m}}{\text{s}^2}\right) \cdot t^2 . $$
+<p>Check at \(t = 4\) s: \(\left(1\ \tfrac{\text{m}}{\text{s}^2}\right)\cdot(4\ \text{s})^2 = 1\ \tfrac{\text{m}}{\text{s}^2}\cdot 16\ \text{s}^2 = 16\ \text{m}\). The s² on top cancels the s² underneath, exactly as in Level 0, and metres are left.</p>
+<p>Physicists write the same rule as \(s(t) = \tfrac12 a t^2\), where \(a = 2\ \text{m/s}^2\) is the car's acceleration. Since \(\tfrac12 \cdot 2\ \text{m/s}^2 = 1\ \text{m/s}^2\), it is the same rule. <a href="03.html">Level 3</a> explains what \(a\) means. On this site we write \(s(t) = t^2\) and keep the hidden 1 m/s² in mind.</p>
+
+<h3>The position table</h3>
+<p>Feed in each whole second. The third column is the change in position during the last second, \(\Delta s\). The fourth column is how much that change grew compared with the second before.</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>time \(t\) (s)</th><th>position \(s(t) = t^2\) (m)</th><th>\(\Delta s\) in the last second (m)</th><th>growth of \(\Delta s\) (m)</th></tr>
+<tr><td>0</td><td>0</td><td></td><td></td></tr>
+<tr><td>1</td><td>1</td><td>1 − 0 = 1</td><td></td></tr>
+<tr><td>2</td><td>4</td><td>4 − 1 = 3</td><td>3 − 1 = 2</td></tr>
+<tr><td>3</td><td>9</td><td>9 − 4 = 5</td><td>5 − 3 = 2</td></tr>
+<tr><td>4</td><td>16</td><td>16 − 9 = 7</td><td>2</td></tr>
+<tr><td>5</td><td>25</td><td>9</td><td>2</td></tr>
+<tr><td>6</td><td>36</td><td>11</td><td>2</td></tr>
+<tr><td>7</td><td>49</td><td>13</td><td>2</td></tr>
+<tr><td>8</td><td>64</td><td>15</td><td>2</td></tr>
+<tr><td>9</td><td>81</td><td>17</td><td>2</td></tr>
+<tr><td>10</td><td>100</td><td>19</td><td>2</td></tr>
+</table>
+</div>
+<p>Read the columns one at a time.</p>
+<ol>
+<li><b>The position grows faster and faster.</b> In the first second the car covers 1 m. In the tenth second it covers 19 m. Each second is the same amount of time, but the car covers more ground in each one. It is speeding up.</li>
+<li><b>The steps grow by exactly 2 m each second.</b> 1, 3, 5, 7, … are the odd numbers. Their growth is 2, 2, 2, … every time. <a href="02.html">Level 2</a> turns the steps into a speed. <a href="03.html">Level 3</a> turns the steady growth of 2 into the acceleration, 2 m/s².</li>
+<li><b>Doubling the time quadruples the distance.</b> \(s(5) = 25\) m and \(s(10) = 100\) m. Section 1.6 explains why.</li>
+</ol>
+
+<h3>Mechanics: one more second, at two different times</h3>
+<p>Move \(t\) from 4 s to 5 s. The position goes from 16 m to 25 m: a gain of 9 m. Now move \(t\) from 9 s to 10 s. The position goes from 81 m to 100 m: a gain of 19 m. The same one-second change in the input gives very different changes in the output, depending on where you start. That is what makes this graph a curve and not a straight line.</p>
+<p>A real-world picture: a car pulling away from traffic lights with the pedal held steady covers little ground in the first second and more in each second after. The numbers here are a toy chosen to make the arithmetic clean.</p>
+
+<figure class="sim" id="sim-cartable">
+<figcaption><b>Figure 1.2.</b> The car's table becoming a graph. Press “Next second” to feed in \(t = 0, 1, 2, \dots\) and plot each row as a dot at \((t, s(t))\). The red step shows the last second: 1 s across, \(\Delta s\) metres up. Watch the red step get taller each second, always by 2 m. Tick the box to join the dots with the curve \(s(t) = t^2\).</figcaption>
+</figure>
+
+<h2>1.5 Straight lines: \(f(x) = m x + b\)</h2>
+<p>A linear function has the form</p>
+$$ f(x) = m x + b , $$
+<p>where \(m\) and \(b\) are constants. In words: start at \(b\), then add \(m\) for every one-unit step of the input. Its graph is a straight line.</p>
+
+<h3>Real-world example: Celsius to Fahrenheit</h3>
+<p>Let \(x\) be a temperature in degrees Celsius (°C) and \(f(x)\) the same temperature in degrees Fahrenheit (°F). The rule is</p>
+$$ f(x) = 1.8\,x + 32 . $$
+<p>Here \(m = 1.8\) °F per °C and \(b = 32\) °F. The units matter: \(m\) is a rate, output unit per input unit, and \(b\) is in the output unit. Feed in some numbers:</p>
+$$ f(0) = 1.8\cdot 0 + 32 = 32\ ^\circ\text{F}, \quad f(10) = 18 + 32 = 50\ ^\circ\text{F}, \quad f(20) = 36 + 32 = 68\ ^\circ\text{F}, \quad f(100) = 180 + 32 = 212\ ^\circ\text{F}. $$
+<p>Each step of 10 °C adds 18 °F. Each step of 1 °C adds 1.8 °F, whether you start at freezing or at a hot day.</p>
+
+<h3>Mechanics: why every step adds the same amount</h3>
+<p>Take any input \(x\) and step it up by 1. Feed both into \(f\) and subtract:</p>
+$$ f(x+1) - f(x) = \big(m(x+1) + b\big) - \big(m x + b\big). $$
+<p>Multiply out the first bracket: \(m(x+1) = m x + m\). So</p>
+$$ f(x+1) - f(x) = m x + m + b - m x - b = m . $$
+<p>The \(mx\) cancels and the \(b\) cancels. What is left is \(m\), and \(x\) has vanished. So the gain from one step does not depend on where you start. More generally, for a step of size \(\Delta x\),</p>
+$$ f(x+\Delta x) - f(x) = m(x + \Delta x) + b - m x - b = m\,\Delta x . $$
+<p>This is the defining property of a straight line: equal steps in, equal steps out. To test a table for straightness, look at the steps. The car's table has steps 1, 3, 5, …: not equal, so the car's graph is not a straight line.</p>
+
+<h3>Worked example: a line from two points</h3>
+<p>Suppose you only know two readings: 10 °C is 50 °F, and 30 °C is 86 °F. Find \(m\) by dividing the change in output by the change in input:</p>
+$$ m = \frac{86\ ^\circ\text{F} - 50\ ^\circ\text{F}}{30\ ^\circ\text{C} - 10\ ^\circ\text{C}} = \frac{36\ ^\circ\text{F}}{20\ ^\circ\text{C}} = 1.8\ \frac{^\circ\text{F}}{^\circ\text{C}} . $$
+<p>Then find \(b\) from either point. Using the first: \(50 = 1.8 \cdot 10 + b = 18 + b\), so \(b = 50 - 18 = 32\) °F. That matches the rule above.</p>
+<p>\(m\) has a standard name: the slope. <a href="02.html">Level 2</a> makes “slope” precise as a rate and extends it to curves, where it changes from place to place. \(b\) is called the intercept: where the line crosses the vertical axis, because \(f(0) = m\cdot 0 + b = b\).</p>
+
+<div class="box plain">
+<span class="boxtitle">Intuition pump: a staircase with identical steps</span>
+A straight line is a staircase whose steps are all the same. \(m\) is the rise of each step per unit of floor you cross. \(b\) is the height of the floor you start on. If \(m\) is negative the stairs go down. If \(m = 0\) there are no stairs: a flat floor, and the output never changes.
+</div>
+
+<figure class="sim" id="sim-line">
+<figcaption><b>Figure 1.3.</b> The line \(f(x) = m x + b\) (toy, pure numbers). Drag \(m\) and \(b\). The red step shows one unit across and \(m\) up. Move the step along the line with the third slider: its height never changes. Notice that \(b\) slides the line up and down without tilting it, and \(m\) tilts it about the point \((0, b)\).</figcaption>
+</figure>
+
+<h2>1.6 Powers</h2>
+<p>A power is repeated multiplication. \(x^2 = x \cdot x\) (“x squared”), \(x^3 = x \cdot x \cdot x\) (“x cubed”), and in general \(x^n\) is \(n\) copies of \(x\) multiplied together. The raised number \(n\) is the exponent. Also \(x^1 = x\).</p>
+$$ 3^2 = 3\cdot 3 = 9, \qquad 3^3 = 3\cdot3\cdot3 = 27, \qquad 2^{10} = 1024 . $$
+<p>Signs: \((-2)^2 = (-2)\cdot(-2) = 4\) but \((-2)^3 = (-2)\cdot(-2)\cdot(-2) = -8\). An even power always gives a result that is not negative.</p>
+
+<h3>The rules for powers, each derived</h3>
+<p>Let \(p\) and \(q\) be exponents. Each rule below comes from counting copies.</p>
+<ol>
+<li><b>Multiplying adds exponents:</b> \(x^p \cdot x^q = x^{p+q}\). Example: \(x^2 \cdot x^3 = (x\cdot x)\cdot(x \cdot x \cdot x) = x^5\). Two copies and three copies make five.</li>
+<li><b>A power of a power multiplies exponents:</b> \((x^p)^q = x^{p q}\). Example: \((x^2)^3 = x^2 \cdot x^2 \cdot x^2 = x^{2+2+2} = x^6\).</li>
+<li><b>Exponent zero gives 1:</b> by rule 1, \(x^p \cdot x^0 = x^{p+0} = x^p\). Multiplying by \(x^0\) changed nothing, so \(x^0 = 1\) (for \(x\) not zero).</li>
+<li><b>Negative exponents divide:</b> by rule 1, \(x^1 \cdot x^{-1} = x^0 = 1\). So \(x^{-1} = 1/x\). Likewise \(x^{-2} = 1/x^2\).</li>
+<li><b>Exponent one half is the square root:</b> \(x^{1/2}\cdot x^{1/2} = x^{1/2 + 1/2} = x^1 = x\). So \(x^{1/2}\) is a number whose square is \(x\): the square root of Section 1.8.</li>
+</ol>
+
+<h3>Units get powered too</h3>
+<p>\((3\ \text{m})^2 = 3^2 \cdot \text{m}^2 = 9\ \text{m}^2\), an area. \((2\ \text{m})^3 = 8\ \text{m}^3\), a volume. \((4\ \text{s})^2 = 16\ \text{s}^2\), which is why the car's rule needed the hidden 1 m/s².</p>
+
+<h3>Mechanics: what doubling the input does</h3>
+<p>Replace \(x\) by \(2x\) and use the rules: \((2x)^2 = 2^2 x^2 = 4x^2\) and \((2x)^3 = 2^3 x^3 = 8 x^3\). In general \((2x)^n = 2^n x^n\).</p>
+<ul>
+<li>A square floor tile 2 m on a side has area 4 m². A tile 4 m on a side has area 16 m². Double the side, four times the area.</li>
+<li>A cube box 1 m on a side holds 1 m³. A box 2 m on a side holds 8 m³. Double the side, eight times the volume.</li>
+<li>The car: \(s(5) = 25\) m and \(s(10) = 100\) m. Double the time, four times the distance, because \(s\) is a square.</li>
+</ul>
+<p>A polynomial is a sum of powers, each times a constant, such as \(3x^2 - 2x + 7\). Feed in \(x = 2\): \(3\cdot 4 - 2\cdot 2 + 7 = 12 - 4 + 7 = 15\).</p>
+
+<h2>1.7 Quadratics and the parabola</h2>
+<p>The simplest curve that is not a straight line is \(y = c\,x^2\), where \(c\) is a constant. Its graph is called a parabola. Take \(c = 1\) and make a table:</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(x\)</th><td>−3</td><td>−2</td><td>−1</td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><th>\(y = x^2\)</th><td>9</td><td>4</td><td>1</td><td>0</td><td>1</td><td>4</td><td>9</td></tr>
+</table>
+</div>
+<p>Three things stand out.</p>
+<ol>
+<li><b>It is a U.</b> The lowest point is \((0, 0)\). The turning point of a parabola is called its vertex.</li>
+<li><b>The left half is a mirror image of the right half</b>, because \((-x)^2 = x^2\): \(-2\) and \(2\) give the same output, 4.</li>
+<li><b>Equal steps in \(x\) give growing steps in \(y\)</b>: from \(x = 0\) to 3 the outputs are 0, 1, 4, 9, so the steps are 1, 3, 5. The same odd numbers as the car. The car's graph is this parabola, kept to \(t \ge 0\).</li>
+</ol>
+
+<h3>What \(c\) does</h3>
+<p>\(c\) multiplies every height. With \(c = 2\) every output doubles, so the U is narrower. With \(c = 0.5\) every output halves, so the U is wider. With \(c = -1\) every output flips sign, so the U turns into a cap (∩). A larger \(\lvert c \rvert\) means a narrower curve. With \(c = 0\) the “parabola” is the flat line \(y = 0\).</p>
+
+<h3>Mechanics: the growth of the steps is always \(2c\)</h3>
+<p>Step from \(x\) to \(x + 1\):</p>
+$$ c(x+1)^2 - c\,x^2 = c\,(x^2 + 2x + 1) - c\,x^2 = 2c\,x + c . $$
+<p>(Here \((x+1)^2 = (x+1)(x+1) = x^2 + x + x + 1 = x^2 + 2x + 1\).) The next step, from \(x + 1\) to \(x + 2\), is the same formula with \(x + 1\) in place of \(x\):</p>
+$$ 2c\,(x+1) + c = 2c\,x + 3c . $$
+<p>The difference between the two steps is \((2c\,x + 3c) - (2c\,x + c) = 2c\). So every step is \(2c\) bigger than the one before, wherever you are. For the car, \(c = 1\) m/s² and the growth was 2 m per second, every second. That fixed growth is the bending of the curve. <a href="03.html">Level 3</a> names it curvature and measures it as the second derivative.</p>
+
+<p>A general quadratic adds a straight-line part and a constant, for example \(y = 2x^2 - 3x + 1\). Feed in \(x = -1, 0, 1, 2\): you get \(2 + 3 + 1 = 6\), then \(1\), then \(2 - 3 + 1 = 0\), then \(8 - 6 + 1 = 3\). It is still a parabola, with its vertex moved away from the origin. A ball thrown straight up has a height that follows a downward parabola over time; Level 3 uses one.</p>
+
+<figure class="sim" id="sim-parabola">
+<figcaption><b>Figure 1.4.</b> The parabola \(y = c\,x^2\) (toy, pure numbers). Drag \(c\). The grey dashed curve is \(y = x^2\) for comparison. The dots at \(x = 1, 2, 3\) always sit at heights \(c\), \(4c\) and \(9c\): every height scales together. Make \(c\) negative and the U flips into a cap. Set \(c = 0\) and the bending disappears.</figcaption>
+</figure>
+
+<h2>1.8 Square roots</h2>
+<p>The square root of \(x\), written \(\sqrt{x}\), is the number that is not negative and whose square is \(x\). So \(\sqrt{49} = 7\), because \(7 \cdot 7 = 49\). The number \(-7\) also squares to 49, but the rule picks the one that is not negative, so that \(\sqrt{\ }\) is a function with one output per input.</p>
+<p>Square roots undo squaring, as long as you stay with numbers that are not negative. You cannot take the square root of a negative number and get an ordinary number, because no ordinary number squared is negative.</p>
+
+<h3>Worked example: when does the car reach 49 m?</h3>
+<p>We want \(t\) with \(s(t) = 49\) m. Write it with the hidden unit:</p>
+$$ \left(1\ \tfrac{\text{m}}{\text{s}^2}\right) t^2 = 49\ \text{m} . $$
+<p>Divide both sides by 1 m/s²:</p>
+$$ t^2 = \frac{49\ \text{m}}{1\ \text{m/s}^2} = 49\ \text{m} \cdot \frac{\text{s}^2}{\text{m}} = 49\ \text{s}^2 . $$
+<p>Take the square root of both sides: \(t = \sqrt{49\ \text{s}^2} = 7\ \text{s}\). The negative answer, \(-7\) s, is before the car started, outside the allowed inputs, so we drop it. Check: \(s(7) = 49\) m from the table.</p>
+
+<h3>Real-world example and mechanics</h3>
+<p>A square room has floor area 20 m². Its side is \(\sqrt{20\ \text{m}^2} \approx 4.47\) m. Check: \(4.47 \cdot 4.47 = 19.98\), close to 20.</p>
+<p>Square roots grow slowly. \(\sqrt{1} = 1\), \(\sqrt{100} = 10\), \(\sqrt{10000} = 100\). Multiply the input by 100 and the output is only multiplied by 10. Multiply the input by 4 and the output doubles: \(\sqrt{4x} = \sqrt4 \cdot \sqrt{x} = 2\sqrt{x}\). This is the mirror of Section 1.6, where doubling the input multiplied a square by 4.</p>
+
+<h2>1.9 The exponential and the logarithm</h2>
+<p>These two functions appear later inside the softmax and the log-likelihood that language models use (<a href="14.html">Level 14</a>). Here is just enough to read them.</p>
+
+<h3>Euler's number and \(e^x\)</h3>
+<p>Let \(e\) be the constant \(e \approx 2.71828\). It is called Euler's number. <a href="02.html">Level 2</a> shows why this odd-looking number is the natural choice: \(e^x\) is the one function of this kind whose rate of change equals its own value. The exponential function is \(e^x\), also written \(\exp(x)\).</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(x\)</th><td>−1</td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+<tr><th>\(e^x\)</th><td>≈ 0.3679</td><td>1</td><td>≈ 2.7183</td><td>≈ 7.3891</td><td>≈ 20.0855</td></tr>
+</table>
+</div>
+<p><b>Mechanics.</b> Add 1 to the input and the output is multiplied by \(e\): \(e^{x+1} = e^x \cdot e^1\), by the first rule for powers. So \(e^2 \approx 2.7183 \times 2.7183 \approx 7.389\). More generally \(e^{p+q} = e^p \cdot e^q\). Going left, each step divides by \(e\), so the outputs shrink towards zero but never reach it: \(e^x\) is always positive.</p>
+<p><b>Real-world example.</b> Money in a savings account at 5% a year is multiplied by 1.05 each year, however much is there. Equal steps in time give equal <i>factors</i>, not equal amounts. That is exponential growth. \(e^x\) is the version that multiplies by \(e\) per unit step.</p>
+
+<h3>The logarithm undoes the exponential</h3>
+<p>The natural logarithm \(\log(x)\) answers: “to what power must I raise \(e\) to get \(x\)?”. So</p>
+$$ \log(e^x) = x \quad \text{for every } x, \qquad e^{\log(y)} = y \quad \text{for every positive } y . $$
+<p>Values to remember: \(\log(1) = 0\) because \(e^0 = 1\); \(\log(e) = 1\); \(\log(10) \approx 2.302585\). The log of zero or a negative number does not exist, because \(e^x\) is always positive.</p>
+<p><b>Mechanics: logs turn multiplying into adding.</b> Since \(2 \approx e^{0.693147}\) and \(5 \approx e^{1.609438}\),</p>
+$$ 2 \cdot 5 \approx e^{0.693147}\cdot e^{1.609438} = e^{0.693147 + 1.609438} = e^{2.302585} \approx 10 . $$
+<p>So \(\log(2\cdot 5) = \log 2 + \log 5\). In general, the log of a product is the sum of the logs. This is why log-probabilities are added where probabilities are multiplied.</p>
+
+<div class="box warn">
+<span class="boxtitle">Units: exp and log only accept pure numbers</span>
+There is no such thing as “\(e\) to the power 3 metres”. The rule “each unit step multiplies by \(e\)” needs a count of steps, which is a pure number. Before taking the exp or log of a quantity, divide it by a reference unit: \(\log(\text{price} / 1\ \$)\), not \(\log(\text{price})\).
+</div>
+
+<figure class="sim" id="sim-explog">
+<figcaption><b>Figure 1.5.</b> \(y = e^x\) (blue) and \(y = \log x\) (red) are mirror images across the grey dashed line \(y = x\). Drag \(x\). The blue dot is \((x, e^x)\); swapping its two coordinates gives the red dot \((e^x, x)\), which lies on the log curve. That swap is what “log undoes exp” looks like. Notice the blue curve never touches the horizontal axis, and the red curve only exists to the right of zero.</figcaption>
+</figure>
+
+<h2>1.10 Functions with several inputs: a preview</h2>
+<p>Many functions need more than one input. A rectangular garden bed of width \(w\) metres and depth \(d\) metres has area</p>
+$$ A(w, d) = w \cdot d \quad \text{square metres}. $$
+<p>Feed in \(w = 3\) m and \(d = 2\) m: \(A(3, 2) = 3\ \text{m}\cdot 2\ \text{m} = 6\ \text{m}^2\).</p>
+
+<h3>Mechanics: change one input, hold the other</h3>
+<p>Hold \(d = 2\) m and widen the bed by 1 m: \(A(4, 2) = 8\) m². The area grew by 2 m². Now hold \(d = 5\) m instead and widen by the same 1 m: \(A(3, 5) = 15\) m² becomes \(A(4, 5) = 20\) m², a gain of 5 m².</p>
+<p>The same change in \(w\) did different amounts of good depending on \(d\). The effect of one input depends on the other. Compare the fence around the bed: its total is \(2w + 2d\) metres. Widening by 1 m adds 2 m of fence whatever \(d\) is. The fence is additive; the area is not.</p>
+<p>That difference, “does the effect of one input depend on the other?”, is called interaction. It is the main subject of <a href="06.html">Level 6</a> and the thing H-space is ultimately about. <a href="05.html">Level 5</a> starts with two inputs properly, using a farm whose yield depends on water and fertiliser.</p>
+
+<h2>1.11 Why this matters for H-space</h2>
+<ol>
+<li><b>A language model is a function.</b> With its weights fixed, the same input text gives the same output numbers (up to tiny rounding differences on real hardware, <a href="11.html">Level 11</a>). That is what lets us ask “if I nudge this input, how does that output move?”, which is a derivative (<a href="02.html">Level 2</a>).</li>
+<li><b>It has thousands of inputs.</b> In Qwen3.6-27B, the residual state at one layer is a list of \(5{,}120\) numbers per token (theory-v2 §0). H-space treats one output of the model as a function of those numbers, the way \(A(w, d)\) is a function of two.</li>
+<li><b>Parabolas are the local shape of curvature.</b> The Hessian (<a href="09.html">Level 9</a>) describes, for each direction you could nudge the input, the parabola \(y = c\,x^2\) that the output follows for small nudges. The number \(c\) is half the curvature, as <a href="03.html">Level 3</a> shows.</li>
+<li><b>Exp and log are everywhere at the top.</b> The softmax uses \(e^x\), and v9 measures interactions in nats, which are units of log-likelihood (<a href="14.html">Level 14</a>, <a href="15.html">Level 15</a>).</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="14" data-tol="0.001">
+<p><b>Exercise 1.1.</b> Let \(f(x) = 3x + 2\). What is \(f(4)\)?</p>
+<details><summary>Show answer</summary>
+<p>Replace \(x\) by \((4)\): \(f(4) = 3\cdot(4) + 2 = 12 + 2 = 14\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="3" data-tol="0.001">
+<p><b>Exercise 1.2.</b> Let \(f(x) = x^2 - 2x\). Feed in the expression \(x + 1\) and expand \(f(x+1)\) fully. Then use your formula to find \(f(3)\) (take \(x = 2\)).</p>
+<details><summary>Show answer</summary>
+<p>Replace every \(x\) by \((x+1)\): \(f(x+1) = (x+1)^2 - 2(x+1)\). Expand: \((x+1)^2 = x^2 + 2x + 1\) and \(2(x+1) = 2x + 2\). So \(f(x+1) = x^2 + 2x + 1 - 2x - 2 = x^2 - 1\). At \(x = 2\): \(4 - 1 = 3\). Direct check: \(f(3) = 9 - 6 = 3\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="16" data-tol="0.001" data-unit="m">
+<p><b>Exercise 1.3.</b> How far does the car travel between \(t = 3\) s and \(t = 5\) s?</p>
+<details><summary>Show answer</summary>
+<p>\(\Delta s = s(5) - s(3) = 25\ \text{m} - 9\ \text{m} = 16\ \text{m}\). Check with the table: the steps in the 4th and 5th seconds are 7 m and 9 m, and \(7 + 9 = 16\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1" data-tol="0.001">
+<p><b>Exercise 1.4.</b> A straight line \(f(x) = m x + b\) passes through \((2, 7)\) and \((5, 16)\) (pure numbers). Find \(m\), then enter \(b\).</p>
+<details><summary>Show answer</summary>
+<p>\(m = \dfrac{16 - 7}{5 - 2} = \dfrac{9}{3} = 3\). Then \(7 = 3\cdot 2 + b = 6 + b\), so \(b = 1\). Check the other point: \(3 \cdot 5 + 1 = 16\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="115" data-tol="0.001" data-unit="$">
+<p><b>Exercise 1.5.</b> A plumber charges a 40 $ call-out fee plus 30 $ per hour. Write the cost as \(f(x) = m x + b\) with \(x\) in hours, give the units of \(m\) and \(b\), and find the cost of a 2.5-hour job.</p>
+<details><summary>Show answer</summary>
+<p>\(m = 30\) $ per hour (a rate: output unit per input unit) and \(b = 40\) $ (output unit). \(f(2.5) = 30\ \tfrac{\$}{\text{h}} \cdot 2.5\ \text{h} + 40\ \$ = 75\ \$ + 40\ \$ = 115\ \$\). The hours cancel in the first term.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="9" data-tol="0.001" data-unit="s">
+<p><b>Exercise 1.6.</b> At what time does the car pass the 81 m mark? Keep track of the units.</p>
+<details><summary>Show answer</summary>
+<p>\(\left(1\ \tfrac{\text{m}}{\text{s}^2}\right) t^2 = 81\ \text{m}\), so \(t^2 = 81\ \text{s}^2\) and \(t = \sqrt{81\ \text{s}^2} = 9\ \text{s}\). The other root, \(-9\) s, is outside \(0 \le t \le 10\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="8" data-tol="0.001">
+<p><b>Exercise 1.7.</b> A cube-shaped tank has side 3 m. A second tank has side 6 m. How many times more water does the second tank hold?</p>
+<details><summary>Show answer</summary>
+<p>Volumes: \((3\ \text{m})^3 = 27\ \text{m}^3\) and \((6\ \text{m})^3 = 216\ \text{m}^3\). The ratio is \(216 / 27 = 8\). Without numbers: \((2x)^3 = 2^3 x^3 = 8x^3\). The ratio is a pure number because m³ cancels.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="148.41" data-tol="0.001">
+<p><b>Exercise 1.8.</b> Use the rules for powers to write \(e^2 \cdot e^3\) as a single power of \(e\). Then give its value to two decimal places (use \(e^5 \approx 148.41\) if you need it).</p>
+<details><summary>Show answer</summary>
+<p>Multiplying adds exponents: \(e^2 \cdot e^3 = e^{2+3} = e^5 \approx 148.41\). Check with the table: \(7.3891 \times 20.0855 \approx 148.41\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="6.9078" data-tol="0.001">
+<p><b>Exercise 1.9.</b> Given \(\log(10) \approx 2.302585\), find \(\log(1000)\).</p>
+<details><summary>Show answer</summary>
+<p>\(1000 = 10 \cdot 10 \cdot 10\), and the log of a product is the sum of the logs: \(\log(1000) = 3 \log(10) \approx 3 \times 2.302585 = 6.907755\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="7" data-tol="0.001" data-unit="m²">
+<p><b>Exercise 1.10.</b> A garden bed has depth \(d = 7\) m. By how much does its area \(A(w, d) = w\cdot d\) grow when the width goes from 4 m to 5 m? Would the answer be different if the depth were 2 m? What does that tell you?</p>
+<details><summary>Show answer</summary>
+<p>\(A(5, 7) - A(4, 7) = 35\ \text{m}^2 - 28\ \text{m}^2 = 7\ \text{m}^2\). With \(d = 2\) m the gain is \(10 - 8 = 2\) m². The effect of widening depends on the depth: the two inputs interact. A sum like \(2w + 2d\) would give the same gain from widening at any depth.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  /* The shared glossary defines "position" as a token position (Level 14).
+     On this page it means the car's position, so drop that pop-up here. */
+  Array.prototype.forEach.call(document.querySelectorAll('.g[data-g="position"]'), function (g) {
+    g.parentNode.replaceChild(document.createTextNode(g.textContent), g);
+  });
+
+  function fig(host, aspect, maxH) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    return { wrap: wrap, c: S.canvas(wrap, { aspect: aspect || 0.55, maxH: maxH }) };
+  }
+  function par(x, d) { var s = S.fmt(x, d); return x < 0 ? "(" + s + ")" : s; }
+  function arrowPx(ctx, x1, y1, x2, y2) {
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 9 * Math.cos(ang - 0.4), y2 - 9 * Math.sin(ang - 0.4));
+    ctx.lineTo(x2 - 9 * Math.cos(ang + 0.4), y2 - 9 * Math.sin(ang + 0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  /* Figure 1.1: function machine */
+  (function () {
+    var host = document.getElementById("sim-machine"), F = fig(host, host.clientWidth < 520 ? 0.8 : 0.5), c = F.c, wrap = F.wrap;
+    var M = [
+      { name: "f(x) = 2x + 1", letter: "f", inName: "x", outName: "f", f: function (x) { return 2 * x + 1; },
+        work: function (x) { return "2·" + par(x, 2) + " + 1"; }, lo: -5, hi: 5, r: { xmin: -5, xmax: 5, ymin: -10, ymax: 12 }, xl: "x", yl: "f(x)", ui: "", uo: "", xt: 1, yt: 2 },
+      { name: "f(x) = x²", letter: "f", inName: "x", outName: "f", f: function (x) { return x * x; },
+        work: function (x) { return par(x, 2) + "²"; }, lo: -5, hi: 5, r: { xmin: -5, xmax: 5, ymin: 0, ymax: 26 }, xl: "x", yl: "f(x)", ui: "", uo: "", xt: 1, yt: 5 },
+      { name: "the car: s(t) = t²", letter: "s", inName: "t", outName: "s", f: function (x) { return x * x; },
+        work: function (x) { return par(x, 2) + "²"; }, lo: 0, hi: 10, r: { xmin: 0, xmax: 10, ymin: 0, ymax: 100 }, xl: "t (s)", yl: "s (m)", ui: " s", uo: " m", xt: 1, yt: 10 }
+    ];
+    var ctl = document.createElement("div"); ctl.className = "controls"; wrap.appendChild(ctl);
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = "Machine: ";
+    var sel = document.createElement("select");
+    M.forEach(function (m, i) { var o = document.createElement("option"); o.value = i; o.textContent = m.name; sel.appendChild(o); });
+    lab.appendChild(sel); ctl.appendChild(lab);
+    var lab2 = document.createElement("label"); lab2.className = "nogl"; lab2.textContent = "Input: ";
+    var inp = document.createElement("input"); inp.type = "number"; inp.step = "any"; inp.value = "3"; inp.size = 6;
+    lab2.appendChild(inp); ctl.appendChild(lab2);
+    var dots = [], last = null, msg = "";
+    S.button(wrap, "Feed in", feed);
+    S.button(wrap, "Clear dots", function () { dots = []; last = null; msg = "Dots cleared."; c.redraw(); });
+    var all = S.checkbox(wrap, "show the whole graph", false, function () { c.redraw(); });
+    var out = S.readout(wrap);
+    var v = S.view(c, { xmin: -5, xmax: 5, ymin: -10, ymax: 12, padLeft: 40, padBottom: 26, padTop: 16 });
+    function feed() {
+      var m = M[+sel.value], x = parseFloat(String(inp.value).replace("−", "-"));
+      if (!isFinite(x)) { msg = "Type a number first."; c.redraw(); return; }
+      if (x < m.lo || x > m.hi) {
+        last = { x: x, y: null };
+        msg = m.inName + " = " + S.fmt(x, 2) + m.ui + " is outside the allowed inputs (" + m.lo + " to " + m.hi + m.ui + ").\n" +
+          (m.letter === "s" ? "The rule only describes the car for 0 ≤ t ≤ 10 s, so no dot is drawn." : "This picture only shows inputs from −5 to 5.");
+        c.redraw(); return;
+      }
+      var y = m.f(x), again = dots.some(function (d) { return Math.abs(d[0] - x) < 1e-12; });
+      if (!again) dots.push([x, y]);
+      last = { x: x, y: y };
+      msg = "input " + m.inName + " = " + S.fmt(x, 2) + m.ui + "  →  " + m.letter + "(" + S.fmt(x, 2) + ") = " + m.work(x) + " = " + S.fmt(y, 2) + m.uo + "\n" +
+        "dot at (" + S.fmt(x, 2) + ", " + S.fmt(y, 2) + ")" +
+        (again ? "   You fed in this input before: same output, same dot." : "   (" + dots.length + " dot" + (dots.length > 1 ? "s" : "") + " so far)");
+      c.redraw();
+    }
+    sel.addEventListener("change", function () {
+      var m = M[+sel.value]; dots = []; last = null;
+      inp.value = m.letter === "s" ? "4" : "3";
+      msg = "New machine: " + m.name + ". Dots cleared."; c.redraw();
+    });
+    inp.addEventListener("keydown", function (e) { if (e.key === "Enter") feed(); });
+    c.draw = function () {
+      var m = M[+sel.value], ctx = c.ctx, LW = Math.round(c.W * 0.3), H = c.H;
+      /* machine on the left */
+      ctx.strokeStyle = S.col.ink; ctx.fillStyle = S.col.ink; ctx.lineWidth = 1.5; ctx.setLineDash([]);
+      var bx = LW * 0.2, bw = LW * 0.6, by = H * 0.36, bh = H * 0.26;
+      ctx.strokeRect(bx, by, bw, bh);
+      ctx.font = 'italic 26px "Times New Roman", Times, serif'; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(m.letter, LW * 0.5, by + bh / 2);
+      ctx.font = S.fontSmall; ctx.fillText("machine", LW * 0.5, by + bh + 12);
+      ctx.strokeStyle = S.col.blue; ctx.fillStyle = S.col.blue;
+      arrowPx(ctx, LW * 0.5, H * 0.13, LW * 0.5, by - 2);
+      ctx.strokeStyle = S.col.red; ctx.fillStyle = S.col.red;
+      arrowPx(ctx, LW * 0.5, by + bh + 22, LW * 0.5, H * 0.86);
+      ctx.font = S.font; ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = S.col.blue;
+      ctx.fillText("in: " + (last ? S.fmt(last.x, 2) + m.ui : "?"), LW * 0.5, H * 0.1);
+      ctx.fillStyle = S.col.red;
+      ctx.fillText("out: " + (last ? (last.y == null ? "none" : S.fmt(last.y, 2) + m.uo) : "?"), LW * 0.5, H * 0.95);
+      /* graph on the right */
+      var r = m.r;
+      v.set({ xmin: r.xmin, xmax: r.xmax, ymin: r.ymin, ymax: r.ymax, left: LW, width: c.W - LW });
+      v.axes({ xlabel: m.xl, ylabel: m.yl, xticks: m.xt, yticks: m.yt });
+      if (all.get()) v.fn(m.f, { color: S.col.gray, width: 1.2, from: m.lo, to: m.hi });
+      dots.forEach(function (d) { v.dot(d[0], d[1], { color: S.col.blue, r: 4 }); });
+      if (last && last.y != null) v.dot(last.x, last.y, { color: S.col.red, r: 5.5 });
+      out.textContent = msg || "Type an input and press Feed in.";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 1.2: the car's table becomes a graph */
+  (function () {
+    var F = fig(document.getElementById("sim-cartable"), 0.55), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: 0, xmax: 10.5, ymin: 0, ymax: 105, padLeft: 44, padBottom: 28, padTop: 16 });
+    var k = -1, timer = null;
+    S.button(wrap, "Next second", function () { clearInterval(timer); step(); });
+    S.button(wrap, "Play", function () {
+      clearInterval(timer);
+      if (k >= 10) k = -1;
+      step();
+      timer = setInterval(function () { if (k >= 10) { clearInterval(timer); return; } step(); }, 700);
+    });
+    S.button(wrap, "Reset", function () { clearInterval(timer); k = -1; c.redraw(); });
+    var curve = S.checkbox(wrap, "join the dots with the curve s(t) = t²", false, function () { c.redraw(); });
+    var out = S.readout(wrap);
+    function step() { if (k < 10) k++; c.redraw(); }
+    c.draw = function () {
+      v.axes({ xlabel: "t (s)", ylabel: "s (m)", xticks: 1, yticks: 10 });
+      if (curve.get() && k > 0) v.fn(function (t) { return t * t; }, { color: S.col.gray, width: 1.2, from: 0, to: k });
+      for (var i = 0; i <= k; i++) v.dot(i, i * i, { color: i === k ? S.col.red : S.col.blue, r: i === k ? 5.5 : 4 });
+      if (k >= 1) {
+        var p = (k - 1) * (k - 1), q = k * k;
+        v.line(k - 1, p, k, p, { color: S.col.red, dash: [4, 3] });
+        v.line(k, p, k, q, { color: S.col.red, width: 2.5 });
+        v.text("+" + (q - p) + " m", k, (p + q) / 2, { dx: 6, color: S.col.red, font: S.fontSmall, baseline: "middle" });
+        v.text("1 s", k - 0.5, p, { dy: 14, align: "center", color: S.col.red, font: S.fontSmall });
+      }
+      if (k < 0) { out.textContent = "Press Next second to feed in t = 0 s."; return; }
+      var line1 = "t = " + k + " s:  s(" + k + ") = " + k + "² = " + (k * k) + " m";
+      var line2 = k >= 1 ? "in the last second the car moved s(" + k + ") − s(" + (k - 1) + ") = " + (k * k) + " − " + ((k - 1) * (k - 1)) + " = " + (2 * k - 1) + " m" : "the car is at the start line";
+      var line3 = k >= 2 ? "the second before, it moved " + (2 * k - 3) + " m: this step is " + (2 * k - 1) + " − " + (2 * k - 3) + " = 2 m bigger" : "";
+      out.textContent = line1 + "\n" + line2 + (line3 ? "\n" + line3 : "");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 1.3: the straight line f(x) = m x + b */
+  (function () {
+    var F = fig(document.getElementById("sim-line"), 0.6), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: -5, xmax: 5, ymin: -10, ymax: 10, padLeft: 30, padBottom: 26, padTop: 14 });
+    var redraw = function () { c.redraw(); };
+    var m = S.slider(wrap, { label: "m", min: -3, max: 3, step: 0.1, value: 1.5, digits: 1, oninput: redraw });
+    var b = S.slider(wrap, { label: "b", min: -5, max: 5, step: 0.5, value: 2, digits: 1, oninput: redraw });
+    var x0 = S.slider(wrap, { label: "step at x", min: -4, max: 3, step: 0.5, value: 1, digits: 1, oninput: redraw });
+    var out = S.readout(wrap);
+    function rule(M, B) { return S.fmt(M, 1) + "·x " + (B < 0 ? "− " + S.fmt(-B, 1) : "+ " + S.fmt(B, 1)); }
+    c.draw = function () {
+      var M = m.get(), B = b.get(), X = x0.get();
+      var f = function (x) { return M * x + B; };
+      v.axes({ xlabel: "x", ylabel: "f(x)", xticks: 1, yticks: 2 });
+      v.fn(f, { color: S.col.blue, width: 2 });
+      v.dot(0, B, { color: S.col.ink });
+      v.text("(0, b)", 0, B, { dx: -8, dy: -8, align: "right", font: S.fontSmall });
+      v.line(X, f(X), X + 1, f(X), { color: S.col.red, dash: [4, 3] });
+      v.line(X + 1, f(X), X + 1, f(X + 1), { color: S.col.red, width: 2.5 });
+      v.text("+1", X + 0.5, f(X), { align: "center", dy: M >= 0 ? 15 : -6, color: S.col.red, font: S.fontSmall });
+      v.text("+m = " + S.fmt(M, 1), X + 1, f(X) + M / 2, { dx: 6, color: S.col.red, font: S.fontSmall, baseline: "middle" });
+      v.dot(X, f(X), { color: S.col.blue }); v.dot(X + 1, f(X + 1), { color: S.col.blue });
+      out.textContent =
+        "f(x) = m·x + b = " + rule(M, B) + "\n" +
+        "f(" + S.fmt(X, 1) + ") = " + S.fmt(M, 1) + "·" + par(X, 1) + (B < 0 ? " − " + S.fmt(-B, 1) : " + " + S.fmt(B, 1)) + " = " + S.fmt(f(X), 2) +
+        "     f(" + S.fmt(X + 1, 1) + ") = " + S.fmt(f(X + 1), 2) + "\n" +
+        "step: f(" + S.fmt(X + 1, 1) + ") − f(" + S.fmt(X, 1) + ") = " + S.fmt(f(X + 1) - f(X), 2) + " = m, wherever the step starts\n" +
+        "f(0) = b = " + S.fmt(B, 1);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 1.4: the parabola y = c x^2 */
+  (function () {
+    var F = fig(document.getElementById("sim-parabola"), 0.6), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: -4, xmax: 4, ymin: -20, ymax: 20, padLeft: 34, padBottom: 26, padTop: 14 });
+    var cc = S.slider(wrap, { label: "c", min: -2, max: 2, step: 0.1, value: 1, digits: 1, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var C = cc.get();
+      v.axes({ xlabel: "x", ylabel: "y", xticks: 1, yticks: 5 });
+      v.fn(function (x) { return x * x; }, { color: S.col.gray, dash: [5, 4], width: 1.2 });
+      v.fn(function (x) { return C * x * x; }, { color: S.col.blue, width: 2 });
+      [1, 2, 3].forEach(function (x) {
+        v.dot(x, C * x * x, { color: S.col.red });
+        v.text((x === 1 ? "" : x * x) + "c", x, C * x * x, { dx: 8, dy: C >= 0 ? -6 : 14, color: S.col.red, font: S.fontSmall });
+      });
+      v.dot(-2, 4 * C, { color: S.col.red, hollow: true });
+      if (Math.abs(C) < 1e-9) {
+        out.textContent = "c = 0: y = 0·x² = 0 for every x. A flat line: no bending at all.";
+        return;
+      }
+      out.textContent =
+        "y = c·x² with c = " + S.fmt(C, 1) + "\n" +
+        "x = 1: y = " + S.fmt(C, 1) + "·1 = " + S.fmt(C, 2) + "\n" +
+        "x = 2: y = " + S.fmt(C, 1) + "·4 = " + S.fmt(4 * C, 2) + "   (4 times the height at x = 1)\n" +
+        "x = 3: y = " + S.fmt(C, 1) + "·9 = " + S.fmt(9 * C, 2) + "   (9 times)\n" +
+        "mirror: x = −2 gives " + S.fmt(4 * C, 2) + " too (hollow dot), because (−2)² = 4. " + (C > 0 ? "Opens up: a U." : "Opens down: a cap.");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 1.5: exp and log are mirror images */
+  (function () {
+    var F = fig(document.getElementById("sim-explog"), 0.75, 700), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: -3, xmax: 6, ymin: -3, ymax: 6, padLeft: 30, padBottom: 26, padTop: 14 });
+    var xs = S.slider(wrap, { label: "x", min: -1.5, max: 1.5, step: 0.05, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      /* equal scale on both axes, so the mirror really is a mirror */
+      var b = v.box(), span = 9, ySpan = span * (b.b - b.t) / (b.r - b.l);
+      v.set({ ymin: 1.4 - ySpan / 2, ymax: 1.4 + ySpan / 2 });
+      var X = xs.get(), Y = Math.exp(X);
+      v.axes({ xlabel: "x", ylabel: "y", xticks: 1, yticks: 1 });
+      v.fn(function (x) { return x; }, { color: S.col.gray, dash: [5, 4], width: 1 });
+      v.fn(Math.exp, { color: S.col.blue, width: 2 });
+      v.fn(function (x) { return x > 0 ? Math.log(x) : NaN; }, { color: S.col.red, width: 2, from: 0.001 });
+      v.line(X, Y, Y, X, { color: S.col.gray, dash: [2, 3] });
+      v.dot(X, Y, { color: S.col.blue }); v.dot(Y, X, { color: S.col.red });
+      v.text("y = eˣ", 1.2, Math.exp(1.2), { dx: 6, color: S.col.blue, baseline: "middle" });
+      v.text("y = log x", 5.2, Math.log(5.2), { dy: -8, align: "center", color: S.col.red });
+      v.text("y = x", -1.6, -1.6, { dx: 8, color: S.col.gray, font: S.fontSmall });
+      out.textContent =
+        "blue dot: x = " + S.fmt(X, 2) + ",  e^x = e^" + S.fmt(X, 2) + " = " + S.fmt(Y, 4) + "\n" +
+        "red dot (coordinates swapped): (" + S.fmt(Y, 4) + ", " + S.fmt(X, 2) + "), and log(" + S.fmt(Y, 4) + ") = " + S.fmt(Math.log(Y), 2) + "\n" +
+        "one more unit of x multiplies by e: e^" + S.fmt(X + 1, 2) + " = " + S.fmt(Y, 4) + " × 2.7183 = " + S.fmt(Math.exp(X + 1), 4);
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+/* H-space explainer. Plain 2001-style page: white, Times, blue links. */
+
+:root {
+  --ink: #000;
+  --paper: #fff;
+  --rule: #000;
+  --soft: #f4f4f4;
+  --mid: #888;
+  --link: #0000ee;
+  --visited: #551a8b;
+  --blue: #0000cc;
+  --red: #cc0000;
+  --green: #007700;
+}
+
+html { background: var(--paper); }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Times New Roman", Times, serif;
+  font-size: 18px;
+  line-height: 1.45;
+  margin: 0;
+  padding: 0 16px 48px;
+  overflow-wrap: break-word;
+}
+.page { max-width: 46em; margin: 0 auto; }
+
+a { color: var(--link); }
+a:visited { color: var(--visited); }
+
+h1 { font-size: 2em; margin: 0.6em 0 0.2em; font-weight: bold; }
+h2 { font-size: 1.45em; margin: 1.6em 0 0.4em; border-bottom: 1px solid var(--rule); }
+h3 { font-size: 1.15em; margin: 1.3em 0 0.3em; }
+h1 + .subtitle { margin-top: 0; font-style: italic; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 1.5em 0; }
+p, li { margin: 0.55em 0; }
+code { font-family: "Courier New", Courier, monospace; font-size: 0.92em; }
+
+/* top bar */
+.topbar {
+  font-size: 15px;
+  border-bottom: 1px solid var(--rule);
+  padding: 6px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: center;
+  max-width: 46em;
+  margin: 0 auto;
+}
+.topbar .spacer { flex: 1; }
+.topbar label { cursor: pointer; white-space: nowrap; }
+
+/* prev / next */
+.nav { font-size: 16px; margin: 1em 0; text-align: center; }
+.nav.bottom { border-top: 1px solid var(--rule); padding-top: 0.8em; margin-top: 2.5em; }
+
+/* boxes */
+.box {
+  border: 1px solid var(--rule);
+  padding: 0.5em 0.9em;
+  margin: 1em 0;
+}
+.box > .boxtitle { font-weight: bold; display: block; margin-bottom: 0.2em; }
+.box.plain { background: var(--soft); }
+.box.key { border-width: 2px; }
+.box.warn { border-style: dashed; }
+.goals { font-size: 0.97em; }
+
+/* tables */
+table { border-collapse: collapse; margin: 0.8em 0; font-size: 0.95em; }
+th, td { border: 1px solid var(--mid); padding: 4px 8px; vertical-align: top; text-align: left; }
+th { background: var(--soft); }
+.tablewrap { overflow-x: auto; max-width: 100%; position: relative; }
+table.symbols td:first-child { white-space: nowrap; text-align: center; }
+
+/* math */
+.katex { font-size: 1.05em; position: relative; }
+/* keep KaTeX's hidden MathML copy from widening the page on phones */
+.katex .katex-mathml { left: 0; top: 0; }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+
+/* glossary terms */
+.g { border-bottom: 1px dotted var(--ink); cursor: help; }
+.g:focus { outline: 1px solid var(--blue); }
+body.nogloss .g { border-bottom: 0; cursor: auto; }
+#gpop {
+  position: absolute;
+  z-index: 50;
+  display: none;
+  max-width: 22em;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--mid);
+  padding: 0.45em 0.7em;
+  font-size: 16px;
+  line-height: 1.35;
+}
+#gpop .gt { font-weight: bold; }
+#gpop .gl { font-size: 14px; margin-top: 0.35em; }
+
+/* simulations */
+figure.sim {
+  border: 1px solid var(--rule);
+  margin: 1.2em 0;
+  padding: 10px;
+}
+figure.sim canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  background: var(--paper);
+}
+figure.sim figcaption { font-size: 0.95em; margin-top: 0.5em; }
+figure.sim figcaption b:first-child { margin-right: 0.3em; }
+.controls { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; font-size: 16px; align-items: center; }
+.controls .ctl { display: flex; align-items: center; gap: 6px; min-width: 14em; flex: 1 1 14em; }
+.controls .ctl label { white-space: nowrap; }
+.controls .ctl input[type=range] { flex: 1; min-width: 6em; }
+.controls .ctl .val { font-family: "Courier New", Courier, monospace; min-width: 6.5em; font-size: 15px; }
+.readout { font-family: "Courier New", Courier, monospace; font-size: 15px; margin-top: 6px; white-space: pre-wrap; }
+button { font-family: inherit; font-size: 16px; }
+
+/* exercises */
+.ex { border-top: 1px solid var(--mid); padding: 0.4em 0 0.6em; margin: 1em 0; }
+.ex .check { margin: 0.4em 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ex .check input { font-family: inherit; font-size: 16px; width: 8em; }
+.ex .verdict { font-style: italic; }
+.ex details { margin-top: 0.3em; }
+.ex summary { cursor: pointer; color: var(--link); text-decoration: underline; }
+
+/* footer */
+.footer { font-size: 14px; color: #333; text-align: center; margin-top: 2em; }
+.small { font-size: 0.9em; }
+.center { text-align: center; }
+
+@media (max-width: 600px) {
+  body { font-size: 17px; }
+  h1 { font-size: 1.6em; }
+  .controls .ctl { min-width: 100%; }
+}

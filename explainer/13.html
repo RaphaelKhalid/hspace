@@ -1,0 +1,892 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 13: Statistics of many directions</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="13">
+<div class="page">
+
+<h1>Level 13: Statistics of many directions</h1>
+<p class="subtitle">One measurement is a number. Many measurements of a vector have a shape: a centre, a spread, and a few preferred directions. This level is about measuring that shape, and about not fooling yourself while you do it.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>compute a mean, a variance, a covariance and a covariance matrix by hand, with units;</li>
+<li>find the directions of most spread (PCA) and say how many directions matter (participation ratio);</li>
+<li>whiten data, and say what “a 1σ move” means in many dimensions;</li>
+<li>compare two subspaces with the overlap score, and know its random baseline \(k/d\);</li>
+<li>explain why heavy tails break split-half reproducibility, and why trimming repairs it;</li>
+<li>explain why random ±1 signs make cross terms cancel on average (Hutchinson's idea);</li>
+<li>run a randomization test, read a p-value and a confidence interval, and say why a test is frozen before the data exist.</li>
+</ul>
+<p class="small">Prerequisites: <a href="07.html">Level 7</a> (vectors, dot product, outer product, projection), <a href="09.html">Level 9</a> (eigenvectors and eigenvalues of a symmetric matrix, the quadratic form), <a href="06.html">Level 6</a> (the 2×2 interaction and 1σ moves) and <a href="11.html">Level 11</a> (why we can only afford matrix-vector products, never whole matrices).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every symbol used below is listed here first. Vectors are bold lower case (\(\mathbf{x}\)), as in Levels 5 to 12. Careful with one letter: \(\Sigma\) (capital sigma) is the covariance matrix, while \(\sum\) is the sum sign. In displayed equations the sum sign is bigger and carries limits above and below it.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(X\), \(Y\)</td><td>“capital x”, “capital y”</td><td>random variables: quantities whose value depends on which item chance picks</td><td>whatever it measures</td><td>height of a random student, in cm</td></tr>
+<tr><td>\(x_i\)</td><td>“x sub i”</td><td>the \(i\)-th observed value (sample) of \(X\)</td><td>same as \(X\)</td><td>\(x_1 = 160\) cm</td></tr>
+<tr><td>\(y_i\), \(\bar y\)</td><td>“y i”, “y bar”</td><td>in 13.3: the \(i\)-th arm span and the mean arm span (in 13.11 and Figure 13.5, the second variable of a pair)</td><td>cm</td><td>\(y_1 = 158\) cm</td></tr>
+<tr><td>\(c\)</td><td>“c”</td><td>any fixed number</td><td>any</td><td>\(c = 2\)</td></tr>
+<tr><td>\(n\)</td><td>“n”</td><td>number of samples</td><td>none (pure number)</td><td>\(n = 5\) students</td></tr>
+<tr><td>\(\sum_{i=1}^{n}\)</td><td>“sum over i from 1 to n”</td><td>add up the expression for \(i = 1, 2, \dots, n\)</td><td>same as what is summed</td><td>\(\sum_{i=1}^{3} i = 6\)</td></tr>
+<tr><td>\(\bar{x}\)</td><td>“x bar”</td><td>sample mean: \(\frac1n\sum_i x_i\)</td><td>same as \(X\)</td><td>\(\bar{x} = 170\) cm</td></tr>
+<tr><td>\(\mathbb{E}[\cdot]\)</td><td>“expectation of”</td><td>the mean over the whole population (every possible draw, weighted by its probability), not one sample</td><td>same as what is inside</td><td>\(\mathbb{E}[X] = \mu\)</td></tr>
+<tr><td>\(\mu\)</td><td>“mu”</td><td>the true mean \(\mathbb{E}[X]\)</td><td>same as \(X\)</td><td>\(\mu \approx 170\) cm</td></tr>
+<tr><td>\(\sigma^2\), \(\operatorname{Var}(X)\)</td><td>“sigma squared”, “variance of X”</td><td>mean squared distance from the mean</td><td>unit of \(X\), squared</td><td>\(50\ \text{cm}^2\)</td></tr>
+<tr><td>\(\sigma\), \(\sigma_x\)</td><td>“sigma”, “sigma x”</td><td>standard deviation \(\sqrt{\sigma^2}\): the typical size of a deviation (the subscript names the variable)</td><td>unit of \(X\)</td><td>\(7.07\) cm</td></tr>
+<tr><td>\(N(\mu, \sigma^2)\)</td><td>“normal mu sigma squared”</td><td>the Gaussian (bell curve) with mean \(\mu\) and variance \(\sigma^2\)</td><td>none (a name of a distribution)</td><td>\(N(0, 1)\)</td></tr>
+<tr><td>\(\operatorname{Cov}(X, Y)\)</td><td>“covariance of X and Y”</td><td>\(\mathbb{E}[(X - \mu_X)(Y - \mu_Y)]\): do X and Y rise together?</td><td>unit of X × unit of Y</td><td>\(52\ \text{cm}^2\)</td></tr>
+<tr><td>\(r\)</td><td>“r”</td><td>correlation: covariance divided by both standard deviations</td><td>none (pure number), between −1 and 1</td><td>\(r = 0.976\)</td></tr>
+<tr><td>\(\mathbf{x}\), \(\mathbf{x}_i\), \(\bar{\mathbf{x}}\)</td><td>“bold x”, “x i”, “x bar”</td><td>one sample that is a vector of \(d\) numbers; the \(i\)-th such sample; their sample mean vector</td><td>unit of the components</td><td>(height, arm span) = (160, 158) cm</td></tr>
+<tr><td>\(d\)</td><td>“d”</td><td>number of components (the dimension)</td><td>none (pure number)</td><td>\(d = 2\); in the 27B model \(d = 5{,}120\)</td></tr>
+<tr><td>\(\boldsymbol{\mu}\)</td><td>“bold mu”</td><td>mean vector \(\mathbb{E}[\mathbf{x}]\)</td><td>unit of the components</td><td>(170, 170) cm</td></tr>
+<tr><td>\(\Sigma\), \(\Sigma_{ij}\), \(\Sigma_{\text{shrunk}}\)</td><td>“capital sigma”</td><td>covariance matrix, \(d \times d\); its entry \(\Sigma_{ij} = \operatorname{Cov}(x_i, x_j)\) (here \(x_i\) is component \(i\)); the shrunk version of 13.6</td><td>products of component units</td><td>\(\begin{pmatrix}50 & 52\\ 52 & 56.8\end{pmatrix}\ \text{cm}^2\)</td></tr>
+<tr><td>\(\mathbf{u}\)</td><td>“bold u”</td><td>a unit direction, \(\lVert \mathbf{u} \rVert = 1\)</td><td>none (pure number)</td><td>\((1, 1)/\sqrt2\)</td></tr>
+<tr><td>\(\mathbf{v}_i\), \(\lambda_i\)</td><td>“v i”, “lambda i”</td><td>\(i\)-th eigenvector of \(\Sigma\) (the \(i\)-th PCA axis) and its eigenvalue (variance along that axis), sorted \(\lambda_1 \ge \lambda_2 \ge \dots\)</td><td>\(\mathbf{v}_i\): none; \(\lambda_i\): same as \(\Sigma\)</td><td>\(\lambda_1 = 105.5\ \text{cm}^2\)</td></tr>
+<tr><td>\(c_1, c_2\)</td><td>“c one”, “c two”</td><td>components of an eigenvector while we solve for it</td><td>none</td><td>\(c_2/c_1 = 1.0675\)</td></tr>
+<tr><td>\(\det\), \(\operatorname{diag}(\dots)\)</td><td>“determinant”, “diagonal matrix of”</td><td>determinant (<a href="07.html">Level 7</a>); a matrix with the listed numbers on its diagonal and zeros elsewhere</td><td>none</td><td>\(\operatorname{diag}(1, 2)\)</td></tr>
+<tr><td>\(P\), \(\Lambda\)</td><td>“capital p”, “capital lambda”</td><td>\(P\) has the eigenvectors as columns; \(\Lambda\) is the diagonal matrix of eigenvalues; \(\Sigma = P \Lambda P^\top\)</td><td>\(P\): none; \(\Lambda\): same as \(\Sigma\)</td><td>\(\Lambda = \operatorname{diag}(105.5, 1.29)\)</td></tr>
+<tr><td>\(\operatorname{PR}\)</td><td>“participation ratio”</td><td>\((\sum_i \lambda_i)^2 / \sum_i \lambda_i^2\): roughly how many directions carry the spread</td><td>none (pure number)</td><td>\(\operatorname{PR} = 1.02\)</td></tr>
+<tr><td>\(\Sigma^{1/2}\), \(\Sigma^{-1/2}\)</td><td>“sigma to the half”, “to the minus half”</td><td>matrix square root of \(\Sigma\) and its inverse: \(P\Lambda^{1/2}P^\top\) and \(P\Lambda^{-1/2}P^\top\)</td><td>unit of the components, and its reciprocal</td><td>see 13.6</td></tr>
+<tr><td>\(H\), \(\tilde H\)</td><td>“H”, “H tilde”</td><td>a Hessian (<a href="09.html">Level 9</a>) and its whitened version \(\Sigma^{1/2}H\Sigma^{1/2}\), previewed in 13.6</td><td>output per input²; \(\tilde H\): output per (natural move)²</td><td>Level 15</td></tr>
+<tr><td>\(\mathbf{z}\)</td><td>“bold z”</td><td>whitened coordinates \(\Sigma^{-1/2}(\mathbf{x} - \boldsymbol{\mu})\)</td><td>none (counts standard deviations)</td><td>\((-0.46, -1.65)\)</td></tr>
+<tr><td>\(\Delta\mathbf{x}\)</td><td>“delta bold x”</td><td>a move (a change of the vector)</td><td>unit of the components</td><td>\((5, -5)\) cm</td></tr>
+<tr><td>\(I\)</td><td>“identity”</td><td>identity matrix: ones on the diagonal, zeros elsewhere</td><td>none</td><td>covariance of whitened data</td></tr>
+<tr><td>\(k\)</td><td>“k”</td><td>number of directions kept in a subspace</td><td>none (pure number)</td><td>\(k = 25\)</td></tr>
+<tr><td>\(Q\), \(Q'\)</td><td>“capital q”, “q prime”</td><td>\(d \times k\) matrices whose columns are orthonormal bases of two subspaces</td><td>none</td><td>top-25 PCA axes</td></tr>
+<tr><td>\(\mathbf{q}_i\), \(\mathbf{q}'_j\)</td><td>“q i”, “q prime j”</td><td>column \(i\) of \(Q\) and column \(j\) of \(Q'\)</td><td>none (unit vectors)</td><td>\(\mathbf{q}_1 = \mathbf{e}_1\)</td></tr>
+<tr><td>\(\mathbf{a}\), \(\mathbf{b}\)</td><td>“bold a”, “bold b”</td><td>two unit vectors spanning two lines (13.7)</td><td>none</td><td>at \(30^\circ\)</td></tr>
+<tr><td>\(\operatorname{ov}(Q, Q')\)</td><td>“overlap”</td><td>subspace overlap: mean squared cosine, \(\lVert Q^\top Q' \rVert_F^2 / k\)</td><td>none, between 0 and 1</td><td>random baseline \(k/d\)</td></tr>
+<tr><td>\(\lVert M \rVert_F\)</td><td>“Frobenius norm of M”</td><td>square root of the sum of squares of all entries of a matrix (Level 9)</td><td>same as the entries</td><td>\(\lVert I \rVert_F = \sqrt2\) for the 2×2 identity</td></tr>
+<tr><td>\(\theta\)</td><td>“theta”</td><td>angle between two directions</td><td>degrees</td><td>\(30^\circ\)</td></tr>
+<tr><td>\(\mathbf{e}_i\)</td><td>“e i”</td><td>the \(i\)-th standard basis vector (1 in place \(i\), 0 elsewhere)</td><td>none</td><td>\(\mathbf{e}_1 = (1, 0, 0)\)</td></tr>
+<tr><td>\(a_i\), \(a_w\)</td><td>“a i”, “a w”</td><td>size (energy or weight) carried by row \(i\), or by item \(w\) in importance sampling</td><td>depends on context</td><td>row energy \(\lVert\mathbf{x}_i\rVert^2\)</td></tr>
+<tr><td>\(n_{\text{eff}}\)</td><td>“n effective”</td><td>effective sample size \((\sum_i a_i)^2 / \sum_i a_i^2\)</td><td>none (a count)</td><td>3 out of 16,384</td></tr>
+<tr><td>\(s_i\), \(\mathbf{s}\), \(\mathbf{s}'\)</td><td>“s i”, “bold s”, “s prime”</td><td>a Rademacher sign (+1 or −1, each with probability ½); a vector of independent ones; a second, independent sign vector</td><td>none</td><td>\(\mathbf{s} = (+1, -1, +1)\)</td></tr>
+<tr><td>\(A\), \(A_{ij}\)</td><td>“capital a”</td><td>a square matrix we can only multiply by vectors, and its entries</td><td>depends on context</td><td>\(\begin{pmatrix}3 & 2\\ -1 & 5\end{pmatrix}\)</td></tr>
+<tr><td>\(\operatorname{tr} A\)</td><td>“trace of A”</td><td>sum of the diagonal entries (Level 9)</td><td>same as the entries</td><td>\(3 + 5 = 8\)</td></tr>
+<tr><td>\(H_0\)</td><td>“H nought”</td><td>the null hypothesis: the boring explanation</td><td>none</td><td>“arm span is unrelated to height”</td></tr>
+<tr><td>\(T\), \(T_0\), \(T_r\)</td><td>“T”, “T nought”, “T r”</td><td>a test statistic; its value on the real data; its value on the \(r\)-th randomised copy (this subscript \(r\) counts copies; it is not the correlation \(r\))</td><td>whatever \(T\) measures</td><td>\(T_0 = 52\ \text{cm}^2\)</td></tr>
+<tr><td>\(\Pr(\cdot \mid \cdot)\), \(\#\{\cdot\}\)</td><td>“probability of … given …”, “number of”</td><td>a probability computed in the world described after the bar; the count of items in a set</td><td>none</td><td>\(\#\{r : T_r \ge T_0\} = 0\)</td></tr>
+<tr><td>\(R\)</td><td>“capital r”</td><td>number of randomised copies (replicates)</td><td>none (a count)</td><td>\(R = 200\)</td></tr>
+<tr><td>\(p\)</td><td>“p”</td><td>p-value</td><td>none, between 0 and 1</td><td>\(p = 1/120\)</td></tr>
+<tr><td>\(\alpha\)</td><td>“alpha”</td><td>significance level: the false-positive rate you accept</td><td>none</td><td>\(\alpha = 0.05\)</td></tr>
+<tr><td>\(m\)</td><td>“m”</td><td>number of separate tests run</td><td>none (a count)</td><td>\(m = 11\)</td></tr>
+<tr><td>\(B\)</td><td>“capital b”</td><td>number of bootstrap resamples</td><td>none (a count)</td><td>\(B = 100{,}000\)</td></tr>
+<tr><td>\(w\)</td><td>“w”</td><td>an item (a text window) in importance sampling</td><td>none (an index)</td><td>one of 4 receipts</td></tr>
+<tr><td>\(q_w\)</td><td>“q w”</td><td>probability of picking item (window) \(w\) in importance sampling</td><td>none, the \(q_w\) add to 1</td><td>\(q_w = 1/4\)</td></tr>
+<tr><td>\(e\), \(\pi\), \(\ln\)</td><td>“e”, “pi”, “natural log”</td><td>Euler's number 2.71828…; 3.14159…; the logarithm to base \(e\) (<a href="01.html">Level 1</a>)</td><td>none</td><td>\(\ln e = 1\)</td></tr>
+<tr><td>\(\operatorname{SE}\)</td><td>“standard error”</td><td>standard deviation of an estimate across repeats of the whole study</td><td>unit of the estimate</td><td>\(\sigma/\sqrt{n}\)</td></tr>
+</table>
+</div>
+
+<h2>13.1 Random variables, samples and the mean</h2>
+<p><b>Real-world example: a class survey.</b> You ask the students in a class for their height. Before you ask, “the height of a student picked at random” has no fixed value. It depends on who gets picked. A quantity like that is a random variable. Call it \(X\), in centimetres (cm). Each answer you actually write down is a sample. Call the \(i\)-th answer \(x_i\).</p>
+<p><b>Intuition pump: a bag of slips.</b> Write every student's height on a paper slip and put the slips in a bag. Drawing one slip blindly is “observing \(X\)”. The bag is the population. A handful of slips is a sample of size \(n\).</p>
+<p>Five students answer: 160, 165, 170, 175 and 180 cm. So \(n = 5\). The sample mean is the total divided by the count:</p>
+$$ \bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i = \frac{160 + 165 + 170 + 175 + 180}{5}\ \text{cm} = \frac{850}{5}\ \text{cm} = 170\ \text{cm}. $$
+<p>The unit survives the division because \(n\) has no unit. The mean of heights is a height.</p>
+<p>The expectation \(\mathbb{E}[X]\) is the same idea for the whole bag: the average over every slip, each slip counted as often as it would come up. We call it \(\mu\). We almost never know \(\mu\). The sample mean \(\bar{x}\) is our estimate of it.</p>
+
+<h3>The mechanics: each sample has weight 1/n</h3>
+<p>Change one answer and keep the others. If the 175 cm student is re-measured at 185 cm, the total rises by 10 cm, so the mean rises by \(10/5 = 2\) cm, to 172 cm. Every sample moves the mean by (its change) ÷ \(n\).</p>
+<p>Now a typo. Someone types 1,700 instead of 170. The total becomes \(160 + 165 + 1700 + 175 + 180 = 2380\) cm and the mean becomes 476 cm. One bad row made the “typical height” nearly 5 metres. Keep this picture. In 13.9 a few rows of real data behave exactly like this typo, and they are not typos.</p>
+
+<div class="box key">
+<span class="boxtitle">Linearity of the mean</span>
+For any random variables \(X, Y\) and any fixed number \(c\): \(\mathbb{E}[X + Y] = \mathbb{E}[X] + \mathbb{E}[Y]\) and \(\mathbb{E}[cX] = c\,\mathbb{E}[X]\). The mean of a sum is the sum of the means. This one rule is why random signs cancel cross terms in 13.10.
+</div>
+
+<h2>13.2 Spread: variance, standard deviation and the bell curve</h2>
+<p>Two classes can have the same mean height and look completely different: one with everyone at 170 cm, one with half at 150 and half at 190. We need a number for spread.</p>
+<p>First try: the average deviation from the mean. The deviations \(x_i - \bar{x}\) are \(-10, -5, 0, 5, 10\) cm. They add to zero. They always do, because the mean is the balance point. So we square them first (squares are never negative) and average:</p>
+$$ \sigma^2 = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})^2 = \frac{100 + 25 + 0 + 25 + 100}{5}\ \text{cm}^2 = \frac{250}{5}\ \text{cm}^2 = 50\ \text{cm}^2. $$
+<p>That is the variance. Its unit is cm², because we squared centimetres. Square cm is awkward to picture, so take the square root to get back to cm:</p>
+$$ \sigma = \sqrt{50\ \text{cm}^2} \approx 7.07\ \text{cm}. $$
+<p>That is the standard deviation: the typical size of a deviation from the mean. A student who is 7 cm taller than average is ordinary. A student 35 cm taller (5σ) would be remarkable.</p>
+
+<div class="box plain">
+<span class="boxtitle">Divide by n or by n − 1?</span>
+The deviations above are measured from \(\bar{x}\), which was fitted to these same five numbers. The fitted mean sits a little closer to the data than the true \(\mu\) does, so the squared deviations come out a little too small on average. Dividing by \(n - 1 = 4\) instead of \(n = 5\) corrects this exactly on average: \(250/4 = 62.5\ \text{cm}^2\), \(\sigma \approx 7.91\) cm. This is Bessel's correction. With thousands of samples the difference is negligible. We use \(1/n\) on this page because it keeps the arithmetic clean.
+</div>
+
+<h3>The mechanics: shifting and scaling</h3>
+<ul>
+<li><b>Add 10 cm to everyone</b> (everyone stands on a 10 cm box). The mean rises by 10 cm. The deviations do not change, so the variance stays 50 cm².</li>
+<li><b>Measure in millimetres</b> (multiply every number by 10). The deviations become \(-100, -50, 0, 50, 100\) mm. The variance becomes \(5{,}000\ \text{mm}^2\), which is 100 times the number. The standard deviation becomes 70.7 mm, which is 10 times the number. Variance scales with the square of the unit; standard deviation scales with the unit.</li>
+</ul>
+
+<h3>The bell curve, and the 1σ move</h3>
+<p>Many measured quantities pile up in a bell shape: most values near the mean, fewer far away, symmetric on both sides. This is the Gaussian distribution \(N(\mu, \sigma^2)\). Its density is</p>
+$$ \frac{1}{\sigma\sqrt{2\pi}}\, e^{-(x - \mu)^2 / (2\sigma^2)}. $$
+<p>Two facts about it are worth memorising. About 68% of draws land within 1σ of the mean, and about 95% within 2σ (1.96σ to be exact). \(N(0, 1)\) is the standard version: mean 0, standard deviation 1.</p>
+<p>A <b>1σ move</b> is a change of one standard deviation. It is the natural size of a change: the size by which two typical members of the population differ. At <a href="06.html">Level 6</a> the v9 interaction test used 1σ moves for exactly this reason: a move much bigger than 1σ would push the model somewhere natural text never takes it.</p>
+
+<h2>13.3 Two variables: covariance and correlation</h2>
+<p><b>Real-world example.</b> The survey also asks for arm span (fingertip to fingertip, arms stretched out). Tall people tend to have long arms. We want a number for “tend to go together”.</p>
+<p>Here are the five students. Height is \(x\), arm span is \(y\), both in cm. Both means are 170 cm.</p>
+<div class="tablewrap">
+<table>
+<tr><th>student</th><th>height \(x_i\)</th><th>arm span \(y_i\)</th><th>\(x_i - \bar{x}\)</th><th>\(y_i - \bar{y}\)</th><th>product</th></tr>
+<tr><td>1</td><td>160</td><td>158</td><td>−10</td><td>−12</td><td>+120</td></tr>
+<tr><td>2</td><td>165</td><td>167</td><td>−5</td><td>−3</td><td>+15</td></tr>
+<tr><td>3</td><td>170</td><td>169</td><td>0</td><td>−1</td><td>0</td></tr>
+<tr><td>4</td><td>175</td><td>177</td><td>+5</td><td>+7</td><td>+35</td></tr>
+<tr><td>5</td><td>180</td><td>179</td><td>+10</td><td>+9</td><td>+90</td></tr>
+<tr><td colspan="5">mean of the products</td><td>\(260/5 = 52\ \text{cm}^2\)</td></tr>
+</table>
+</div>
+<p>The covariance is the mean of those products:</p>
+$$ \operatorname{Cov}(x, y) = \frac{1}{n}\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y}) = \frac{120 + 15 + 0 + 35 + 90}{5}\ \text{cm}^2 = 52\ \text{cm}^2. $$
+<p>Why products? A student who is above average on both gives (plus) × (plus) = plus. Below average on both gives (minus) × (minus) = plus. Above on one and below on the other gives minus. So the covariance is positive when the two rise together, negative when one rises as the other falls, and near zero when there is no linear pattern. The unit is cm × cm = cm².</p>
+<p>The arm-span variance is \((144 + 9 + 1 + 49 + 81)/5 = 284/5 = 56.8\ \text{cm}^2\). The covariance of a variable with itself is its variance.</p>
+
+<h3>Correlation: covariance without units</h3>
+<p>Covariance depends on units (switch to mm and it grows 100 times). Divide by both standard deviations and the units cancel:</p>
+$$ r = \frac{\operatorname{Cov}(x, y)}{\sigma_x\,\sigma_y} = \frac{52\ \text{cm}^2}{\sqrt{50\ \text{cm}^2}\,\sqrt{56.8\ \text{cm}^2}} = \frac{52}{\sqrt{2840}} = \frac{52}{53.29} \approx 0.976. $$
+<p>This is the Pearson correlation from <a href="12.html">Level 12</a>. 0.976 says the five points lie very close to a rising straight line.</p>
+
+<h3>The mechanics: one student moves</h3>
+<p>Change only student 5's arm span from 179 to 159 cm. The arm-span mean drops to 166 cm, the deviations become \(-8, 1, 3, 11, -7\), and the products with the height deviations become \(80, -5, 0, 55, -70\). Their mean is \(60/5 = 12\ \text{cm}^2\). One row changed and the covariance fell from 52 to 12. With five samples every row matters a lot.</p>
+
+<div class="box warn">
+<span class="boxtitle">Zero covariance is not “unrelated”</span>
+Let \(x\) take the values −1, 0, 1 equally often and let \(y = x^2\), so \(y\) is 1, 0, 1. Then \(y\) is completely determined by \(x\). But \(\bar{y} = 2/3\) and the products \(x(y - \bar{y})\) are \(-1/3, 0, +1/3\), with mean 0. Covariance only sees straight-line (first-order) patterns. A U-shaped relation is invisible to it. Hold onto this: it is the statistical cousin of “the Jacobian cannot see an interaction”, which motivates the whole project.
+</div>
+
+<h2>13.4 The covariance matrix and the spread along any direction</h2>
+<p>Now treat each student as one vector \(\mathbf{x} = (\text{height}, \text{arm span})\), so \(d = 2\). The covariance matrix \(\Sigma\) collects every covariance at once: entry \((i, j)\) is \(\operatorname{Cov}(x_i, x_j)\).</p>
+$$ \Sigma = \begin{pmatrix} \operatorname{Var}(\text{height}) & \operatorname{Cov}(\text{height}, \text{span}) \\ \operatorname{Cov}(\text{span}, \text{height}) & \operatorname{Var}(\text{span}) \end{pmatrix} = \begin{pmatrix} 50 & 52 \\ 52 & 56.8 \end{pmatrix}\ \text{cm}^2. $$
+
+<h3>Σ is an average of outer products</h3>
+<p>There is a compact way to write all of this. For each student, take the deviation vector \(\mathbf{x}_i - \boldsymbol{\mu}\) and form its outer product with itself (<a href="07.html">Level 7</a>). Then average:</p>
+$$ \Sigma = \mathbb{E}\big[(\mathbf{x} - \boldsymbol{\mu})(\mathbf{x} - \boldsymbol{\mu})^\top\big] \approx \frac{1}{n}\sum_{i=1}^{n} (\mathbf{x}_i - \bar{\mathbf{x}})(\mathbf{x}_i - \bar{\mathbf{x}})^\top. $$
+<p>Do it for student 1, whose deviation is \((-10, -12)\) cm:</p>
+$$ \begin{pmatrix}-10\\-12\end{pmatrix}\begin{pmatrix}-10 & -12\end{pmatrix} = \begin{pmatrix}100 & 120\\ 120 & 144\end{pmatrix}\ \text{cm}^2. $$
+<p>The five outer products are \(\begin{pmatrix}100&120\\120&144\end{pmatrix}\), \(\begin{pmatrix}25&15\\15&9\end{pmatrix}\), \(\begin{pmatrix}0&0\\0&1\end{pmatrix}\), \(\begin{pmatrix}25&35\\35&49\end{pmatrix}\), \(\begin{pmatrix}100&90\\90&81\end{pmatrix}\). They add to \(\begin{pmatrix}250&260\\260&284\end{pmatrix}\), and dividing by 5 gives \(\Sigma\) above. Each sample adds one rank-1 piece. The covariance matrix is a pile of rank-1 pieces, averaged.</p>
+<p>Three properties follow at once. \(\Sigma\) is symmetric (\(\Sigma_{ij} = \Sigma_{ji}\)). Its diagonal holds the variances. Its trace is the total variance: \(50 + 56.8 = 106.8\ \text{cm}^2\).</p>
+
+<h3>Variance along a direction: \(\mathbf{u}^\top \Sigma \mathbf{u}\)</h3>
+<p>Pick any unit direction \(\mathbf{u}\) and measure every student along it: the number \(\mathbf{u}\cdot\mathbf{x}\). What is the variance of that number? Step by step:</p>
+<ol>
+<li>Its mean is \(\mathbf{u}\cdot\boldsymbol{\mu}\) (linearity of the mean).</li>
+<li>Its deviation is \(\mathbf{u}\cdot\mathbf{x} - \mathbf{u}\cdot\boldsymbol{\mu} = \mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu})\).</li>
+<li>The squared deviation is \(\mathbf{u}^\top(\mathbf{x} - \boldsymbol{\mu})(\mathbf{x} - \boldsymbol{\mu})^\top\mathbf{u}\), a number written as row × matrix × column.</li>
+<li>Average it. \(\mathbf{u}\) is fixed, so it comes outside the average, and the average of the outer products is \(\Sigma\).</li>
+</ol>
+$$ \operatorname{Var}(\mathbf{u}\cdot\mathbf{x}) = \mathbf{u}^\top \Sigma\, \mathbf{u}. $$
+<p>This is the same kind of quadratic form as the curvature along a direction at <a href="09.html">Level 9</a>, with \(\Sigma\) in place of the Hessian. There it measured curvature. Here it measures spread along \(\mathbf{u}\). Because a variance is never negative, \(\mathbf{u}^\top\Sigma\mathbf{u} \ge 0\) for every \(\mathbf{u}\): a covariance matrix is always positive semidefinite.</p>
+<p>Two directions for the class:</p>
+$$ \mathbf{u} = \tfrac{1}{\sqrt2}(1, 1):\quad \mathbf{u}^\top\Sigma\mathbf{u} = \tfrac12(50 + 52 + 52 + 56.8) = \tfrac{210.8}{2} = 105.4\ \text{cm}^2, $$
+$$ \mathbf{u} = \tfrac{1}{\sqrt2}(1, -1):\quad \mathbf{u}^\top\Sigma\mathbf{u} = \tfrac12(50 - 52 - 52 + 56.8) = \tfrac{2.8}{2} = 1.4\ \text{cm}^2. $$
+<p>The first direction reads “overall size” (height plus span). Students differ along it by about \(\sqrt{105.4} \approx 10.3\) cm. The second reads “arm span minus height”. Students differ along it by only about \(\sqrt{1.4} \approx 1.2\) cm. Same data, same units, a 75-fold difference in variance, purely from the choice of direction.</p>
+
+<figure class="sim" id="sim-cov">
+<figcaption><b>Figure 13.1.</b> A toy cloud of 300 two-component samples (made-up data in cm, centred on zero). Stretch it with the two σ sliders and turn it with the rotation slider. The ellipses mark 1σ and 2σ. The red and blue arrows are the PCA axes (13.5), each one standard deviation long. Drag the green handle to choose a direction \(\mathbf{u}\): the readout gives \(\mathbf{u}^\top\Sigma\mathbf{u}\), the variance along it. Look for: the variance along \(\mathbf{u}\) is largest when \(\mathbf{u}\) lies on the red axis, and that largest value is \(\lambda_1\). Then press “Whiten” (13.6): the ellipse becomes a circle, \(\Sigma\) becomes \(I\), and every direction has variance 1.</figcaption>
+</figure>
+
+<div class="box warn">
+<span class="boxtitle">Units decide the directions</span>
+If heights were in metres and arm spans in centimetres, the height variance would be \(0.005\ \text{m}^2\) and the arm span would own almost all of the spread. The “most varied direction” would swing to the arm-span axis. Before comparing spread across components, make sure they share a unit. Residual-stream components (<a href="14.html">Level 14</a>) all share one arbitrary unit, but their scales still differ wildly from coordinate to coordinate.
+</div>
+
+<h3>How big is Σ in the real model?</h3>
+<p>At a layer of the 27B model each sample is a vector of \(d = 5{,}120\) numbers. \(\Sigma\) is \(5{,}120 \times 5{,}120\): \(26{,}214{,}400\) entries. By symmetry \(d(d+1)/2 = 13{,}109{,}760\) of them are distinct. Every one is an average over samples, so estimating \(\Sigma\) well needs many tokens. theory-v2 §0 defines the activation covariance this way and then shrinks it a little (13.6).</p>
+
+<h2>13.5 PCA, the spectrum and the participation ratio</h2>
+<p><b>Question:</b> which unit direction \(\mathbf{u}\) makes \(\mathbf{u}^\top\Sigma\mathbf{u}\) as large as possible? <a href="09.html">Level 9</a> answered this for any symmetric matrix: the top eigenvector, and the largest value is the top eigenvalue. For a covariance matrix this has a name: principal component analysis (PCA). The eigenvectors \(\mathbf{v}_1, \mathbf{v}_2, \dots\) of \(\Sigma\) are the PCA axes, sorted so that \(\lambda_1 \ge \lambda_2 \ge \dots\). Each \(\lambda_i\) is the variance along its axis.</p>
+
+<h3>Worked example: the class</h3>
+<p>The eigenvalues solve \(\det(\Sigma - \lambda I) = 0\):</p>
+$$ (50 - \lambda)(56.8 - \lambda) - 52^2 = 0 \;\Longrightarrow\; \lambda^2 - 106.8\,\lambda + (2840 - 2704) = 0 \;\Longrightarrow\; \lambda^2 - 106.8\,\lambda + 136 = 0. $$
+$$ \lambda = \frac{106.8 \pm \sqrt{106.8^2 - 4 \times 136}}{2} = \frac{106.8 \pm \sqrt{10862.24}}{2} = \frac{106.8 \pm 104.222}{2}. $$
+<p>So \(\lambda_1 \approx 105.51\ \text{cm}^2\) and \(\lambda_2 \approx 1.289\ \text{cm}^2\). Check: they add to 106.8, the trace. The total variance is shared out between the axes, and PC1 takes \(105.51/106.8 \approx 98.8\%\) of it.</p>
+<p>For the eigenvector, write the unknown direction as \((c_1, c_2)\) and solve \((\Sigma - \lambda_1 I)(c_1, c_2)^\top = \mathbf{0}\). The first row says \((50 - 105.51)\,c_1 + 52\,c_2 = 0\), so \(c_2 / c_1 = 55.51/52 \approx 1.0675\). Normalise \((1, 1.0675)\) by its length \(\sqrt{1 + 1.0675^2} \approx 1.4627\):</p>
+$$ \mathbf{v}_1 \approx (0.684,\ 0.730), \qquad \mathbf{v}_2 \approx (-0.730,\ 0.684). $$
+<p>\(\mathbf{v}_1\) points at about 46.9° (between height and span: “overall size”). \(\mathbf{v}_2\) is perpendicular to it (“arm span relative to height”). The variance along \(\mathbf{v}_1\) is 105.51 cm², a touch more than the 105.4 cm² we found along the 45° direction. That is the maximum.</p>
+
+<h3>The mechanics: PCA coordinates</h3>
+<p>Measure each student along the PCA axes instead of along height and span. Student 1 (deviation \((-10, -12)\) cm) gets</p>
+$$ \text{PC1 score} = 0.684 \times (-10) + 0.730 \times (-12) \approx -15.6\ \text{cm}, \qquad \text{PC2 score} = -0.730 \times (-10) + 0.684 \times (-12) \approx -0.91\ \text{cm}. $$
+<p>Do this for every student and the two score columns have zero covariance with each other. In PCA coordinates \(\Sigma\) becomes diagonal: \(\Sigma = P\Lambda P^\top\), with \(P\) holding \(\mathbf{v}_1, \mathbf{v}_2\) as columns and \(\Lambda = \operatorname{diag}(105.51, 1.289)\ \text{cm}^2\). This mirrors <a href="09.html">Level 9</a>: Hessian eigenvectors are the axes with no interaction; covariance eigenvectors are the axes with no covariance.</p>
+
+<h3>The spectrum</h3>
+<p>The sorted list of eigenvalues is the spectrum. A steep spectrum (one or two big values, the rest tiny) means the cloud is a thin cigar or pancake: a few directions carry the spread. A flat spectrum means a round ball: every direction is about the same.</p>
+
+<h3>Participation ratio: how many directions matter?</h3>
+<p>We want one number that says “about this many directions”. The participation ratio is</p>
+$$ \operatorname{PR} = \frac{\big(\sum_i \lambda_i\big)^2}{\sum_i \lambda_i^2}. $$
+<p>Check it on clean cases:</p>
+<ul>
+<li>\(k\) equal eigenvalues \(\lambda\), the rest zero: \(\operatorname{PR} = (k\lambda)^2 / (k\lambda^2) = k\). Exactly the count.</li>
+<li>One eigenvalue much bigger than all the others: the top term dominates both sums, so \(\operatorname{PR} \approx \lambda_1^2/\lambda_1^2 = 1\).</li>
+<li>The class: \(\operatorname{PR} = 106.8^2 / (105.51^2 + 1.289^2) = 11406.24 / 11134.3 \approx 1.02\). One direction.</li>
+</ul>
+<p><b>Intuition pump: counting parties.</b> Political scientists count the “effective number of parties” in a parliament with the same formula. Write each party's seat share as \(\lambda_i / \sum_j \lambda_j\) and the formula becomes \(1 / \sum_i (\text{share}_i)^2\). Four parties with 40%, 30%, 20% and 10% of seats give \(1/(0.16 + 0.09 + 0.04 + 0.01) = 1/0.30 \approx 3.3\) effective parties. Two equal parties give 2. A dominant party with 95% gives about 1.1.</p>
+<p>A related number is the <b>top-\(k\) energy fraction</b> \((\lambda_1 + \dots + \lambda_k)/\sum_i\lambda_i\): the share of the total carried by the top \(k\) directions. The word “energy” is used when the matrix is an average of squares that is not a covariance (Level 15 uses curvature energy); the arithmetic is identical.</p>
+
+<figure class="sim" id="sim-pr">
+<figcaption><b>Figure 13.2.</b> A spectrum of 8 eigenvalues (toy numbers, no unit). Click or drag inside the chart to set any bar's height, or use the preset buttons. The readout computes \(\operatorname{PR} = (\sum\lambda)^2/\sum\lambda^2\) and the top-\(k\) energy fractions. Look for: “flat” gives PR = 8; “one spike” gives PR near 1; a steep decay lands in between, and PR rounds to about how many bars you would call “big”.</figcaption>
+</figure>
+
+<p>In the real runs this number decides a lot. The README of this repository reports that the run-1 curvature operator had a participation ratio of only 1.3 to 8.5 out of \(d = 5{,}120\): roughly 2 to 8 directions carried the signal. 13.8 shows why that made a 25-direction reproducibility test fail.</p>
+
+<h2>13.6 Whitening: measuring in units of natural spread</h2>
+<p><b>The problem.</b> In the class, a 5 cm change means different things in different directions. Along PC1 (σ = \(\sqrt{105.51} \approx 10.27\) cm) it is about half a standard deviation: an ordinary difference between two students. Along PC2 (σ = \(\sqrt{1.289} \approx 1.135\) cm) it is about 4.4 standard deviations: a student whose arm span differs from their height by an amount almost nobody has.</p>
+<p><b>Intuition pump: grading on a curve.</b> A teacher who gets two tests, one where scores spread by ±20 points and one where they spread by ±2, does not compare raw points. They convert each score to “how many standard deviations from the class mean”. Whitening does this for vectors, in every direction at once.</p>
+
+<h3>The matrix square root</h3>
+<p>Because \(\Sigma = P\Lambda P^\top\) with \(P\) a rotation, we can take square roots axis by axis:</p>
+$$ \Sigma^{1/2} = P\,\Lambda^{1/2}P^\top, \qquad \Sigma^{-1/2} = P\,\Lambda^{-1/2}P^\top, $$
+<p>where \(\Lambda^{1/2} = \operatorname{diag}(\sqrt{\lambda_1}, \sqrt{\lambda_2}, \dots)\) and \(\Lambda^{-1/2} = \operatorname{diag}(1/\sqrt{\lambda_1}, 1/\sqrt{\lambda_2}, \dots)\). Check: \(\Sigma^{1/2}\Sigma^{1/2} = P\Lambda^{1/2}P^\top P\Lambda^{1/2}P^\top = P\Lambda P^\top = \Sigma\), because \(P^\top P = I\). For the class:</p>
+$$ \Sigma^{1/2} \approx \begin{pmatrix}5.406 & 4.559\\ 4.559 & 6.002\end{pmatrix}\ \text{cm}, \qquad \Sigma^{-1/2} \approx \begin{pmatrix}0.5146 & -0.3909\\ -0.3909 & 0.4635\end{pmatrix}\ \text{cm}^{-1}. $$
+<p>Read \(\Sigma^{-1/2}\) as three moves: rotate into PCA axes (\(P^\top\)), divide each PCA coordinate by its own standard deviation (\(\Lambda^{-1/2}\)), rotate back (\(P\)).</p>
+
+<h3>Whitened coordinates</h3>
+<p>Define \(\mathbf{z} = \Sigma^{-1/2}(\mathbf{x} - \boldsymbol{\mu})\). Student 1:</p>
+$$ \mathbf{z}_1 = \begin{pmatrix}0.5146 & -0.3909\\ -0.3909 & 0.4635\end{pmatrix}\begin{pmatrix}-10\\ -12\end{pmatrix} = \begin{pmatrix}-5.146 + 4.691\\ 3.909 - 5.562\end{pmatrix} = \begin{pmatrix}-0.456\\ -1.653\end{pmatrix}. $$
+<p>The centimetres cancelled (cm⁻¹ × cm), so \(\mathbf{z}\) has no unit: it counts standard deviations. Compute \(\mathbf{z}\) for all five students and their covariance is exactly \(I\). Whitened data look the same in every direction: unit variance everywhere, no covariance anywhere.</p>
+
+<h3>The mechanics: the natural size of a move</h3>
+<p>The natural size of a move \(\Delta\mathbf{x}\) is the length of its whitened version, \(\lVert \Sigma^{-1/2}\Delta\mathbf{x} \rVert\). (This is called the Mahalanobis distance.) Three moves of similar raw size:</p>
+<ul>
+<li>\(\Delta\mathbf{x} = (5, 5)\) cm (both grow): natural size \(\approx 0.72\). An ordinary move.</li>
+<li>\(\Delta\mathbf{x} = (0, 5)\) cm (span grows, height fixed): natural size \(\approx 3.03\). Unusual.</li>
+<li>\(\Delta\mathbf{x} = (5, -5)\) cm (span shrinks as height grows): natural size \(\approx 6.22\). Almost never seen.</li>
+</ul>
+<p>Going the other way, \(\Sigma^{1/2}\) turns a whitened unit move into a raw <b>1σ move</b>. The whitened unit move along \(\mathbf{v}_2\) becomes the raw move \(\Sigma^{1/2}\mathbf{v}_2 = \sqrt{\lambda_2}\,\mathbf{v}_2\): 1.135 cm along PC2. The same recipe gives the 1σ moves along any direction in many dimensions.</p>
+
+<div class="box key">
+<span class="boxtitle">Why the H-lens whitens</span>
+A curvature measured in raw units mixes up two things: how sharply the model's output bends, and how far activations naturally move. theory-v2 §0 measures curvature per unit of natural activation scale, \(\tilde H = \Sigma^{1/2} H \Sigma^{1/2}\), and states that this “is a choice, not a consequence”. The reason for the sandwich is one line: a whitened move \(\mathbf{z}\) is the raw move \(\Sigma^{1/2}\mathbf{z}\), and \((\Sigma^{1/2}\mathbf{z})^\top H (\Sigma^{1/2}\mathbf{z}) = \mathbf{z}^\top (\Sigma^{1/2} H \Sigma^{1/2})\mathbf{z}\). <a href="15.html">Level 15</a> uses it.
+</div>
+
+<h3>Shrinkage: a floor under small eigenvalues</h3>
+<p>Whitening divides by \(\sqrt{\lambda_i}\). If an estimated eigenvalue is tiny, perhaps only because we had too few samples, dividing by it blows noise up. The fix is shrinkage: pull \(\Sigma\) a little towards a round ball of the same total size. theory-v2 §0 uses</p>
+$$ \Sigma_{\text{shrunk}} = 0.95\,\Sigma + 0.05\,\frac{\operatorname{tr}\Sigma}{d}\, I. $$
+<p>For the class, \(\operatorname{tr}\Sigma/d = 106.8/2 = 53.4\ \text{cm}^2\), so we add \(0.05 \times 53.4 = 2.67\ \text{cm}^2\) to the diagonal of \(0.95\,\Sigma\):</p>
+$$ \Sigma_{\text{shrunk}} = \begin{pmatrix}47.5 + 2.67 & 49.4\\ 49.4 & 53.96 + 2.67\end{pmatrix} = \begin{pmatrix}50.17 & 49.4\\ 49.4 & 56.63\end{pmatrix}\ \text{cm}^2. $$
+<p>The eigenvectors do not move. Each eigenvalue becomes \(0.95\,\lambda + 2.67\): \(\lambda_1\) goes from 105.51 to 102.91, and \(\lambda_2\) goes from 1.29 to 3.89. The small one tripled, so whitening no longer amplifies that direction as violently.</p>
+
+<div class="box warn">
+<span class="boxtitle">Whitening amplifies quiet directions</span>
+Whitening gives every direction equal say. A direction where activations barely vary gets multiplied by a huge \(1/\sqrt{\lambda}\). That is the point (it measures things per natural move), but it also means that estimation noise in quiet directions gets the loudest voice. Shrinkage is the safety valve.
+</div>
+
+<h2>13.7 Comparing subspaces: the overlap score and its random baseline</h2>
+<p>The H-space question is about subspaces: “the top 25 directions of some matrix”. The <b>top-\(k\) subspace</b> of a symmetric matrix is the span of its top \(k\) eigenvectors. We store it as a \(d \times k\) matrix \(Q\) whose columns are those eigenvectors (orthonormal: unit length, mutually perpendicular). We need a way to ask “how much do two such subspaces agree?”</p>
+
+<h3>One dimension: the squared cosine</h3>
+<p>Two lines through the origin, spanned by unit vectors \(\mathbf{a}\) and \(\mathbf{b}\), at angle \(\theta\). Their agreement is \(\cos^2\theta = (\mathbf{a}\cdot\mathbf{b})^2\). At \(\theta = 0^\circ\) it is 1, at \(90^\circ\) it is 0, at \(30^\circ\) it is \(0.866^2 = 0.75\). Why squared? The line spanned by \(\mathbf{a}\) is the same as the one spanned by \(-\mathbf{a}\), and squaring forgets the sign. Also, \(\cos^2\theta + \sin^2\theta = 1\): the squared cosine is the fraction of \(\mathbf{a}\)'s squared length that lies along \(\mathbf{b}\).</p>
+
+<h3>k dimensions: the mean squared cosine</h3>
+$$ \operatorname{ov}(Q, Q') = \frac{\lVert Q^\top Q' \rVert_F^2}{k} = \frac{1}{k}\sum_{i=1}^{k}\sum_{j=1}^{k} (\mathbf{q}_i\cdot\mathbf{q}'_j)^2 . $$
+<p>Here \(\mathbf{q}_i\) is column \(i\) of \(Q\) and \(\mathbf{q}'_j\) is column \(j\) of \(Q'\). For one fixed \(\mathbf{q}_i\), the inner sum \(\sum_j (\mathbf{q}_i\cdot\mathbf{q}'_j)^2\) is the squared length of its projection onto the other subspace (<a href="07.html">Level 7</a>): the fraction of \(\mathbf{q}_i\) that lies inside \(Q'\). The overlap averages that fraction over the \(k\) basis vectors. Identical subspaces give 1. Perpendicular subspaces give 0. It does not depend on which orthonormal basis you picked inside each subspace. This is the formula in <code>hlens/hspace.py</code>.</p>
+<p><b>Worked example</b> in \(d = 3\). Let \(Q\) span \(\mathbf{e}_1, \mathbf{e}_2\) and let \(Q'\) span \(\mathbf{e}_1\) and \((\mathbf{e}_2 + \mathbf{e}_3)/\sqrt2\). Then</p>
+$$ Q^\top Q' = \begin{pmatrix} \mathbf{e}_1\cdot\mathbf{e}_1 & \mathbf{e}_1\cdot\tfrac{\mathbf{e}_2 + \mathbf{e}_3}{\sqrt2} \\ \mathbf{e}_2\cdot\mathbf{e}_1 & \mathbf{e}_2\cdot\tfrac{\mathbf{e}_2 + \mathbf{e}_3}{\sqrt2}\end{pmatrix} = \begin{pmatrix}1 & 0\\ 0 & 1/\sqrt2\end{pmatrix}, \qquad \operatorname{ov} = \frac{1 + 0 + 0 + \tfrac12}{2} = 0.75. $$
+<p>One direction is shared fully; the other is half in, half out.</p>
+
+<h3>The random baseline k/d</h3>
+<p>What overlap would two unrelated subspaces have? Take a random unit vector in \(d\) dimensions. Its \(d\) squared components add to 1, and by symmetry no component is special, so each averages \(1/d\). Its squared projection onto a fixed \(k\)-dimensional subspace is a sum of \(k\) such squared components (in a basis that starts with that subspace), so it averages \(k/d\). Averaging over the \(k\) basis vectors keeps that value:</p>
+$$ \mathbb{E}[\operatorname{ov}] \approx \frac{k}{d}. $$
+<p>At \(k = 25\), \(d = 5{,}120\): \(25/5120 \approx 0.0049\). This is the “random 0.005” baseline quoted in run 1 (theory-v2 §6A). In 5,120 dimensions there is so much room that two random 25-dimensional subspaces barely touch. An overlap of 0.15 is therefore 30 times chance. Whether chance is the right comparison is another matter, which <a href="15.html">Level 15</a> takes up (the Σ prior).</p>
+
+<h2>13.8 Estimators, noise floors and split-half reproducibility</h2>
+<p>An estimator is a recipe that turns samples into a guess of a true quantity. The sample mean estimates \(\mu\). The sample covariance estimates \(\Sigma\). Its top eigenvectors estimate the true PCA axes. Two properties matter:</p>
+<ul>
+<li><b>Bias:</b> is the estimator right on average over many repeats of the study? If yes, it is unbiased. The sample mean is unbiased: \(\mathbb{E}[\bar{x}] = \frac1n\sum_i \mathbb{E}[x_i] = \mu\), by linearity.</li>
+<li><b>Variance:</b> how much does the estimate wobble from one repeat to the next? Its standard deviation across repeats is called the standard error.</li>
+</ul>
+
+<h3>The standard error of a mean: σ/√n</h3>
+<p>For independent samples, variances of a sum add (the cross terms have zero mean). So \(\operatorname{Var}(\sum_i x_i) = n\sigma^2\), and dividing the sum by \(n\) divides the variance by \(n^2\):</p>
+$$ \operatorname{Var}(\bar{x}) = \frac{n\sigma^2}{n^2} = \frac{\sigma^2}{n}, \qquad \operatorname{SE} = \frac{\sigma}{\sqrt{n}}. $$
+<p>For the class, \(\sigma = 7.07\) cm and \(n = 5\) give \(\operatorname{SE} \approx 3.2\) cm. With 500 students it would be about 0.32 cm. To halve the error you need four times the data. Estimating a quantity by averaging random samples like this is called Monte Carlo. The \(\mathbb{E}_x\) “average over texts” in the J-lens (<a href="14.html">Level 14</a>) is a Monte Carlo average.</p>
+
+<h3>Noise floors: pure noise has a spectrum too</h3>
+<p>Take data with no preferred direction at all: true \(\Sigma = I\), every true eigenvalue equal to 1. Estimate \(\Sigma\) from a finite sample. The estimated eigenvalues do <i>not</i> all come out as 1. They spread out, and the largest is well above 1. In a toy check computed for this page (\(d = 100\) components, \(n = 400\) samples of \(N(0,1)\) noise, 50 repeats), the largest sample eigenvalue averaged about 2.2.</p>
+<p>So a big top eigenvalue is not evidence on its own. The <b>noise floor</b> is the size a statistic reaches from randomness alone, at your \(n\) and \(d\). An eigenvalue is only interesting if it clears its floor. theory-v2 §6B reports that for the run-2 primary estimator at layer 16, no eigenvalue cleared its floor at all.</p>
+
+<h3>Split-half reproducibility</h3>
+<p>A direct check that a subspace estimate is determined by the data and not by noise:</p>
+<ol>
+<li>Split the samples randomly into two disjoint halves, A and B.</li>
+<li>Run the same estimator on each half. Keep each half's top-\(k\) subspace, \(Q_A\) and \(Q_B\).</li>
+<li>Report \(\operatorname{ov}(Q_A, Q_B)\).</li>
+</ol>
+<p>If the true structure is strong and the sample is big enough, both halves find it and the overlap is near 1. If the estimate is mostly noise, each half finds its own noise and the overlap falls towards \(k/d\). Run 1 required split-half ≥ 0.7 (criterion C1 in the README).</p>
+
+<h3>The mechanics: why the choice of k matters</h3>
+<p>Suppose the truth has exactly 3 strong directions, and both halves find them perfectly. At \(k = 25\), each half also keeps 22 further directions that are pure noise. Each noise direction lies about \(22/5117\) inside the other half's subspace (chance level, in the room left over). So</p>
+$$ \operatorname{ov} \approx \frac{3 \times 1 + 22 \times \tfrac{22}{5117}}{25} = \frac{3 + 0.095}{25} \approx 0.12. $$
+<p>A perfect 3-dimensional signal scores 0.12 at \(k = 25\), far below 0.7. This is half of the README's diagnosis of the run-1 failure: “C1 was measured at k = 25. But the participation ratio is 1.3–8.5.” The other half is heavy tails, next.</p>
+
+<div class="box warn">
+<span class="boxtitle">Reproducible is not the same as real</span>
+Split-half measures stability, not meaning. An estimator with a systematic bias towards some fixed directions (say, the PCA axes) reproduces those directions in both halves, whatever the data say. A high split-half rules out “just noise”. It does not rule out “just the estimator's own preference”. <a href="15.html">Level 15</a> proves that the H-lens estimators have exactly such a preference (the Σ prior) and builds a test that removes it.
+</div>
+
+<h2>13.9 Heavy tails: when a few rows decide everything</h2>
+<p>Back to the typo. One row of 1,700 cm dragged the mean from 170 to 476 cm. It does worse to the variance. Measured from the new mean, its squared deviation is about \(1{,}224^2 \approx 1.5\) million cm², four times the other four students' squared deviations combined (about 0.37 million cm²). Before the typo the whole class's total was 250 cm². Statistics built from squares, like variances, covariance matrices and energy operators, are dominated by their largest rows.</p>
+<p>A distribution is heavy-tailed when rare, huge values carry a large share of the total. Incomes are a familiar example: a few people earn a large share of all income. In a heavy-tailed sample the “average” is really the average of a handful of giant rows.</p>
+
+<h3>Effective sample size</h3>
+<p>How many rows is a lopsided sample really worth? Give each row a size \(a_i\) (for an energy operator, the row's squared length). The Kish effective sample size is</p>
+$$ n_{\text{eff}} = \frac{\big(\sum_i a_i\big)^2}{\sum_i a_i^2}. $$
+<p>Notice it is the participation ratio formula again, applied to rows instead of eigenvalues. Equal rows give \(n_{\text{eff}} = n\). Worked: 16,384 rows, three of size 1,000 and the rest of size 0.001. Then \(\sum a_i = 3000 + 16.381 = 3016.4\) and \(\sum a_i^2 \approx 3{,}000{,}000\), so \(n_{\text{eff}} \approx 3016.4^2/3{,}000{,}000 \approx 3.0\). Sixteen thousand rows, worth three.</p>
+<p>This is not a made-up worry. theory-v2 Observation 8.3 reports that the effective sample size of the 27B H-lens rows was 0.01 to 0.06% of rows: “about 2–10 effective rows out of 16,384”.</p>
+
+<h3>The mechanics: why heavy tails break split-half</h3>
+<p>Split a heavy-tailed sample into halves. Each half gets its own few giant rows. Each half's top direction points wherever its own giants point. Those directions have nothing to do with each other, so the halves disagree. Adding more ordinary rows hardly helps, because the giants still outweigh them.</p>
+<p><b>Trimming</b> drops the heaviest few percent of rows before estimating. What is left is many ordinary rows, each with a small say, so both halves see the same bulk structure and agree again. The real version is theory-v2 Observation 8.2: at layer 16 “the heaviest 0.1% of (position, probe) rows carry 97.5% of the raw second moment”, and dropping the heaviest 5% of rows gave split-half 0.95 at \(k = 5\). <a href="15.html">Level 15</a> goes through those numbers.</p>
+
+<figure class="sim" id="sim-split">
+<figcaption><b>Figure 13.3.</b> Split-half under heavy tails (toy data, no unit). 400 rows are drawn from a stretched cloud whose true long axis is the dashed gray line at 30°. Each row is then multiplied by a random size factor; the “tail heaviness” slider controls how lopsided those factors are (0 = plain Gaussian). Rows are split at random into half A (blue) and half B (red). The blue and red lines are each half's top direction (top eigenvector of its second-moment matrix). Rows too big to fit are drawn as hollow circles at the edge. Look for: at heaviness 0 the two lines agree with the gray one. Raise the heaviness and they swing apart, because each half follows its own giants. Tick “trim” to drop the heaviest 5% of rows: agreement returns. The last readout line averages 100 fresh samples, so it does not depend on one lucky draw. In two dimensions two random lines already overlap 0.5 on average (\(k/d = 1/2\)), so values near 0.6 mean the halves barely agree.</figcaption>
+</figure>
+
+<div class="box warn">
+<span class="boxtitle">Trimming changes the question</span>
+A trimmed estimator answers a different question: “what does the bulk of the rows do?”, not “what does the total do?”. If the giants are the interesting part, trimming throws the signal away. And the trimming rule (how many rows, measured how) must be fixed before you look at the answer, or it becomes a dial you can turn until you like the result (13.12).
+</div>
+
+<h2>13.10 Random signs make cross terms vanish (Hutchinson's idea)</h2>
+<p><b>The problem.</b> At <a href="11.html">Level 11</a> we could afford products of a matrix \(A\) with vectors (Hessian-vector products) but never the whole matrix \(A\). Suppose we want the trace of \(A\), or its diagonal. How do we get it from products alone?</p>
+<p><b>Rademacher signs.</b> Let \(s_1, s_2, \dots\) be independent random signs: each is +1 or −1 with probability ½, like a fair coin. Three facts:</p>
+<ul>
+<li>\(\mathbb{E}[s_i] = \tfrac12(+1) + \tfrac12(-1) = 0\).</li>
+<li>\(s_i^2 = 1\) always, so \(\mathbb{E}[s_i^2] = 1\).</li>
+<li>For \(i \ne j\), the four patterns \((s_i, s_j) = (+,+), (+,-), (-,+), (-,-)\) are equally likely, and \(s_i s_j\) is \(+1, -1, -1, +1\). So \(\mathbb{E}[s_i s_j] = 0\).</li>
+</ul>
+
+<h3>The mechanics with a 2×2 matrix</h3>
+<p>Let \(A = \begin{pmatrix}3 & 2\\ -1 & 5\end{pmatrix}\), so \(\operatorname{tr}A = 8\). Draw a sign vector \(\mathbf{s} = (s_1, s_2)\) and compute the number \(\mathbf{s}^\top A\mathbf{s}\) (one product \(A\mathbf{s}\), then one dot product). Expand it:</p>
+$$ \mathbf{s}^\top A\,\mathbf{s} = A_{11}s_1^2 + A_{22}s_2^2 + (A_{12} + A_{21})\,s_1s_2 = 3 + 5 + (2 - 1)\,s_1 s_2 = 8 + s_1 s_2. $$
+<p>The diagonal part is 8 on every draw, because \(s_i^2 = 1\). The cross term is \(+1\) or \(-1\). All four sign patterns:</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(\mathbf{s}\)</th><th>(+1, +1)</th><th>(+1, −1)</th><th>(−1, +1)</th><th>(−1, −1)</th><th>average</th></tr>
+<tr><td>\(\mathbf{s}^\top A\mathbf{s}\)</td><td>9</td><td>7</td><td>7</td><td>9</td><td>8 = tr A</td></tr>
+</table>
+</div>
+<p>Every single draw is wrong (9 or 7). The average is exactly right. The estimator is unbiased but noisy, and its noise comes entirely from the off-diagonal entries. For the diagonal itself, use \(s_i\,(A\mathbf{s})_i = A_{ii} + \sum_{j \ne i} A_{ij}s_is_j\), which averages to \(A_{ii}\) for the same reason. This is the Hutchinson estimator (Hutchinson 1990, cited in theory-v2 Lemma 7).</p>
+<p><b>Intuition pump: microphones in a crowded room.</b> Each microphone should record one speaker, but it also picks up the neighbours. Suppose that on each recording every speaker independently says their line either normally or with flipped polarity, and you multiply microphone \(i\)'s track by speaker \(i\)'s own flip. Speaker \(i\) always comes out right way up (\(s_i \times s_i = 1\)). Each neighbour comes out right way up or upside down at random (\(s_i \times s_j\)). Average many recordings and the neighbours cancel; the speaker remains.</p>
+
+<figure class="sim" id="sim-hutch">
+<figcaption><b>Figure 13.4.</b> Estimating the trace of a toy 3×3 matrix \(A\) (diagonal 2, −1, 3, so \(\operatorname{tr}A = 4\)) from random-sign products only. Each gray dot is one draw of \(\mathbf{s}^\top A\mathbf{s}\); the blue line is the running average; the red dashed line is the true trace. The slider scales the off-diagonal entries. Look for: the running average settles on 4 whatever the slider says, but larger off-diagonal entries make every single draw noisier, so the average takes longer to settle. The readout splits the last draw into its fixed diagonal part and its random cross part, and compares the error with the standard error \(\text{(per-draw SD)}/\sqrt{N}\) from 13.8.</figcaption>
+</figure>
+
+<div class="box warn">
+<span class="boxtitle">Squares bring the cross terms back</span>
+The cancellation works for anything <i>linear</i> in the cross terms. Square the estimate and it fails, because \((s_1s_2)^2 = 1\). In the example, \((\mathbf{s}^\top A\mathbf{s})^2\) is 81 or 49, averaging 65, not \((\operatorname{tr}A)^2 = 64\). The extra 1 is the cross term, squared, surviving. The fix is to multiply two estimates made with <i>independent</i> sign vectors \(\mathbf{s}\) and \(\mathbf{s}'\): then \(\mathbb{E}[(\mathbf{s}^\top A\mathbf{s})(\mathbf{s}'^\top A\mathbf{s}')] = (\operatorname{tr}A)^2\) exactly. theory-v2 says Lemma 7 is “unbiased, not exact, and first moment only” for this reason. In the H-lens the signs are one per token position, so the cross terms are cross-position curvature blocks. <a href="15.html">Level 15</a> shows that the run-1 energy estimator kept them, and that a cross-moment estimator with independent signs removes them.
+</div>
+
+<h2>13.11 Null hypotheses, p-values and randomization tests</h2>
+<p>A null hypothesis \(H_0\) is the boring explanation you want to rule out: “the pattern is chance”, or “the structure is just the covariance”. A test statistic \(T\) is a number computed from the data that would tend to be large if \(H_0\) were false. The p-value is</p>
+$$ p = \Pr\big(T \ge T_0 \;\big|\; H_0 \text{ is true}\big), $$
+<p>the probability, in a world where the null is true, of a statistic at least as extreme as the one you observed, \(T_0\). A small \(p\) means the null explains your data badly.</p>
+
+<h3>Worked example: an exact test on the class</h3>
+<p>Is the height–arm-span link real, or could chance pairing produce it? Null: arm span has nothing to do with height. If that were true, the way the five spans happen to sit next to the five heights would be arbitrary: any of the \(5! = 5 \times 4 \times 3 \times 2 \times 1 = 120\) pairings would be equally likely.</p>
+<ol>
+<li>Statistic: \(T = \operatorname{Cov}(x, y)\). Observed \(T_0 = 52\ \text{cm}^2\).</li>
+<li>Recompute \(T\) for every one of the 120 pairings of the same spans with the same heights.</li>
+<li>Count how many give \(T \ge 52\). Only one: the real pairing. (The next largest is 50 cm².)</li>
+<li>\(p = 1/120 \approx 0.0083\).</li>
+</ol>
+<p>No formula for a bell curve was needed. The null itself told us which rearrangements leave the data's distribution unchanged, and we counted. That is a randomization test, and here it is exact.</p>
+
+<h3>When there are too many arrangements: Monte Carlo replicates</h3>
+<p>With 100 rows there are \(100!\) pairings, far too many. Instead draw \(R\) random rearrangements, compute \(T_1, \dots, T_R\), and use</p>
+$$ p = \frac{1 + \#\{r : T_r \ge T_0\}}{R + 1}. $$
+<p>The “+1” on top and bottom counts the real data as one of the arrangements, which it is under the null. Two consequences. The p-value can never be 0. And the test is exactly valid: if \(H_0\) is true, \(\Pr(p \le \alpha) \le \alpha\) for every level \(\alpha\). If the real statistic beats all \(R = 200\) replicates, \(p = 1/201 \approx 0.005\). That is the smallest p-value 200 replicates can give.</p>
+<p>The recipe needs only one thing: a transformation that changes nothing if the null is true. Shuffling pairs works for “unrelated”. For the H-lens, theory-v2 Corollary 8.1 uses flips of the signs of PCA axes, which change nothing if the curvature has no preferred directions beyond the covariance's. That is the sign-flip test of <a href="15.html">Level 15</a>, with exactly this formula.</p>
+
+<figure class="sim" id="sim-perm">
+<figcaption><b>Figure 13.5.</b> A randomization test on a toy dataset of 12 pairs (no unit). The “link strength” slider sets how strongly \(y\) follows \(x\) in the made-up data. Left: the data (black), and the latest shuffled copy (red). Right: the histogram of the covariance on shuffled copies, which is the null distribution, with the real covariance \(T_0\) as a red line. Press the buttons to add shuffles. Look for: at strength 0 the red line sits inside the histogram and \(p\) is large; at strength 0.8 it sits far to the right and \(p\) falls to its floor \(1/(R+1)\). The p-value can never go below that floor, however extreme the data.</figcaption>
+</figure>
+
+<div class="box warn">
+<span class="boxtitle">What a p-value is not</span>
+\(p = 0.005\) does not mean “the null has a 0.5% chance of being true”. It means “if the null were true, data this extreme would turn up 0.5% of the time”. And beating a null tells you only that <i>this</i> null is wrong. A different boring explanation may still fit. Much of Level 15 is about finding the right null.
+</div>
+
+<h2>13.12 Confidence intervals, the bootstrap, and freezing the rule</h2>
+<h3>Confidence intervals</h3>
+<p>An estimate without an error bar is half an answer. A 95% confidence interval (CI) is a range produced by a procedure that, over many repeats of the whole study, captures the true value 95% of the time. If a 95% CI for a difference includes 0, the data do not rule out “no difference”.</p>
+
+<h3>The bootstrap</h3>
+<p>Often there is no formula for the standard error (for an eigenvector, a ratio, an overlap). The bootstrap gets one from the data alone:</p>
+<ol>
+<li>Draw \(n\) rows <i>with replacement</i> from your \(n\) rows (some rows twice, some not at all).</li>
+<li>Recompute the statistic on this resample.</li>
+<li>Repeat \(B\) times. The spread of the \(B\) values approximates the spread across repeated studies.</li>
+<li>For a 95% interval, take the 2.5th and 97.5th percentiles of the \(B\) values.</li>
+</ol>
+<p>Class example: one resample is (160, 160, 175, 180, 165), with mean 168 cm. With \(B = 100{,}000\) resamples (computed for this page) the 95% percentile interval for the class mean is 164 to 176 cm. With five rows that interval is itself rough; the bootstrap is honest only when \(n\) is large enough that the sample resembles the population.</p>
+
+<h3>Ratios: use the logarithm</h3>
+<p>Many results in this project are ratios (“5.8 times more interaction than the controls”). Ratios are lopsided: 2× and 0.5× are equally far from 1× but sit at different distances on the number line. So the interval is computed on the logarithm and mapped back. If \(\ln(\text{ratio})\) has 95% CI [0.5, 0.9], the ratio has CI \([e^{0.5}, e^{0.9}] \approx [1.65, 2.46]\). And beware ratios whose denominator can be near 0: tiny changes in the denominator swing the ratio wildly. The README reports run-1 criterion C6 failed partly this way: “a ratio whose denominator is ≈ 0”, with 95% CIs spanning [−1, 10].</p>
+
+<h3>Many tests, one false pass</h3>
+<p>The significance level \(\alpha\) is the false-positive rate you accept for one test, usually 0.05. Run \(m\) independent tests where every null is true, and the chance that at least one passes by luck is</p>
+$$ 1 - (1 - \alpha)^m. $$
+<p>With \(m = 11\) and \(\alpha = 0.05\): \(1 - 0.95^{11} \approx 1 - 0.569 = 0.431\). Eleven honest tests of nothing give a 43% chance of at least one “discovery”. Worse, if after each look you tweak the rule (which layer, which \(k\), which trimming level), you are silently running many tests. This is the garden of forking paths.</p>
+
+<h3>Preregistration</h3>
+<p>The defence is to write the exact test and the pass/fail rule down <i>before</i> the data exist, and to make it impossible to change unnoticed. This project hashes each frozen rule in <code>results/runlog.md</code> before the data it governs are computed. The README is explicit about the count, too: v8 and v9 are “the 10th and 11th tests in the sequence”. Freezing the rule does not remove the sequence; it makes it visible, so a reader can discount accordingly.</p>
+
+<h2>13.13 Importance sampling: spend samples where the mass is</h2>
+<p><b>Real-world example: auditing receipts.</b> An auditor must estimate a company's total spending from a sample of receipts. Most receipts are for coffee; a few are for buildings. Sampling receipts uniformly mostly finds coffee, and the estimate swings wildly depending on whether a building happens to be drawn. Better: pick big receipts more often, and correct for that.</p>
+
+<h3>The mechanics</h3>
+<p>We want the total \(\sum_w a_w\) over many items \(w\) (in the project, the items are text windows). Pick one item at random with probability \(q_w\), and report \(a_w / q_w\). On average this is</p>
+$$ \mathbb{E}\Big[\frac{a_w}{q_w}\Big] = \sum_w q_w\,\frac{a_w}{q_w} = \sum_w a_w, $$
+<p>the right total, for <i>any</i> choice of the \(q_w\) (as long as no item with \(a_w \ne 0\) has \(q_w = 0\)). So the choice cannot add bias. It only changes the noise.</p>
+<p>Four items of sizes \(a = (100, 1, 1, 1)\), total 103:</p>
+<ul>
+<li><b>Uniform</b>, \(q_w = 1/4\): the report is \(4a_w\), so 400 (one time in four) or 4 (three times in four). Mean \((400 + 4 + 4 + 4)/4 = 103\). Correct on average, but one draw is off by about 171 (its standard deviation).</li>
+<li><b>Proportional to size</b>, \(q_w = a_w/103\): the report is \(a_w/(a_w/103) = 103\) every time. Zero noise.</li>
+</ul>
+<p>Sampling in proportion to size is optimal. For matrices, theory-v2 Proposition 9 proves that the variance is smallest when \(q_w\) is proportional to the Frobenius norm of window \(w\)'s contribution. The catch: you need to know the sizes before you measure them. theory-v2 Observation 8.3 proposes a cheap first-order screen (one backward pass per window) to predict them, and reports how well it did on the 0.8B model. The 27B test came with v8 (paper §4c); <a href="15.html">Level 15</a> (section 15.14) covers it.</p>
+<p>The effective sample size from 13.9 also measures how well a weighted sample uses its rows: with weights \(a_i\), \(n_{\text{eff}} = (\sum_i a_i)^2/\sum_i a_i^2\). Lopsided weights waste rows.</p>
+
+<h2>13.14 Why this matters for H-space</h2>
+<p>Every tool on this page is used at <a href="14.html">Level 14</a> or <a href="15.html">Level 15</a>:</p>
+<ol>
+<li><b>Covariance \(\Sigma\), whitening and 1σ moves.</b> The H-lens is computed in whitened units, \(\tilde H = \Sigma^{1/2} H \Sigma^{1/2}\), with \(\Sigma\) shrunk by 0.05 (theory-v2 §0). The v9 test moves along directions by 1σ.</li>
+<li><b>PCA and the PCA basis \(P\).</b> The Σ prior (theory-v2 Proposition 8) says whitened curvature estimators return PCA axes whenever curvature has no preferred directions beyond \(\Sigma\). The sign-flip test flips the signs of exactly these axes.</li>
+<li><b>Spectrum, participation ratio, top-\(k\) subspace.</b> H-space\(_k\) is the top-\(k\) eigenspace of an energy operator, default \(k = 25\). The run-1 participation ratio of 1.3 to 8.5 explains why \(k = 25\) was too many.</li>
+<li><b>Overlap and \(k/d\).</b> Criteria C1 (split-half) and C3 (overlap with J-space) are overlaps. The random baseline 0.005 is \(25/5120\).</li>
+<li><b>Noise floors and heavy tails.</b> They explain why C1 failed (theory-v2 Observation 8.2) and why trimming the top 5% of rows restored reproducibility.</li>
+<li><b>Rademacher signs.</b> Each H-lens probe uses random signs over positions; what the estimate converges to depends on whether cross terms cancel, which depends on whether the estimate is linear or quadratic in the signs.</li>
+<li><b>Randomization tests, p-values, CIs on log ratios, preregistration.</b> The sign-flip test, the v5/v8/v9 verdicts and their confidence intervals all use exactly these tools, under rules hashed before the data.</li>
+<li><b>Importance sampling and effective sample size.</b> “C1 is a rare-event estimation problem” (theory-v2 Observation 8.3).</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="8.165" data-tol="0.005" data-unit="cm">
+<p><b>Exercise 13.1.</b> Three students are 150, 160 and 170 cm tall. Compute the mean, the variance (divide by \(n\)) and the standard deviation. Give the standard deviation in cm.</p>
+<details><summary>Show answer</summary>
+<p>Mean: \((150 + 160 + 170)/3 = 480/3 = 160\) cm. Deviations: \(-10, 0, +10\) cm. Squares: 100, 0, 100 cm². Variance: \(200/3 \approx 66.67\ \text{cm}^2\). Standard deviation: \(\sqrt{66.67} \approx 8.165\) cm.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-0.6667" data-tol="0.005" data-unit="°C·h">
+<p><b>Exercise 13.2.</b> On three afternoons the temperature was 20, 22, 24 °C and the hours of rain were 3, 1, 2 h. Compute the covariance of temperature and rain (divide by \(n\)), with its unit.</p>
+<details><summary>Show answer</summary>
+<p>Means: 22 °C and 2 h. Deviations: temperature \(-2, 0, +2\) °C; rain \(+1, -1, 0\) h. Products: \(-2, 0, 0\) °C·h. Their sum is −2 °C·h, and the covariance divides it by \(n = 3\): \(-2/3 \approx -0.667\ ^\circ\text{C}\cdot\text{h}\). Warmer afternoons had slightly less rain in this tiny sample. The unit °C·h is awkward to interpret, which is one reason to divide by both standard deviations and report the correlation instead.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="3.68" data-tol="0.005">
+<p><b>Exercise 13.3.</b> A covariance matrix is \(\Sigma = \begin{pmatrix}4 & 1\\ 1 & 2\end{pmatrix}\) (unit: m²). What is the variance along the unit direction \(\mathbf{u} = (0.6, 0.8)\)?</p>
+<details><summary>Show answer</summary>
+<p>\(\mathbf{u}^\top\Sigma\mathbf{u} = 4(0.6)^2 + 2 \times 1 \times 0.6 \times 0.8 + 2(0.8)^2 = 1.44 + 0.96 + 1.28 = 3.68\ \text{m}^2\). The middle term is doubled because the off-diagonal 1 appears twice in \(\Sigma\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2.941" data-tol="0.005">
+<p><b>Exercise 13.4.</b> A spectrum has eigenvalues 4, 4, 1, 1 (and zeros). What is its participation ratio? Does it match your gut count of “big” directions?</p>
+<details><summary>Show answer</summary>
+<p>\(\sum\lambda = 10\), \(\sum\lambda^2 = 16 + 16 + 1 + 1 = 34\). \(\operatorname{PR} = 100/34 \approx 2.94\). Two big directions plus two small ones count as about three: the small ones contribute partly.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.02441" data-tol="0.005">
+<p><b>Exercise 13.5.</b> The 0.8B development model has \(d = 1{,}024\). What overlap do two random 25-dimensional subspaces have on average? Compare with the 27B value.</p>
+<details><summary>Show answer</summary>
+<p>\(k/d = 25/1024 \approx 0.0244\). At 27B it is \(25/5120 \approx 0.0049\), five times smaller, because there is five times more room. An overlap of 0.1 is 4× chance at 0.8B but 20× chance at 27B: always compare with the right \(k/d\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="6.225" data-tol="0.01">
+<p><b>Exercise 13.6.</b> Using the class's \(\Sigma^{-1/2} = \begin{pmatrix}0.5146 & -0.3909\\ -0.3909 & 0.4635\end{pmatrix}\ \text{cm}^{-1}\), compute the natural size \(\lVert\Sigma^{-1/2}\Delta\mathbf{x}\rVert\) of the move \(\Delta\mathbf{x} = (5, -5)\) cm.</p>
+<details><summary>Show answer</summary>
+<p>\(\Sigma^{-1/2}\Delta\mathbf{x} = (0.5146 \times 5 + 0.3909 \times 5,\ -0.3909 \times 5 - 0.4635 \times 5) = (4.528, -4.272)\). Length \(\sqrt{4.528^2 + 4.272^2} = \sqrt{20.50 + 18.25} = \sqrt{38.75} \approx 6.22\). The move goes almost exactly along PC2 (σ ≈ 1.135 cm), and its raw length is \(\sqrt{50} \approx 7.07\) cm, so about \(7.07/1.135 \approx 6.2\) standard deviations.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="7" data-tol="0.001">
+<p><b>Exercise 13.7.</b> For \(A = \begin{pmatrix}3 & 2\\ -1 & 5\end{pmatrix}\) and the sign vector \(\mathbf{s} = (+1, -1)\), compute \(A\mathbf{s}\) and then \(\mathbf{s}^\top A\mathbf{s}\). Then explain why averaging over all four sign vectors gives the trace.</p>
+<details><summary>Show answer</summary>
+<p>\(A\mathbf{s} = (3 - 2,\ -1 - 5) = (1, -6)\). \(\mathbf{s}^\top A\mathbf{s} = (+1)(1) + (-1)(-6) = 7\). In general \(\mathbf{s}^\top A\mathbf{s} = 8 + s_1s_2\); the cross term \(s_1s_2\) is +1 for two of the four patterns and −1 for the other two, so it averages to 0, leaving \(\operatorname{tr}A = 8\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.004975" data-tol="0.01">
+<p><b>Exercise 13.8.</b> A sign-flip test uses \(R = 200\) randomised replicates, and the real statistic is larger than all of them. What is the p-value? Could more extreme data give a smaller one?</p>
+<details><summary>Show answer</summary>
+<p>\(p = (1 + 0)/(200 + 1) = 1/201 \approx 0.004975\). No: with 200 replicates this is the floor. To report a smaller p-value you need more replicates.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2.143" data-tol="0.005">
+<p><b>Exercise 13.9.</b> Six rows have energies 10, 1, 1, 1, 1, 1. What is their effective sample size? What does it say about split-half reproducibility on such data?</p>
+<details><summary>Show answer</summary>
+<p>\(\sum a = 15\), \(\sum a^2 = 100 + 5 = 105\), \(n_{\text{eff}} = 225/105 \approx 2.14\). Six rows are worth about two. Whichever half gets the size-10 row will be dominated by it; the other half will not, so the halves will tend to disagree.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.4013" data-tol="0.005">
+<p><b>Exercise 13.10.</b> A researcher runs 10 independent tests at \(\alpha = 0.05\), and in truth every null hypothesis holds. What is the probability that at least one test “passes”? What does preregistration change, and what does it not change?</p>
+<details><summary>Show answer</summary>
+<p>\(1 - 0.95^{10} = 1 - 0.5987 \approx 0.401\). Preregistration fixes each rule before the data, so no single test can be tuned after looking, and it makes the number of tests visible. It does not change the arithmetic: if you run ten tests, a reader should still expect about a 40% chance of one lucky pass and weigh the results with that in mind.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  /* seeded random numbers; the seed is scrambled and the first draws discarded so small seeds mix well */
+  function mkRng(seed) { var r = S.rng(((seed + 1) * 2654435761) >>> 0); for (var i = 0; i < 20; i++) r.u(); return r; }
+  /* helper: make the y-range match the x-range scale, so circles look round */
+  function equalAspect(v, cx, cy, halfX) {
+    var b = v.box(), scale = (b.r - b.l) / (2 * halfX), halfY = (b.b - b.t) / scale / 2;
+    v.set({ xmin: cx - halfX, xmax: cx + halfX, ymin: cy - halfY, ymax: cy + halfY });
+  }
+  function cov2(pts) {
+    var n = pts.length, mx = 0, my = 0, sxx = 0, sxy = 0, syy = 0, i;
+    for (i = 0; i < n; i++) { mx += pts[i][0]; my += pts[i][1]; }
+    mx /= n; my /= n;
+    for (i = 0; i < n; i++) { var dx = pts[i][0] - mx, dy = pts[i][1] - my; sxx += dx * dx; sxy += dx * dy; syy += dy * dy; }
+    return { mu: [mx, my], S: [[sxx / n, sxy / n], [sxy / n, syy / n]] };
+  }
+  function mom2(pts) { /* uncentred second moment, as for an energy operator */
+    var a = 0, b = 0, c = 0;
+    pts.forEach(function (p) { a += p[0] * p[0]; b += p[0] * p[1]; c += p[1] * p[1]; });
+    return [[a, b], [b, c]];
+  }
+
+  /* Figure 13.1: covariance ellipse, PCA axes, variance along u, whitening */
+  (function () {
+    var host = document.getElementById("sim-cov");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.62 });
+    var v = S.view(c, { xmin: -30, xmax: 30, ymin: -20, ymax: 20, padLeft: 30, padBottom: 26, padRight: 12, padTop: 12 });
+    var rng = mkRng(13), base = [], i;
+    for (i = 0; i < 300; i++) base.push([rng.n(), rng.n()]);
+    var white = false;
+    var s1 = S.slider(wrap, { label: "σ along axis 1", min: 1, max: 15, step: 0.5, value: 10, unit: "cm", digits: 1, oninput: function () { c.redraw(); } });
+    var s2 = S.slider(wrap, { label: "σ along axis 2", min: 1, max: 15, step: 0.5, value: 2, unit: "cm", digits: 1, oninput: function () { c.redraw(); } });
+    var th = S.slider(wrap, { label: "rotation", min: 0, max: 180, step: 1, value: 47, unit: "°", digits: 0, oninput: function () { c.redraw(); } });
+    var btn = S.button(wrap, "Whiten", function () { white = !white; btn.textContent = white ? "Show raw data" : "Whiten"; c.redraw(); });
+    var out = S.readout(wrap);
+    var handle = { x: 0, y: 0, r: 18 }, phi = 90 * Math.PI / 180, R0 = 0;
+    S.drag(c, v, [handle], function (p) { phi = Math.atan2(p.y, p.x); c.redraw(); });
+    function rot(p, a) { return [Math.cos(a) * p[0] - Math.sin(a) * p[1], Math.sin(a) * p[0] + Math.cos(a) * p[1]]; }
+    c.draw = function () {
+      var a = th.get() * Math.PI / 180, A = s1.get(), B = s2.get();
+      var pts = base.map(function (p) { return rot([A * p[0], B * p[1]], a); });
+      var st = cov2(pts), Sg = st.S, mu = st.mu, e = S.linalg.eigSym2(Sg);
+      var L1 = e.vals[0], L2 = e.vals[1], V1 = e.vecs[0], V2 = e.vecs[1];
+      if (V1[0] < 0) V1 = [-V1[0], -V1[1]];
+      V2 = [-V1[1], V1[0]];
+      /* Sigma^(-1/2) */
+      var i1 = 1 / Math.sqrt(L1), i2 = 1 / Math.sqrt(L2);
+      var W = [[i1 * V1[0] * V1[0] + i2 * V2[0] * V2[0], i1 * V1[0] * V1[1] + i2 * V2[0] * V2[1]],
+               [i1 * V1[1] * V1[0] + i2 * V2[1] * V2[0], i1 * V1[1] * V1[1] + i2 * V2[1] * V2[1]]];
+      var show = white ? pts.map(function (p) { return S.linalg.matVec(W, [p[0] - mu[0], p[1] - mu[1]]); }) : pts;
+      var cv = white ? cov2(show) : st, Sv = cv.S;
+      equalAspect(v, 0, 0, white ? 4.2 : 32);
+      v.axes({ xlabel: white ? "z₁ (σ units)" : "x₁ (cm)", ylabel: white ? "z₂ (σ units)" : "x₂ (cm)", xticks: white ? 1 : 10, yticks: white ? 1 : 10 });
+      show.forEach(function (p) { v.dot(p[0], p[1], { r: 2.2, color: S.col.gray }); });
+      /* ellipses at 1 and 2 sigma */
+      [1, 2].forEach(function (k) {
+        var poly = [];
+        for (var t = 0; t <= 64; t++) {
+          var ang = 2 * Math.PI * t / 64, ca = Math.cos(ang), sa = Math.sin(ang);
+          if (white) poly.push([k * ca, k * sa]);
+          else poly.push([mu[0] + k * (Math.sqrt(L1) * ca * V1[0] + Math.sqrt(L2) * sa * V2[0]), mu[1] + k * (Math.sqrt(L1) * ca * V1[1] + Math.sqrt(L2) * sa * V2[1])]);
+        }
+        v.poly(poly, { color: S.col.ink, width: k === 1 ? 1.5 : 1, dash: k === 1 ? [] : [4, 3], close: true });
+      });
+      /* PCA axes, 1 sigma long */
+      if (!white) {
+        v.arrow(mu[0], mu[1], mu[0] + Math.sqrt(L1) * V1[0], mu[1] + Math.sqrt(L1) * V1[1], { color: S.col.red, width: 2.5 });
+        v.arrow(mu[0], mu[1], mu[0] + Math.sqrt(L2) * V2[0], mu[1] + Math.sqrt(L2) * V2[1], { color: S.col.blue, width: 2.5 });
+        v.text("PC1", mu[0] + Math.sqrt(L1) * V1[0], mu[1] + Math.sqrt(L1) * V1[1], { color: S.col.red, dx: 6, dy: -4 });
+        v.text("PC2", mu[0] + Math.sqrt(L2) * V2[0], mu[1] + Math.sqrt(L2) * V2[1], { color: S.col.blue, dx: 6, dy: -4 });
+      }
+      /* direction u */
+      var u = [Math.cos(phi), Math.sin(phi)], len = 0.65 * Math.min(v.r.xmax, v.r.ymax);
+      v.line(-len * 1.3 * u[0], -len * 1.3 * u[1], len * 1.3 * u[0], len * 1.3 * u[1], { color: S.col.green, width: 1, dash: [3, 3] });
+      handle.x = len * u[0]; handle.y = len * u[1];
+      v.dot(handle.x, handle.y, { color: S.col.green, r: 7 });
+      v.text("u (drag)", handle.x, handle.y, { color: S.col.green, dx: 9, dy: 4, font: S.fontSmall });
+      var varU = u[0] * u[0] * Sv[0][0] + 2 * u[0] * u[1] * Sv[0][1] + u[1] * u[1] * Sv[1][1];
+      var deg = (Math.atan2(V1[1], V1[0]) * 180 / Math.PI);
+      var phiDeg = ((phi * 180 / Math.PI) % 360 + 360) % 360;
+      if (white) {
+        out.textContent =
+          "whitened: z = Σ^(−1/2)(x − μ).  Covariance of z = [[" + S.fmt(Sv[0][0], 2) + ", " + S.fmt(Sv[0][1], 2) + "], [" + S.fmt(Sv[1][0], 2) + ", " + S.fmt(Sv[1][1], 2) + "]]  (no unit; this is I)\n" +
+          "variance along u (at " + S.fmt(phiDeg, 0) + "°) = uᵀ I u = " + S.fmt(varU, 2) + "   in every direction\n" +
+          "the raw cloud had λ1 = " + S.fmt(L1, 1) + " cm², λ2 = " + S.fmt(L2, 1) + " cm²; whitening divided PC1 by " + S.fmt(Math.sqrt(L1), 2) + " cm and PC2 by " + S.fmt(Math.sqrt(L2), 2) + " cm";
+      } else {
+        var pr = (L1 + L2) * (L1 + L2) / (L1 * L1 + L2 * L2);
+        out.textContent =
+          "Σ = [[" + S.fmt(Sg[0][0], 1) + ", " + S.fmt(Sg[0][1], 1) + "], [" + S.fmt(Sg[1][0], 1) + ", " + S.fmt(Sg[1][1], 1) + "]] cm²   (diagonal = variances, off-diagonal = covariance)\n" +
+          "λ1 = " + S.fmt(L1, 1) + " cm² (σ = " + S.fmt(Math.sqrt(L1), 2) + " cm) along PC1 at " + S.fmt(deg, 0) + "°;   λ2 = " + S.fmt(L2, 1) + " cm² (σ = " + S.fmt(Math.sqrt(L2), 2) + " cm)\n" +
+          "trace = λ1 + λ2 = " + S.fmt(L1 + L2, 1) + " cm²;  correlation r = " + S.fmt(Sg[0][1] / Math.sqrt(Sg[0][0] * Sg[1][1]), 3) + ";  participation ratio = " + S.fmt(pr, 2) + "\n" +
+          "u at " + S.fmt(phiDeg, 0) + "°:  variance along u = uᵀΣu = " + S.fmt(varU, 1) + " cm²   (largest possible = λ1 = " + S.fmt(L1, 1) + ")";
+      }
+    };
+    c.redraw();
+  })();
+
+  /* Figure 13.2: spectrum and participation ratio */
+  (function () {
+    var host = document.getElementById("sim-pr");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.45, maxH: 340 });
+    var v = S.view(c, { xmin: 0.3, xmax: 8.7, ymin: 0, ymax: 10.5, padLeft: 36, padBottom: 28 });
+    var lam = [8, 5, 3, 2, 1.2, 0.8, 0.5, 0.3];
+    S.button(wrap, "flat", function () { lam = [5, 5, 5, 5, 5, 5, 5, 5]; c.redraw(); });
+    S.button(wrap, "one spike", function () { lam = [10, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]; c.redraw(); });
+    S.button(wrap, "steep decay", function () { lam = [8, 5, 3, 2, 1.2, 0.8, 0.5, 0.3]; c.redraw(); });
+    S.button(wrap, "two strong, six weak", function () { lam = [8, 8, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]; c.redraw(); });
+    var out = S.readout(wrap);
+    var down = false;
+    function setFrom(ev) {
+      var r = c.cv.getBoundingClientRect(), t = ev.touches ? ev.touches[0] : ev;
+      var x = v.invX(t.clientX - r.left), y = v.invY(t.clientY - r.top);
+      var k = Math.round(x) - 1;
+      if (k < 0 || k > 7) return;
+      lam[k] = Math.max(0, Math.min(10, Math.round(y * 10) / 10));
+      c.redraw();
+    }
+    c.cv.addEventListener("mousedown", function (ev) { down = true; setFrom(ev); });
+    window.addEventListener("mousemove", function (ev) { if (down) setFrom(ev); });
+    window.addEventListener("mouseup", function () { down = false; });
+    c.cv.addEventListener("touchstart", function (ev) { ev.preventDefault(); setFrom(ev); }, { passive: false });
+    c.cv.addEventListener("touchmove", function (ev) { ev.preventDefault(); setFrom(ev); }, { passive: false });
+    c.cv.style.cursor = "pointer";
+    c.draw = function () {
+      v.axes({ xlabel: "i", ylabel: "λᵢ", xticks: 1, yticks: 2, frame: true });
+      var sorted = lam.slice().sort(function (a, b) { return b - a; });
+      var sum = 0, sq = 0;
+      lam.forEach(function (x, i) {
+        v.rect(i + 1 - 0.32, 0, 0.64, x, { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.25, width: 1.5 });
+        v.text(S.fmt(x, 1), i + 1, x, { align: "center", dy: -5, font: S.fontSmall });
+        sum += x; sq += x * x;
+      });
+      var pr = sq > 0 ? sum * sum / sq : 0;
+      function top(k) { var s = 0; for (var i = 0; i < k; i++) s += sorted[i]; return sum > 0 ? s / sum : 0; }
+      out.textContent =
+        "Σλ = " + S.fmt(sum, 2) + "    Σλ² = " + S.fmt(sq, 2) + "\n" +
+        "participation ratio PR = (Σλ)² / Σλ² = " + S.fmt(sum * sum, 2) + " / " + S.fmt(sq, 2) + " = " + S.fmt(pr, 2) + "   (out of 8 directions)\n" +
+        "top-k energy fraction:  k = 1: " + S.fmt(top(1), 3) + "   k = 2: " + S.fmt(top(2), 3) + "   k = 3: " + S.fmt(top(3), 3);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 13.3: split-half under heavy tails, with trimming */
+  (function () {
+    var host = document.getElementById("sim-split");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.6 });
+    var v = S.view(c, { xmin: -6, xmax: 6, ymin: -4, ymax: 4, padLeft: 26, padBottom: 24 });
+    var TRUE = 30 * Math.PI / 180, N = 400, seed = 7;
+    var heavy = S.slider(wrap, { label: "tail heaviness", min: 0, max: 1, step: 0.05, value: 0.7, digits: 2, oninput: function () { stats(); c.redraw(); } });
+    var trim = S.checkbox(wrap, "trim the heaviest 5% of rows", false, function () { stats(); c.redraw(); });
+    S.button(wrap, "new sample", function () { seed += 1; c.redraw(); });
+    var out = S.readout(wrap);
+    var avgText = "";
+    function sample(sd, h) {
+      var r = mkRng(sd), rows = [], i;
+      for (i = 0; i < N; i++) {
+        var g1 = 1.7 * r.n(), g2 = r.n(), f = Math.pow(r.u(), -h);
+        var x = f * (Math.cos(TRUE) * g1 - Math.sin(TRUE) * g2), y = f * (Math.sin(TRUE) * g1 + Math.cos(TRUE) * g2);
+        rows.push({ p: [x, y], half: r.u() < 0.5 ? 0 : 1, e: x * x + y * y });
+      }
+      return rows;
+    }
+    function analyse(rows, doTrim) {
+      var keep = rows;
+      if (doTrim) {
+        var es = rows.map(function (q) { return q.e; }).sort(function (a, b) { return b - a; });
+        var cut = es[Math.floor(0.05 * rows.length)];
+        keep = rows.filter(function (q) { return q.e < cut; });
+      }
+      var A = keep.filter(function (q) { return q.half === 0; }).map(function (q) { return q.p; });
+      var B = keep.filter(function (q) { return q.half === 1; }).map(function (q) { return q.p; });
+      var vA = S.linalg.eigSym2(mom2(A)).vecs[0], vB = S.linalg.eigSym2(mom2(B)).vecs[0];
+      var ov = Math.pow(vA[0] * vB[0] + vA[1] * vB[1], 2);
+      return { keep: keep, vA: vA, vB: vB, ov: ov };
+    }
+    function stats() {
+      var h = heavy.get(), s0 = 0, s1 = 0;
+      for (var k = 0; k < 100; k++) { var rows = sample(1000 + k, h); s0 += analyse(rows, false).ov; s1 += analyse(rows, true).ov; }
+      avgText = "mean split-half (k = 1) over 100 fresh samples at this heaviness:  no trim " + S.fmt(s0 / 100, 2) + "   trim 5% " + S.fmt(s1 / 100, 2);
+    }
+    stats();
+    function ang(u) { var a = Math.atan2(u[1], u[0]) * 180 / Math.PI; if (a < 0) a += 180; if (a >= 180) a -= 180; return a; }
+    c.draw = function () {
+      equalAspect(v, 0, 0, 10);
+      v.axes({ xlabel: "x₁", ylabel: "x₂", xticks: 2, yticks: 2 });
+      var rows = sample(seed, heavy.get()), res = analyse(rows, trim.get());
+      var kept = {}; res.keep.forEach(function (q) { kept[rows.indexOf(q)] = 1; });
+      var R = v.r, tot = 0, es = rows.map(function (q) { tot += q.e; return q.e; }).sort(function (a, b) { return b - a; });
+      var top1 = 0; for (var i = 0; i < Math.round(N * 0.01); i++) top1 += es[i];
+      rows.forEach(function (q, idx) {
+        var x = q.p[0], y = q.p[1], out2 = false;
+        var sx = Math.max(Math.abs(x) / (R.xmax * 0.97), Math.abs(y) / (R.ymax * 0.95));
+        if (sx > 1) { x /= sx; y /= sx; out2 = true; }
+        var col = !kept[idx] ? S.col.light : (q.half === 0 ? S.col.blue : S.col.red);
+        v.dot(x, y, { r: out2 ? 4 : 2.2, color: col, hollow: out2 });
+      });
+      var L = 16;
+      v.line(-L * Math.cos(TRUE), -L * Math.sin(TRUE), L * Math.cos(TRUE), L * Math.sin(TRUE), { color: S.col.gray, dash: [6, 4], width: 1.5 });
+      v.line(-L * res.vA[0], -L * res.vA[1], L * res.vA[0], L * res.vA[1], { color: S.col.blue, width: 2.2 });
+      v.line(-L * res.vB[0], -L * res.vB[1], L * res.vB[0], L * res.vB[1], { color: S.col.red, width: 2.2 });
+      out.textContent =
+        "top direction of half A: " + S.fmt(ang(res.vA), 0) + "°    half B: " + S.fmt(ang(res.vB), 0) + "°    (truth 30°)\n" +
+        "split-half overlap at k = 1: cos²(angle between them) = " + S.fmt(res.ov, 3) + "\n" +
+        "share of total energy Σ‖x‖² carried by the heaviest 1% of rows: " + S.fmt(100 * top1 / tot, 1) + "%" + (trim.get() ? "   (" + (N - res.keep.length) + " rows trimmed, shown light gray)" : "") + "\n" +
+        avgText;
+    };
+    c.redraw();
+  })();
+
+  /* Figure 13.4: Hutchinson trace estimate with Rademacher signs */
+  (function () {
+    var host = document.getElementById("sim-hutch");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.45, maxH: 340 });
+    var v = S.view(c, { xmin: 0, xmax: 50, ymin: -10, ymax: 18, padLeft: 40, padBottom: 26 });
+    var D = [2, -1, 3], O = [[0, 1.5, -1], [0.5, 0, 2], [-2, 1, 0]];
+    var rng = mkRng(5), draws = [], last = null;
+    var sc = S.slider(wrap, { label: "off-diagonal size", min: 0, max: 2, step: 0.1, value: 1, digits: 1, oninput: function () { draws = []; last = null; c.redraw(); } });
+    function A() { var M = [], i, j; for (i = 0; i < 3; i++) { M.push([]); for (j = 0; j < 3; j++) M[i].push(i === j ? D[i] : sc.get() * O[i][j]); } return M; }
+    function one() {
+      var s = [rng.u() < 0.5 ? 1 : -1, rng.u() < 0.5 ? 1 : -1, rng.u() < 0.5 ? 1 : -1], M = A();
+      var As = S.linalg.matVec(M, s), val = S.linalg.dot(s, As);
+      last = { s: s, val: val, M: M };
+      draws.push(val);
+    }
+    function add(k) { for (var i = 0; i < k; i++) one(); c.redraw(); }
+    S.button(wrap, "1 draw", function () { add(1); });
+    S.button(wrap, "10 draws", function () { add(10); });
+    S.button(wrap, "100 draws", function () { add(100); });
+    S.button(wrap, "reset", function () { draws = []; last = null; c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var M = A(), pairs = [M[0][1] + M[1][0], M[0][2] + M[2][0], M[1][2] + M[2][1]];
+      var maxdev = Math.abs(pairs[0]) + Math.abs(pairs[1]) + Math.abs(pairs[2]);
+      var sd = Math.sqrt(pairs[0] * pairs[0] + pairs[1] * pairs[1] + pairs[2] * pairs[2]);
+      var n = draws.length;
+      v.set({ xmax: Math.max(50, Math.ceil(n * 1.05 / 10) * 10), ymin: 4 - maxdev - 1, ymax: 4 + maxdev + 1 });
+      v.axes({ xlabel: "number of draws N", ylabel: "estimate", frame: true });
+      v.line(0, 4, v.r.xmax, 4, { color: S.col.red, dash: [6, 4], width: 1.5 });
+      v.text("tr A = 4", v.r.xmax, 4, { align: "right", dy: -6, color: S.col.red, font: S.fontSmall });
+      var run = 0, pts = [];
+      draws.forEach(function (x, i) { v.dot(i + 1, x, { r: 2, color: S.col.gray }); run += x; pts.push([i + 1, run / (i + 1)]); });
+      if (pts.length > 1) v.poly(pts, { color: S.col.blue, width: 2, close: false });
+      else if (pts.length === 1) v.dot(pts[0][0], pts[0][1], { color: S.col.blue });
+      var txt = "A = [[" + M.map(function (r) { return r.map(function (x) { return S.fmt(x, 1); }).join(", "); }).join("], [") + "]]\n";
+      if (last) {
+        var s = last.s, cross = pairs[0] * s[0] * s[1] + pairs[1] * s[0] * s[2] + pairs[2] * s[1] * s[2];
+        txt += "last s = (" + s.map(function (x) { return x > 0 ? "+1" : "−1"; }).join(", ") + "):  sᵀAs = diagonal part 4 + cross part " + S.fmt(cross, 2) + " = " + S.fmt(last.val, 2) + "\n" +
+          "N = " + n + "   running average = " + S.fmt(run / n, 3) + "   error = " + S.fmt(run / n - 4, 3) +
+          "   per-draw SD = " + S.fmt(sd, 2) + ", so standard error ≈ " + S.fmt(sd / Math.sqrt(n), 3);
+      } else txt += "press a button to draw random sign vectors s";
+      out.textContent = txt;
+    };
+    c.redraw();
+  })();
+
+  /* Figure 13.5: randomization (permutation) test */
+  (function () {
+    var host = document.getElementById("sim-perm");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.45, maxH: 360 });
+    var left = S.view(c, { xmin: -2.8, xmax: 2.8, ymin: -2.8, ymax: 2.8, left: 0, width: 0, padLeft: 26, padBottom: 24, padRight: 8 });
+    var right = S.view(c, { xmin: -1.2, xmax: 1.2, ymin: 0, ymax: 10, left: 0, width: 0, padLeft: 34, padBottom: 24, padRight: 10 });
+    var n = 12, seed = 6, X = [], Y = [], shufY = null, null_ = [];
+    var beta = S.slider(wrap, { label: "link strength in the toy data", min: 0, max: 1, step: 0.05, value: 0.5, digits: 2, oninput: function () { make(); c.redraw(); } });
+    S.button(wrap, "1 shuffle", function () { addShuf(1); });
+    S.button(wrap, "100 shuffles", function () { addShuf(100); });
+    S.button(wrap, "1000 shuffles", function () { addShuf(1000); });
+    S.button(wrap, "reset", function () { null_ = []; shufY = null; c.redraw(); });
+    S.button(wrap, "new data", function () { seed += 1; make(); c.redraw(); });
+    var out = S.readout(wrap);
+    var rng = mkRng(99);
+    function make() {
+      var r = mkRng(seed), b = beta.get(); X = []; Y = [];
+      for (var i = 0; i < n; i++) { var x = r.n(); X.push(x); Y.push(b * x + Math.sqrt(1 - b * b) * r.n()); }
+      null_ = []; shufY = null;
+    }
+    function covXY(x, y) {
+      var mx = 0, my = 0, s = 0, i;
+      for (i = 0; i < n; i++) { mx += x[i]; my += y[i]; }
+      mx /= n; my /= n;
+      for (i = 0; i < n; i++) s += (x[i] - mx) * (y[i] - my);
+      return s / n;
+    }
+    function addShuf(k) {
+      for (var t = 0; t < k; t++) {
+        var y = Y.slice();
+        for (var i = n - 1; i > 0; i--) { var j = Math.floor(rng.u() * (i + 1)), tmp = y[i]; y[i] = y[j]; y[j] = tmp; }
+        shufY = y; null_.push(covXY(X, y));
+      }
+      c.redraw();
+    }
+    make();
+    c.draw = function () {
+      var half = c.W * 0.42;
+      left.set({ left: 0, width: half }); right.set({ left: half, width: c.W - half });
+      left.axes({ xlabel: "x", ylabel: "y", xticks: 1, yticks: 1 });
+      for (var i = 0; i < n; i++) {
+        if (shufY) left.dot(X[i], shufY[i], { r: 3.5, color: S.col.red, hollow: true });
+        left.dot(X[i], Y[i], { r: 3.2, color: S.col.ink });
+      }
+      var T0 = covXY(X, Y), bins = 40, cnt = [], b, k = 0, H = Math.max(0.8, Math.abs(T0) * 1.15);
+      right.set({ xmin: -H, xmax: H });
+      for (b = 0; b < bins; b++) cnt.push(0);
+      null_.forEach(function (t) { var bi = Math.floor((t + H) / (2 * H) * bins); bi = Math.max(0, Math.min(bins - 1, bi)); cnt[bi]++; if (t >= T0) k++; });
+      var mx = Math.max.apply(null, cnt.concat([1]));
+      right.set({ ymax: Math.max(5, Math.ceil(mx * 1.15)) });
+      right.axes({ xlabel: "covariance", ylabel: "count", frame: true });
+      for (b = 0; b < bins; b++) if (cnt[b]) right.rect(-H + b * 2 * H / bins, 0, 2 * H / bins, cnt[b], { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.3, width: 1 });
+      right.line(T0, 0, T0, right.r.ymax, { color: S.col.red, width: 2 });
+      right.text("T₀", T0, right.r.ymax, { color: S.col.red, dx: 4, dy: 14 });
+      var R = null_.length;
+      out.textContent =
+        "real data: T₀ = Cov(x, y) = " + S.fmt(T0, 3) + "\n" +
+        "R = " + R + " shuffles, of which " + k + " have T_r ≥ T₀\n" +
+        (R ? "p = (1 + " + k + ") / (" + R + " + 1) = " + S.fmt((1 + k) / (R + 1), 4) + "    (floor with this R: 1/(R + 1) = " + S.fmt(1 / (R + 1), 4) + ")" : "press a shuffle button to build the null histogram");
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

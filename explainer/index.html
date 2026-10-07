@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jacobians and Hessians, from scratch</title>
+<meta name="description" content="A sixteen-level explainer, from rates and units to the H-lens of a 27-billion-parameter language model.">
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body>
+<div class="page">
+
+<h1>Jacobians and Hessians, from scratch</h1>
+<p class="subtitle">From “metres per second” to the H-lens of a 27-billion-parameter language model, in sixteen levels.</p>
+
+<hr>
+
+<p>This site teaches the mathematics behind <a href="https://github.com/RaphaelKhalid/hspace">H-space</a>, a search for the second-order workspace of a language model. It starts at grade-school arithmetic and ends at the propositions in the project's theory notes. Every level uses only ideas from the levels before it.</p>
+
+<h2>How to read it</h2>
+<ul>
+<li><b>Dotted underlines</b> mark technical words. Hover over one (or tap it on a phone) for a short definition. You can turn these pop-ups off with the checkbox at the top of every page. The full list is on the <a href="glossary.html">glossary page</a>.</li>
+<li><b>Every level opens with a symbol table.</b> Each letter is listed with how to say it, what it means, its unit and an example, before it is used.</li>
+<li><b>Figures are live.</b> Drag the sliders and points. Each simulation shows one idea, and its caption says what to look for.</li>
+<li><b>Exercises</b> close each level. Some check a typed number. Every one has a hidden worked answer.</li>
+<li><b>Two running examples</b> come back again and again: a car (one input, time) and a farm, where crop yield depends on water and fertiliser (two inputs). Interactions, Jacobians and Hessians are all first shown on the farm.</li>
+</ul>
+
+<h2 id="offline">Use it offline</h2>
+<p>After one visit with internet, the whole site (all sixteen levels, the glossary, the equation fonts and every simulation, about 2 MB) is saved in your browser. The top bar says “Saved for offline ✓” when it is done. From then on it opens with no connection.</p>
+<ul>
+<li><b>iPhone or iPad, Safari:</b> tap Share, then “Add to Home Screen”. Open the new H-space icon once while online and wait for “Saved for offline ✓”. Use the icon from then on. (Safari can clear a website's saved files after about a week without a visit; a Home Screen icon is not cleared that way.)</li>
+<li><b>iPhone or iPad, Chrome:</b> a normal Chrome tab on iOS cannot keep an offline copy. Tap Share (the square with an arrow, in the address bar), then “Add to Home Screen” (needs iOS 16.4 or later). Open the new icon once while online and wait for “Saved for offline ✓”.</li>
+<li><b>Android, Chrome:</b> it saves itself on the first visit. To get an app icon, open the menu (⋮) and choose “Add to Home screen” or “Install app”.</li>
+<li><b>Laptop, Chrome or Edge:</b> it saves itself on the first visit. The install icon in the address bar gives it its own window.</li>
+</ul>
+<p class="small">When the site is updated, the next visit with internet downloads the new version in the background, and the next page you open uses it.</p>
+
+<h2 id="contents">Contents</h2>
+<div id="toc"></div>
+
+<h2>Where this ends</h2>
+<p>Level 15 explains the actual runs: what the H-lens energy operators are, why the covariance can fake structure (the Σ prior), how the sign-flip test and the Σ-orbit twins rule that out, and what the preregistered tests v5, v8 and v9 did and did not show on Qwen3.6-27B. Every number on that page is copied by a script from the committed <code>results/*.json</code> files.</p>
+
+<p class="small">Source for this site: <code>explainer/</code> in the repository. Plain HTML, no build step. Equations typeset with KaTeX (bundled locally).</p>
+
+</div>
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+(function () {
+  var parts = [
+    ["Part I: one input", [0, 1, 2, 3, 4]],
+    ["Part II: two inputs", [5, 6]],
+    ["Part III: many inputs and outputs", [7, 8, 9]],
+    ["Part IV: derivatives of networks", [10, 11, 12]],
+    ["Part V: from statistics to H-space", [13, 14, 15]]
+  ];
+  var blurbs = {
+    0: "What a quantity is, rates as “per”, and units as an error check.",
+    1: "Variables, functions as machines, and reading a graph.",
+    2: "Zooming in on a curve until it is straight: the derivative.",
+    3: "How fast the slope changes: curvature and acceleration.",
+    4: "Rebuilding a function near a point from its derivatives, and where that fails.",
+    5: "Hills and maps: partial derivatives, the gradient, contour lines.",
+    6: "When the effect of one input depends on another: the mixed partial and the 2×2 test.",
+    7: "Vectors as arrows, matrices as machines, the determinant as area scaling.",
+    8: "The best linear copy of a many-to-many function, and the Jacobian conjecture.",
+    9: "All second derivatives at once: bowls, saddles, eigenvectors.",
+    10: "Multiplying Jacobians: how backpropagation computes gradients cheaply.",
+    11: "Getting H·v without ever building H.",
+    12: "Curvature created layer by layer, and the exact 2×2 interaction formula.",
+    13: "Covariance, whitening, PCA, reproducibility, heavy tails and null tests.",
+    14: "Tokens, the residual stream, attention, SwiGLU, and the J-lens.",
+    15: "Energy operators, the Σ prior, sign flips, twins, and the v5/v8/v9 results."
+  };
+  var html = "";
+  parts.forEach(function (p) {
+    html += "<h3>" + p[0] + "</h3><ul>";
+    p[1].forEach(function (n) {
+      var L = (window.EXPLAINER_LEVELS || [])[n];
+      html += '<li><a href="' + L.file + '">Level ' + n + ": " + L.title + "</a>. " + blurbs[n] + "</li>";
+    });
+    html += "</ul>";
+  });
+  document.getElementById("toc").innerHTML = html;
+})();
+</script>
+</body>
+</html>
