@@ -8,6 +8,18 @@ I call that subspace **H-space**, after the Hessian.
 
 **Status (Oct 6 2026): run 1, run 2 and the follow-up tests through v9 are complete (11 tests in the sequence, counting run 1 and run 2; v6 was designed but not run), including a preregistered replication (v8) and a preregistered interaction test (v9) of a punctuation-conditional H-subspace, both passed. Negatives, one retraction and all later corrections (`results/CORRECTIONS.md`) are included. Decoding, ablation/steering, class-specificity and a second model are untested.** This is research code plus a paper draft, built in one push on a $17 GPU budget.
 
+## Status (Oct 8 2026)
+
+- **What is established:** a reproducible second-order structure in Qwen3.6-27B.
+  - v10 M3: the punctuation H-space has 7.3x (L16) and 3.4x (L40) more interaction than 16 matched twins.
+  - R passes in v10 and v11.
+  - The all-position version replicates across runs (v11a overlap 0.94) and still beats every one of 16 Sigma-orbit twins on fresh text at random positions, by 2.2x (L16) and 1.7x (L40). It also beats them after J-space is removed (v11).
+- **Not established ("I found H-space" in the J-space sense):**
+  - v10 and v11 MUST tiers not passed.
+  - v11's all-position effect is below the preregistered 2x bar at L40.
+  - "Used" (M4/M5) is still untestable. The tasks do not route through any single suffix position at L16 or L40, so only 1 of 3 contexts localized.
+  - J-space directions carry far more interaction.
+- **Details:** `results/runlog_laptop.md`, `results/v10/`, `results/v11/`, `results/hs_v11a.json`.
 ## Results so far
 
 ### Run 1: the preregistered one-shot on Qwen3.6-27B (`hlens/paper/SCOPE-hspace.md`). Verdict: **FAIL**
