@@ -6,7 +6,7 @@ Anthropic's J-lens (arXiv 2607.15495) averages the **Jacobian** of a model's fin
 
 I call that subspace **H-space**, after the Hessian.
 
-**Status (Oct 6 2026): run 1, run 2 and the follow-up tests through v9 are complete (11 tests in the sequence, counting run 1 and run 2; v6 was designed but not run), including a preregistered replication (v8) and a preregistered interaction test (v9) of a punctuation-conditional H-subspace, both passed. Negatives, one retraction and all later corrections (`results/CORRECTIONS.md`) are included. Decoding, ablation/steering, class-specificity and a second model are untested.** This is research code plus a paper draft, built in one push on a $17 GPU budget.
+**Status (Oct 6 2026): run 1, run 2 and the follow-up tests through v9 are complete (11 tests in the sequence, counting run 1 and run 2; v6 was designed but not run), including a preregistered replication (v8) and a preregistered interaction test (v9) of a punctuation-conditional H-subspace, both passed. Negatives, one retraction and all later corrections (`results/CORRECTIONS.md`) are included. Decoding, ablation/steering, class-specificity and a second model are untested.** This is research code plus a paper draft, built on about $26 of RunPod GPU time in total (Oct 5–8 account billing: about $17 through v9, about $9 for v10–v11).
 
 ## Status (Oct 8 2026)
 
