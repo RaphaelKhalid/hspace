@@ -1,0 +1,59 @@
+[v11 04:59:48 +0.0m] start full, layers [16, 40], budget 160.0 min
+/usr/local/lib/python3.12/dist-packages/huggingface_hub/constants.py:302: FutureWarning: The `HF_HUB_ENABLE_HF_TRANSFER` environment variable is deprecated as 'hf_transfer' is not used anymore. Please use `HF_XET_HIGH_PERFORMANCE` instead to enable high performance transfer with Xet. Visit https://huggingface.co/docs/huggingface_hub/package_reference/environment_variables#hfxethighperformance for more details.
+  warnings.warn(
+The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+[v11 05:01:23 +1.6m] S0: class moments from 768 windows
+[v11 05:01:30 +1.7m] S0 L16: mean-energy 0.0084 (refs max 0.0029, tw max 0.0014) mean/norm-aligned True | H in J25 0.060 | HJ retained 0.940 | H vs EX 0.336 | raw norm H 0.749 vs tw max 0.749
+[v11 05:01:37 +1.8m] S0 L40: mean-energy 0.0053 (refs max 0.0008, tw max 0.0007) mean/norm-aligned True | H in J25 0.019 | HJ retained 0.981 | H vs EX 0.391 | raw norm H 1.521 vs tw max 1.521
+[v11 05:01:37 +1.8m] S0 done (1.7 min); live layers [16, 40]
+[v11 05:01:59 +2.2m] L negation_truth: item 4/16 (0.3 min in L)
+[v11 05:02:19 +2.5m] L negation_truth: item 8/16 (0.7 min in L)
+[v11 05:02:39 +2.8m] L negation_truth: item 12/16 (1.0 min in L)
+[v11 05:02:59 +3.2m] L negation_truth: item 16/16 (1.4 min in L)
+[v11 05:03:00 +3.2m] L negation_truth: n 16 DiD +5.29 CI [4.36, 6.19] gated True | L16 o*=None ratio None curv None site-gate False | L40 o*=2 ratio 0.40067083364249 curv -0.03051160352604186 site-gate True
+[v11 05:03:19 +3.5m] L entity_attribute: item 4/16 (1.7 min in L)
+[v11 05:03:39 +3.9m] L entity_attribute: item 8/16 (2.0 min in L)
+[v11 05:03:59 +4.2m] L entity_attribute: item 12/16 (2.4 min in L)
+[v11 05:04:18 +4.5m] L entity_attribute: item 16/16 (2.7 min in L)
+[v11 05:04:19 +4.5m] L entity_attribute: n 16 DiD +7.18 CI [4.8, 9.42] gated True | L16 o*=None ratio None curv None site-gate False | L40 o*=None ratio None curv None site-gate False
+[v11 05:04:42 +4.9m] L relational_composition: item 4/16 (3.1 min in L)
+[v11 05:05:05 +5.3m] L relational_composition: item 8/16 (3.5 min in L)
+[v11 05:05:28 +5.7m] L relational_composition: item 12/16 (3.8 min in L)
+[v11 05:05:51 +6.1m] L relational_composition: item 16/16 (4.2 min in L)
+[v11 05:05:52 +6.1m] L relational_composition: n 16 DiD +2.14 CI [1.7, 2.54] gated True | L16 o*=None ratio None curv None site-gate False | L40 o*=None ratio None curv None site-gate False
+[v11 05:06:30 +6.7m] T negation_truth: item 4/32 (0.6 min in T)
+[v11 05:07:07 +7.3m] T negation_truth: item 8/32 (1.3 min in T)
+[v11 05:07:45 +7.9m] T negation_truth: item 12/32 (1.9 min in T)
+[v11 05:08:24 +8.6m] T negation_truth: item 16/32 (2.5 min in T)
+[v11 05:09:02 +9.2m] T negation_truth: item 20/32 (3.2 min in T)
+[v11 05:09:40 +9.9m] T negation_truth: item 24/32 (3.8 min in T)
+[v11 05:10:18 +10.5m] T negation_truth: item 28/32 (4.4 min in T)
+[v11 05:10:57 +11.1m] T negation_truth: item 32/32 (5.1 min in T)
+[v11 05:11:19 +11.5m] T null_unrelated: item 4/24 (5.5 min in T)
+[v11 05:11:41 +11.9m] T null_unrelated: item 8/24 (5.8 min in T)
+[v11 05:12:03 +12.2m] T null_unrelated: item 12/24 (6.2 min in T)
+[v11 05:12:25 +12.6m] T null_unrelated: item 16/24 (6.6 min in T)
+[v11 05:12:47 +13.0m] T null_unrelated: item 20/24 (6.9 min in T)
+[v11 05:13:08 +13.3m] T null_unrelated: item 24/24 (7.3 min in T)
+[v11 05:13:09 +13.3m] T negation_truth L40 o*=2 (n=32): DiD_site CI [1.708, 2.383] | share -0.13491904429368126 | H removes -0.04 (e 0.001) z -0.3 rankD 10 -> M4 inconclusive | M5 dH +0.012 vs J5 -0.062 twins max +0.009 -> M5 fail | HJ: M4 inconclusive M5 fail
+[v11 05:13:09 +13.3m] T null_unrelated L40 o=2 (n=24): TOST diff -0.00014738761095108762 CI90 [-0.0005551349545101369, 0.0002477515023269856] -> equivalent True
+[v11 05:13:11 +13.4m] W: 40 windows from 40 articles (k>=5; 0 excluded as v10 windows)
+[v11 05:18:00 +18.2m] W window 4/40 (72.6s/window, peak 57.9 GB)
+[v11 05:22:50 +23.0m] W window 8/40 (72.5s/window, peak 57.9 GB)
+[v11 05:27:39 +27.8m] W window 12/40 (72.4s/window, peak 57.9 GB)
+[v11 05:32:27 +32.7m] W window 16/40 (72.4s/window, peak 57.9 GB)
+[v11 05:37:16 +37.5m] W window 20/40 (72.3s/window, peak 57.9 GB)
+[v11 05:42:03 +42.2m] W window 24/40 (72.2s/window, peak 57.9 GB)
+[v11 05:46:52 +47.1m] W window 28/40 (72.2s/window, peak 57.9 GB)
+[v11 05:51:40 +51.9m] W window 32/40 (72.2s/window, peak 57.9 GB)
+[v11 05:56:30 +56.7m] W window 36/40 (72.2s/window, peak 57.9 GB)
+[v11 06:01:19 +61.5m] W window 40/40 (72.2s/window, peak 57.9 GB)
+[v11 06:01:20 +61.5m] W L16 (n=40): H T1 I +0.79 [0.54, 1.06] rank 1/17 p_PI 0.000 | I_trunk +0.84 | freeze kept nan valid True -> M3 fail | HJ T1 +0.49 [0.24, 0.75] rank 1/17 -> M3res fail | log H/J5 -1.87 HJ/J5 -1.90
+[v11 06:01:21 +61.5m] W L40 (n=40): H T1 I +0.52 [0.35, 0.69] rank 1/17 p_PI 0.000 | I_trunk +0.54 | freeze kept None valid True -> M3 fail | HJ T1 +0.44 [0.28, 0.6] rank 1/17 -> M3res fail | log H/J5 -2.56 HJ/J5 -2.69
+[v11 06:01:22 +61.6m] R: shuffled 195 weight tensors in blocks 41..63 (all blocks > 40 now shuffled)
+[v11 06:03:38 +63.8m] R L40 (n=24): random-weights T1 +0.13 vs trained +0.57 on the same windows (median twin |I| 1.27e-02 vs 2.08e-04) -> pass
+[v11 06:03:40 +63.9m] R: shuffled 204 weight tensors in blocks 17..40 (all blocks > 16 now shuffled)
+[v11 06:07:35 +67.8m] R L16 (n=24): random-weights T1 -0.08 vs trained +0.96 on the same windows (median twin |I| 7.77e-03 vs 1.53e-04) -> pass
+[v11 06:07:35 +67.8m] VERDICT: MUST tier not passed. fail: ['M3', 'M3res']; inconclusive: ['M4', 'M5']; qualifiers: localized sites: negation_truth|L40|o*=2; subspace (k = 5 fixed); v11a object: position-general at L40 only, punctuation-carried at L40 (v11a frozen verdict); distinct = geometric (H in J25 overlap reported in S0) + functional (M4/M5 J5 contrasts); mean/norm-aligned (L16); excess at non-punctuation positions (L16); mean/norm-aligned (L40); punctuation-carried in W (L40)
+[v11 06:07:35 +67.8m] verdict detail: {"M3": "fail", "R": "pass", "M3res": "fail", "M4": "inconclusive", "M5": "inconclusive", "TOST": "pass", "M4_HJ": "inconclusive", "M5_HJ": "inconclusive"}
+[v11 06:07:35 +67.8m] DONE
