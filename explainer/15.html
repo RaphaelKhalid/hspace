@@ -28,7 +28,7 @@
 <li>prove Proposition 0 (\(M^{\text{row}} \succeq M^{\text{diag}} \succeq M^{\text{lens}}\)) and say which of these each sign-probe estimator converges to (Proposition 6);</li>
 <li>read the run-1 C0 to C6 table and say exactly why it is a FAIL;</li>
 <li>explain heavy tails, the Σ prior (Proposition 8) and the exact sign-flip test (Corollary 8.1), each with its proof;</li>
-<li>follow v5, the Σ-orbit twin test, v8 and v9, and list precisely what is and is not established.</li>
+<li>follow v5, the Σ-orbit twin test, v8, v9, v10a, v10, v11a and v11, and list precisely what is and is not established.</li>
 </ul>
 <p class="small">Prerequisites: <a href="09.html">Level 9</a> (Hessian, eigenvectors), <a href="11.html">Level 11</a> (HVPs), <a href="12.html">Level 12</a> (second-order adjoint, rectangle identity), <a href="13.html">Level 13</a> (covariance, whitening, PCA, split-half, heavy tails, sign tricks, randomization tests), <a href="14.html">Level 14</a> (transformers, residual stream, J-lens).</p>
 </div>
@@ -127,6 +127,13 @@
 <tr><td>\(r_I,\ r_M,\ S\)</td><td>“r I”, “r M”, “S”</td><td>retention of interactions and of main effects after an ablation; specificity \(S = r_M - r_I\)</td><td>none (pure numbers)</td><td>\(S = 0.014\) (paper §4b)</td></tr>
 <tr><td>C0 … C6</td><td>“C nought” …</td><td>the seven run-1 criteria (15.8)</td><td>none (labels)</td><td>C1: split-half ≥ 0.7</td></tr>
 <tr><td>\(k_{\text{floor}}\)</td><td>“k floor”</td><td>number of eigenvalues above the noise floor (v3)</td><td>none (count)</td><td>1</td></tr>
+<tr><td>H (v10, v11)</td><td>“H”</td><td>the frozen 5-dimensional subspace under test: EX in v10; the all-position top 5 from v11a in v11 (15.16)</td><td>none (unit vectors)</td><td></td></tr>
+<tr><td>J5, PC5, HJ</td><td>“J five”, “P C five”, “H J”</td><td>top 5 of the author's whitened J25; top 5 eigenvectors of the whitened punctuation covariance; H with its J25 part projected out (15.16)</td><td>none (unit vectors)</td><td></td></tr>
+<tr><td>\(Q_J\)</td><td>“Q J”</td><td>a \(d\times25\) matrix whose columns are J25's orthonormalised directions</td><td>none</td><td></td></tr>
+<tr><td>\(\operatorname{orth}\)</td><td>“orth”</td><td>orthonormalise the columns of a matrix</td><td>none</td><td></td></tr>
+<tr><td>DiD, \(f_{11}, f_{10}, f_{01}, f_{00}\)</td><td>“D i D”</td><td>a task's own 2×2 interaction \(f_{11} - f_{10} - f_{01} + f_{00}\); subscripts say which two factors are on; \(f\) is the log-probability difference of the two answer tokens</td><td>nats</td><td>about +5 nats for negation (log)</td></tr>
+<tr><td>\(p_{\text{PI}}\)</td><td>“p P I”</td><td>prediction-interval p-value of H's \(T_1\) against each twin's leave-one-out \(T_1\)</td><td>none (probability)</td><td></td></tr>
+<tr><td>M2 … M7, M3res, R, TOST</td><td>“M two” …</td><td>the named checks of the v10 and v11 registered reports (15.16)</td><td>none (labels)</td><td>M3: “real”</td></tr>
 </table>
 </div>
 
@@ -576,7 +583,96 @@ $$ T_1 = \operatorname*{mean}_{j}\log\frac{\text{ex}_3}{\text{tw}_{3,j}},\qquad 
 v9 is a <b>perturbation test</b>. It shows that natural-scale, same-position pairwise interaction concentrates in EX more than in exact global-covariance twins, per unit of main effect too. That is predictive validity in a narrow sense. It is not evidence that the model relies on EX: nothing was decoded, ablated or steered. The twins match the <b>global</b> covariance, not the punctuation-row covariance. About 15 to 23% of the “punctuation” positions are wikitext markup. A fail would have refuted only within-span, single-position pairwise interaction.
 </div>
 
-<h2>15.16 What is and is not established</h2>
+<h2>15.16 After v9: v10a, v10, v11a and v11</h2>
+<p>v9 showed that EX carries more natural-scale interaction than its twins. Four more tests followed, each frozen before its data existed. They ask four questions in turn.</p>
+<ol>
+<li><b>v10a:</b> does any other token class have its own replicable H-space?</li>
+<li><b>v10:</b> is the frozen punctuation H-space real, used by the model, and distinct from J-space?</li>
+<li><b>v11a:</b> is there a position-general H-space, pooled over all tokens?</li>
+<li><b>v11:</b> is that position-general H-space used, and distinct from J-space?</li>
+</ol>
+<p>Every number below is printed live from <code>assets/hspace_numbers.js</code>, generated from <code>results/hs_v10a.json</code>, <code>results/v10/hs_v10_full.json</code>, <code>results/hs_v11a.json</code> and <code>results/v11/hs_v11_full.json</code>. Numbers marked “(log)” are quoted from <code>results/v10/hs_v10.log</code>, <code>results/v11/hs_v11.log</code> or <code>results/runlog_laptop.md</code>. The rules are in <code>hlens/paper/SCOPE-hspace-v10a.md</code>, <code>-v10.md</code>, <code>-v11a.md</code> and <code>-v11.md</code>.</p>
+
+<h3>New names used in this section</h3>
+<ul>
+<li><b>H</b> is the name of the frozen subspace under test. In v10, H is EX renamed. In v11, H is the new all-position subspace from v11a. Like J-space, the name is a definition, not a claim.</li>
+<li><b>J5</b> is the top 5 directions of the author's whitened J25. <b>PC5</b> is the top 5 eigenvectors of the whitened punctuation covariance.</li>
+<li><b>HJ</b> is H with its J25 part projected out: \(\mathrm{HJ} = \operatorname{orth}\big((I_d - Q_JQ_J^\top)H\big)\), where \(Q_J\) holds J25's orthonormalised directions. If HJ still beats its twins, the effect does not come from the small part of H that lies in J-space.</li>
+<li><b>DiD</b> is a task's own 2×2 interaction (Level 6): \(\text{DiD} = f_{11} - f_{10} - f_{01} + f_{00}\), where the subscripts say which of two factors are switched on in the prompt, and \(f\) is the log-probability difference between the two answer tokens (nats).</li>
+<li><b>\(p_{\text{PI}}\)</b> is a one-sided prediction-interval p-value: how unusual H's \(T_1\) is compared with what each twin scores against the other twins.</li>
+<li>The checks M2 to M7, M3res, R and TOST are explained where they first appear.</li>
+</ul>
+
+<h3>v10a: does another token class carry its own H-space? (12th test, laptop, $0)</h3>
+<p><b>Rule.</b> The v8 rule, word for word, applied separately to four new token classes: function words (articles, pronouns, prepositions and so on), content words, digits and whitespace. A class replicates at a layer if both robust estimators beat every flip on \(\lambda_1\) and split@3, split@3 is at least 0.7, the planted control is found, and the top-5 overlap with run 2 is at least 0.5. A class passes if it replicates at both L16 and L40. Punctuation is the reference row.</p>
+<div class="tablewrap">
+<table id="tbl-v10a">
+<tr><th>class</th><th>L16 split@3 (norm / xnorm)</th><th>L16 cross-run</th><th>L16</th><th>L40 split@3 (norm / xnorm)</th><th>L40 cross-run</th><th>L40</th></tr>
+</table>
+</div>
+<p><b>Verdict:</b> <span class="hs" data-k="v10aV">...</span>. Function and content words replicate at L16 only. Punctuation reproduces at both layers, as it should. So the replicable structure, at this budget and under this rule, is punctuation-specific.</p>
+
+<h3>v10: the registered report on the frozen H-space (13th test, one pod, about $3.6)</h3>
+<p>v10 froze H (EX) and asked a full list of questions, each with a pass/fail rule written in advance. The verdict “I found H-space” needed every check in the MUST tier to pass. The checks, in plain words:</p>
+<ul>
+<li><b>M2, kill check: is H just punctuation geometry?</b> Measure how much of H lies along the top 25 directions of the punctuation covariance, and along the punctuation mean. Kill if either is at least 0.25 and larger than for 200 global twins. Measured (log): 0.026 and 0.003 at L16, 0.024 and 0.004 at L40. No kill, so M2 passes. But the covariance overlap sits just above the twins' maximum at both layers (0.023 and 0.017), so the forced qualifier “punctuation-moment-aligned” is printed.</li>
+<li><b>M3, real:</b> on 40 fresh text windows, at a random punctuation position each, compare H's 1σ interaction with 16 punctuation twins. These twins are a new, stricter control: they match H not only in the global covariance but also in the punctuation rows' second moments. M3 also requires an RMS-freeze arm: freeze every normalisation denominator downstream, and the excess must keep at least half its size, so it is not just the norms bending.</li>
+<li><b>R, random weights:</b> shuffle the weights of every later block and repeat. The excess must drop below half. This rules out an artefact of the architecture alone.</li>
+<li><b>M6, transfer:</b> does H also carry excess interaction inside real two-factor tasks (negation, entity attributes, relational composition)?</li>
+<li><b>M4, routing, and M5, ablation (“used”):</b> at the token where the task's interaction happens, does deleting H remove the interaction more than deleting twins or J5 does?</li>
+<li><b>M7, gold rank:</b> do H's interaction logits rank the task's correct answer?</li>
+<li><b>TOST, negative control:</b> on an unrelated task bank, H's effect must be equivalent to the twins' (90% CI inside ±0.10 of the task interaction).</li>
+</ul>
+<div class="tablewrap">
+<table id="tbl-v10">
+<tr><th>check</th><th>verdict</th></tr>
+</table>
+</div>
+<p><b>Real (M3 passed).</b> Against the 16 punctuation twins, H carries <span class="hs" data-k="vxr:v10:16:I">...</span>× the interaction at L16 and <span class="hs" data-k="vxr:v10:40:I">...</span>× at L40, ranking 1st of 17 both times. That is larger than v9's 5.8× and 2.5×, on different windows and against stricter controls. In the trunk alone it is <span class="hs" data-k="vxr:v10:16:I_trunk">...</span>× and <span class="hs" data-k="vxr:v10:40:I_trunk">...</span>×. With the norms frozen, the excess keeps <span class="hs" data-k="v10ret:16">...</span> and <span class="hs" data-k="v10ret:40">...</span> of its size. On random weights the excess is <span class="hs" data-k="v10R:16">...</span> and <span class="hs" data-k="v10R:40">...</span> of the trained value.</p>
+<p><b>Not only at punctuation.</b> At a random <i>word</i> position, against 8 word-class twins, H still carries <span class="hs" data-k="vxr:v10:16:I_word">...</span>× (L16) and <span class="hs" data-k="vxr:v10:40:I_word">...</span>× (L40). So the forced qualifier “position-general” is printed.</p>
+<p><b>Not used, as far as v10 could test.</b> The task probe site was the last punctuation token. It carried only 0 to 8% of each task's interaction (log), so the site gate failed everywhere and M4 and M5 are inconclusive. M6's transfer also showed up on the <i>unrelated</i> null bank (about 4× at L16, log), so it measures generic curvature, not task use. M6 and M7 fail.</p>
+<p><b>Much smaller than J-space's interaction.</b> On the same windows, J5's 1σ moves carry <span class="hs" data-k="vxj:v10:16">...</span>× (L16) and <span class="hs" data-k="vxj:v10:40">...</span>× (L40) H's raw interaction. H's excess is relative to matched twins, not to J-space.</p>
+<p><b>Verdict (mechanical):</b> MUST tier not passed. Fail: M6, M7. Inconclusive: M4, M5. Pass: M2, M3, R, TOST.</p>
+
+<h3>v11a: a position-general H-space? (14th test, laptop, $0)</h3>
+<p>J-space is defined over all token positions. H-space so far was punctuation-conditional. v11a pools rows from every position (“all”), and separately every non-punctuation position (“nonpunct”), and applies the v10a rule unchanged to the v8 rows. The class was fixed before estimation, so this object is not cherry-picked.</p>
+<div class="tablewrap">
+<table id="tbl-v11a">
+<tr><th>rows</th><th>layer</th><th>λ₁ norm (flip max)</th><th>split@3 norm / xnorm</th><th>split@5 norm / xnorm</th><th>cross-run top-5</th><th>replicates</th></tr>
+</table>
+</div>
+<p><b>Frozen verdict:</b> “<span class="hs" data-k="v11aV">...</span>”. “all” misses at L16 only on split@3 (0.63 and 0.62 against the 0.7 bar), and nonpunct misses at L40 on xnorm. Descriptively (not part of the rule), the top-5 subspace, the size H-space is defined at, is stable at both layers, and it replicates across independent runs at about 0.94. The L16 miss is a top-3 instability from near-tied 3rd and 4th eigenvalues, not a lack of structure (log).</p>
+
+<h3>v11: is the position-general H-space used and distinct? (15th test, one pod, about $4)</h3>
+<p>v11 takes v11a's frozen all-position top 5 as H. It keeps v10's machinery, with three changes decided before the data:</p>
+<ul>
+<li>M6 and M7 are dropped: v10 showed M6 measures generic curvature, and a curvature space is not expected to steer toward a gold answer.</li>
+<li>The site where “used” is tested is chosen by an <b>H-blind localisation scan</b> over the last 6 tokens, on one half of the items, then tested on the other half. It picks the place where the task's interaction lives.</li>
+<li><b>M3res</b> is new: HJ (H minus its J25 part) against its own 16 twins. If HJ passes, the excess is geometrically outside J-space. Known before any data: H overlaps J25 by only 0.060 at L16 and 0.019 at L40, so HJ is nearly H.</li>
+</ul>
+<div class="tablewrap">
+<table id="tbl-v11">
+<tr><th>check</th><th>verdict</th></tr>
+</table>
+</div>
+<p><b>Real at random positions, but below the bar.</b> On 40 fresh windows, at one random position from all tokens, H carries <span class="hs" data-k="vxr:v11:16:I">...</span>× its 16 twins' interaction at L16 and <span class="hs" data-k="vxr:v11:40:I">...</span>× at L40, ranking 1st of 17 at both, with tiny \(p_{\text{PI}}\). L40 fails the preregistered 2× bar. L16 fails only because the RMS-freeze retention came out undefined: one non-finite value in 1 of 40 windows of the freeze arm. Excluding that window, retention is 1.46 (log; descriptive, not part of the rule). The random-weights check passes (<span class="hs" data-k="v11R:16">...</span> and <span class="hs" data-k="v11R:40">...</span> of the trained excess).</p>
+<p><b>Outside J-space geometrically.</b> HJ still beats its twins at both layers (<span class="hs" data-k="vxr:v11:16:HJ_I">...</span>× and <span class="hs" data-k="vxr:v11:40:HJ_I">...</span>×, rank 1 of 17), but below 2×, so M3res fails.</p>
+<p><b>Much weaker than J-space.</b> J5 carries <span class="hs" data-k="vxj:v11:16">...</span>× (L16) and <span class="hs" data-k="vxj:v11:40">...</span>× (L40) H's raw interaction.</p>
+<p><b>“Used” still untestable.</b> All three task banks pass the behavioural gate (the model really does compute their 2×2 interaction). But the localisation scan found a site that carries it in only one context: negation, at L40, 2 tokens from the end (log). Entity attributes and relational composition do not route through any single suffix position at L16 or L40. M4 and M5 need at least 2 evaluable contexts, so both are inconclusive. At the one evaluable site, curvature share was −0.13 and M5 failed there (log). The unrelated-bank TOST passes at L40.</p>
+<p><b>Verdict (mechanical):</b> MUST tier not passed. Fail: M3, M3res. Inconclusive: M4, M5. Pass: R, TOST.</p>
+
+<figure class="sim" id="sim-v10v11">
+<figcaption><b>Figure 15.10.</b> Real data: how much more 1σ interaction the frozen subspace carries than its matched twins, \(e^{T_1}\) with its 95% CI, at each layer, across v9, v10 and v11. Grey dashed line: the 2× bar every test used. Solid line: no excess. Tick the box to switch to the comparison with J-space: \(e^{\log(H/J5)}\), H's raw interaction as a fraction of J5's (below 1 means J5 carries more). Sources: HS.v9, HS.v10, HS.v11.</figcaption>
+</figure>
+
+<h3>What the four tests changed</h3>
+<ul>
+<li><b>Stronger evidence that the structure is real.</b> Against stricter controls (punctuation-moment twins, an RMS freeze, random weights), the punctuation H-space's excess grew (v10). An all-position version replicates across runs at about 0.94 and still beats exact twins at random positions (v11a, v11).</li>
+<li><b>No evidence yet that the model uses it.</b> In v10 the probe site carried almost none of the task interaction. In v11 the tasks mostly do not route through any single suffix position, so only one context could be tested.</li>
+<li><b>Distinct from J-space only geometrically.</b> H lies almost entirely outside J25. But J-space's top directions carry 5 to 13 times more raw interaction than H. H's claim is “more than matched controls”, not “more than J-space”.</li>
+</ul>
+
+<h2>15.17 What is and is not established</h2>
 <p>This list follows paper §4d, README and theory-v2 §8. Everything is about Qwen3.6-27B only.</p>
 <div class="box key">
 <span class="boxtitle">Established (with the scope stated)</span>
@@ -588,25 +684,30 @@ v9 is a <b>perturbation test</b>. It shows that natural-scale, same-position pai
 <li><b>Twin causal test FAIL:</b> deleting that structure is not more interaction-specific than deleting exact twins.</li>
 <li><b>v8 REPLICATED</b> (L16, L40): a punctuation-conditional subspace reproduces within and across runs (<span class="hs" data-k="v8ov:16:clean">...</span> / <span class="hs" data-k="v8ov:40:clean">...</span> cross-run top-5 overlap after the correction).</li>
 <li><b>v9 PASS</b> (L16, L40): on fresh text, 1σ same-position moves along EX pairs produce more natural-scale pairwise interaction than 8 exact global-covariance twins (<span class="hs" data-k="v9r:16:I">...</span>× and <span class="hs" data-k="v9r:40:I">...</span>×), in the trunk and per unit of main effect.</li>
+<li><b>v10a:</b> no other single token class replicates at both layers; function and content words replicate at L16 only.</li>
+<li><b>v10 M3, R and TOST pass:</b> the frozen punctuation H-space carries <span class="hs" data-k="vxr:v10:16:I">...</span>× and <span class="hs" data-k="vxr:v10:40:I">...</span>× the interaction of 16 punctuation-moment twins, survives an RMS freeze, and vanishes on random weights. The excess also appears at word positions.</li>
+<li><b>v11a and v11:</b> an all-position top-5 subspace replicates across runs (about 0.94), and on fresh text at random positions beats all 16 exact twins (<span class="hs" data-k="vxr:v11:16:I">...</span>× and <span class="hs" data-k="vxr:v11:40:I">...</span>×), also with J-space removed. But this is below the 2× bar at L40, so v11's M3 fails.</li>
+<li><b>v10 and v11 MUST tiers not passed.</b> So, in the J-space sense, “I found H-space” is not established.</li>
 </ol>
 </div>
 <div class="box warn">
 <span class="boxtitle">Not established</span>
 <ul>
 <li>Decoded or verbalisable content of EX.</li>
-<li>Steering or ablation function, or that the model relies on EX.</li>
-<li>Class-specificity (no matched arm at non-punctuation positions).</li>
-<li>That the effect survives twins matched in the punctuation-row covariance; punctuation-conditional mean or covariance and basis misspecification for punctuation rows are not ruled out.</li>
+<li>Steering or ablation function, or that the model relies on H. “Used” (M4/M5) is still untestable: in v10 the probe site carried 0 to 8% of task interaction, and in v11 the tasks did not route through any single suffix position, so only 1 of 3 contexts localised.</li>
+<li>Functional distinctness from J-space: H lies almost entirely outside J25, but J5 carries about 5 to 13 times more raw interaction.</li>
+<li>Transfer to tasks beyond generic curvature (v10's M6 effect also appeared on the unrelated bank).</li>
+<li>That the excess is independent of the punctuation mean and norms: v10 fixed twins matched in punctuation second moments (and still passed), but the “mean/norm-aligned” and “punctuation-moment-aligned” qualifiers fired.</li>
 <li>Cross-position interactions.</li>
 <li>Generality across models, corpora or other token classes.</li>
 <li>An H-space “as provable as J-space”. The README's phrase is a “validated H-subspace candidate”.</li>
 </ul>
-<p><b>And the meta-caveats:</b> punctuation was chosen after a descriptive look at run-2 data; v8 and v9 are the 10th and 11th tests in the sequence; absolute effects are small (about 1e-3 nats); everything is one model at 27B.</p>
+<p><b>And the meta-caveats:</b> punctuation was chosen after a descriptive look at run-2 data; v8 and v9 are the 10th and 11th tests in the sequence, and v10a, v10, v11a and v11 the 12th to 15th; absolute effects are small (about 1e-3 nats); everything is one model at 27B.</p>
 </div>
 
-<h2>15.17 Open questions (theory-v2 §8)</h2>
+<h2>15.18 Open questions (theory-v2 §8)</h2>
 <ol>
-<li><b>Does H-space exist at 27B?</b> For \(M^{\text{row}}\): FAIL. For \(M^{\text{diag}}\): not found (heavy tails). The spatial-sign operator is reproducible mostly through the Σ prior. Its non-\(\Sigma\)-commuting part reproduces (v5) but was not interaction-specific under the twin test. Since then, v8 and v9 give a replicated punctuation-conditional subspace with predictive validity (README). Still open: a non-\(\Sigma\)-commuting H-structure with demonstrated function; better causal readouts (for example interactions on the lens objective itself, or on clause-initial subject tokens); ruling out position-dependent covariance.</li>
+<li><b>Does H-space exist at 27B?</b> For \(M^{\text{row}}\): FAIL. For \(M^{\text{diag}}\): not found (heavy tails). The spatial-sign operator is reproducible mostly through the Σ prior. Its non-\(\Sigma\)-commuting part reproduces (v5) but was not interaction-specific under the twin test. Since then, v8 and v9 give a replicated punctuation-conditional subspace with predictive validity, v10 confirms it against stricter twins, and v11a/v11 find an all-position version that beats exact twins but misses the 2× bar at L40 (README, Oct 8). Still open: a non-\(\Sigma\)-commuting H-structure with demonstrated function, which needs tasks whose interaction is computed at one position at these layers; better causal readouts (for example interactions on the lens objective itself, or on clause-initial subject tokens); ruling out position-dependent covariance.</li>
 <li><b>Does the integrated H-lens fix v1's effective-scale failure?</b> Not at 0.8B, \(\ell = 12\), \(\lambda = 1\) (r 0.16 vs 0.25 for the local lens). Other layers, the triangular weight and v1's own setting are open.</li>
 <li><b>Does the potential lens find the planted pirate × animal sleeper from honest data?</b> Open; nothing implemented. The gate is cross-position, which a per-position MLP lens may not see.</li>
 <li><b>Is H-space distinct from J-space?</b> At 0.8B, H25 under \(M^{\text{row}}\) is largely the high-variance subspace. At 27B, H25–J25 of 0.15 to 0.29 is uninformative given split-half 0.33 to 0.41. (The v5 patterns and EX lie mostly outside J25, per paper §4b and §4d.)</li>
@@ -616,7 +717,7 @@ v9 is a <b>perturbation test</b>. It shows that natural-scale, same-position pai
 <li><b>Is the signal-capture fraction \(\rho\) of J25/H25 much larger than 0.07 for agent intent (goal 3, G2)?</b> Open.</li>
 </ol>
 
-<h2>15.18 Why this matters for H-space</h2>
+<h2>15.19 Why this matters for H-space</h2>
 <p>This level is the place every earlier idea gets used. A map back down the ladder:</p>
 <ul>
 <li><b>Units and rates</b> (<a href="00.html">Level 0</a>): whitening changes curvature from “per a.u.²” to “per (1σ)²”, and that change is exactly what creates the Σ prior. The v9 ratio is a pure number because both sides are in nats.</li>
@@ -838,6 +939,103 @@ S.ready(function () {
     var parts = el.getAttribute("data-k").split(":"), fn = GET[parts[0]];
     try { el.textContent = fn ? fn.apply(null, parts.slice(1)) : "?"; } catch (e) { el.textContent = "?"; }
   });
+
+
+  /* ---------- v10a, v10, v11a, v11 (section 15.16) ---------- */
+  var VX = { v10: HSd.v10, v11: HSd.v11 };
+  function vxJ5(t, L) { var w = VX[t].W[L]; return Math.exp(-(t === "v10" ? w.I_vs_J5.mean : w.log_H_over_J5.mean)); }
+  function vxR(t, L) { var r = VX[t].R[L]; return r.I_random.T1 / r.T1_trained_same_windows; }
+  GET.v10aV = function () { return HSd.v10a.verdict; };
+  GET.v11aV = function () { return HSd.v11a.verdict; };
+  GET.vxr = function (t, L, X) { return S.fmt(Math.exp(VX[t].W[L][X].T1), 1); };
+  GET.vxj = function (t, L) { return S.fmt(vxJ5(t, L), 1); };
+  GET.v10ret = function (L) { return f2(HSd.v10.W[L].freeze_retained); };
+  GET.v10R = function (L) { return f2(vxR("v10", L)); };
+  GET.v11R = function (L) { return f2(vxR("v11", L)); };
+  (function () {
+    function rows(id, html) { var t = document.getElementById(id); if (t) t.insertAdjacentHTML("beforeend", html); }
+    var a = HSd.v10a.layers, h = "";
+    ["function", "content", "digit", "whitespace", "punctuation"].forEach(function (c) {
+      h += "<tr><td>" + c + (c === "punctuation" ? " (reference)" : "") + "</td>";
+      ["16", "40"].forEach(function (L) {
+        var r = a[L][c];
+        h += "<td>" + f2(r.split3.norm) + " / " + f2(r.split3.xnorm) + "</td><td>" + f2(r.cross_run_top5_overlap) + "</td><td>" + (r.replicates ? "replicates" : "no") + "</td>";
+      });
+      h += "</tr>";
+    });
+    rows("tbl-v10a", h);
+    function verdictRows(V, order) {
+      return order.filter(function (k) { return V[k]; }).map(function (k) { return "<tr><td>" + k + "</td><td>" + V[k] + "</td></tr>"; }).join("");
+    }
+    rows("tbl-v10", verdictRows(HSd.v10.verdict, ["M2", "M3", "R", "M6", "M4", "M5", "M7", "TOST"]));
+    rows("tbl-v11", verdictRows(HSd.v11.verdict, ["M3", "M3res", "R", "M4", "M5", "M4_HJ", "M5_HJ", "TOST"]));
+    var b = HSd.v11a.layers; h = "";
+    ["all", "nonpunct", "punctuation"].forEach(function (c) {
+      ["16", "40"].forEach(function (L) {
+        var r = b[L][c];
+        h += "<tr><td>" + c + "</td><td>L" + L + "</td><td>" + S.fmt(r.lam1.norm, 2) + " (" + S.fmt(r.null_lam1_max.norm, 2) + ")</td><td>" +
+          f2(r.split3.norm) + " / " + f2(r.split3.xnorm) + "</td><td>" + f2(r.split5.norm) + " / " + f2(r.split5.xnorm) + "</td><td>" +
+          S.fmt(r.cross_run_top5_overlap, 3) + "</td><td>" + (r.replicates ? "yes" : "no") + "</td></tr>";
+      });
+    });
+    rows("tbl-v11a", h);
+  })();
+  Array.prototype.forEach.call(document.querySelectorAll(".hs[data-k]"), function (el) {
+    var parts = el.getAttribute("data-k").split(":"), fn = GET[parts[0]];
+    if (el.textContent !== "..." && el.textContent !== "?") return;
+    try { el.textContent = fn ? fn.apply(null, parts.slice(1)) : "?"; } catch (e) { el.textContent = "?"; }
+  });
+
+  /* ---------- Figure 15.10: v9, v10, v11 against twins and J5 ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-v10v11"));
+    var c = S.canvas(wrap, { aspect: 0.55, maxH: 420 });
+    var vJ = false;
+    S.checkbox(wrap, "show H's raw interaction as a fraction of J5's instead", false, function (b) { vJ = b; c.redraw(); });
+    var out = S.readout(wrap);
+    var LN10 = Math.LN10;
+    var arms = [
+      { lab: "v9 EX", sub: "8 global twins, punct.", get: function (L) { var o = v9[L].I; return [o.T1, o.T1_ci]; } },
+      { lab: "v10 H", sub: "16 punct. twins", get: function (L) { var o = HSd.v10.W[L].I; return [o.T1, o.ci95]; }, j: function (L) { var o = HSd.v10.W[L].I_vs_J5; return [o.mean, o.ci95]; } },
+      { lab: "v10 H", sub: "word positions", get: function (L) { var o = HSd.v10.W[L].I_word; return [o.T1, o.ci95]; } },
+      { lab: "v11 H", sub: "all positions", get: function (L) { var o = HSd.v11.W[L].I; return [o.T1, o.ci95]; }, j: function (L) { var o = HSd.v11.W[L].log_H_over_J5; return [o.mean, o.ci95]; } },
+      { lab: "v11 HJ", sub: "H minus J25", get: function (L) { var o = HSd.v11.W[L].HJ_I; return [o.T1, o.ci95]; }, j: function (L) { var o = HSd.v11.W[L].log_HJ_over_J5; return [o.mean, o.ci95]; } }
+    ];
+    var v = S.view(c, { xmin: 0, xmax: arms.length + 0.2, ymin: Math.log10(0.8), ymax: Math.log10(12), padLeft: 52, padBottom: 52 });
+    c.draw = function () {
+      var list = vJ ? arms.filter(function (a) { return a.j; }) : arms;
+      v.set({ xmax: list.length + 0.2, ymin: vJ ? Math.log10(0.05) : Math.log10(0.8), ymax: vJ ? Math.log10(1.5) : Math.log10(12) });
+      (vJ ? [0.05, 0.1, 0.2, 0.5, 1] : [1, 2, 3, 5, 10]).forEach(function (t) {
+        var y = Math.log10(t);
+        v.line(0, y, v.r.xmax, y, { color: t === 1 ? S.col.ink : S.col.faint, width: t === 1 ? 1.2 : 1 });
+        v.text(t + "×", 0, y, { align: "right", dx: -6, dy: 4, font: S.fontSmall });
+      });
+      v.line(0, v.r.ymin, 0, v.r.ymax, { color: S.col.ink, width: 1 });
+      if (!vJ) {
+        v.line(0, Math.log10(2), v.r.xmax, Math.log10(2), { dash: [6, 4], color: S.col.gray, width: 1.2 });
+        v.text("2× bar", v.r.xmax - 0.05, Math.log10(2), { align: "right", dy: -5, font: S.fontSmall });
+      }
+      v.text(vJ ? "H's raw interaction ÷ J5's (log scale)" : "e^T1: interaction vs matched twins (log scale)", 0.1, v.r.ymax, { dy: 14, font: S.fontSmall });
+      var lines = [];
+      list.forEach(function (a, i) {
+        ["16", "40"].forEach(function (L, li) {
+          var g = vJ ? a.j(L) : a.get(L), x = 0.75 + i + li * 0.35, col = li ? S.col.red : S.col.blue;
+          var y = g[0] / LN10, ya = g[1][0] / LN10, yb = g[1][1] / LN10;
+          v.line(x, ya, x, yb, { color: col, width: 2 });
+          v.line(x - 0.06, ya, x + 0.06, ya, { color: col, width: 2 });
+          v.line(x - 0.06, yb, x + 0.06, yb, { color: col, width: 2 });
+          v.dot(x, y, { color: col, r: 4.5 });
+          lines.push((a.lab + " (" + a.sub + ") L" + L + "                                   ").slice(0, 38) +
+            S.fmt(Math.exp(g[0]), 2) + "×  [" + S.fmt(Math.exp(g[1][0]), 2) + ", " + S.fmt(Math.exp(g[1][1]), 2) + "]");
+        });
+        v.text(a.lab, 0.92 + i, v.r.ymin, { align: "center", dy: 16, font: S.fontSmall });
+        v.text(a.sub, 0.92 + i, v.r.ymin, { align: "center", dy: 30, font: S.fontSmall });
+      });
+      v.text("blue L16, red L40", v.r.xmax - 0.05, v.r.ymin, { align: "right", dy: -6, font: S.fontSmall });
+      out.textContent = lines.join("\n");
+    };
+    c.redraw();
+  })();
 
   /* ---------- Figure 15.1: Proposition 0 toy ---------- */
   (function () {

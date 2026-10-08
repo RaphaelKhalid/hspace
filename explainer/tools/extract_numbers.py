@@ -121,6 +121,91 @@ def main():
         },
     }
 
+    def stat(s):
+        keep = ("T1", "ci95", "p_PI", "rank", "K", "mean_ex", "mean_tw", "n")
+        return {k: s[k] for k in keep if k in s}
+
+    v10a = load("hs_v10a.json")
+    out["v10a"] = {
+        "_file": "results/hs_v10a.json",
+        "verdict": v10a["VERDICT_v10a"],
+        "layers": {
+            L: {
+                c: {
+                    "n_rows": v["n_rows"],
+                    "replicates": v["replicates"],
+                    "cross_run_top5_overlap": v["cross_run_top5_overlap"],
+                    "split3": {e: v["d"][e]["obs_split"]["k3"] for e in ("norm", "xnorm")},
+                }
+                for c, v in d.items()
+            }
+            for L, d in v10a["layers"].items()
+        },
+    }
+
+    v10 = load(os.path.join("v10", "hs_v10_full.json"))
+    out["v10"] = {
+        "_file": "results/v10/hs_v10_full.json",
+        "verdict": {k: v for k, v in v10["verdict"].items() if isinstance(v, str)},
+        "W": {
+            L: {
+                "n": w["n"],
+                "I": stat(w["I"]),
+                "I_trunk": stat(w["I_trunk"]),
+                "I_global8_v9": stat(w["I_global8_v9"]),
+                "I_word": stat(w["I_word"]),
+                "I_vs_J5": w["I_vs_J5"],
+                "I_vs_PC5": w["I_vs_PC5"],
+                "freeze_retained": w["freeze_retained"],
+                "M3": w["M3"],
+            }
+            for L, w in v10["stages"]["W"].items()
+        },
+        "R": v10["stages"]["R"],
+    }
+
+    v11a = load("hs_v11a.json")
+    out["v11a"] = {
+        "_file": "results/hs_v11a.json",
+        "verdict": v11a["VERDICT_v11a"],
+        "replicates_all": v11a["replicates_all"],
+        "replicates_nonpunct": v11a["replicates_nonpunct"],
+        "layers": {
+            L: {
+                c: {
+                    "replicates": v["replicates"],
+                    "cross_run_top5_overlap": v["cross_run_top5_overlap"],
+                    "lam1": {e: v["d"][e]["obs_lam"][0] for e in ("norm", "xnorm")},
+                    "null_lam1_max": {e: v["d"][e]["null_lam1_max"] for e in ("norm", "xnorm")},
+                    "split3": {e: v["d"][e]["obs_split"]["k3"] for e in ("norm", "xnorm")},
+                    "split5": {e: v["d"][e]["obs_split"]["k5"] for e in ("norm", "xnorm")},
+                }
+                for c, v in d.items()
+                if isinstance(v, dict) and "d" in v
+            }
+            for L, d in v11a["layers"].items()
+        },
+    }
+
+    v11 = load(os.path.join("v11", "hs_v11_full.json"))
+    out["v11"] = {
+        "_file": "results/v11/hs_v11_full.json",
+        "verdict": {k: v for k, v in v11["verdict"].items() if isinstance(v, str)},
+        "W": {
+            L: {
+                "n": w["n"],
+                "I": stat(w["I"]),
+                "I_trunk": stat(w["I_trunk"]),
+                "HJ_I": stat(w["HJ_I"]),
+                "EX_I_vs_tw": stat(w["EX_I_vs_tw"]),
+                "log_H_over_J5": w["log_H_over_J5"],
+                "log_HJ_over_J5": w["log_HJ_over_J5"],
+            }
+            for L, w in v11["stages"]["W"].items()
+        },
+        "R": v11["stages"]["R"],
+    }
+
     v9 = load("hs_v9_full.json")
     out["v9"] = {
         "_file": "results/hs_v9_full.json",
