@@ -6,7 +6,7 @@ Anthropic's J-lens (arXiv 2607.15495) averages the **Jacobian** of a model's fin
 
 I call that subspace **H-space**, after the Hessian.
 
-**Status (Oct 6 2026): run 1, run 2 and the follow-up tests through v9 are complete (11 tests in the sequence, counting run 1 and run 2; v6 was designed but not run), including a preregistered replication (v8) and a preregistered interaction test (v9) of a punctuation-conditional H-subspace, both passed. Negatives, one retraction and all later corrections (`results/CORRECTIONS.md`) are included. Decoding, ablation/steering, class-specificity and a second model are untested.** This is research code plus a paper draft, built on about $26 of RunPod GPU time in total (Oct 5–8 account billing: about $17 through v9, about $9 for v10–v11).
+**Status (Oct 8 2026): 15 tests are complete (run 1 and run 2 through v11), including two full registered reports (v10, v11) whose MUST tiers did not pass; see the Status section below. Negatives, one retraction and all corrections (`results/CORRECTIONS.md`) are included.** This is research code plus a paper draft, built on about $26 of RunPod GPU time in total (Oct 5–8 account billing: about $17 through v9, about $9 for v10–v11).
 
 ## Status (Oct 8 2026)
 
@@ -83,7 +83,22 @@ I call that subspace **H-space**, after the Hessian.
 - So I have **not** found an H-space "as provably as J-space". What exists is a reproducible non-Σ-commuting curvature structure without demonstrated function.
 - Every step, including one retraction (`results/CORRECTIONS.md`), is hashed in `results/runlog_pod.md` before its data.
 - **C6′ (descriptive):** S is mostly dose. At L16 it tracks the raw variance each ablation removes (r = 0.999), and the robust subspace's interaction-per-damage ratio equals J25's. At matched damage (L28, L40) the robust subspace is about 1.5–1.7× more interaction-selective than J25, but it is mostly the Σ prior (correction in `results/CORRECTIONS.md`).
-- **Compute:** one RTX PRO 6000 pod for 7.65 h, plus a 38-minute v8 pod and a 32-minute v9 pod: about $15.1 in total. All 78 result files were verified by sha256 on a private HF dataset before the pod was terminated.
+- **Compute (through v9):** one RTX PRO 6000 pod for 7.65 h, plus a 38-minute v8 pod and a 32-minute v9 pod: about $15.1 by my pod-time estimate (RunPod billing through v9: about $17; through v11: about $26). All 78 result files were verified by sha256 on a private HF dataset before the pod was terminated.
+
+### v10–v11 (Oct 6–8): registered reports on H-space
+
+| Test | Question | Verdict | Key numbers |
+|---|---|---|---|
+| v10a (`hs_v10a_classes.py`) | Does any non-punctuation token class replicate? | no class at both layers | function/content words replicate at L16 only |
+| v10 (`hs_v10.py`, `paper/SCOPE-hspace-v10.md`) | Is the punctuation H-space real, used, distinct? | MUST not passed | M3 pass: 7.3x (L16), 3.4x (L40) vs 16 twins, rank 1/17; R, TOST pass; M6, M7 fail; M4/M5 inconclusive (site carried 0-8%) |
+| v11a (`hs_v11a_allpos.py`) | Is there a position-general H-space? | position-general at L40 only (frozen rule) | cross-run top-5 overlap 0.94 at both layers; L16 missed split-half top-3 (0.63 < 0.7) |
+| v11 (`hs_v11.py`, `paper/SCOPE-hspace-v11.md`) | Is the all-position H-space real, used, distinct? | MUST not passed | beats all 16 Sigma-orbit twins at random tokens: 2.2x (L16), 1.7x (L40), below the 2x bar at L40; L16 voided by a NaN in 1/40 freeze windows; H minus J25: 1.6x; R, TOST pass; only 1 of 3 tasks localizable, so M4/M5 inconclusive |
+
+**Descriptive, post hoc, not preregistered** (`hlens/hs_v11_descriptive.py`):
+- **Canonical window** (L16, at the "." in "...the Pagan Dynasty itself. Between the newly conquered..."): mean leftover interaction 0.023% (median decoy), 0.28% (H-space), 1.47% (J5).
+- **Interaction per unit of main effect:** H is 1.66x (L16) and 1.41x (L40) the decoys; J5 is 2.35x and 3.08x H. J5's interaction exceeds H's in 39/40 (L16) and 40/40 (L40) windows.
+- **H-space vs J-space geometry:** 94% (L16) and 98% (L40) of the all-position H-space lies outside span(J25).
+- **Untested hypothesis:** J5's extra interaction may be final-softmax saturation, which the H-lens readout (a linear readout) excludes and the log-likelihood test includes.
 
 ## Theory (`hlens/paper/theory-v2.md`, red-teamed by 48 adversarial agents)
 - **Lemma 1, the second-order adjoint (standard):** the exact block decomposition of the residual Hessian, verified to ≤ 1.5e-6 on Qwen3.5-0.8B.
@@ -109,6 +124,9 @@ hlens/                 code (run from this folder)
   hspace.py            run 1 (S2-S8); hs_s7.py = S7 re-run verbatim on 455 windows
   hspace2.py           run 2 (cross-moment / spatial-sign / rectangle estimators)
   hs_c6prime.py        v3 C6' interaction-ablation test
+  hs_v10.py            v10 registered report (frozen); hs_v10a_classes.py = v10a token-class scan
+  hs_v11a_allpos.py    v11a position-general H-space; hs_v11.py = v11 registered report (frozen)
+  hs_v11_descriptive.py  post-hoc descriptive numbers from the v11 records
   hs_anatomy.py ...    0.8B development checks (anatomy, rectangle, integrated, local H-lens)
   ctrl_read.py         goal 3: sanitized surrogate white-box read of agent trajectories
   ctrl_score_v2.py     goal 3: offline scoring
