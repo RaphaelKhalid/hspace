@@ -1,0 +1,162 @@
+{
+ "sample mean": {
+  "t": "sample mean",
+  "a": [
+   "sample means"
+  ],
+  "l": 13,
+  "d": "The plain average of the samples you actually have: add them up and divide by how many. It is an estimate of the true mean of the whole population."
+ },
+ "population": {
+  "t": "population",
+  "a": [
+   "populations"
+  ],
+  "l": 13,
+  "d": "Everything you could in principle sample from: every student in the school, or every token of every text a model might read. A sample is a handful drawn from it."
+ },
+ "Bessel's correction": {
+  "t": "Bessel's correction",
+  "a": [
+   "Bessel’s correction"
+  ],
+  "l": 13,
+  "d": "Dividing the sum of squared deviations by n − 1 instead of n when estimating a variance. It undoes the small downward bias caused by measuring deviations from the sample mean instead of the true mean."
+ },
+ "standard error": {
+  "t": "standard error",
+  "a": [
+   "standard errors"
+  ],
+  "l": 13,
+  "d": "How much an estimate would wobble if you repeated the whole study: the standard deviation of the estimate across repeats. For a mean of n independent samples it is σ/√n."
+ },
+ "probability density": {
+  "t": "probability density",
+  "a": [
+   "density function"
+  ],
+  "l": 13,
+  "d": "For a continuous quantity, a curve whose area over an interval gives the probability of landing in that interval. The bell curve is the density of the Gaussian."
+ },
+ "statistical independence": {
+  "t": "statistical independence",
+  "a": [
+   "independent samples",
+   "independent random variables",
+   "independent random signs",
+   "independent sign vectors"
+  ],
+  "l": 13,
+  "d": "Two random quantities are independent if knowing one tells you nothing about the other, like two separate coin flips. Then the mean of their product is the product of their means."
+ },
+ "matrix square root": {
+  "t": "matrix square root",
+  "a": [
+   "matrix square roots",
+   "square root of a matrix"
+  ],
+  "l": 13,
+  "d": "For a covariance matrix Σ = P Λ Pᵀ, the matrix Σ^(1/2) = P Λ^(1/2) Pᵀ: take the square root of each eigenvalue and keep the eigenvectors. Multiplying it by itself gives Σ back."
+ },
+ "Mahalanobis distance": {
+  "t": "Mahalanobis distance",
+  "a": [],
+  "l": 13,
+  "d": "The length of a move after whitening: how many standard deviations it covers, counting each direction by its own natural spread. A 5 cm move can be ordinary in one direction and extreme in another."
+ },
+ "orthonormal": {
+  "t": "orthonormal",
+  "a": [
+   "orthonormal basis",
+   "orthonormal columns",
+   "orthonormal bases"
+  ],
+  "l": 13,
+  "d": "A set of vectors that each have length 1 and are all perpendicular to each other. A d × k matrix with orthonormal columns is the standard way to store a k-dimensional subspace."
+ },
+ "energy fraction": {
+  "t": "energy fraction",
+  "a": [
+   "top-k energy fraction",
+   "energy fractions",
+   "energy share"
+  ],
+  "l": 13,
+  "d": "The share of a matrix's total (the sum of its eigenvalues) carried by its top k eigenvalues. 0.97 means the top k directions carry 97% of the total."
+ },
+ "second moment": {
+  "t": "second moment",
+  "a": [
+   "second moments",
+   "second-moment matrix",
+   "raw second moment"
+  ],
+  "l": 13,
+  "d": "The average of squares (for vectors, of outer products x xᵀ) without first subtracting the mean. It is a covariance that has not been centred, and it is dominated by the largest rows."
+ },
+ "trimming": {
+  "t": "trimming",
+  "a": [
+   "trimmed",
+   "trimmed estimator",
+   "trim"
+  ],
+  "l": 13,
+  "d": "Dropping the most extreme few percent of rows before estimating, so a handful of giants cannot decide the answer. It changes the question to one about the bulk of the data, and the rule must be fixed in advance."
+ },
+ "cross term": {
+  "t": "cross term",
+  "a": [
+   "cross terms"
+  ],
+  "l": 13,
+  "d": "In an expanded product or quadratic form, a term that mixes two different indices, like A₁₂s₁s₂. Random ±1 signs make cross terms average to zero while terms like A₁₁s₁² survive."
+ },
+ "test statistic": {
+  "t": "test statistic",
+  "a": [
+   "test statistics"
+  ],
+  "l": 13,
+  "d": "The single number a test computes from the data, chosen so that it tends to be large when the null hypothesis is false. The p-value asks how often the null would produce one this large."
+ },
+ "replicate": {
+  "t": "replicate",
+  "a": [
+   "replicates",
+   "null replicates",
+   "randomised copies"
+  ],
+  "l": 13,
+  "d": "One randomised copy of the data in a randomization test, made by a transformation (a shuffle, a sign flip) that would change nothing if the null were true. Their statistics form the null distribution."
+ },
+ "significance level": {
+  "t": "significance level",
+  "a": [
+   "false-positive rate",
+   "false positive",
+   "false positives"
+  ],
+  "l": 13,
+  "d": "The rate of false alarms you accept, written α, often 0.05: if the null is true, a valid test passes by luck at most this often."
+ },
+ "garden of forking paths": {
+  "t": "garden of forking paths",
+  "a": [
+   "forking paths"
+  ],
+  "l": 13,
+  "d": "The hidden multiplicity created when analysis choices (which layer, which k, which trimming) are made after looking at the data. Each choice is a silent extra test. Preregistration closes it off."
+ },
+ "percentile": {
+  "t": "percentile",
+  "a": [
+   "percentiles",
+   "quantile",
+   "quantiles"
+  ],
+  "l": 13,
+  "d": "The value below which a given percent of the data fall. The 2.5th and 97.5th percentiles of bootstrap estimates bracket a 95% interval."
+ }
+}

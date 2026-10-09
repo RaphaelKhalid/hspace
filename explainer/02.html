@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 2: Slope and the derivative</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="2">
+<div class="page">
+
+<h1>Level 2: Slope and the derivative</h1>
+<p class="subtitle">An average rate over a shorter and shorter step settles on one number: the rate at an instant. That number is the derivative.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>compute an average rate of change between two points, and draw it as the slope of a secant line;</li>
+<li>shrink the step \(\Delta t\) by hand, see the average rate settle, and say what a limit is;</li>
+<li>define the derivative, read \(f'(x)\) and \(df/dx\) aloud, and state its unit without guessing;</li>
+<li>derive the derivatives of \(t^2\) and \(t^3\) by expanding, and use the rules for \(t^n\), \(e^x\), sums and constant multiples;</li>
+<li>compute a derivative numerically, and explain why a very small step can make the answer worse;</li>
+<li>spot where a derivative does not exist (corners) and why zooming in reveals it.</li>
+</ul>
+<p class="small">Prerequisites: <a href="00.html">Level 0</a> (rates, \(\Delta\)) and <a href="01.html">Level 1</a> (functions, \(f(x+1)\), straight lines, powers, \(e^x\), the car).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first.</p>
+<div class="tablewrap" style="position: relative">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>time since the car started</td><td>seconds (s)</td><td>\(t = 3\) s</td></tr>
+<tr><td>\(s(t)\)</td><td>“s of t”</td><td>the car's position at time \(t\): \(s(t) = t^2\) (Level 1)</td><td>metres (m)</td><td>\(s(3) = 9\) m</td></tr>
+<tr><td>\(a\)</td><td>“a”</td><td>the car's acceleration in \(s(t) = \tfrac12 a t^2\)</td><td>m/s²</td><td>\(a = 2\) m/s²</td></tr>
+<tr><td>\(t_1,\ t_2\)</td><td>“t one”, “t two”</td><td>two particular times, the ends of an interval</td><td>seconds (s)</td><td>\(t_1 = 1\) s, \(t_2 = 3\) s</td></tr>
+<tr><td>\(\Delta t\)</td><td>“delta t”</td><td>a change in time: a time step</td><td>seconds (s)</td><td>\(\Delta t = 0.1\) s</td></tr>
+<tr><td>\(\Delta s\)</td><td>“delta s”</td><td>the change in position over that step</td><td>metres (m)</td><td>\(\Delta s = 0.61\) m</td></tr>
+<tr><td>\(\Delta f\)</td><td>“delta f”</td><td>the change in the output of \(f\) over a step \(\Delta x\): \(f(x + \Delta x) - f(x)\)</td><td>the output's unit</td><td>\(f(x) = x^2\), \(x = 3\), \(\Delta x = 0.01\): \(\Delta f = 0.0601\)</td></tr>
+<tr><td>\(s'(t)\)</td><td>“s prime of t”</td><td>the derivative of \(s\): the car's speed at the instant \(t\)</td><td>metres per second (m/s)</td><td>\(s'(3) = 6\) m/s</td></tr>
+<tr><td>\(x\)</td><td>“x”</td><td>a general input</td><td>depends; none (pure number) in toys</td><td>\(x = 2\)</td></tr>
+<tr><td>\(f,\ g\)</td><td>“f”, “g”</td><td>names of functions</td><td>no unit of their own</td><td>\(f(x) = x^3\)</td></tr>
+<tr><td>\(\Delta x\)</td><td>“delta x”</td><td>a change in the input: a step</td><td>the input's unit</td><td>\(\Delta x = 0.01\)</td></tr>
+<tr><td>\(f'(x)\)</td><td>“f prime of x”</td><td>the derivative of \(f\) at \(x\): the rate of change of the output at that one input</td><td>output unit per input unit</td><td>\(f(x) = x^3\): \(f'(2) = 12\)</td></tr>
+<tr><td>\(\dfrac{df}{dx}\), \(\dfrac{ds}{dt}\)</td><td>“d f d x”, “d s d t”</td><td>another way to write \(f'(x)\) and \(s'(t)\): a tiny change in the output per tiny change in the input. \(\dfrac{d}{dt}\) on its own means “the derivative, with respect to \(t\), of what follows”.</td><td>output unit per input unit</td><td>\(\dfrac{ds}{dt} = 2t\)</td></tr>
+<tr><td>\(\displaystyle\lim_{\Delta x \to 0}\)</td><td>“the limit as delta x goes to zero”</td><td>the value an expression settles towards as \(\Delta x\) shrinks towards 0, from either side, without being 0</td><td>same as the expression</td><td>\(\displaystyle\lim_{\Delta t\to 0}(6 + \Delta t) = 6\)</td></tr>
+<tr><td>\(\to\)</td><td>“goes to”, “approaches”</td><td>gets as close as you like to</td><td>none</td><td>\(\Delta t \to 0\)</td></tr>
+<tr><td>\(m\)</td><td>“m”</td><td>the slope of a straight line \(m x + b\) (Level 1): rise per unit of run</td><td>output unit per input unit</td><td>\(m = 4\) m/s</td></tr>
+<tr><td>\(b\)</td><td>“b”</td><td>in a straight line \(m x + b\): the output at input 0 (Level 1)</td><td>output unit</td><td>\(b = 3\) $</td></tr>
+<tr><td>\(T(t)\)</td><td>“T of t”</td><td>the tangent line to the car's graph at one chosen time</td><td>metres (m)</td><td>\(T(t) = 9 + 6(t - 3)\)</td></tr>
+<tr><td>\(n\)</td><td>“n”</td><td>a whole-number exponent</td><td>none (pure number)</td><td>\(n = 3\)</td></tr>
+<tr><td>\(c\)</td><td>“c”</td><td>any constant that multiplies a function</td><td>whatever makes the units work</td><td>\(c = 3\)</td></tr>
+<tr><td>\(e,\ e^x\)</td><td>“e”, “e to the x”</td><td>Euler's number \(\approx 2.71828\), and the exponential function (Level 1)</td><td>none; \(x\) must be a pure number</td><td>\(e^1 \approx 2.71828\)</td></tr>
+<tr><td>\(\log\)</td><td>“log”</td><td>the natural logarithm, which undoes \(e^x\) (Level 1)</td><td>none (pure number)</td><td>\(\log 2 \approx 0.6931\)</td></tr>
+<tr><td>\(\log_{10}\)</td><td>“log base ten”</td><td>the power of 10 that gives the number</td><td>none (pure number)</td><td>\(\log_{10}(0.001) = -3\)</td></tr>
+<tr><td>\(\sqrt{t}\)</td><td>“square root of t”</td><td>the number that is not negative and squares to \(t\) (Level 1)</td><td>square root of the unit of \(t\)</td><td>\(\sqrt{9} = 3\)</td></tr>
+<tr><td>\(\lvert x \rvert\)</td><td>“absolute value of x”</td><td>the size of \(x\) ignoring its sign (Level 1)</td><td>same as \(x\)</td><td>\(\lvert -4 \rvert = 4\)</td></tr>
+<tr><td>\(\approx\), \(\ne\), \(\cdot\), \(\times\), \(\div\)</td><td>“approximately”, “is not equal to”, “times”, “times”, “divided by”</td><td>rounded equality; inequality; multiplication; division</td><td>none</td><td>\(\Delta t \ne 0\)</td></tr>
+</table>
+</div>
+
+<h2>2.1 The problem: a rate at one instant</h2>
+<p>At Level 1 a straight line \(f(x) = m x + b\) had one rate, \(m\), everywhere: every one-unit step added \(m\). The car is not like that. Its position \(s(t) = t^2\) metres gained 1 m in the first second, 3 m in the second, 5 m in the third. There is no single “metres per second” for the whole trip.</p>
+<p>Yet a speedometer shows one number at each instant. At exactly \(t = 3\) s it shows some speed. What is it, and how could we compute it? A speed is distance divided by time. In one instant the car covers no distance in no time, and \(0 \div 0\) is not a number. This level resolves that puzzle. The answer is the derivative, and every later level is built on it.</p>
+
+<h2>2.2 Average rate over an interval</h2>
+<p>Start with what we can compute: the average rate over a stretch of time. Let \(t_1\) and \(t_2\) be two times. The car moves \(\Delta s = s(t_2) - s(t_1)\) metres in \(\Delta t = t_2 - t_1\) seconds. Its average speed is</p>
+$$ \frac{\Delta s}{\Delta t} = \frac{s(t_2) - s(t_1)}{t_2 - t_1} . $$
+<p>This fraction, change in output divided by change in input, is called a difference quotient. It is exactly the “change ÷ change” of Level 0.</p>
+
+<h3>Worked example: from 1 s to 3 s</h3>
+$$ \Delta s = s(3) - s(1) = 9\ \text{m} - 1\ \text{m} = 8\ \text{m}, \qquad \Delta t = 3\ \text{s} - 1\ \text{s} = 2\ \text{s}, \qquad \frac{\Delta s}{\Delta t} = \frac{8\ \text{m}}{2\ \text{s}} = 4\ \text{m/s}. $$
+<p>Meaning: a car moving steadily at 4 m/s would cover the same 8 m in the same 2 s. The real car went slower than 4 m/s at the start of the stretch and faster at the end; 4 m/s is the average speed.</p>
+<p><b>Real-world example.</b> Average-speed cameras on motorways photograph a car at two points a known distance apart and divide that distance by the time between photos. They measure exactly this difference quotient, over a long stretch.</p>
+
+<h3>Mechanics: a formula for every interval of the car</h3>
+<p>For the car we can do the division once, for all \(t_1\) and \(t_2\), instead of plugging in numbers each time. Here is every step.</p>
+<p><b>Step 1: write out the two positions.</b> The car's rule is \(s(t) = t^2\): to get the position, square the time. So at time \(t_1\) the position is \(s(t_1) = t_1^2\), and at time \(t_2\) it is \(s(t_2) = t_2^2\). For example, with \(t_1 = 1\) s and \(t_2 = 3\) s: \(s(1) = 1^2 = 1\) m and \(s(3) = 3^2 = 9\) m.</p>
+<p><b>Step 2: put them into the average-speed fraction.</b> Replace \(s(t_2)\) by \(t_2^2\) and \(s(t_1)\) by \(t_1^2\):</p>
+$$ \frac{s(t_2) - s(t_1)}{t_2 - t_1} = \frac{t_2^2 - t_1^2}{t_2 - t_1}. $$
+<p>In the example: \(\dfrac{9 - 1}{3 - 1} = \dfrac{8}{2} = 4\).</p>
+<p><b>Step 3: factor the top.</b> Use the fact \(t_2^2 - t_1^2 = (t_2 - t_1)(t_2 + t_1)\). Check it by multiplying out the right side: \((t_2 - t_1)(t_2 + t_1) = t_2^2 + t_2 t_1 - t_1 t_2 - t_1^2 = t_2^2 - t_1^2\), because the middle two terms cancel. In the example: \(9 - 1 = 8\) and \((3 - 1)(3 + 1) = 2 \times 4 = 8\).</p>
+<p><b>Step 4: cancel.</b> The factor \(t_2 - t_1\) is on top and on the bottom, so it cancels (it is not zero, because the two times differ):</p>
+$$ \frac{t_2^2 - t_1^2}{t_2 - t_1} = \frac{(t_2 - t_1)(t_2 + t_1)}{t_2 - t_1} = t_1 + t_2 . $$
+<p><b>Step 5: put the units back.</b> In full, the car's rule is \(s(t) = (1\ \text{m/s}^2) \times t^2\) (the “1 m/s²” was left out of the short form, see Level 1). Carrying it through the same steps gives \((1\ \text{m/s}^2) \times (t_1 + t_2)\). Seconds times m/s² is m/s, a speed, as it should be.</p>
+<p>So the average speed of the car between any two times is just the sum of the two times, read in metres per second. Example: between \(t_1 = 1\) s and \(t_2 = 3\) s it is \(1 + 3 = 4\) m/s, the same 4 as Step 2. Mechanics: move the later time one second later and the average speed goes up by exactly 1 m/s.</p>
+
+<h2>2.3 The secant line and the word “slope”</h2>
+<p>Draw the two moments as points on the car's graph: \((t_1, s(t_1))\) and \((t_2, s(t_2))\). The straight line through them is called a secant line. Going from the first point to the second, the line runs \(\Delta t\) across and rises \(\Delta s\) up. Its steepness, rise divided by run, is</p>
+$$ m = \frac{\text{rise}}{\text{run}} = \frac{\Delta s}{\Delta t}. $$
+<p>That is the \(m\) of a straight line from Level 1, and it is the average speed. From now on we call this steepness the slope. A slope always has a unit: output unit per input unit. Here it is metres per second.</p>
+
+<figure class="sim" id="sim-secant">
+<figcaption><b>Figure 2.1.</b> The car's graph \(s(t) = t^2\) with two draggable points, P and Q. The red line through them is the secant line. Its slope, rise \(\Delta s\) over run \(\Delta t\), is the average speed between the two times. Drag the points. Check the last line of numbers: the average speed always equals \(t_1 + t_2\). Drag both points to the right: the secant gets steeper because the car is going faster there.</figcaption>
+</figure>
+
+<h2>2.4 Shrinking the step: the limit</h2>
+<p>An average speed over two seconds is a blurry answer to “how fast at 3 s?”. So shrink the stretch. Keep the first end at \(t = 3\) s and let the second end be \(3 + \Delta t\). Compute the average speed for smaller and smaller \(\Delta t\).</p>
+
+<h3>By hand, every step</h3>
+<p>\(\Delta t = 1\) s: \(s(4) = 16\), so \(\dfrac{16 - 9}{1} = 7\) m/s.</p>
+<p>\(\Delta t = 0.5\) s: \(s(3.5) = 3.5 \times 3.5 = 12.25\), so \(\dfrac{12.25 - 9}{0.5} = \dfrac{3.25}{0.5} = 6.5\) m/s.</p>
+<p>\(\Delta t = 0.1\) s: \(s(3.1) = 9.61\), so \(\dfrac{9.61 - 9}{0.1} = \dfrac{0.61}{0.1} = 6.1\) m/s.</p>
+<p>\(\Delta t = 0.01\) s: \(s(3.01) = 9.0601\), so \(\dfrac{0.0601}{0.01} = 6.01\) m/s.</p>
+<p>\(\Delta t = -0.1\) s (look backwards): \(s(2.9) = 8.41\), so \(\dfrac{8.41 - 9}{-0.1} = \dfrac{-0.59}{-0.1} = 5.9\) m/s.</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(\Delta t\) (s)</th><td>1</td><td>0.5</td><td>0.1</td><td>0.01</td><td>0.001</td><td>−0.001</td><td>−0.01</td><td>−0.1</td></tr>
+<tr><th>average speed (m/s)</th><td>7</td><td>6.5</td><td>6.1</td><td>6.01</td><td>6.001</td><td>5.999</td><td>5.99</td><td>5.9</td></tr>
+</table>
+</div>
+<p>From both sides the numbers close in on 6 m/s. The pattern is plain: the average speed is \(6 + \Delta t\).</p>
+
+<h3>The algebra behind the table</h3>
+<p>Here is every step, with \(\Delta t = 0.1\) s worked alongside.</p>
+<p><b>Step 1: write out the later position.</b> The rule is \(s(t) = t^2\). Feed in \(3 + \Delta t\) as the time, as at Level 1: \(s(3 + \Delta t) = (3 + \Delta t)^2\). Example: \(s(3.1) = 3.1^2 = 9.61\) m.</p>
+<p><b>Step 2: expand the square.</b> Write the square as a product, then multiply every term of the first bracket by every term of the second:</p>
+$$ (3 + \Delta t)^2 = (3 + \Delta t)(3 + \Delta t) = 3\cdot 3 + 3\,\Delta t + \Delta t\cdot 3 + \Delta t\cdot\Delta t = 9 + 6\,\Delta t + \Delta t^2 . $$
+<p>Here \(\Delta t^2\) means \((\Delta t)^2\). Example: \(9 + 6 \times 0.1 + 0.1^2 = 9 + 0.6 + 0.01 = 9.61\). It matches Step 1.</p>
+<p><b>Step 3: subtract the starting position.</b> The starting position is \(s(3) = 3^2 = 9\). Take it away from the expansion. The \(+9\) and \(-9\) cancel:</p>
+$$ s(3 + \Delta t) - s(3) = 9 + 6\,\Delta t + \Delta t^2 - 9 = 6\,\Delta t + \Delta t^2 . $$
+<p>Example: \(0.6 + 0.01 = 0.61\) m, which is \(9.61 - 9\).</p>
+<p><b>Step 4: divide by the step.</b> Divide each term on top by \(\Delta t\): \(6\,\Delta t / \Delta t = 6\) and \(\Delta t^2 / \Delta t = \Delta t\):</p>
+$$ \frac{s(3 + \Delta t) - s(3)}{\Delta t} = \frac{6\,\Delta t + \Delta t^2}{\Delta t} = 6 + \Delta t \qquad (\Delta t \ne 0). $$
+<p>Example: \(0.61 / 0.1 = 6.1\) m/s, and \(6 + 0.1 = 6.1\). It matches the table.</p>
+<p>Step 4 divides top and bottom by \(\Delta t\). That is only allowed because \(\Delta t\) is not zero. At \(\Delta t = 0\) the original fraction is \(0/0\) and has no value. But for every \(\Delta t\) that is not zero, the average speed is exactly \(6 + \Delta t\), and as \(\Delta t\) shrinks that gets as close to 6 as we like.</p>
+
+<div class="box key">
+<span class="boxtitle">The limit</span>
+The limit of an expression as \(\Delta t \to 0\) is the value it settles towards as \(\Delta t\) gets closer and closer to 0, from both sides, while never being 0. We write
+$$ \lim_{\Delta t \to 0} (6 + \Delta t) = 6 . $$
+Precisely: for any tolerance you name, say 0.001 m/s, there is a step size below which the average speed stays within that tolerance of 6. Here any \(\lvert\Delta t\rvert\) below 0.001 s works.
+</div>
+
+<div class="box plain">
+<span class="boxtitle">Intuition pump: shorter and shorter camera exposures</span>
+Photograph a moving car with a one-second exposure and you get a long smear: the motion of the whole second, blurred together. Use 1/100 s and the smear is short. Use 1/10000 s and the car is frozen, yet a tiny smear remains, pointing the way it moves. The derivative is what that smear's direction settles on as the exposure shrinks. You never need an exposure of exactly zero.
+</div>
+
+<figure class="sim" id="sim-shrink">
+<figcaption><b>Figure 2.2.</b> The secant line (red) between \(t\) and \(t + \Delta t\). Press “halve Δt” repeatedly, or drag the \(\Delta t\) slider towards 0 from either side. The red line swings onto the grey dashed tangent line and the average speed below settles on \(2t\). Set \(\Delta t\) to exactly 0 to see why the limit never uses \(\Delta t = 0\) itself. Move \(t\) to check that the settled value is always \(2t\).</figcaption>
+</figure>
+
+<h2>2.5 The derivative</h2>
+<p>Do the same for any function \(f\) at any input \(x\). The derivative of \(f\) at \(x\) is</p>
+$$ f'(x) = \lim_{\Delta x \to 0} \frac{f(x + \Delta x) - f(x)}{\Delta x} . $$
+<p>In words: the average rate of change over a step \(\Delta x\), in the limit of a tiny step. It is the instantaneous rate of change: the rate at one input, not over a stretch. If this limit exists, \(f\) is called differentiable at \(x\).</p>
+
+<h3>Notation and units</h3>
+<ul>
+<li>\(f'(x)\) is read “f prime of x”. The prime mark says “derivative of”.</li>
+<li>\(\dfrac{df}{dx}\) is read “d f d x”. It is a reminder of where the derivative came from: \(\Delta f / \Delta x\) with the steps made tiny. It is not a fraction you can compute directly, but its units behave like one.</li>
+<li><b>Unit of a derivative:</b> output unit per input unit, always. The derivative of position in metres with respect to time in seconds is in metres per second. The derivative of a cost in dollars with respect to a mass in kilograms is in dollars per kilogram.</li>
+</ul>
+
+<h3>Worked example: the car's speed at every instant</h3>
+<p>Repeat Section 2.4 with a general time \(t\) instead of 3. Here is every step, with \(t = 3\) s and \(\Delta t = 0.1\) s worked alongside.</p>
+<p><b>Step 1: write out the two positions.</b> The rule is “square the time”. At time \(t\) the position is \(s(t) = t^2\). A short step \(\Delta t\) later the time is \(t + \Delta t\), so the position is \(s(t + \Delta t) = (t + \Delta t)^2\). Example: \(s(3) = 9\) m and \(s(3.1) = 3.1^2 = 9.61\) m.</p>
+<p><b>Step 2: expand the square.</b> \((t + \Delta t)^2\) means \((t + \Delta t) \times (t + \Delta t)\). Multiply every term of the first bracket by every term of the second:</p>
+$$ (t + \Delta t)(t + \Delta t) = t\cdot t + t\cdot\Delta t + \Delta t\cdot t + \Delta t\cdot\Delta t = t^2 + 2t\,\Delta t + \Delta t^2 . $$
+<p>Example: \(9 + 2\times3\times0.1 + 0.01 = 9 + 0.6 + 0.01 = 9.61\). It matches Step 1.</p>
+<p><b>Step 3: put both positions into the fraction.</b> Replace \(s(t + \Delta t)\) by the expansion and \(s(t)\) by \(t^2\):</p>
+$$ \frac{s(t + \Delta t) - s(t)}{\Delta t} = \frac{t^2 + 2t\,\Delta t + \Delta t^2 - t^2}{\Delta t}. $$
+<p><b>Step 4: cancel the \(t^2\).</b> On top, \(+t^2\) and \(-t^2\) cancel, leaving \(2t\,\Delta t + \Delta t^2\). This is the change in position. Example: \(0.6 + 0.01 = 0.61\) m, which is \(9.61 - 9\).</p>
+$$ \frac{t^2 + 2t\,\Delta t + \Delta t^2 - t^2}{\Delta t} = \frac{2t\,\Delta t + \Delta t^2}{\Delta t}. $$
+<p><b>Step 5: divide each term by \(\Delta t\).</b> \(2t\,\Delta t / \Delta t = 2t\) and \(\Delta t^2/\Delta t = \Delta t\) (allowed because \(\Delta t\) is not zero yet):</p>
+$$ \frac{2t\,\Delta t + \Delta t^2}{\Delta t} = 2t + \Delta t . $$
+<p>Example: \(0.61 / 0.1 = 6.1\), and \(2\times3 + 0.1 = 6.1\). The average speed over the short step is 6.1 m/s.</p>
+<p><b>Step 6: shrink the step.</b> Let \(\Delta t \to 0\). In \(2t + \Delta t\) only the \(\Delta t\) part changes, and it goes to 0. Example at \(t = 3\): \(\Delta t = 0.1, 0.01, 0.001\) give 6.1, 6.01, 6.001 m/s, closing in on 6. So</p>
+$$ s'(t) = \frac{ds}{dt} = 2t \quad \text{metres per second.} $$
+<p><b>Units.</b> Restore the hidden 1 m/s² from Level 1: \(s(t) = (1\ \text{m/s}^2)\,t^2\), so \(s'(t) = (2\ \text{m/s}^2)\cdot t\). At \(t = 3\) s this is \(2\ \text{m/s}^2 \cdot 3\ \text{s} = 6\ \text{m/s}\). The seconds cancel once and leave m/s. With the physicists' form \(s(t) = \tfrac12 a t^2\) the same steps give \(s'(t) = \tfrac12 a \cdot 2t = a t\), and \(a = 2\) m/s².</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(t\) (s)</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+<tr><th>speed \(s'(t) = 2t\) (m/s)</th><td>0</td><td>2</td><td>4</td><td>6</td><td>8</td><td>10</td><td>12</td><td>14</td><td>16</td><td>18</td><td>20</td></tr>
+</table>
+</div>
+<p>At 10 s the car does 20 m/s, which is \(20 \times 3.6 = 72\) km/h. The derivative is itself a function: feed in a time, get out a speed. Its graph is a straight line through the origin, rising 2 m/s for every second. <a href="03.html">Level 3</a> takes the derivative of this new function.</p>
+<p><b>Mechanics.</b> Change only \(t\), from 3 s to 3.5 s. The speed changes from 6 m/s to 7 m/s. The position changes from 9 m to 12.25 m. Compare with Level 1: there the steps 1 m, 3 m, 5 m, … were the distances covered in whole seconds. By Section 2.2 each one is \(t_1 + t_2\) m/s times 1 s: \(0 + 1 = 1\), \(1 + 2 = 3\), \(2 + 3 = 5\). And \(t_1 + t_2\) is exactly halfway between the speeds \(2t_1\) and \(2t_2\) at the two ends of that second.</p>
+
+<figure class="sim" id="sim-speedo">
+<figcaption><b>Figure 2.3.</b> A speedometer built from slopes. Top: the car's position. The red segment is the tangent line at the current time; its slope is the speed. Bottom: that slope, plotted as a height. Drag the time slider or press “Drive”. The dot in the bottom panel draws out the straight line \(s'(t) = 2t\). Notice that the bottom panel's height at each time is the steepness of the top panel at that time.</figcaption>
+</figure>
+
+<h2>2.6 The tangent line, and zooming in</h2>
+<p>The tangent line at a point is the straight line through that point with slope equal to the derivative there. Here is how to write it at \(t = 3\) s.</p>
+<p><b>Step 1: start from the point.</b> A straight line through the point \((3, s(3))\) with slope \(m\) starts at height \(s(3)\) when \(t = 3\). Each second away from 3 adds \(m\). After \(t - 3\) seconds it has added \(m\,(t - 3)\). So the line is \(s(3) + m\,(t - 3)\). The tangent line uses the derivative as its slope, \(m = s'(3)\):</p>
+$$ T(t) = s(3) + s'(3)\cdot(t - 3) . $$
+<p><b>Step 2: compute the two numbers.</b> The position is \(s(3) = 3^2 = 9\) m. The speed is \(s'(3) = 2 \times 3 = 6\) m/s (Section 2.5). Put them in:</p>
+$$ T(t) = 9 + 6\,(t - 3) \quad \text{metres}. $$
+<p>Example: at \(t = 4\) s the line is at \(9 + 6 \times (4 - 3) = 9 + 6 = 15\) m.</p>
+<p>Units: \(9\ \text{m} + 6\ \tfrac{\text{m}}{\text{s}}\cdot(t - 3\ \text{s})\); the seconds cancel and every term is in metres.</p>
+
+<h3>Mechanics: how far the curve is from the tangent line</h3>
+<p>Step a distance \(\Delta t\) away from 3 s. Here is every step, with \(\Delta t = 0.1\) s worked alongside.</p>
+<p><b>Step 1: the curve.</b> Section 2.4 (Steps 1 and 2) expanded the curve's height: \(s(3 + \Delta t) = 9 + 6\Delta t + \Delta t^2\). Example: \(9 + 0.6 + 0.01 = 9.61\) m.</p>
+<p><b>Step 2: the tangent line.</b> Put \(t = 3 + \Delta t\) into \(T(t) = 9 + 6\,(t - 3)\). The bracket becomes \((3 + \Delta t) - 3 = \Delta t\), so \(T(3 + \Delta t) = 9 + 6\Delta t\). Example: \(9 + 0.6 = 9.6\) m.</p>
+<p><b>Step 3: subtract.</b> Take the line from the curve. The 9s cancel and the \(6\Delta t\)s cancel:</p>
+$$ s(3 + \Delta t) - T(3 + \Delta t) = (9 + 6\Delta t + \Delta t^2) - (9 + 6\Delta t) = \Delta t^2 . $$
+<p>Example: \(9.61 - 9.6 = 0.01\) m, which is \(0.1^2\).</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(\Delta t\) (s)</th><td>1</td><td>0.1</td><td>0.01</td><td>0.001</td></tr>
+<tr><th>curve \(s(3 + \Delta t)\) (m)</th><td>16</td><td>9.61</td><td>9.0601</td><td>9.006001</td></tr>
+<tr><th>tangent \(T(3 + \Delta t)\) (m)</th><td>15</td><td>9.6</td><td>9.06</td><td>9.006</td></tr>
+<tr><th>gap (m)</th><td>1</td><td>0.01</td><td>0.0001</td><td>0.000001</td></tr>
+</table>
+</div>
+<p>Make the step 10 times smaller and the gap gets 100 times smaller. So if you zoom in on the graph around \((3, 9)\), the visible stretch shrinks like \(\Delta t\) but the gap shrinks like \(\Delta t^2\). Relative to what you can see, the gap vanishes. The curve looks more and more like its tangent line.</p>
+
+<div class="box key">
+<span class="boxtitle">Differentiable means “straight when you zoom in”</span>
+A function is differentiable at a point if zooming in there makes its graph look like a straight line. The slope of that line is the derivative. The leftover gap, \(\Delta t^2\) here, is where the bending lives: <a href="03.html">Level 3</a> measures it, and <a href="04.html">Level 4</a> uses the tangent line as the first approximation of a function.
+</div>
+
+<figure class="sim" id="sim-zoom">
+<figcaption><b>Figure 2.4.</b> The zoom test. Choose a function and drag the zoom slider to the right. For the car at \(t = 3\) s, the blue curve and the grey dashed tangent line merge: the gap shrinks like \(\Delta t^2\) while the visible stretch shrinks like \(\Delta t\). For \(\lvert x \rvert\) at \(x = 0\), the corner looks exactly the same at every zoom. It never becomes a straight line, so it has no derivative there (Section 2.11).</figcaption>
+</figure>
+
+<h2>2.7 The power rule, derived for \(t^2\) and \(t^3\)</h2>
+<p>We found that the derivative of \(t^2\) is \(2t\). Now do \(t^3\) the same way, every step shown, with \(t = 2\) and \(\Delta t = 0.01\) worked alongside (pure numbers).</p>
+<p><b>Step 1: write out the two values.</b> The rule is “cube the input”. At \(t\) the value is \(t^3\). At \(t + \Delta t\) it is \((t + \Delta t)^3\). Example: \(2^3 = 8\) and \(2.01^3 = 8.120601\).</p>
+<p><b>Step 2: split the cube.</b> A cube is a square times one more copy: \((t + \Delta t)^3 = (t + \Delta t)^2 \cdot (t + \Delta t)\). Section 2.5 (Step 2) expanded the square: \((t + \Delta t)^2 = t^2 + 2t\,\Delta t + \Delta t^2\). So</p>
+$$ (t + \Delta t)^3 = (t^2 + 2t\,\Delta t + \Delta t^2)\cdot(t + \Delta t) . $$
+<p><b>Step 3: multiply by each part of the last bracket.</b> Multiply each term by \(t\), then each term by \(\Delta t\):</p>
+$$ (t^2 + 2t\,\Delta t + \Delta t^2)\cdot t = t^3 + 2t^2\,\Delta t + t\,\Delta t^2 , $$
+$$ (t^2 + 2t\,\Delta t + \Delta t^2)\cdot \Delta t = t^2\,\Delta t + 2t\,\Delta t^2 + \Delta t^3 . $$
+<p><b>Step 4: add the two lines and collect matching terms.</b> \(2t^2\,\Delta t + t^2\,\Delta t = 3t^2\,\Delta t\) and \(t\,\Delta t^2 + 2t\,\Delta t^2 = 3t\,\Delta t^2\):</p>
+$$ (t + \Delta t)^3 = t^3 + 3t^2\,\Delta t + 3t\,\Delta t^2 + \Delta t^3 . $$
+<p>Example: \(8 + 3\times4\times0.01 + 3\times2\times0.0001 + 0.000001 = 8 + 0.12 + 0.0006 + 0.000001 = 8.120601\). It matches Step 1.</p>
+<p><b>Step 5: subtract \(t^3\).</b> The \(t^3\) at the front cancels:</p>
+$$ (t+\Delta t)^3 - t^3 = 3t^2\,\Delta t + 3t\,\Delta t^2 + \Delta t^3 . $$
+<p>Example: \(8.120601 - 8 = 0.120601\).</p>
+<p><b>Step 6: divide each term by \(\Delta t\).</b> Each term loses one \(\Delta t\):</p>
+$$ \frac{(t+\Delta t)^3 - t^3}{\Delta t} = \frac{3t^2\,\Delta t + 3t\,\Delta t^2 + \Delta t^3}{\Delta t} = 3t^2 + 3t\,\Delta t + \Delta t^2 . $$
+<p>Example: \(0.120601 / 0.01 = 12.0601\), and \(12 + 0.06 + 0.0001 = 12.0601\).</p>
+<p><b>Step 7: shrink the step.</b> As \(\Delta t \to 0\), the terms \(3t\,\Delta t\) and \(\Delta t^2\) go to 0. Only \(3t^2\) is left. So the derivative of \(t^3\) is \(3t^2\). Example: the limit at \(t = 2\) is \(3 \times 2^2 = 12\).</p>
+
+<h3>The pattern</h3>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>function</th><td>\(1\) (a constant)</td><td>\(t\)</td><td>\(t^2\)</td><td>\(t^3\)</td><td>\(t^n\)</td></tr>
+<tr><th>derivative</th><td>\(0\)</td><td>\(1\)</td><td>\(2t\)</td><td>\(3t^2\)</td><td>\(n\,t^{n-1}\)</td></tr>
+</table>
+</div>
+<p>The constant: \(\dfrac{1 - 1}{\Delta t} = 0\) for every step, so its derivative is 0. A flat graph has slope 0. For \(t\): the top is \((t + \Delta t) - t = \Delta t\), because the \(t\)s cancel. Then \(\Delta t / \Delta t = 1\) for every step, so the derivative is 1.</p>
+<p>Why the pattern holds for every whole \(n\): when you expand \((t + \Delta t)^n\), the first two terms are always \(t^n + n\,t^{n-1}\Delta t\) (one way to pick no \(\Delta t\), and \(n\) ways to pick exactly one \(\Delta t\) from the \(n\) brackets). Every other term contains \(\Delta t^2\) or a higher power. After you subtract \(t^n\) and divide by \(\Delta t\), those other terms still carry at least one \(\Delta t\), so they vanish in the limit. The rule also holds for negative and fractional exponents, for example \(t^{1/2} = \sqrt{t}\) has derivative \(\tfrac12 t^{-1/2}\); that needs a different proof, which we do not give here.</p>
+<div class="box key">
+<span class="boxtitle">Power rule</span>
+$$ \frac{d}{dt}\,t^n = n\,t^{n-1} . $$
+Unit check: if \(t\) is in seconds, \(t^n\) is in sⁿ and \(n\,t^{n-1}\) is in sⁿ⁻¹, which is sⁿ per s. Output unit per input unit, as it must be.
+</div>
+
+<h2>2.8 Sums and constant multiples</h2>
+<p>Two rules let us differentiate any polynomial. Let \(f\) and \(g\) be functions and \(c\) a constant.</p>
+<p><b>Constant multiple.</b> Scaling a function scales its rate of change by the same factor. Here are the steps, with \(c = 3\), \(f(x) = x^2\), \(x = 2\) and \(\Delta x = 0.1\) worked alongside (pure numbers).</p>
+<p><b>Step 1: write the difference quotient of \(c\,f\).</b> The new function's value is \(c\) times the old one at both ends of the step:</p>
+$$ \frac{c\,f(x+\Delta x) - c\,f(x)}{\Delta x} . $$
+<p>Example: \(\dfrac{3 \times 2.1^2 - 3 \times 2^2}{0.1} = \dfrac{3 \times 4.41 - 3 \times 4}{0.1} = \dfrac{13.23 - 12}{0.1} = \dfrac{1.23}{0.1} = 12.3\).</p>
+<p><b>Step 2: take \(c\) out of the top.</b> Both terms on top are multiplied by \(c\), so \(c\,A - c\,B = c\,(A - B)\):</p>
+$$ \frac{c\,f(x+\Delta x) - c\,f(x)}{\Delta x} = c\cdot\frac{f(x+\Delta x) - f(x)}{\Delta x} . $$
+<p>Example: \(3 \times \dfrac{4.41 - 4}{0.1} = 3 \times 4.1 = 12.3\). Same number.</p>
+<p><b>Step 3: take the limit.</b> As \(\Delta x \to 0\) the fraction goes to \(f'(x)\). The \(c\) does not depend on the step, so it stays. The limit is \(c\,f'(x)\). Example: \(3 \times f'(2) = 3 \times (2 \times 2) = 12\).</p>
+<p><b>Sum.</b> The rate of change of a sum is the sum of the rates. Here are the steps, with \(f(x) = x^2\), \(g(x) = x^3\), \(x = 2\) and \(\Delta x = 0.1\) worked alongside.</p>
+<p><b>Step 1: write the difference quotient of \(f + g\).</b></p>
+$$ \frac{\big(f(x+\Delta x) + g(x+\Delta x)\big) - \big(f(x) + g(x)\big)}{\Delta x} . $$
+<p>Example: \(\dfrac{(4.41 + 9.261) - (4 + 8)}{0.1} = \dfrac{13.671 - 12}{0.1} = \dfrac{1.671}{0.1} = 16.71\).</p>
+<p><b>Step 2: regroup the top.</b> Remove the brackets (the minus sign flips both signs in the second bracket) and put each function's two terms next to each other:</p>
+$$ \big(f(x+\Delta x) - f(x)\big) + \big(g(x+\Delta x) - g(x)\big) . $$
+<p>Example: \((4.41 - 4) + (9.261 - 8) = 0.41 + 1.261 = 1.671\). Same top.</p>
+<p><b>Step 3: split the fraction.</b> A sum divided by \(\Delta x\) is each part divided by \(\Delta x\), then added:</p>
+$$ \frac{f(x+\Delta x) - f(x)}{\Delta x} + \frac{g(x+\Delta x) - g(x)}{\Delta x} . $$
+<p>Example: \(0.41/0.1 + 1.261/0.1 = 4.1 + 12.61 = 16.71\).</p>
+<p><b>Step 4: take the limit.</b> The first fraction goes to \(f'(x)\) and the second to \(g'(x)\). The limit is \(f'(x) + g'(x)\). Example: \(2 \times 2 + 3 \times 2^2 = 4 + 12 = 16\).</p>
+
+<h3>Worked example</h3>
+<p>Let \(f(x) = 3x^2 + 5x + 7\) (toy, pure numbers). Here is every step.</p>
+<p><b>Step 1: split into terms.</b> By the sum rule, the derivative of \(3x^2 + 5x + 7\) is the derivative of \(3x^2\), plus that of \(5x\), plus that of \(7\).</p>
+<p><b>Step 2: differentiate each term.</b> For \(3x^2\): the power rule gives \(2x\) for \(x^2\), and the constant-multiple rule multiplies by 3, giving \(3 \cdot 2x = 6x\). For \(5x\): the derivative of \(x\) is 1, times 5 gives 5. For \(7\): a constant has derivative 0.</p>
+<p><b>Step 3: add the pieces.</b></p>
+$$ f'(x) = 6x + 5 + 0 = 6x + 5 . $$
+<p><b>Step 4: put in \(x = 2\).</b> \(f'(2) = 6 \times 2 + 5 = 12 + 5 = 17\).</p>
+<p><b>Step 5: check numerically with \(\Delta x = 0.001\).</b> At \(x = 2.001\): \(2.001^2 = 4.004001\), so \(3x^2 = 12.012003\). Also \(5x = 10.005\). Adding the 7 gives \(f(2.001) = 12.012003 + 10.005 + 7 = 29.017003\). At \(x = 2\): \(f(2) = 3 \times 4 + 5 \times 2 + 7 = 12 + 10 + 7 = 29\). The quotient is \((29.017003 - 29) / 0.001 = 0.017003 / 0.001 = 17.003\). Close to 17, and closer for a smaller step.</p>
+<p><b>Mechanics: constants vanish.</b> The 7 contributes nothing to \(f'\). Adding a constant slides the graph up without changing its steepness anywhere, just like the taxi's start fee in Level 0. Changing the 5 to a 6 adds 1 to the slope everywhere. Changing the 3 to a 4 adds \(2x\) to the slope: more at large \(x\), nothing at \(x = 0\).</p>
+
+<h2>2.9 The exponential is its own derivative</h2>
+<p>Level 1 said \(e \approx 2.71828\) is a natural choice. Here is why, with \(x = 2\) and \(\Delta x = 0.1\) worked alongside (values rounded to 5 decimal places).</p>
+<p><b>Step 1: write the difference quotient.</b></p>
+$$ \frac{e^{x+\Delta x} - e^x}{\Delta x} . $$
+<p>Example: \(\dfrac{e^{2.1} - e^{2}}{0.1} = \dfrac{8.16617 - 7.38906}{0.1} = \dfrac{0.77711}{0.1} \approx 7.7711\).</p>
+<p><b>Step 2: split the power.</b> Use the exponent rule from Level 1: adding exponents multiplies powers, \(e^{a + b} = e^a \cdot e^b\). With \(a = x\) and \(b = \Delta x\), \(e^{x + \Delta x} = e^x \cdot e^{\Delta x}\):</p>
+$$ \frac{e^{x+\Delta x} - e^x}{\Delta x} = \frac{e^x\cdot e^{\Delta x} - e^x}{\Delta x} . $$
+<p>Example: \(e^2 \cdot e^{0.1} = 7.38906 \times 1.10517 = 8.16617\), the same as \(e^{2.1}\).</p>
+<p><b>Step 3: take \(e^x\) out of the top.</b> Both terms on top contain \(e^x\), and \(e^x = e^x \cdot 1\), so the top is \(e^x\,(e^{\Delta x} - 1)\):</p>
+$$ \frac{e^x\cdot e^{\Delta x} - e^x}{\Delta x} = e^x \cdot \frac{e^{\Delta x} - 1}{\Delta x} . $$
+<p>Example: \(7.38906 \times \dfrac{1.10517 - 1}{0.1} = 7.38906 \times 1.05171 \approx 7.7711\). Same number.</p>
+<p><b>Step 4: shrink the step.</b> The factor on the right does not depend on \(x\). Compute it for shrinking steps:</p>
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(\Delta x\)</th><td>1</td><td>0.1</td><td>0.01</td><td>0.001</td><td>0.0001</td></tr>
+<tr><th>\(\dfrac{e^{\Delta x} - 1}{\Delta x}\)</th><td>1.71828</td><td>1.05171</td><td>1.00502</td><td>1.00050</td><td>1.00005</td></tr>
+</table>
+</div>
+<p>It settles on 1. So</p>
+$$ \frac{d}{dx}\,e^x = e^x . $$
+<p>The rate of change of \(e^x\) equals its current value. At \(x = 2\), the graph is at height \(e^2 \approx 7.389\) and its slope is also about 7.389. For comparison, the same factor for \(2^x\) settles on \(\log 2 \approx 0.6931\) instead of 1 (with \(\Delta x = 0.001\) it is 0.69339), so \(2^x\) grows at about 0.693 times its own value. \(e\) is the one base where that factor is exactly 1.</p>
+<p><b>Real-world example.</b> A colony of bacteria with unlimited food grows at a rate proportional to how many bacteria there are: twice the bacteria, twice the new bacteria per hour. Quantities like that follow an exponential curve.</p>
+
+<h2>2.10 Numerical derivative versus exact</h2>
+<p>A computer can approximate a derivative without any algebra: pick a small \(\Delta x\) and compute the difference quotient. This is called a forward difference. How good is it?</p>
+
+<h3>The error from the step size</h3>
+<p>For the car, Section 2.5 showed the forward difference is exactly \(2t + \Delta t\). The error is \(\Delta t\): a step of 0.01 s gives an answer 0.01 m/s too high. For \(t^3\), Section 2.7 showed the error is \(3t\,\Delta t + \Delta t^2\). Either way the error shrinks in proportion to the step.</p>
+<p>A better recipe looks both ways. The central difference is</p>
+$$ \frac{f(x + \Delta x) - f(x - \Delta x)}{2\,\Delta x} . $$
+<p>For \(t^3\), here is every step, with \(t = 2\) and \(\Delta t = 0.1\) worked alongside (pure numbers).</p>
+<p><b>Step 1: the forward cube.</b> Section 2.7 (Step 4) expanded it: \((t+\Delta t)^3 = t^3 + 3t^2\Delta t + 3t\Delta t^2 + \Delta t^3\). Example: \(2.1^3 = 8 + 1.2 + 0.06 + 0.001 = 9.261\).</p>
+<p><b>Step 2: the backward cube.</b> \((t - \Delta t)^3\) is the same expansion with \(-\Delta t\) in place of \(\Delta t\). An even power of \(-\Delta t\) is positive, \((-\Delta t)^2 = \Delta t^2\). An odd power is negative, \((-\Delta t)^3 = -\Delta t^3\). So \((t-\Delta t)^3 = t^3 - 3t^2\Delta t + 3t\Delta t^2 - \Delta t^3\). Example: \(1.9^3 = 8 - 1.2 + 0.06 - 0.001 = 6.859\).</p>
+<p><b>Step 3: subtract, term by term.</b> \(t^3 - t^3 = 0\). \(3t^2\Delta t - (-3t^2\Delta t) = 6t^2\Delta t\). \(3t\Delta t^2 - 3t\Delta t^2 = 0\). \(\Delta t^3 - (-\Delta t^3) = 2\Delta t^3\). So</p>
+$$ (t+\Delta t)^3 - (t - \Delta t)^3 = \big(t^3 + 3t^2\Delta t + 3t\Delta t^2 + \Delta t^3\big) - \big(t^3 - 3t^2\Delta t + 3t\Delta t^2 - \Delta t^3\big) = 6t^2\,\Delta t + 2\,\Delta t^3 . $$
+<p>Example: \(9.261 - 6.859 = 2.402\), and \(6 \times 4 \times 0.1 + 2 \times 0.001 = 2.4 + 0.002 = 2.402\).</p>
+<p><b>Step 4: divide by \(2\Delta t\).</b> \(6t^2\Delta t / (2\Delta t) = 3t^2\) and \(2\Delta t^3 / (2\Delta t) = \Delta t^2\). So the central difference is \(3t^2 + \Delta t^2\). Example: \(2.402 / 0.2 = 12.01\), and \(12 + 0.01 = 12.01\).</p>
+<p>Its error is \(\Delta t^2\). Shrink the step 10 times and the forward error shrinks 10 times, but the central error shrinks 100 times.</p>
+<p>For \(t^2\) the central difference is exact. The two squares are \((t+\Delta t)^2 = t^2 + 2t\Delta t + \Delta t^2\) (Section 2.5) and, with \(-\Delta t\) in place of \(\Delta t\), \((t-\Delta t)^2 = t^2 - 2t\Delta t + \Delta t^2\). Subtract them: the \(t^2\)s cancel, the \(\Delta t^2\)s cancel, and \(2t\Delta t - (-2t\Delta t) = 4t\Delta t\). Divide by \(2\Delta t\): \(4t\Delta t / (2\Delta t) = 2t\). Example at \(t = 3\), \(\Delta t = 0.1\): \(3.1^2 - 2.9^2 = 9.61 - 8.41 = 1.2\), and \(1.2 / 0.2 = 6 = 2 \times 3\).</p>
+
+<h3>The error from rounding</h3>
+<p>So why not use \(\Delta x = 10^{-15}\)? Because a computer keeps only about 16 significant digits. When \(\Delta x\) is tiny, \(f(x + \Delta x)\) and \(f(x)\) agree in almost all their digits. Subtracting them throws those digits away, and what is left is mostly rounding noise. Dividing by the tiny \(\Delta x\) then blows the noise up. This is a rounding error.</p>
+<p>Concretely, for \(e^x\) at \(x = 1\) in ordinary double precision: the forward difference has error about \(1.4\times10^{-2}\) at \(\Delta x = 10^{-2}\), about \(7\times10^{-9}\) at \(\Delta x = 10^{-8}\), and about \(4\times10^{-4}\) at \(\Delta x = 10^{-12}\). Smaller is not always better. Figure 2.5 computes these numbers live in your browser.</p>
+
+<figure class="sim" id="sim-numerr">
+<figcaption><b>Figure 2.5.</b> Error of the numerical derivative against step size, both on a \(\log_{10}\) scale (toy functions at \(x = 1\), pure numbers). Blue: forward difference. Red: central difference. Read the curves from right to left. At first the error falls as \(\Delta x\) shrinks; the red line falls twice as steeply because its error goes like \(\Delta x^2\). Then rounding takes over and the error climbs again. Drag the slider to read off exact values. Try \(t^2\), whose central difference has no step error at all.</figcaption>
+</figure>
+
+<h2>2.11 When derivatives fail: corners</h2>
+<p>Not every function has a derivative everywhere. The simplest failure is the absolute value \(\lvert x \rvert\) at \(x = 0\). Its graph is a V with a sharp corner at the origin.</p>
+<p>Compute the difference quotient at 0. For a step \(\Delta x\) to the right (\(\Delta x\) positive), \(\lvert \Delta x \rvert = \Delta x\):</p>
+$$ \frac{\lvert 0 + \Delta x\rvert - \lvert 0 \rvert}{\Delta x} = \frac{\Delta x}{\Delta x} = 1 . $$
+<p>For a step to the left (\(\Delta x\) negative), \(\lvert \Delta x \rvert = -\Delta x\):</p>
+$$ \frac{\lvert \Delta x\rvert - 0}{\Delta x} = \frac{-\Delta x}{\Delta x} = -1 . $$
+<div class="tablewrap" style="position: relative">
+<table>
+<tr><th>\(\Delta x\)</th><td>0.1</td><td>0.001</td><td>0.00001</td><td>−0.00001</td><td>−0.001</td><td>−0.1</td></tr>
+<tr><th>quotient</th><td>1</td><td>1</td><td>1</td><td>−1</td><td>−1</td><td>−1</td></tr>
+</table>
+</div>
+<p>From the right it is always 1; from the left always −1. However small the step, the two sides disagree. The quotient never settles on one value, so the limit does not exist, and \(\lvert x \rvert\) has no derivative at 0. Away from 0 there is no problem: near \(x = 2\), \(\lvert x \rvert = x\) and the derivative is 1; near \(x = -2\), \(\lvert x\rvert = -x\) and the derivative is \(-1\).</p>
+<p>The zoom test of Figure 2.4 shows the same thing: a corner looks identical at every magnification. A function with a jump, such as a price that steps from 1 $ to 2 $ at midnight, also has no derivative at the jump.</p>
+<p><b>Real-world example.</b> Roll a ball at 1 m/s straight at a wall and let it bounce back at 1 m/s. Its distance from the wall, graphed over time, is a V with its corner at the moment of the bounce. Just before, the distance shrinks at 1 m/s; just after, it grows at 1 m/s. At the instant itself there is no single rate. A real ball squashes for a moment, so the real graph is rounded at very small scales; the corner is the idealisation.</p>
+<p><b>Preview.</b> The ReLU used in many neural networks gives 0 for negative inputs and \(x\) itself for positive ones. It has exactly this kind of corner at 0 (<a href="10.html">Level 10</a>). Smooth alternatives such as SiLU have no corner.</p>
+
+<h2>2.12 Why this matters for H-space</h2>
+<ol>
+<li><b>Everything at the top is a derivative.</b> A Jacobian (<a href="08.html">Level 8</a>) is a table of derivatives of several outputs with respect to several inputs. The J-lens is an average Jacobian of a transformer's final residual state with respect to an earlier layer (theory-v2 §0, <a href="14.html">Level 14</a>). H-space goes one derivative higher (<a href="03.html">Level 3</a>, <a href="09.html">Level 9</a>).</li>
+<li><b>Units decide what a number means.</b> A derivative is output unit per input unit. When the inputs are measured in units of their natural spread (whitening, <a href="13.html">Level 13</a>), the same function has different derivative numbers. Section 2.5's habit of tracking units is what keeps that straight.</li>
+<li><b>Numerical versus exact.</b> <a href="11.html">Level 11</a> checks an exact Hessian-vector product against a central finite difference, and faces the same trade-off as Figure 2.5: too large a step gives step error, too small a step gives rounding error, and low-precision formats such as bf16 make the rounding much worse.</li>
+<li><b>Corners matter for second derivatives.</b> The MLPs of the Qwen models use SwiGLU, built on the smooth SiLU, not on ReLU (<a href="14.html">Level 14</a>). Smoothness is what lets the second derivatives of the next level exist at every point.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="8" data-tol="0.001" data-unit="m/s">
+<p><b>Exercise 2.1.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds.)</span> What is the car's average speed between \(t_1 = 2\) s and \(t_2 = 6\) s? Compute it from the positions, then check with the shortcut \(t_1 + t_2\).</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: the two positions.</b> The rule is \(s(t) = t^2\). So \(s(2) = 2^2 = 4\) m and \(s(6) = 6^2 = 36\) m.</p>
+<p><b>Step 2: the two changes.</b> \(\Delta s = s(6) - s(2) = 36 - 4 = 32\) m. \(\Delta t = 6 - 2 = 4\) s.</p>
+<p><b>Step 3: divide.</b> \(\Delta s / \Delta t = 32\ \text{m} / 4\ \text{s} = 8\) m/s.</p>
+<p><b>Check with the shortcut.</b> \(t_1 + t_2 = 2 + 6 = 8\) m/s.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="10.1" data-tol="0.001" data-unit="m/s">
+<p><b>Exercise 2.2.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds.)</span> Compute the car's difference quotient at \(t = 5\) s with \(\Delta t = 0.1\) s. What does it settle on as \(\Delta t \to 0\)?</p>
+<details><summary>Show answer</summary>
+<p>\(s(5.1) = 5.1 \times 5.1 = 26.01\) m and \(s(5) = 25\) m. The quotient is \((26.01 - 25)/0.1 = 1.01/0.1 = 10.1\) m/s. By Section 2.5 it equals \(2t + \Delta t = 10 + 0.1\), which settles on \(s'(5) = 10\) m/s.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="48" data-tol="0.001">
+<p><b>Exercise 2.3.</b> Let \(f(x) = 4x^3\) (pure numbers). Find \(f'(x)\) and then \(f'(2)\).</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: power rule.</b> With \(n = 3\), the derivative of \(x^3\) is \(3x^{3-1} = 3x^2\).</p>
+<p><b>Step 2: constant multiple.</b> \(f\) is 4 times \(x^3\), so its derivative is 4 times \(3x^2\): \(f'(x) = 4 \cdot 3x^2 = 12x^2\).</p>
+<p><b>Step 3: put in \(x = 2\).</b> \(2^2 = 4\), so \(f'(2) = 12 \times 4 = 48\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="4" data-tol="0.001">
+<p><b>Exercise 2.4.</b> Let \(f(x) = 3x^2 - 2x + 5\). Find \(f'(1)\).</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: split into terms (sum rule).</b> Differentiate \(3x^2\), \(-2x\) and \(5\) one at a time.</p>
+<p><b>Step 2: each term.</b> \(3x^2\): power rule gives \(2x\), times 3 gives \(6x\). \(-2x\): the derivative of \(x\) is 1, times \(-2\) gives \(-2\). \(5\): a constant, derivative 0.</p>
+<p><b>Step 3: add.</b> \(f'(x) = 6x - 2 + 0 = 6x - 2\).</p>
+<p><b>Step 4: put in \(x = 1\).</b> \(f'(1) = 6 \times 1 - 2 = 4\). The constant 5 does not affect the slope.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="4" data-tol="0.001">
+<p><b>Exercise 2.5.</b> Derive the derivative of \(t^4\) by expanding, as in Section 2.7. Use \((t+\Delta t)^4 = t^4 + 4t^3\Delta t + 6t^2\Delta t^2 + 4t\Delta t^3 + \Delta t^4\) (or check it by multiplying \((t+\Delta t)^3\) by \((t + \Delta t)\)). Enter the derivative at \(t = 1\).</p>
+<details><summary>Show answer</summary>
+<p>Worked alongside: \(t = 1\), \(\Delta t = 0.1\).</p>
+<p><b>Step 1: subtract \(t^4\).</b> The \(t^4\) at the front of the expansion cancels: \((t+\Delta t)^4 - t^4 = 4t^3\Delta t + 6t^2\Delta t^2 + 4t\Delta t^3 + \Delta t^4\). Example: \(1.1^4 - 1 = 1.4641 - 1 = 0.4641\), and \(0.4 + 0.06 + 0.004 + 0.0001 = 0.4641\).</p>
+<p><b>Step 2: divide each term by \(\Delta t\).</b> Each term loses one \(\Delta t\): \(4t^3 + 6t^2\Delta t + 4t\Delta t^2 + \Delta t^3\). Example: \(0.4641 / 0.1 = 4.641\).</p>
+<p><b>Step 3: shrink the step.</b> As \(\Delta t \to 0\), every term that still holds a \(\Delta t\) goes to 0. Only \(4t^3\) survives. At \(t = 1\) that is \(4 \times 1^3 = 4\). This matches the power rule \(n\,t^{n-1}\) with \(n = 4\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.25" data-tol="0.001" data-unit="m">
+<p><b>Exercise 2.6.</b> <span class="small">(The car: its position is \(s(t) = t^2\) metres at time \(t\) seconds.)</span> Write the tangent line to the car's graph at \(t = 4\) s. How far is the curve above the tangent line at \(t = 4.5\) s?</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: the point.</b> \(s(4) = 4^2 = 16\) m.</p>
+<p><b>Step 2: the slope.</b> \(s'(t) = 2t\), so \(s'(4) = 2 \times 4 = 8\) m/s.</p>
+<p><b>Step 3: the line.</b> Put both into \(T(t) = s(4) + s'(4)\,(t - 4)\): \(T(t) = 16 + 8(t - 4)\) metres.</p>
+<p><b>Step 4: the line at 4.5 s.</b> \(t - 4 = 0.5\), so \(T(4.5) = 16 + 8 \times 0.5 = 16 + 4 = 20\) m.</p>
+<p><b>Step 5: the curve at 4.5 s.</b> \(s(4.5) = 4.5^2 = 20.25\) m.</p>
+<p><b>Step 6: subtract.</b> \(20.25 - 20 = 0.25\) m. That is \(\Delta t^2 = 0.5^2\), as in Section 2.6.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-12" data-tol="0.001" data-unit="L/min">
+<p><b>Exercise 2.7.</b> A tank drains so that the water left after \(t\) minutes is \(200 - 3t^2\) litres (a toy). What is the unit of its derivative, and what is the derivative at \(t = 2\) min? What does the sign mean?</p>
+<details><summary>Show answer</summary>
+<p><b>Unit.</b> Output unit per input unit: litres per minute.</p>
+<p><b>Step 1: each term.</b> \(200\) is a constant, derivative 0. \(-3t^2\): power rule gives \(2t\) for \(t^2\), times \(-3\) gives \(-6t\).</p>
+<p><b>Step 2: add.</b> The derivative is \(0 - 6t = -6t\) L/min.</p>
+<p><b>Step 3: put in \(t = 2\).</b> \(-6 \times 2 = -12\) L/min. Negative: the water level is falling, by 12 litres per minute at that instant.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2" data-tol="0.001">
+<p><b>Exercise 2.8.</b> Let \(f(x) = 2e^x + x^2\). Find \(f'(0)\).</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: each term.</b> \(2e^x\): the derivative of \(e^x\) is \(e^x\) (Section 2.9), times 2 gives \(2e^x\). \(x^2\): power rule gives \(2x\).</p>
+<p><b>Step 2: add (sum rule).</b> \(f'(x) = 2e^x + 2x\).</p>
+<p><b>Step 3: put in \(x = 0\).</b> Any number to the power 0 is 1, so \(e^0 = 1\). Then \(f'(0) = 2 \times 1 + 2 \times 0 = 2\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="12.01" data-tol="0.0001">
+<p><b>Exercise 2.9.</b> Compute the central difference for \(f(t) = t^3\) at \(t = 2\) with \(\Delta t = 0.1\). How far is it from the exact derivative 12, and how does that compare with the forward difference?</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: the two cubes.</b> \(2.1^2 = 4.41\), so \(2.1^3 = 4.41 \times 2.1 = 9.261\). \(1.9^2 = 3.61\), so \(1.9^3 = 3.61 \times 1.9 = 6.859\).</p>
+<p><b>Step 2: subtract.</b> \(9.261 - 6.859 = 2.402\).</p>
+<p><b>Step 3: divide by \(2\Delta t = 0.2\).</b> \(2.402 / 0.2 = 12.01\). Error \(12.01 - 12 = 0.01\), which is \(\Delta t^2 = 0.1^2\).</p>
+<p><b>Forward difference, for comparison.</b> \(2^3 = 8\), so \((9.261 - 8)/0.1 = 1.261/0.1 = 12.61\). Error \(0.61\), which is \(3t\,\Delta t + \Delta t^2 = 3 \times 2 \times 0.1 + 0.01 = 0.6 + 0.01\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-1" data-tol="0.001">
+<p><b>Exercise 2.10.</b> What is the derivative of \(\lvert x \rvert\) at \(x = -3\)? Why does the same method fail at \(x = 0\)?</p>
+<details><summary>Show answer</summary>
+<p>Near \(-3\), all inputs are negative, so \(\lvert x \rvert = -x\) and the slope is \(-1\). At 0 the difference quotient is \(+1\) for every step to the right and \(-1\) for every step to the left, so it never settles on one value: no limit, no derivative.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  /* The shared glossary defines "position" as a token position (Level 14).
+     On this page it means the car's position, so drop that pop-up here. */
+  Array.prototype.forEach.call(document.querySelectorAll('.g[data-g="position"]'), function (g) {
+    g.parentNode.replaceChild(document.createTextNode(g.textContent), g);
+  });
+
+  function fig(host, aspect, maxH) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    return { wrap: wrap, c: S.canvas(wrap, { aspect: aspect || 0.55, maxH: maxH }) };
+  }
+  function nice(span, target) {
+    var raw = span / (target || 5), p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+    return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p;
+  }
+  function digitsFor(step) { return Math.max(0, Math.ceil(-Math.log10(step) - 1e-9)); }
+  function car(t) { return t * t; }
+
+  /* Figure 2.1: secant line through two draggable points */
+  (function () {
+    var F = fig(document.getElementById("sim-secant"), 0.6), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: 0, xmax: 10, ymin: 0, ymax: 100, padLeft: 44, padBottom: 28, padTop: 14 });
+    var P = { x: 2, y: 4 }, Q = { x: 6, y: 36 };
+    var out = S.readout(wrap);
+    S.drag(c, v, [P, Q], function (pt) {
+      pt.x = Math.round(pt.x * 100) / 100; pt.y = car(pt.x); c.redraw();
+    });
+    c.draw = function () {
+      v.axes({ xlabel: "t (s)", ylabel: "s (m)", xticks: 1, yticks: 10 });
+      v.fn(car, { color: S.col.blue, width: 2 });
+      var dt = Q.x - P.x, ds = Q.y - P.y;
+      if (Math.abs(dt) > 1e-9) {
+        var k = ds / dt;
+        v.fn(function (t) { return P.y + k * (t - P.x); }, { color: S.col.red, width: 1.5 });
+        v.line(P.x, P.y, Q.x, P.y, { color: S.col.ink, dash: [4, 3], width: 1 });
+        v.line(Q.x, P.y, Q.x, Q.y, { color: S.col.ink, dash: [4, 3], width: 1 });
+        v.text("Δt", (P.x + Q.x) / 2, P.y, { align: "center", dy: 15, font: S.fontSmall });
+        v.text("Δs", Q.x, (P.y + Q.y) / 2, { dx: 6, font: S.fontSmall, baseline: "middle" });
+      }
+      v.dot(P.x, P.y, { color: S.col.blue, r: 6 }); v.text("P", P.x, P.y, { dx: -14, dy: -6 });
+      v.dot(Q.x, Q.y, { color: S.col.red, r: 6 }); v.text("Q", Q.x, Q.y, { dx: -14, dy: -6 });
+      var l1 = "P: t₁ = " + S.fmt(P.x, 2) + " s, s(t₁) = " + S.fmt(P.y, 2) + " m      Q: t₂ = " + S.fmt(Q.x, 2) + " s, s(t₂) = " + S.fmt(Q.y, 2) + " m";
+      if (Math.abs(dt) < 1e-9) { out.textContent = l1 + "\nThe points coincide: Δs = 0 and Δt = 0, and 0/0 has no value. Pull them apart."; return; }
+      out.textContent = l1 + "\n" +
+        "Δs = " + S.fmt(Q.y, 2) + " − " + S.fmt(P.y, 2) + " = " + S.fmt(ds, 2) + " m,   Δt = " + S.fmt(Q.x, 2) + " − " + S.fmt(P.x, 2) + " = " + S.fmt(dt, 2) + " s\n" +
+        "average speed = slope of red line = Δs/Δt = " + S.fmt(ds / dt, 2) + " m/s\n" +
+        "shortcut: t₁ + t₂ = " + S.fmt(P.x, 2) + " + " + S.fmt(Q.x, 2) + " = " + S.fmt(P.x + Q.x, 2) + " m/s";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 2.2: shrinking the step */
+  (function () {
+    var F = fig(document.getElementById("sim-shrink"), 0.6), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: 0, xmax: 6, ymin: 0, ymax: 36, padLeft: 40, padBottom: 28, padTop: 14 });
+    var t0 = S.slider(wrap, { label: "t", min: 1, max: 5, step: 0.5, value: 3, unit: "s", digits: 1, oninput: function () { c.redraw(); } });
+    var dts = S.slider(wrap, { label: "Δt", min: -2, max: 2, step: 0.001, value: 1, unit: "s", digits: 3, oninput: function () { c.redraw(); } });
+    S.button(wrap, "halve Δt", function () {
+      var d = dts.get() / 2, r = Math.round(d * 1000) / 1000;
+      if (r === 0) r = d < 0 ? -0.001 : 0.001;
+      dts.set(r); c.redraw();
+    });
+    S.button(wrap, "Δt = 1 s", function () { dts.set(1); c.redraw(); });
+    var tan = S.checkbox(wrap, "show tangent line", true, function () { c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var T = t0.get(), D = dts.get(), S0 = car(T);
+      v.axes({ xlabel: "t (s)", ylabel: "s (m)", xticks: 1, yticks: 5 });
+      v.fn(car, { color: S.col.blue, width: 2 });
+      if (tan.get()) v.fn(function (t) { return S0 + 2 * T * (t - T); }, { color: S.col.gray, dash: [6, 4], width: 1.2 });
+      v.dot(T, S0, { color: S.col.blue, r: 5 });
+      if (Math.abs(D) < 1e-12) {
+        out.textContent = "t = " + S.fmt(T, 1) + " s, Δt = 0 s\n" +
+          "(s(" + S.fmt(T, 1) + ") − s(" + S.fmt(T, 1) + ")) / 0 = 0/0: no value at all, and no line can be drawn through one point.\n" +
+          "The limit only asks what happens as Δt gets close to 0, never at 0.";
+        return;
+      }
+      var S1 = car(T + D), q = (S1 - S0) / D;
+      v.fn(function (t) { return S0 + q * (t - T); }, { color: S.col.red, width: 1.5 });
+      v.dot(T + D, S1, { color: S.col.red, r: 5 });
+      out.textContent =
+        "t = " + S.fmt(T, 1) + " s,  Δt = " + S.fmt(D, 3) + " s\n" +
+        "s(t + Δt) = " + S.fmt(T + D, 3) + "² = " + S.fmt(S1, 6) + " m,   s(t) = " + S.fmt(T, 1) + "² = " + S.fmt(S0, 2) + " m\n" +
+        "average speed = (" + S.fmt(S1, 6) + " − " + S.fmt(S0, 2) + ") / " + S.fmt(D, 3) + " = " + S.fmt(q, 4) + " m/s\n" +
+        "algebra: 2t + Δt = " + S.fmt(2 * T, 1) + " + " + (D < 0 ? "(" + S.fmt(D, 3) + ")" : S.fmt(D, 3)) + " = " + S.fmt(2 * T + D, 4) + " m/s\n" +
+        "as Δt → 0 this settles on 2t = " + S.fmt(2 * T, 1) + " m/s";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 2.3: speedometer built from slopes */
+  (function () {
+    var F = fig(document.getElementById("sim-speedo"), 0.9, 600), c = F.c, wrap = F.wrap;
+    var top = S.view(c, { xmin: 0, xmax: 10, ymin: 0, ymax: 100, padLeft: 44 });
+    var bot = S.view(c, { xmin: 0, xmax: 10, ymin: 0, ymax: 22, padLeft: 44 });
+    var ts = S.slider(wrap, { label: "t", min: 0, max: 10, step: 0.1, value: 3, unit: "s", digits: 1, oninput: function () { seen = Math.max(seen, ts.get()); c.redraw(); } });
+    var timer = null, seen = 3;
+    S.button(wrap, "Drive", function () {
+      clearInterval(timer); ts.set(0); seen = 0;
+      timer = setInterval(function () {
+        var t = Math.min(10, ts.get() + 0.1); ts.set(t); seen = Math.max(seen, t); c.redraw();
+        if (t >= 10) clearInterval(timer);
+      }, 40);
+    });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var H = c.H, half = H / 2, T = ts.get();
+      top.set({ padTop: 14, padBottom: H - half + 22 });
+      bot.set({ padTop: half + 14, padBottom: 26 });
+      top.axes({ xlabel: "t (s)", ylabel: "position s (m)", xticks: 1, yticks: 20 });
+      top.fn(car, { color: S.col.blue, width: 2 });
+      var w = 1.2;
+      top.line(T - w, car(T) - 2 * T * w, T + w, car(T) + 2 * T * w, { color: S.col.red, width: 2.5 });
+      top.dot(T, car(T), { color: S.col.red });
+      bot.axes({ xlabel: "t (s)", ylabel: "speed s′ (m/s)", xticks: 1, yticks: 5 });
+      bot.fn(function (t) { return 2 * t; }, { color: S.col.light, width: 1, dash: [4, 4] });
+      if (seen > 0) bot.fn(function (t) { return 2 * t; }, { color: S.col.blue, width: 2, from: 0, to: seen });
+      bot.line(T, 0, T, 2 * T, { color: S.col.red, dash: [3, 3], width: 1 });
+      bot.dot(T, 2 * T, { color: S.col.red });
+      out.textContent =
+        "t = " + S.fmt(T, 1) + " s:  position s(" + S.fmt(T, 1) + ") = " + S.fmt(T, 1) + "² = " + S.fmt(car(T), 2) + " m\n" +
+        "slope of the red tangent = speed s′(" + S.fmt(T, 1) + ") = 2·" + S.fmt(T, 1) + " = " + S.fmt(2 * T, 1) + " m/s  (" + S.fmt(2 * T * 3.6, 1) + " km/h)";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 2.4: the zoom test */
+  (function () {
+    var F = fig(document.getElementById("sim-zoom"), 0.6), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: 0, xmax: 6, ymin: 0, ymax: 36, padLeft: 66, padBottom: 28, padTop: 14 });
+    var ctl = document.createElement("div"); ctl.className = "controls"; wrap.appendChild(ctl);
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = "Function: ";
+    var sel = document.createElement("select");
+    ["the car s(t) = t², at t = 3 s", "|x|, at x = 0"].forEach(function (s, i) { var o = document.createElement("option"); o.value = i; o.textContent = s; sel.appendChild(o); });
+    lab.appendChild(sel); ctl.appendChild(lab);
+    sel.addEventListener("change", function () { c.redraw(); });
+    var z = S.slider(wrap, { label: "zoom in", min: 0, max: 3.5, step: 0.01, value: 0, digits: 2, oninput: function () { c.redraw(); } });
+    z.label("zoom in (powers of 10)");
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var w = 3 * Math.pow(10, -z.get()), isCar = sel.value === "0";
+      var xmin, xmax, ymin, ymax, f;
+      if (isCar) {
+        f = car; xmin = 3 - w; xmax = 3 + w;
+        var hh = 6 * w * 1.1 + w * w; ymin = 9 - hh; ymax = 9 + hh;
+      } else {
+        f = Math.abs; xmin = -w; xmax = w; ymin = -0.4 * w; ymax = 1.3 * w;
+      }
+      v.set({ xmin: xmin, xmax: xmax, ymin: ymin, ymax: ymax });
+      var xs = nice(xmax - xmin, 4), ys = nice(ymax - ymin, 4);
+      v.axes({ xlabel: isCar ? "t (s)" : "x", ylabel: isCar ? "s (m)" : "|x|", xticks: xs, yticks: ys, xdigits: digitsFor(xs), ydigits: digitsFor(ys), frame: true });
+      if (isCar) v.fn(function (t) { return 9 + 6 * (t - 3); }, { color: S.col.gray, dash: [6, 4], width: 1.5 });
+      v.fn(f, { color: S.col.blue, width: 2.5 });
+      v.dot(isCar ? 3 : 0, isCar ? 9 : 0, { color: S.col.red });
+      if (isCar) {
+        out.textContent =
+          "window: t from " + (3 - w).toPrecision(6) + " to " + (3 + w).toPrecision(6) + " s  (half-width " + w.toPrecision(3) + " s)\n" +
+          "largest gap between curve and tangent line in the window = (half-width)² = " + (w * w).toPrecision(3) + " m\n" +
+          "as a share of the window height: " + (100 * w * w / (2 * hh)).toPrecision(3) + " %   (shrinks as you zoom: the curve straightens)";
+      } else {
+        out.textContent =
+          "window: x from " + (-w).toPrecision(3) + " to " + w.toPrecision(3) + "\n" +
+          "slope on the left of 0: −1.   slope on the right of 0: +1.   At every zoom.\n" +
+          "the corner looks exactly the same at every zoom: it never straightens, so there is no derivative at 0";
+      }
+    };
+    c.redraw();
+  })();
+
+  /* Figure 2.5: numerical derivative error against step size */
+  (function () {
+    var F = fig(document.getElementById("sim-numerr"), 0.62), c = F.c, wrap = F.wrap;
+    var v = S.view(c, { xmin: -16, xmax: 0, ymin: -17, ymax: 1, padLeft: 40, padBottom: 28, padTop: 14 });
+    var fns = [
+      { name: "eˣ at x = 1 (exact derivative e ≈ 2.718281828)", f: Math.exp, d: Math.E },
+      { name: "t³ at t = 1 (exact derivative 3)", f: function (t) { return t * t * t; }, d: 3 },
+      { name: "t² at t = 1 (exact derivative 2)", f: function (t) { return t * t; }, d: 2 }
+    ];
+    var ctl = document.createElement("div"); ctl.className = "controls"; wrap.appendChild(ctl);
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = "Function: ";
+    var sel = document.createElement("select");
+    fns.forEach(function (s, i) { var o = document.createElement("option"); o.value = i; o.textContent = s.name; sel.appendChild(o); });
+    lab.appendChild(sel); ctl.appendChild(lab);
+    sel.addEventListener("change", function () { c.redraw(); });
+    var k = S.slider(wrap, { label: "log₁₀ Δx", min: -15, max: 0, step: 0.25, value: -2, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    function errs(fn, dx) {
+      var x = 1, fwd = (fn.f(x + dx) - fn.f(x)) / dx, cen = (fn.f(x + dx) - fn.f(x - dx)) / (2 * dx);
+      return { fwd: fwd, cen: cen, ef: Math.abs(fwd - fn.d), ec: Math.abs(cen - fn.d) };
+    }
+    function lg(e) { return Math.log10(Math.max(e, 1e-17)); }
+    c.draw = function () {
+      var fn = fns[+sel.value];
+      v.axes({ xlabel: "log₁₀ Δx", ylabel: "log₁₀ |error|", xticks: 2, yticks: 2, frame: true });
+      var pf = [], pc = [];
+      for (var a = -16; a <= 0.0001; a += 0.05) { var e = errs(fn, Math.pow(10, a)); pf.push([a, lg(e.ef)]); pc.push([a, lg(e.ec)]); }
+      v.poly(pf, { color: S.col.blue, close: false, width: 1.5 });
+      v.poly(pc, { color: S.col.red, close: false, width: 1.5 });
+      var K = k.get(), dx = Math.pow(10, K), E = errs(fn, dx);
+      v.line(K, -17, K, 1, { color: S.col.gray, dash: [3, 3], width: 1 });
+      v.dot(K, lg(E.ef), { color: S.col.blue, r: 5 }); v.dot(K, lg(E.ec), { color: S.col.red, r: 5 });
+      v.text("forward", -1.2, lg(errs(fn, Math.pow(10, -1.2)).ef), { dy: -8, align: "right", color: S.col.blue, font: S.fontSmall });
+      v.text("central", -2.5, lg(errs(fn, Math.pow(10, -2.5)).ec), { dy: 14, align: "left", color: S.col.red, font: S.fontSmall });
+      function show(e) { return e === 0 ? "0 (exact to every stored digit)" : e.toExponential(1); }
+      out.textContent =
+        "Δx = 10^" + S.fmt(K, 2) + " = " + dx.toExponential(2) + "\n" +
+        "forward (f(1 + Δx) − f(1)) / Δx         = " + E.fwd.toPrecision(12) + "   error " + show(E.ef) + "\n" +
+        "central (f(1 + Δx) − f(1 − Δx)) / (2Δx) = " + E.cen.toPrecision(12) + "   error " + show(E.ec) + "\n" +
+        "exact                                     = " + fn.d.toPrecision(12);
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

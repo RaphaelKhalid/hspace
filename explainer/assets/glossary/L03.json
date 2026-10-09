@@ -1,0 +1,5 @@
+{
+  "second difference": {"t": "second difference", "a": ["second differences"], "l": 3, "d": "A measurable stand-in for the second derivative from three nearby values: (f(x + Δx) − 2f(x) + f(x − Δx)) / Δx². It is the slope just ahead minus the slope just behind, per step. It is exact for polynomials up to x³."},
+  "second-derivative test": {"t": "second-derivative test", "a": ["second derivative test"], "l": 3, "d": "At a point where the slope is zero: if the second derivative is positive the point is a local minimum, if negative a local maximum, and if zero the test says nothing."},
+  "diminishing returns": {"t": "diminishing returns", "a": [], "l": 3, "d": "When each extra unit of effort adds less than the one before, like the tenth hour of revision helping less than the first. The graph of the result is concave down: its second derivative is negative."}
+}

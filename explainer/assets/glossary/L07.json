@@ -1,0 +1,109 @@
+{
+  "scalar": {
+    "t": "scalar",
+    "a": [
+      "scalars"
+    ],
+    "l": 7,
+    "d": "A single ordinary number, as opposed to a vector or a matrix. Multiplying a vector by a scalar stretches it: 2·(3, 1) = (6, 2)."
+  },
+  "linear combination": {
+    "t": "linear combination",
+    "a": [
+      "linear combinations"
+    ],
+    "l": 7,
+    "d": "A sum of scaled vectors, like 2a + 3b. A matrix times a vector is a linear combination of the matrix's columns."
+  },
+  "column vector": {
+    "t": "column vector",
+    "a": [
+      "column vectors",
+      "row vector",
+      "row vectors"
+    ],
+    "l": 7,
+    "d": "A vector written as a vertical column of numbers. A row vector is the same numbers written across. The transpose turns one into the other, and a row times a column is a dot product."
+  },
+  "standard basis": {
+    "t": "standard basis",
+    "a": [
+      "standard basis vectors"
+    ],
+    "l": 7,
+    "d": "The unit arrows along the axes: e₁ = (1, 0) and e₂ = (0, 1) in the plane. A matrix's columns are where it sends them."
+  },
+  "orthonormal": {
+    "t": "orthonormal",
+    "a": [
+      "orthonormal basis",
+      "orthonormal bases"
+    ],
+    "l": 7,
+    "d": "Perpendicular to each other and each of length 1. In an orthonormal basis, each coordinate of a vector is just a dot product with one basis vector."
+  },
+  "singular matrix": {
+    "t": "singular matrix",
+    "a": [
+      "singular",
+      "non-invertible"
+    ],
+    "l": 7,
+    "d": "A square matrix with determinant zero. It squashes space onto a line (or smaller), so several inputs share one output and it has no inverse."
+  },
+  "shear": {
+    "t": "shear",
+    "a": [
+      "shears",
+      "shear map"
+    ],
+    "l": 7,
+    "d": "A map that slides each layer sideways by an amount proportional to its height, like pushing the top of a deck of cards. It never changes area: determinant 1."
+  },
+  "orientation": {
+    "t": "orientation",
+    "a": [],
+    "l": 7,
+    "d": "Which way round a shape's corners go: anticlockwise or clockwise. A map with negative determinant flips it, like a mirror."
+  },
+  "parallelogram": {
+    "t": "parallelogram",
+    "a": [
+      "parallelograms"
+    ],
+    "l": 7,
+    "d": "A four-sided shape whose opposite sides are parallel and equal. A linear map turns a square into one."
+  },
+  "null space": {
+    "t": "null space",
+    "a": [],
+    "l": 7,
+    "d": "All the inputs a matrix sends to zero: the directions it cannot see. For the outer product a·bᵀ it is every vector perpendicular to b."
+  },
+  "law of cosines": {
+    "t": "law of cosines",
+    "a": [
+      "cosine rule"
+    ],
+    "l": 7,
+    "d": "For a triangle with sides A, B and C, where θ is the angle between A and B: C² = A² + B² − 2AB·cos θ. With θ = 90° it is Pythagoras."
+  },
+  "Pythagoras' theorem": {
+    "t": "Pythagoras' theorem",
+    "a": [
+      "Pythagoras",
+      "Pythagorean theorem"
+    ],
+    "l": 7,
+    "d": "In a right-angled triangle, the long side squared equals the sum of the other two sides squared: 3² + 4² = 5²."
+  },
+  "off-diagonal": {
+    "t": "off-diagonal",
+    "a": [
+      "off-diagonal entry",
+      "off-diagonal entries"
+    ],
+    "l": 7,
+    "d": "Any entry of a square matrix not on the main diagonal: row number and column number differ. In a Hessian these are the interactions."
+  }
+}

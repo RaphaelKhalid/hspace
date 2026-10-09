@@ -1,0 +1,1583 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 15: The H-lens and what the runs found</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="15">
+<div class="page">
+
+<h1>Level 15: The H-lens and what the runs found</h1>
+<p class="subtitle">One derivative above the J-lens: the objects, the theorems that say what each estimator really measures, and a plain account of every test run on Qwen3.6-27B.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>define every object of the H-lens: the objective \(F_c\), the Hessian blocks \(H_{pq}\), the lens \(T_\ell\), whitening \(\tilde H = \Sigma^{1/2} H \Sigma^{1/2}\) and the random covectors \(c\);</li>
+<li>prove Proposition 0 (\(M^{\text{row}} \succeq M^{\text{diag}} \succeq M^{\text{lens}}\)) and say which of these each sign-probe estimator converges to (Proposition 6);</li>
+<li>read the run-1 C0 to C6 table and say exactly why it is a FAIL;</li>
+<li>explain heavy tails, the Σ prior (Proposition 8) and the exact sign-flip test (Corollary 8.1), each with its proof;</li>
+<li>follow v5, the Σ-orbit twin test, v8, v9, v10a, v10, v11a and v11, and list precisely what is and is not established.</li>
+</ul>
+<p class="small">Prerequisites: <a href="09.html">Level 9</a> (Hessian, eigenvectors), <a href="11.html">Level 11</a> (HVPs), <a href="12.html">Level 12</a> (second-order adjoint, rectangle identity), <a href="13.html">Level 13</a> (covariance, whitening, PCA, split-half, heavy tails, sign tricks, randomization tests), <a href="14.html">Level 14</a> (transformers, residual stream, J-lens).</p>
+</div>
+
+<div class="box plain">
+<span class="boxtitle">Conventions on this page</span>
+<ul>
+<li><b>Vectors are plain letters</b> (\(v\), \(c\), \(\xi\)), not bold, to match the research notes <code>hlens/paper/theory-v2.md</code>. Matrices are capitals.</li>
+<li><b>Two units.</b> Residual-stream numbers have an arbitrary unit; call it the <b>activation unit (a.u.)</b>. The objective \(F_c\) (defined in 15.2) is an activation read along a token's unembedding row; call its unit the <b>proxy unit (pu)</b>, which is one a.u. times one logit. Whitened coordinates are pure numbers: they count standard deviations.</li>
+<li><b>Two clashes avoided.</b> The identity matrix is \(I_d\) (with its size); a plain \(I\) is always an interaction, in nats. The test statistic of a randomization test is \(\tau\) (theory-v2 writes \(T\)), because \(T\) already means the window length.</li>
+<li><b>Sources.</b> Every number about the real runs is either printed live from <code>assets/hspace_numbers.js</code> (generated from <code>results/*.json</code>) or quoted from a named file, with the file given in small print.</li>
+</ul>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every symbol used below is listed here first. Grouped by where it first appears.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(x\)</td><td>“x”</td><td>a context: one window of text fed to the model</td><td>none (a list of tokens)</td><td>128 tokens of a Wikipedia article</td></tr>
+<tr><td>\(T\)</td><td>“T”</td><td>number of tokens in a window</td><td>tokens</td><td>\(T = 128\)</td></tr>
+<tr><td>\(p,\ q,\ p'\)</td><td>“p”, “q”, “p prime”</td><td>positions (token indices) in the window</td><td>none (pure number)</td><td>\(p = 40\)</td></tr>
+<tr><td>\(V\)</td><td>“V”</td><td>the valid positions \(\{16, \dots, T-2\}\)</td><td>none (a set)</td><td>\(\{16,\dots,126\}\)</td></tr>
+<tr><td>\(|V|\)</td><td>“size of V”</td><td>number of valid positions</td><td>none (pure number)</td><td>111 at \(T = 128\)</td></tr>
+<tr><td>\(d\)</td><td>“d”</td><td>width of the residual stream</td><td>none (count of coordinates)</td><td>5,120 (27B); 1,024 (0.8B)</td></tr>
+<tr><td>\(\ell\)</td><td>“ell”</td><td>source layer (output of decoder block \(\ell\))</td><td>none (index)</td><td>16, 28, 40, 52</td></tr>
+<tr><td>\(L^*\)</td><td>“L star”</td><td>the last block output, before the final norm</td><td>none (index)</td><td>63 for Qwen3.6-27B</td></tr>
+<tr><td>\(h_\ell,\ h_\ell[p]\)</td><td>“h ell”, “h ell at p”</td><td>residual state at layer \(\ell\) (all positions, \(T\times d\)); its row at position \(p\) (a \(d\)-vector)</td><td>a.u.</td><td>\(h_{16}[40] \in \mathbb{R}^{5120}\)</td></tr>
+<tr><td>\(\mu\)</td><td>“mu”</td><td>mean activation at layer \(\ell\)</td><td>a.u.</td><td>a \(d\)-vector</td></tr>
+<tr><td>\(J_\ell\)</td><td>“J ell”</td><td>the J-lens: averaged Jacobian of the summed final residual with respect to layer \(\ell\) (Level 14)</td><td>none (a.u. per a.u.)</td><td>a \(d\times d\) matrix</td></tr>
+<tr><td>\(t,\ u_t\)</td><td>“t”, “u t”</td><td>a vocabulary token; its readout covector \(u_t = (1+w_{\text{final}})\odot W_U[t]\)</td><td>\(u_t\): pu per a.u.</td><td>\(t\) = “ the”</td></tr>
+<tr><td>\(\Sigma_U\)</td><td>“sigma U”</td><td>second moment of the readout covectors, \(\frac{1}{|\text{vocab}|}\sum_t u_t u_t^\top\)</td><td>(pu per a.u.)²</td><td>a \(d\times d\) matrix</td></tr>
+<tr><td>\(c\)</td><td>“c”</td><td>an output covector, drawn as \(c\sim\mathcal N(0,\Sigma_U)\)</td><td>pu per a.u.</td><td>a random “mixture of tokens” readout</td></tr>
+<tr><td>\(F_c\)</td><td>“F sub c”</td><td>the objective \(\sum_{p'\in V} c\cdot h_{L^*}[p']\), seen as a function of \(h_\ell\)</td><td>pu</td><td>one number per context</td></tr>
+<tr><td>\(H_x[c]\)</td><td>“H of x at c”</td><td>the full Hessian \(\nabla^2_{h_\ell}F_c\) in context \(x\), made of blocks</td><td>pu per a.u.²</td><td>\((|V|d)\times(|V|d)\)</td></tr>
+<tr><td>\(H_{pq}\)</td><td>“H p q”</td><td>its \(d\times d\) block \(\partial^2 F_c/\partial h_\ell[p]\,\partial h_\ell[q]\)</td><td>pu per a.u.²</td><td>\(H_{40,40}\) (a diagonal block)</td></tr>
+<tr><td>\(\operatorname{sym}(A)\)</td><td>“sym A”</td><td>\(A + A^\top\) (theory-v2 convention: no factor ½)</td><td>as \(A\)</td><td>\(\operatorname{sym}(ab^\top) = ab^\top + ba^\top\)</td></tr>
+<tr><td>\(T_\ell[c]\)</td><td>“T ell at c”</td><td>the H-lens: \(\mathbb{E}_x \operatorname{mean}_{p\in V} H_x[c]_{pp}\)</td><td>pu per a.u.²</td><td>a symmetric \(d\times d\) matrix for each \(c\)</td></tr>
+<tr><td>\(\mathbb{E}_x,\ \operatorname{mean}_{p\in V}\)</td><td>“expectation over x”, “mean over p”</td><td>average over contexts; plain average over valid positions</td><td>as the thing averaged</td><td>\(\operatorname{mean}_{p}a_p = \frac{1}{|V|}\sum_p a_p\)</td></tr>
+<tr><td>\(\Sigma\)</td><td>“sigma”</td><td>covariance of \(h_\ell[p]\) (shrunk: \(0.95\,\hat\Sigma + 0.05\,\tfrac{\operatorname{tr}\hat\Sigma}{d} I_d\))</td><td>a.u.²</td><td>\(d\times d\), positive definite</td></tr>
+<tr><td>\(\hat\Sigma\)</td><td>“sigma hat”</td><td>the raw sample covariance before shrinkage</td><td>a.u.²</td><td></td></tr>
+<tr><td>\(\Sigma^{1/2}\)</td><td>“root sigma”</td><td>the symmetric square root of \(\Sigma\)</td><td>a.u.</td><td>\(\operatorname{diag}(4,1)^{1/2} = \operatorname{diag}(2,1)\)</td></tr>
+<tr><td>\(I_d\)</td><td>“identity”</td><td>the \(d\times d\) identity matrix</td><td>none (pure number)</td><td>\(I_2\)</td></tr>
+<tr><td>\(P\)</td><td>“P”</td><td>the PCA basis: orthonormal columns \(P_1,\dots,P_d\), the eigenvectors of \(\Sigma\)</td><td>none (unit vectors)</td><td>\(\Sigma = P\,\operatorname{diag}(\sigma_1^2,\dots,\sigma_d^2)\,P^\top\)</td></tr>
+<tr><td>\(\sigma_i^2\)</td><td>“sigma i squared”</td><td>the variance along PCA axis \(i\) (eigenvalue of \(\Sigma\))</td><td>a.u.²</td><td>\(\sigma_1^2 = 4\)</td></tr>
+<tr><td>\(\tilde H_{pq},\ \tilde T_\ell[c]\)</td><td>“H tilde”, “T tilde”</td><td>whitened block \(\Sigma^{1/2}H_{pq}\Sigma^{1/2}\); whitened lens \(\Sigma^{1/2}T_\ell[c]\Sigma^{1/2}\)</td><td>pu (per 1σ per 1σ)</td><td>\(\tilde H = \begin{pmatrix}4&2\\2&1\end{pmatrix}\) in 15.4</td></tr>
+<tr><td>\(A \succeq B\)</td><td>“A dominates B”</td><td>Loewner order: \(A - B\) is positive semidefinite</td><td>none (a relation)</td><td>\(\operatorname{diag}(3,1)\succeq\operatorname{diag}(2,1)\)</td></tr>
+<tr><td>\(M^{\text{lens}},\ M^{\text{diag}},\ M^{\text{row}}\)</td><td>“M lens”, “M diag”, “M row”</td><td>the three energy operators of 15.5</td><td>pu²</td><td>\(d\times d\), positive semidefinite</td></tr>
+<tr><td>\(M^{\text{rect}}\)</td><td>“M rect”</td><td>diagonal-block energy of the rectangle-averaged Hessian (Prop. 6c)</td><td>pu²</td><td></td></tr>
+<tr><td>\(M\)</td><td>“M”</td><td>whichever energy operator (or estimate of one) is under discussion</td><td>pu² (pure number for spatial-sign estimators)</td><td></td></tr>
+<tr><td>\(\lambda_i(M),\ \lambda_1\)</td><td>“lambda i of M”</td><td>\(i\)-th largest eigenvalue of \(M\); the top one</td><td>as the matrix (\(M\): pu²)</td><td>\(\lambda_1(\tilde H) = 5\) pu in 15.4</td></tr>
+<tr><td>\(\operatorname{tr}\)</td><td>“trace”</td><td>sum of diagonal entries (= sum of eigenvalues)</td><td>as the matrix</td><td>\(\operatorname{tr}I_d = d\)</td></tr>
+<tr><td>\(\operatorname{Cov}_x(A)\)</td><td>“covariance over x of A”</td><td>\(\mathbb{E}[(A-\mathbb{E}A)^2]\) for a random symmetric matrix \(A\)</td><td>as \(A^2\)</td><td></td></tr>
+<tr><td>\(k\)</td><td>“k”</td><td>dimension of a subspace</td><td>none (pure number)</td><td>25 (run 1), 3 (split@3), 5 (EX)</td></tr>
+<tr><td>H-space\(_k(M)\)</td><td>“H-space k of M”</td><td>the top-\(k\) eigenspace of the chosen energy operator \(M\)</td><td>none (a subspace)</td><td>H25 = H-space\(_{25}(M^{\text{row}})\)</td></tr>
+<tr><td>\(\operatorname{ov}(A,B)\)</td><td>“overlap”</td><td>\(\lVert A^\top B\rVert_F^2/k\) for two \(d\times k\) orthonormal bases: mean squared cosine</td><td>none (0 to 1)</td><td>random: \(k/d\)</td></tr>
+<tr><td>split@\(k\)</td><td>“split at k”</td><td>overlap of the top-\(k\) subspaces estimated from two disjoint halves of the probes</td><td>none (0 to 1)</td><td>1 = identical halves; \(k/d\) = random</td></tr>
+<tr><td>PR</td><td>“participation ratio”</td><td>\((\sum_i\lambda_i)^2/\sum_i\lambda_i^2\): how many eigenvalues effectively carry the trace</td><td>none (pure number)</td><td>PR = 2 if two equal eigenvalues carry everything</td></tr>
+<tr><td>\(\lVert A\rVert_F\)</td><td>“Frobenius norm”</td><td>square root of the sum of squared entries</td><td>as \(A\)</td><td></td></tr>
+<tr><td>\(\xi,\ z\)</td><td>“xi”, “z”</td><td>a whitened random direction, \(\mathcal N(0, I_d)\); theory-v2 writes \(\xi\) in §6A and \(z\) in §6B for the same thing</td><td>none (whitened units)</td><td>\(\xi = (0.3, -1.2, \dots)\)</td></tr>
+<tr><td>\(v\)</td><td>“v”</td><td>the raw tangent \(v = \Sigma^{1/2}\xi\)</td><td>a.u.</td><td></td></tr>
+<tr><td>\(s,\ s_p\)</td><td>“s”, “s p”</td><td>Rademacher signs: one independent ±1 per (window, valid position)</td><td>none (±1)</td><td>\(s_{40} = -1\)</td></tr>
+<tr><td>\(s^1,\ s^2\)</td><td>“s one”, “s two”</td><td>two independent sign vectors used with the same \(\xi\)</td><td>none (±1)</td><td></td></tr>
+<tr><td>\(s\otimes v\)</td><td>“s tensor v”</td><td>the tangent that puts \(s_p v\) at every valid position \(p\)</td><td>a.u.</td><td></td></tr>
+<tr><td>\(g,\ g_p\)</td><td>“g”, “g p”</td><td>the HVP output \(H(s\otimes v)\); its block at position \(p\)</td><td>pu per a.u.</td><td>a \(d\)-vector per position</td></tr>
+<tr><td>\(y_p\)</td><td>“y p”</td><td>one probe sample (“row”): \(y_p = \Sigma^{1/2}s_pg_p = s_p\sum_q s_q\tilde H_{pq}\xi\)</td><td>pu</td><td>a \(d\)-vector</td></tr>
+<tr><td>\(\hat y_p\)</td><td>“y hat”</td><td>the spatial sign \(y_p/\lVert y_p\rVert\)</td><td>none (unit vector)</td><td></td></tr>
+<tr><td>\(B,\ N_{\text{probe}}\)</td><td>“B”, “N probe”</td><td>windows per probe; probes per layer</td><td>none (counts)</td><td>\(B = 4\), \(N_{\text{probe}} = 256\)</td></tr>
+<tr><td>\(\delta_{pq}\)</td><td>“delta p q”</td><td>1 if \(p = q\), 0 otherwise</td><td>none (pure number)</td><td>\(\delta_{40,40} = 1\)</td></tr>
+<tr><td>\(w\)</td><td>“w”</td><td>any fixed test direction, or (15.4) an eigenvector in whitened coordinates</td><td>as stated</td><td>\(w = (2,1)/\sqrt5\)</td></tr>
+<tr><td>\(A\)</td><td>“A”</td><td>a matrix named inside one proof or exercise (each says what it is), for example the random block \(\tilde H_{pp}\) in Prop. 0</td><td>as stated</td><td>\(A = \operatorname{mean}_p\tilde H_{pp}\) in Prop. 6f</td></tr>
+<tr><td>\(\beta,\ A_\beta,\ \bar A\)</td><td>“beta”, “A beta”, “A bar”</td><td>in Prop. 6f: a window of a probe (1 to \(B\)); that window's \(\operatorname{mean}_p\tilde H_{pp}\); their average over the \(B\) windows</td><td>none; pu; pu</td><td>\(B = 4\) windows</td></tr>
+<tr><td>\(\bar y,\ \Omega\)</td><td>“y bar”, “capital omega”</td><td>in Prop. 6f: rows averaged over a probe's windows and positions; the sign-dependent part of that average</td><td>pu; pu</td><td></td></tr>
+<tr><td>\(S_{pq}\)</td><td>“S p q”</td><td>\(\tilde H_{pq} + \tilde H_{qp}\) (only in Prop. 6f)</td><td>pu</td><td></td></tr>
+<tr><td>\(D\)</td><td>“D”</td><td>one sign-flip matrix \(P\operatorname{diag}(\pm1)P^\top\)</td><td>none (orthogonal matrix)</td><td>flips PCA axes 2 and 5</td></tr>
+<tr><td>\(\mathcal D\)</td><td>“script D”</td><td>the group of all \(2^d\) such matrices</td><td>none (a set)</td><td>\(2^{6} = 64\) elements at \(d = 6\)</td></tr>
+<tr><td>\(R\)</td><td>“R”</td><td>the diagonal-normalised operator \(\operatorname{diag}(M)^{-1/2}M\operatorname{diag}(M)^{-1/2}\), in PCA coordinates</td><td>none (pure number)</td><td>\(R\approx I_d\) under the null</td></tr>
+<tr><td>\(\tau_0,\ \tau_r,\ N\)</td><td>“tau nought”, “tau r”, “N”</td><td>a test statistic on the real data; on flipped replicate \(r\); number of replicates</td><td>as the statistic</td><td>\(N = 200\)</td></tr>
+<tr><td>\(Q\)</td><td>“Q”</td><td>a fixed \(d\times m\) orthonormal set of directions removed by projection</td><td>none</td><td>the massive-activation span</td></tr>
+<tr><td>\(\pi_Q\)</td><td>“pi Q”</td><td>the fixed projection \(y\mapsto(I_d - QQ^\top)y\) that removes the span of \(Q\)</td><td>none (a map)</td><td>\(\pi_Q(y)\) has no part along \(Q\)</td></tr>
+<tr><td>\(K\)</td><td>“K”</td><td>an axis-aligned mask \(P\operatorname{diag}(0\text{ or }1)P^\top\)</td><td>none</td><td>drops PCA axes 1 to 5</td></tr>
+<tr><td>\(\Lambda\)</td><td>“capital lambda”</td><td>\(M\) with its off-diagonal entries in PCA coordinates set to 0</td><td>as \(M\)</td><td>\(P\operatorname{diag}(5, 3)P^\top\)</td></tr>
+<tr><td>\(\Gamma\)</td><td>“capital gamma”</td><td>\(\mathbb{E}[M]\) written in PCA coordinates, \(P^\top\mathbb{E}[M]P\) (proof of Prop. 8)</td><td>as \(M\)</td><td>\(\begin{pmatrix}5&amp;2\\2&amp;3\end{pmatrix}\)</td></tr>
+<tr><td>\(Y,\ Y'\)</td><td>“Y”, “Y prime”</td><td>all the real rows of all probes; a flipped copy of them (proof of Cor. 8.1)</td><td>pu</td><td></td></tr>
+<tr><td>\(\mathbf D,\ \mathbf D_0,\ \mathbf D_r\)</td><td>“bold D”</td><td>one flip \(D\in\mathcal D\) per probe, applied together; the hidden one; the one for replicate \(r\)</td><td>none</td><td></td></tr>
+<tr><td>\(m\), rank</td><td>“m”, “rank”</td><td>a whole number from 1 to \(N+1\); the position \(1 + \#\{r:\tau_r\ge\tau_0\}\) of the real statistic from the top</td><td>none (counts)</td><td>rank 1 gives \(p = 1/201\)</td></tr>
+<tr><td>EX</td><td>“E X”</td><td>the 5-dimensional punctuation-conditional H-subspace (top-5 patterns from v8), a \(d\times 5\) matrix in whitened PCA coordinates</td><td>none (unit vectors)</td><td></td></tr>
+<tr><td>\(Q_j\)</td><td>“Q j”</td><td>Σ-orbit twin \(j\) of EX: \(D_j\,\mathrm{EX}\) for a random \(D_j\in\mathcal D\)</td><td>none</td><td>8 twins, \(j = 1,\dots,8\)</td></tr>
+<tr><td>\(a,\ b\)</td><td>“a”, “b”</td><td>two moves of the residual state at one position (v9 prereg writes \(u, w\))</td><td>whitened units (raw move \(\Sigma^{1/2}a\), in a.u.)</td><td>a 1σ move along an EX direction</td></tr>
+<tr><td>\(f\)</td><td>“f”</td><td>summed log-likelihood of the next 16 tokens</td><td>nats</td><td>\(f(0) = -41.3\) (made up)</td></tr>
+<tr><td>\(I\)</td><td>“I”</td><td>2×2 interaction \(f(a+b) - f(a) - f(b) + f(0)\)</td><td>nats</td><td>\(2.2\times10^{-3}\) (paper §4d)</td></tr>
+<tr><td>\(I_{\text{trunk}},\ I_{\text{soft}}\)</td><td>“I trunk”, “I soft”</td><td>the part of \(I\) already in the last residual state; the remainder made by final norm and softmax</td><td>nats</td><td></td></tr>
+<tr><td>\(\Delta f_a\)</td><td>“delta f a”</td><td>main effect of one move, \(f(a) - f(0)\)</td><td>nats</td><td></td></tr>
+<tr><td>\(\text{ex}_3,\ \text{tw}_{3,j}\)</td><td>“ex three”, “tw three j”</td><td>per window: mean \(|I|\) over 3 matched pairs along EX; along twin \(j\)</td><td>nats</td><td></td></tr>
+<tr><td>\(T_1,\ T_3\)</td><td>“T one”, “T three”</td><td>v9 statistics: mean log ratio EX/twin of \(|I|\); the same per unit of main effect</td><td>none (natural log of a ratio)</td><td>\(T_1 = 1.766\), so \(e^{T_1} = 5.85\) (<code>CORRECTIONS.md</code>)</td></tr>
+<tr><td>\(r_I,\ r_M,\ S\)</td><td>“r I”, “r M”, “S”</td><td>retention of interactions and of main effects after an ablation; specificity \(S = r_M - r_I\)</td><td>none (pure numbers)</td><td>\(S = 0.014\) (paper §4b)</td></tr>
+<tr><td>C0 … C6</td><td>“C nought” …</td><td>the seven run-1 criteria (15.8)</td><td>none (labels)</td><td>C1: split-half ≥ 0.7</td></tr>
+<tr><td>\(k_{\text{floor}}\)</td><td>“k floor”</td><td>number of eigenvalues above the noise floor (v3)</td><td>none (count)</td><td>1</td></tr>
+<tr><td>H (v10, v11)</td><td>“H”</td><td>the frozen 5-dimensional subspace under test: EX in v10; the all-position top 5 from v11a in v11 (15.16)</td><td>none (unit vectors)</td><td></td></tr>
+<tr><td>J5, PC5, HJ</td><td>“J five”, “P C five”, “H J”</td><td>top 5 of the author's whitened J25; top 5 eigenvectors of the whitened punctuation covariance; H with its J25 part projected out (15.16)</td><td>none (unit vectors)</td><td></td></tr>
+<tr><td>\(Q_J\)</td><td>“Q J”</td><td>a \(d\times25\) matrix whose columns are J25's orthonormalised directions</td><td>none</td><td></td></tr>
+<tr><td>\(\operatorname{orth}\)</td><td>“orth”</td><td>orthonormalise the columns of a matrix</td><td>none</td><td></td></tr>
+<tr><td>DiD, \(f_{11}, f_{10}, f_{01}, f_{00}\)</td><td>“D i D”</td><td>a task's own 2×2 interaction \(f_{11} - f_{10} - f_{01} + f_{00}\); subscripts say which two factors are on; \(f\) is the log-probability difference of the two answer tokens</td><td>nats</td><td>about +5 nats for negation (log)</td></tr>
+<tr><td>\(p_{\text{PI}}\)</td><td>“p P I”</td><td>prediction-interval p-value of H's \(T_1\) against each twin's leave-one-out \(T_1\)</td><td>none (probability)</td><td></td></tr>
+<tr><td>M2 … M7, M3res, R, TOST</td><td>“M two” …</td><td>the named checks of the v10 and v11 registered reports (15.16)</td><td>none (labels)</td><td>M3: “real”</td></tr>
+</table>
+</div>
+
+<h2>15.1 Where we stand: one derivative above the J-lens</h2>
+<p>At <a href="14.html">Level 14</a> you met the J-lens. In theory-v2's notation it is</p>
+$$ J_\ell = \mathbb{E}_x \operatorname*{mean}_{p\in V} \frac{\partial}{\partial h_\ell[p]} \sum_{p'\in V} h_{L^*}[p'] \qquad (d\times d). $$
+<p>It answers a first-order question. If I nudge the residual at layer \(\ell\) along a direction, how does the final residual move, to first order? Directions that move it a lot, in ways that decode to tokens, form J-space.</p>
+<p>A first-order lens cannot see an AND. Take the SwiGLU neuron of <a href="14.html">Level 14</a>: \(\text{silu}(a\cdot x)\,(b\cdot x)\). If the gate read \(a\cdot x\) is closed, nudging the up read \(b\cdot x\) does almost nothing. Nudging both together does something. That joint effect lives in the mixed second derivative, so it lives in the Hessian. H-space asks: is there a low-dimensional subspace where the model's second-order computation lives?</p>
+<p>The rest of this level builds the object that answers that question, proves what the estimators measure, and then walks through every test in the order it was run.</p>
+
+<h2>15.2 The objective and the per-context Hessian blocks</h2>
+<p>Fix a covector \(c\) (a readout direction, unit pu per a.u.). Define the objective</p>
+$$ F_c(h_\ell) = \sum_{p'\in V} c\cdot h_{L^*}[p'] \quad\text{(pu)}. $$
+<p>Read it as: run the model from layer \(\ell\) to the last block, read every valid position's final residual along \(c\), and add the results. It is a linear readout <i>before</i> the final norm. That is the same choice the J-lens makes.</p>
+<div class="box warn">
+<span class="boxtitle">The pre-norm proxy, not the logit</span>
+For a token \(t\), \(u_t\cdot h_{L^*} = \operatorname{rms}(h_{L^*})\cdot\text{logit}_t\). So \(T_\ell[u_t]\) (defined below) is the averaged Hessian of this pre-norm proxy, not of \(\text{logit}_t\). The curvature added by the final norm is left out by construction (theory-v2 §0).
+</div>
+<p>In one context \(x\), the Hessian of \(F_c\) with respect to the whole layer-\(\ell\) state is a big matrix \(H_x[c]\). Cut it into \(d\times d\) blocks, one per pair of positions:</p>
+$$ H_{pq} = \frac{\partial^2 F_c}{\partial h_\ell[p]\,\partial h_\ell[q]}, \qquad (H_{pq})_{ij} = \frac{\partial^2 F_c}{\partial h_\ell[p]_i\,\partial h_\ell[q]_j}\quad(\text{pu per a.u.}^2). $$
+<p>Two facts follow from symmetry of mixed partials (<a href="06.html">Level 6</a>).</p>
+<ol>
+<li>\(H_{qp} = H_{pq}^\top\). Proof: \((H_{qp})_{ji} = \partial^2F_c/\partial h_\ell[q]_j\partial h_\ell[p]_i = \partial^2F_c/\partial h_\ell[p]_i\partial h_\ell[q]_j = (H_{pq})_{ij}\).</li>
+<li>\(H_{pp}\) is symmetric: set \(q = p\) in fact 1.</li>
+</ol>
+<p>A diagonal block \(H_{pp}\) says how two moves <i>at the same position</i> interact. An off-diagonal block \(H_{pq}\), \(p\ne q\), says how a move at \(p\) interacts with a move at \(q\), for example through attention.</p>
+
+<h3>Worked example: blocks of a tiny objective</h3>
+<p>Take \(d = 2\) and two valid positions, \(V = \{1, 2\}\). Write \(h[1] = (h[1]_1, h[1]_2)\) and \(h[2] = (h[2]_1, h[2]_2)\), in a.u. Suppose, in one context, the objective happens to be (a toy, made up)</p>
+$$ F = 3\,h[1]_1\,h[2]_1 + 2\,h[1]_1\,h[1]_2 + h[2]_2^2 \quad\text{(pu; coefficients in pu per a.u.}^2). $$
+<p>Differentiate twice, one pair of coordinates at a time.</p>
+<ul>
+<li>\(H_{11}\): only the term \(2h[1]_1h[1]_2\) has two factors at position 1. \(\partial^2/\partial h[1]_1\partial h[1]_2\) of it is 2. No square of a position-1 coordinate appears. So \(H_{11} = \begin{pmatrix}0&2\\2&0\end{pmatrix}\).</li>
+<li>\(H_{22}\): only \(h[2]_2^2\), whose second derivative in \(h[2]_2\) is 2. So \(H_{22} = \begin{pmatrix}0&0\\0&2\end{pmatrix}\).</li>
+<li>\(H_{12}\): only \(3h[1]_1h[2]_1\) mixes the two positions: entry (1,1) is 3. So \(H_{12} = \begin{pmatrix}3&0\\0&0\end{pmatrix}\) and \(H_{21} = H_{12}^\top\), the same matrix here.</li>
+</ul>
+<p>Every entry has unit pu per a.u.². The cross-position block \(H_{12}\) is the biggest entry, yet it is not part of the H-lens, as you will see next.</p>
+
+<h2>15.3 The H-lens \(T_\ell\)</h2>
+<div class="box key">
+<span class="boxtitle">Definition (theory-v2 §0)</span>
+$$ T_\ell[c] = \mathbb{E}_x \operatorname*{mean}_{p\in V} H_x[c]_{pp}\qquad(\text{pu per a.u.}^2). $$
+For each \(c\) it is one symmetric \(d\times d\) matrix. It is linear in \(c\), because \(F_c\) is linear in \(c\). So as a whole, \(T_\ell\) is a tensor in \(\mathbb{R}^d\otimes\operatorname{Sym}(d)\): give it a readout, get back a curvature matrix.
+</div>
+<p>This is the J-lens recipe one derivative higher: average a derivative over contexts and positions. The perturbation sits at a <b>single source position</b> \(p\), so only the diagonal blocks \(H_{pp}\) enter. In the toy above, with one context, \(\mathbb{E}_x\) does nothing and \(\operatorname{mean}_{p\in V}\) averages the two diagonal blocks, entry by entry:</p>
+$$ T = \tfrac12(H_{11}+H_{22}) = \tfrac12\left(\begin{pmatrix}0&2\\2&0\end{pmatrix} + \begin{pmatrix}0&0\\0&2\end{pmatrix}\right) = \tfrac12\begin{pmatrix}0&2\\2&2\end{pmatrix} = \begin{pmatrix}0&1\\1&1\end{pmatrix}\ \text{pu per a.u.}^2 . $$
+<p>The large \(H_{12}\) does not appear.</p>
+
+<h2>15.4 Whitening, and random covectors</h2>
+<p>Raw units are arbitrary. A direction where activations barely vary can have a huge raw curvature and still never matter, because the data never move along it. So theory-v2 measures curvature per unit of natural spread.</p>
+<p>Let \(\Sigma\) be the covariance of \(h_\ell[p]\) over the data, in a.u.². The run shrinks it slightly toward a multiple of the identity, \(\Sigma = 0.95\,\hat\Sigma + 0.05\,(\operatorname{tr}\hat\Sigma/d)\,I_d\) (<code>hlens/hspace.py</code>, line 258), so it is safely invertible. Then</p>
+$$ \tilde H = \Sigma^{1/2} H\, \Sigma^{1/2}\qquad(\text{pu}). $$
+<div class="box key">
+<span class="boxtitle">Why this is “curvature per 1σ”</span>
+Let \(\xi\) be a whitened direction (pure numbers) and \(v = \Sigma^{1/2}\xi\) the matching raw move (a.u.). Then
+$$ v^\top H v = (\Sigma^{1/2}\xi)^\top H (\Sigma^{1/2}\xi) = \xi^\top (\Sigma^{1/2})^\top H\,\Sigma^{1/2}\xi = \xi^\top \Sigma^{1/2} H \Sigma^{1/2}\xi = \xi^\top\tilde H\xi. $$
+The second equals sign uses \((AB)^\top = B^\top A^\top\). The third uses that \(\Sigma^{1/2}\) is symmetric. So \(\tilde H\) gives the curvature of \(F_c\) along moves measured in standard deviations. Its unit is pu, because a.u.² from \(\Sigma^{1/2}\cdots\Sigma^{1/2}\) cancels the a.u.² in the denominator of \(H\).
+</div>
+<h3>Worked example: whitening changes which direction is “top”</h3>
+<p>Take \(\Sigma = \begin{pmatrix}4&0\\0&1\end{pmatrix}\) a.u.² and \(H = \begin{pmatrix}1&1\\1&1\end{pmatrix}\) pu per a.u.². Then \(\Sigma^{1/2} = \operatorname{diag}(2,1)\) a.u., and</p>
+$$ \tilde H = \begin{pmatrix}2&0\\0&1\end{pmatrix}\begin{pmatrix}1&1\\1&1\end{pmatrix}\begin{pmatrix}2&0\\0&1\end{pmatrix} = \begin{pmatrix}2&2\\1&1\end{pmatrix}\begin{pmatrix}2&0\\0&1\end{pmatrix} = \begin{pmatrix}4&2\\2&1\end{pmatrix}\ \text{pu}. $$
+<ul>
+<li>Raw: \(H\) has eigenvalues 2 and 0. Its top eigenvector is \((1,1)/\sqrt2\), at 45°.</li>
+<li>Whitened: \(\operatorname{tr}\tilde H = 5\) and \(\det\tilde H = 4 - 4 = 0\), so the eigenvalues are 5 and 0. The top eigenvector solves \((\tilde H - 5I_2)w = 0\): \(-w_1 + 2w_2 = 0\), so \(w = (2,1)/\sqrt5\) in whitened coordinates.</li>
+</ul>
+<p>Mapped back to raw coordinates (a whitened direction \(w\) is the raw move \(\Sigma^{1/2}w\)): \(\operatorname{diag}(2,1)\,(2,1) = (2\times2,\ 1\times1) = (4, 1)\), up to the factor \(1/\sqrt5\). That is about 14° from the first axis, against 45° before: the top direction has tilted toward the high-variance axis. Whitening is, in theory-v2's words, “a choice, not a consequence”. Hold this thought: in 15.10 it becomes the Σ prior.</p>
+<h3>Random covectors</h3>
+<p>One readout \(c\) asks about one token mixture. To ask about all tokens at once, theory-v2 draws \(c\sim\mathcal N(0,\Sigma_U)\) with \(\Sigma_U = \frac{1}{|\text{vocab}|}\sum_t u_tu_t^\top\). Any quantity quadratic in \(c\) then averages as if every vocabulary token were weighted equally: \(\mathbb{E}[cc^\top] = \Sigma_U\).</p>
+
+<h2>15.5 Three energy operators, and Proposition 0</h2>
+<p>Why not just take the top eigenvectors of \(T_\ell[c]\)? Because signed curvature cancels. On 0.8B, a corpus-averaged signed H-lens predicted per-context interactions at only \(r\approx 0.3\) (paper §3.2, “Reading 2”). The same direction curves up in one context and down in another. So H-space is defined by <b>energy</b>: squares, which cannot cancel. There are three natural ways to square.</p>
+<div class="box key">
+<span class="boxtitle">The three operators (theory-v2 §0), all \(d\times d\), all in pu²</span>
+$$ M^{\text{lens}}_\ell = \mathbb{E}_c\big[\tilde T_\ell[c]^2\big] \qquad\text{(square the average)} $$
+$$ M^{\text{diag}}_\ell = \mathbb{E}_{x,c}\operatorname*{mean}_{p\in V}\tilde H_{pp}^2 \qquad\text{(average the squares of diagonal blocks)} $$
+$$ M^{\text{row}}_\ell = \mathbb{E}_{x,c}\operatorname*{mean}_{p\in V}\sum_{q\in V}\tilde H_{pq}\tilde H_{pq}^\top \qquad\text{(whole row of blocks, cross-position included)} $$
+</div>
+<p>Each is positive semidefinite. Why, in steps:</p>
+<p><b>Step 1: every piece has the form \(AA^\top\).</b> \(\tilde H_{pq}\tilde H_{pq}^\top\) is already of that form. For the symmetric \(\tilde H_{pp}\) and \(\tilde T[c]\), \(\tilde H_{pp}^\top = \tilde H_{pp}\), so \(\tilde H_{pp}^2 = \tilde H_{pp}\tilde H_{pp}^\top\), and likewise for \(\tilde T[c]^2\).</p>
+<p><b>Step 2: such a piece is never negative along any \(w\).</b> \(w^\top AA^\top w = (A^\top w)^\top(A^\top w)\), because \((A^\top w)^\top = w^\top A\) (transpose of a product, reversed). That is the squared length \(\lVert A^\top w\rVert^2 \ge 0\).</p>
+<p><b>Step 3: averages keep the sign.</b> By linearity, \(w^\top(\text{average of pieces})\,w\) is the average of the numbers \(w^\top(\text{piece})\,w\), each \(\ge 0\). Toy: \(A = \begin{pmatrix}1&2\\0&0\end{pmatrix}\), \(w = (1, -1)\): \(A^\top w = (1, 2)\), so \(w^\top AA^\top w = 1 + 4 = 5 \ge 0\).</p>
+
+<h3>Proposition 0 (ordering)</h3>
+<p><b>In words.</b> Adding the cross-position blocks can only add energy. Squaring before averaging can only give more energy than averaging before squaring. So row energy dominates diagonal energy, which dominates lens energy, in every direction and for every sorted eigenvalue. But the three top-\(k\) subspaces can still point in different directions.</p>
+<p><b>In symbols.</b></p>
+$$ M^{\text{row}} - M^{\text{diag}} = \mathbb{E}_{x,c}\operatorname*{mean}_p\sum_{q\ne p}\tilde H_{pq}\tilde H_{pq}^\top \succeq 0,\qquad M^{\text{diag}} - M^{\text{lens}} = \mathbb{E}_c\,\mathbb{E}_{x,p}\big[(\tilde H_{pp}-\tilde T[c])^2\big]\succeq 0, $$
+$$ \text{hence}\quad M^{\text{row}}\succeq M^{\text{diag}}\succeq M^{\text{lens}}\quad\text{and}\quad \lambda_i(M^{\text{row}})\ge\lambda_i(M^{\text{diag}})\ge\lambda_i(M^{\text{lens}})\ \text{for every } i. $$
+<p><b>Proof, line by line.</b></p>
+<ol>
+<li><b>First gap.</b> In \(M^{\text{row}}\) split the sum over \(q\) into \(q = p\) and \(q\ne p\). The \(q = p\) term is \(\tilde H_{pp}\tilde H_{pp}^\top = \tilde H_{pp}^2\), whose average is \(M^{\text{diag}}\). What remains is the stated difference. Each \(\tilde H_{pq}\tilde H_{pq}^\top\) is positive semidefinite, and sums and averages of positive semidefinite matrices are positive semidefinite.</li>
+<li><b>Second gap: fix \(c\).</b> Let \(A = \tilde H_{pp}\) where \((x, p)\) is random: \(x\) from the corpus, \(p\) uniform on \(V\). Its mean is \(\mathbb{E}A = \mathbb{E}_x\operatorname{mean}_p\Sigma^{1/2}H_{pp}\Sigma^{1/2} = \Sigma^{1/2}T_\ell[c]\Sigma^{1/2} = \tilde T[c]\), because whitening is linear and passes through averages.</li>
+<li>Expand \((A - \mathbb{E}A)^2 = A^2 - A\,\mathbb{E}A - \mathbb{E}A\,A + (\mathbb{E}A)^2\). (Matrices need not commute, so keep the order.)</li>
+<li>Take the expectation of each of the four terms (linearity). \(\mathbb{E}A\) is a fixed matrix, so it comes outside: \(\mathbb{E}[A\,\mathbb{E}A] = (\mathbb{E}A)(\mathbb{E}A) = (\mathbb{E}A)^2\), and the same for \(\mathbb{E}[\mathbb{E}A\,A]\). The last term is fixed already. So \(\mathbb{E}[(A-\mathbb{E}A)^2] = \mathbb{E}[A^2] - (\mathbb{E}A)^2 - (\mathbb{E}A)^2 + (\mathbb{E}A)^2 = \mathbb{E}[A^2] - (\mathbb{E}A)^2\). Toy with \(d = 1\): \(A = 1\) or \(3\), equally likely. \(\mathbb{E}A = 2\), \(\mathbb{E}[A^2] = (1 + 9)/2 = 5\), and \(\mathbb{E}[(A - 2)^2] = (1 + 1)/2 = 1 = 5 - 4\).</li>
+<li>\(A - \mathbb{E}A\) is symmetric, so \((A-\mathbb{E}A)^2 = (A-\mathbb{E}A)(A-\mathbb{E}A)^\top\succeq 0\), and so is its expectation.</li>
+<li>So \(\mathbb{E}_{x,p}[\tilde H_{pp}^2] - \tilde T[c]^2\succeq 0\). Average over \(c\): \(M^{\text{diag}} - M^{\text{lens}}\succeq 0\).</li>
+<li><b>Eigenvalues (Weyl monotonicity).</b> By the Courant–Fischer theorem, \(\lambda_i(A) = \max_{\dim U = i}\ \min_{w\in U,\lVert w\rVert = 1} w^\top Aw\). If \(A\succeq B\) then \(w^\top Aw\ge w^\top Bw\) for every \(w\), so every inner minimum, and hence every maximum, is at least as large for \(A\). So \(\lambda_i(A)\ge\lambda_i(B)\). ∎</li>
+</ol>
+<div class="box warn">
+<span class="boxtitle">What Proposition 0 does not say</span>
+It orders eigenvalues and traces. It says nothing about eigenvectors. Run 1 estimated \(M^{\text{row}}\) (Prop. 6a below). Its top-25 need not resemble the top-25 of \(M^{\text{diag}}\) or \(M^{\text{lens}}\). Every H-space claim must name its \(M\).
+</div>
+
+<figure class="sim" id="sim-prop0">
+<figcaption><b>Figure 15.1.</b> Toy (made-up blocks): \(d = 2\), three valid positions, three contexts, one covector. Left: the two eigenvalues of each operator (pu²). Right: each operator's top eigenvector as a line through the origin. Raise “cross-position strength”: only \(M^{\text{row}}\) grows. Raise “variation over contexts”: \(M^{\text{diag}}\) pulls away from \(M^{\text{lens}}\). The ordering of eigenvalues never breaks; the top directions often disagree.</figcaption>
+</figure>
+
+<h2>15.6 H-space\(_k\), and how a subspace is judged</h2>
+<div class="box key">
+<span class="boxtitle">Definition</span>
+H-space\(_k(M)\) is the span of the top-\(k\) eigenvectors of a chosen energy operator \(M\). The default is \(k = 25\), matching J-space's “at most 25 active directions”. H25 means H-space\(_{25}\) of the run-1 operator.
+</div>
+<p>Three yardsticks from <a href="13.html">Level 13</a> are used throughout.</p>
+<ul>
+<li><b>Overlap.</b> For two \(d\times k\) orthonormal bases \(A, B\), \(\operatorname{ov}(A,B) = \lVert A^\top B\rVert_F^2/k\), the mean squared cosine. Identical subspaces give 1. Two random \(k\)-subspaces give about \(k/d\): <span class="hs" data-k="r1rand">...</span> for \(k = 25\), \(d = 5120\).</li>
+<li><b>split@\(k\).</b> Split the probes into two disjoint halves, estimate \(M\) on each, and take the overlap of the two top-\(k\) subspaces. It measures reproducibility.</li>
+<li><b>Participation ratio.</b> \(\text{PR} = (\sum_i\lambda_i)^2/\sum_i\lambda_i^2\). If \(m\) eigenvalues are equal and the rest zero, PR = \(m\). It counts how many directions carry the energy.</li>
+</ul>
+
+<h2>15.7 Sign probes, and what each estimator converges to (Proposition 6)</h2>
+<p>You cannot write down a 5,120 × 5,120 matrix per position per context (<a href="11.html">Level 11</a>). You can compute Hessian-vector products. The run-1 probe design (theory-v2 §6A) is:</p>
+<ol>
+<li>Draw one covector \(c\sim\mathcal N(0,\Sigma_U)\).</li>
+<li>Draw one whitened direction \(\xi\sim\mathcal N(0,I_d)\) and set \(v = \Sigma^{1/2}\xi\) (a.u.).</li>
+<li>Draw Rademacher signs \(s_p\) for every valid position of every window.</li>
+<li>Compute one HVP, \(g = H(s\otimes v)\) (theory-v2 writes \(h\); here \(h\) is kept for the residual state), where \(s\otimes v\) puts \(s_pv\) at position \(p\). The Hessian is block-diagonal over windows, because windows are separate forward passes.</li>
+</ol>
+<p>The HVP output and the stored sample (“row”), one step at a time.</p>
+<p><b>Step 1: block multiplication.</b> The tangent has block \(s_qv\) at position \(q\). Block \(p\) of \(H\) times it is the sum over \(q\) of block \((p,q)\) times block \(q\): \(g_p = \sum_q H_{pq}(s_qv)\) (pu per a.u.).</p>
+<p><b>Step 2: move the sign out and substitute \(v\).</b> \(s_q\) is a number, so it can move to the front. With \(v = \Sigma^{1/2}\xi\): \(g_p = \sum_q s_q H_{pq}\Sigma^{1/2}\xi\).</p>
+<p><b>Step 3: the stored row.</b> The code stores \(y_p = \Sigma^{1/2}s_pg_p\). Put in Step 2, and move the numbers \(s_p\), \(s_q\) to the front:</p>
+$$ y_p = \Sigma^{1/2}s_p g_p = s_p\sum_{q\in V}s_q\,\Sigma^{1/2}H_{pq}\Sigma^{1/2}\xi . $$
+<p><b>Step 4: recognise the whitened block.</b> \(\Sigma^{1/2}H_{pq}\Sigma^{1/2} = \tilde H_{pq}\), so</p>
+$$ y_p = s_p\sum_{q\in V}s_q\,\tilde H_{pq}\,\xi\qquad(\text{pu}). $$
+<p>Toy with \(d = 1\) (blocks are numbers) and two positions: \(\tilde H_{11} = 1\), \(\tilde H_{12} = 2\), \(\xi = 1\), \(s = (+1, -1)\). Then \(y_1 = (+1)\big((+1)\times1 + (-1)\times2\big)\times1 = -1\).</p>
+<p>One HVP gives \(|V|\) rows per window. Run 1 used 256 probes × \(B = 4\) windows per layer, \(T = 128\), \(|V| = 111\) (theory-v2 §6A). Everything below is conditional on the plug-in \(\mu\) and \(\Sigma\).</p>
+
+<h3>Proposition 6 (simplified)</h3>
+<p><b>In words.</b> Each estimator is an average of some product of rows. Which energy operator it converges to depends on how many independent sign vectors it uses. One sign vector cannot tell a same-position block from a cross-position block, so it converges to the whole row energy. Two independent sign vectors cancel the cross-position blocks in expectation, so their cross product converges to the diagonal energy.</p>
+<p><b>In symbols.</b></p>
+<ul>
+<li><b>(a) One sign vector</b> (run 1; <code>loc_raw</code>): \(\mathbb{E}[y_py_p^\top] = \sum_{q\in V}\tilde H_{pq}\tilde H_{pq}^\top\). Averaged over \(x, c, p\), the estimator converges to \(M^{\text{row}}\).</li>
+<li><b>(b) Two independent sign vectors</b> \(s^1, s^2\), same \(\xi\) (<code>loc_x</code>): \(\mathbb{E}[y^1_p\mid\xi] = \tilde H_{pp}\xi\) and \(\mathbb{E}[\tfrac12(y^1_py^{2\top}_p + y^2_py^{1\top}_p)] = \tilde H_{pp}^2\). It converges to \(M^{\text{diag}}\). It costs 2 HVPs per probe and is unbiased, but each sample is indefinite, so finite estimates carry negative eigen-mass.</li>
+<li><b>(c) Two independent rectangle points</b> (<code>int_x</code>) converge to \(M^{\text{rect}} = \mathbb{E}\operatorname{mean}_{p\in P}(\bar{\tilde H}_{pp})^2\), the diagonal energy of the Lemma-3 rectangle-averaged Hessian (<a href="12.html">Level 12</a>). Still an energy over random pairs, not a pair-specific form.</li>
+<li><b>(d) One rectangle point</b> (<code>int_raw</code>): the mean row energy at a random rectangle point, which is neither the averaged Hessian nor its energy.</li>
+<li><b>(e) Spatial-sign variants</b> (<code>norm</code>: \(\mathbb{E}[\hat y\hat y^\top]\); <code>xnorm</code>: its two-sign-vector version) have no closed form in \(H\). Their eigenvectors equal those of \(\mathbb{E}[yy^\top]\) only if the rows are elliptically distributed, which a mixture over contexts, positions and covectors need not be.</li>
+<li><b>(f) Run 1's “\(M_{\text{lens}}\)”</b> (rows averaged over a probe's \(B\) windows and \(|V|\) positions before squaring) converges to \(M^{\text{lens}} + \tfrac1B\mathbb{E}_c\operatorname{Cov}_x(\operatorname{mean}_p\tilde H_{pp}) + \tfrac{1}{B|V|^2}\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top\), with \(S_{pq} = \tilde H_{pq} + \tilde H_{qp}\). Neither bias term shrinks with more probes.</li>
+</ul>
+<p><b>Proof of (a), line by line.</b> Fix \(x\), \(c\) and \(p\). The randomness is in \(s\) and \(\xi\), which are independent.</p>
+<ol>
+<li>Transpose the row. The transpose of a product is the product of the transposes in reverse order, and numbers are unchanged: \(y_p^\top = s_p\sum_{q'}s_{q'}\,\xi^\top\tilde H_{pq'}^\top\). (A second index name \(q'\) keeps the two sums apart.)</li>
+<li>Multiply the column \(y_p\) by the row \(y_p^\top\). Every term of the first sum meets every term of the second: \(y_py_p^\top = s_p^2\sum_q\sum_{q'}s_qs_{q'}\,\tilde H_{pq}\,\xi\xi^\top\,\tilde H_{pq'}^\top\).</li>
+<li>\(s_p^2 = 1\), because \(s_p = \pm1\).</li>
+<li>Take the expectation term by term (linearity). In each term the random parts are \(s_qs_{q'}\) and \(\xi\xi^\top\), which are independent, so the mean of their product is the product of their means: \(\mathbb{E}[s_qs_{q'}]\,\tilde H_{pq}\,\mathbb{E}[\xi\xi^\top]\,\tilde H_{pq'}^\top\).</li>
+<li>\(\mathbb{E}[s_qs_{q'}] = 1\) if \(q = q'\) (because \(s_q^2 = 1\)) and \(0\) otherwise (independent signs with mean 0, <a href="13.html">Level 13</a>). This holds also when \(q\) or \(q'\) equals \(p\). So only the terms with \(q' = q\) survive.</li>
+<li>\(\mathbb{E}[\xi\xi^\top] = I_d\): the covariance of \(\mathcal N(0, I_d)\).</li>
+<li>So \(\mathbb{E}[y_py_p^\top] = \sum_q\tilde H_{pq}I_d\tilde H_{pq}^\top = \sum_q\tilde H_{pq}\tilde H_{pq}^\top\). Average over \(x, c, p\): \(M^{\text{row}}\). ∎</li>
+</ol>
+<p>Toy check with the \(d = 1\) toy above (\(\tilde H_{11} = 1\), \(\tilde H_{12} = 2\), \(\xi = 1\) fixed): the four sign patterns give \(y_1 = s_1(s_1 + 2s_2) = 1 + 2s_1s_2\), that is 3, −1, −1, 3. Their squares 9, 1, 1, 9 average 5, which is \(1^2 + 2^2\).</p>
+<p><b>Proof of (b).</b></p>
+<ol>
+<li>Hold \(\xi\) fixed and average over the signs \(s^1\) only (written \(\mathbb{E}[\,\cdot\mid\xi]\)). By linearity, \(\mathbb{E}[y^1_p\mid\xi] = \sum_q\mathbb{E}[s^1_ps^1_q]\,\tilde H_{pq}\xi\).</li>
+<li>\(\mathbb{E}[s^1_ps^1_q] = \delta_{pq}\), where \(\delta_{pq}\) is 1 if \(p = q\) and 0 otherwise (Level 13). Only the \(q = p\) term survives: \(\mathbb{E}[y^1_p\mid\xi] = \tilde H_{pp}\xi\). The same holds for \(y^2_p\).</li>
+<li>Given \(\xi\), \(y^1_p\) and \(y^2_p\) are independent (different sign vectors). For independent quantities, the mean of a product is the product of the means: \(\mathbb{E}[y^1_py^{2\top}_p\mid\xi] = \mathbb{E}[y^1_p\mid\xi]\,\mathbb{E}[y^2_p\mid\xi]^\top = \tilde H_{pp}\xi\,(\tilde H_{pp}\xi)^\top\).</li>
+<li>Transpose the product, reversed: \((\tilde H_{pp}\xi)^\top = \xi^\top\tilde H_{pp}^\top\). So the conditional mean is \(\tilde H_{pp}\xi\xi^\top\tilde H_{pp}^\top\).</li>
+<li>Average over \(\xi\), using \(\mathbb{E}[\xi\xi^\top] = I_d\): \(\tilde H_{pp}I_d\tilde H_{pp}^\top = \tilde H_{pp}\tilde H_{pp}^\top\). Since \(\tilde H_{pp}\) is symmetric, that is \(\tilde H_{pp}^2\).</li>
+<li>The symmetrised version \(\tfrac12(y^1_py^{2\top}_p + y^2_py^{1\top}_p)\): its second term is the transpose of the first, so its mean is \((\tilde H_{pp}^2)^\top = \tilde H_{pp}^2\). The average of the two is \(\tilde H_{pp}^2\). Average over \(x, c, p\): \(M^{\text{diag}}\). ∎</li>
+</ol>
+<div class="box plain">
+<span class="boxtitle">Proof of (f), for completeness</span>
+<p><b>Step 1: sum one window's rows.</b> From the row formula, \(\sum_py_p = \sum_p\sum_qs_ps_q\tilde H_{pq}\xi\).</p>
+<p><b>Step 2: the terms with \(q = p\).</b> \(s_p^2 = 1\), so they give \(\sum_p\tilde H_{pp}\xi = |V|\,A\,\xi\), with \(A = \operatorname{mean}_p\tilde H_{pp}\) (a sum is \(|V|\) times the mean).</p>
+<p><b>Step 3: the terms with \(q \ne p\).</b> Each unordered pair \(p\lt q\) appears twice, as \((p,q)\) and \((q,p)\), with the same sign product \(s_ps_q\). Together they give \(s_ps_q(\tilde H_{pq} + \tilde H_{qp})\xi = s_ps_qS_{pq}\xi\).</p>
+<p><b>Step 4: divide by \(|V|\).</b> \(\frac{1}{|V|}\sum_py_p = A\xi + \frac{1}{|V|}\sum_{p\lt q}s_ps_qS_{pq}\xi\).</p>
+<p><b>Step 5: average over the \(B\) windows of the probe</b> (same \(c\), same \(\xi\), each window \(\beta = 1,\dots,B\) with its own signs and blocks, marked by a superscript \((\beta)\)):</p>
+$$ \bar y = \bar A\xi + \Omega\xi, \qquad \bar A = \frac1B\sum_\beta A_\beta, \qquad \Omega = \frac{1}{B|V|}\sum_\beta\sum_{p\lt q}s^{(\beta)}_ps^{(\beta)}_qS^{(\beta)}_{pq} . $$
+<p><b>Step 6: square.</b> \(\bar y\bar y^\top = \bar A\xi\xi^\top\bar A^\top + \bar A\xi\xi^\top \Omega^\top + \Omega\xi\xi^\top\bar A^\top + \Omega\xi\xi^\top \Omega^\top\) (transpose of a product, reversed).</p>
+<p><b>Step 7: the two mixed terms vanish.</b> Each is linear in sign products \(s_ps_q\) with \(p \ne q\), which average 0 and are independent of everything else.</p>
+<p><b>Step 8: the last term.</b> It is a double sum over pairs of (window, pair) of \(s^{(\beta)}_ps^{(\beta)}_q\,s^{(\beta')}_{p'}s^{(\beta')}_{q'}\) times matrices. The four-sign product averages 1 when it is the same window and the same pair (every sign then appears squared), and 0 otherwise (some sign appears once, and its mean is 0). With \(\mathbb{E}[\xi\xi^\top] = I_d\), the survivors give \(\frac{1}{B^2|V|^2}\sum_\beta\sum_{p\lt q}S^{(\beta)}_{pq}S^{(\beta)\top}_{pq}\). The \(B\) windows have the same law, so the average is \(\frac{B}{B^2|V|^2}\,\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top = \frac{1}{B|V|^2}\,\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top\).</p>
+<p><b>Step 9: the first term.</b> With \(\mathbb{E}[\xi\xi^\top] = I_d\) and \(\bar A\) symmetric, it averages \(\mathbb{E}[\bar A^2]\). Write \(\bar A = \mathbb{E}A + (\bar A - \mathbb{E}A)\) and square. The mixed terms average 0, because \(\bar A - \mathbb{E}A\) averages 0. So \(\mathbb{E}[\bar A^2] = (\mathbb{E}A)^2 + \mathbb{E}[(\bar A - \mathbb{E}A)^2]\).</p>
+<p><b>Step 10: the variance of a mean of \(B\) independent windows.</b> \(\bar A - \mathbb{E}A = \frac1B\sum_\beta(A_\beta - \mathbb{E}A)\). Squaring gives \(B^2\) terms over \(B^2\); the \(\beta \ne \beta'\) ones average 0 by independence, and the \(B\) others average \(\operatorname{Cov}_x(A)\) each. So \(\mathbb{E}[(\bar A - \mathbb{E}A)^2] = \frac{B}{B^2}\operatorname{Cov}_x(A) = \frac1B\operatorname{Cov}_x(A)\). This is the matrix version of \(\sigma^2/n\) (Level 13).</p>
+<p><b>Step 11: collect.</b> \((\mathbb{E}A)^2 = \tilde T[c]^2\) (Proposition 0, step 2). Adding Steps 8 to 10 and averaging over \(c\) gives \(M^{\text{lens}} + \tfrac1B\mathbb{E}_c\operatorname{Cov}_x(A) + \tfrac{1}{B|V|^2}\mathbb{E}\sum_{p\lt q}S_{pq}S_{pq}^\top\). ∎</p>
+</div>
+<p><b>The toy check in theory-v2.</b> An fp64 toy with \(T = 5\), \(d = 3\), a cubic \(F\) (so the rectangle average is exact) and \(4\times10^5\) probes. Relative Frobenius error of each estimator against its stated target and against the nearest wrong target:</p>
+<div class="tablewrap">
+<table>
+<tr><th>estimator</th><th>vs its target</th><th>vs nearest wrong target</th></tr>
+<tr><td>(a) one sign vector</td><td>0.16%</td><td>184% vs \(M^{\text{diag}}\)</td></tr>
+<tr><td>(b) two sign vectors</td><td>0.44%</td><td>66% vs \(M^{\text{row}}\)</td></tr>
+<tr><td>(c) two rectangle points</td><td>0.62%</td><td>45% vs local \(M^{\text{diag}}\)</td></tr>
+<tr><td>(d) one rectangle point</td><td>0.43%</td><td>310% vs (c)'s target</td></tr>
+</table>
+</div>
+<p class="small">Source: <code>hlens/paper/theory-v2.md</code> §6A, “Toy check (v2)”. Its script is not in the repo; the identities are proved anyway.</p>
+
+<figure class="sim" id="sim-prop6">
+<figcaption><b>Figure 15.2.</b> Toy (made-up blocks, \(d = 2\), four positions, three contexts). Press the buttons to add probes. Blue: estimator (a), one sign vector. Red: estimator (b), two sign vectors. Solid lines are errors against each estimator's own target, dashed lines against the other operator. The solid lines fall like \(1/\sqrt{n}\); the dashed lines level off at a fixed bias. Watch the smallest eigenvalue of (b): it can be negative at small \(n\) although its target is positive semidefinite.</figcaption>
+</figure>
+
+<h2>15.8 Run 1: the preregistered one-shot, and its C0 to C6 verdict</h2>
+<p><b>Setup</b> (paper §4). Qwen3.6-27B on one 96 GB GPU. Weights stored in bf16 with exact fp32 compute through <code>bf16w.BFLinear</code>, whose HVP matches all-fp32 within 7e-7. Layers 16, 28, 40, 52. 256 probes × 4 windows per layer. The criteria were frozen and hashed before the pod existed (<code>SCOPE-hspace.md</code>).</p>
+<p><b>The criteria, in plain words</b> (all per layer, from <code>SCOPE-hspace.md</code>):</p>
+<ul>
+<li><b>C0, instrument validity.</b> Plant a known bilinear gate \(G(a\cdot z)(b\cdot z)w\) at layer 40 (\(z\) the whitened residual, \(a, b\) random orthonormal), sized so its eigenvalue equals the 25th eigenvalue of the unplanted \(M\). Pass: the top-25 recovers span\((a, b)\) at ≥ 0.8. If C0 fails, the run is VOID.</li>
+<li><b>C1, reproducible.</b> split@25 ≥ 0.7.</li>
+<li><b>C2, low-dimensional.</b> The top-25 eigenvalues hold ≥ 50% of \(\operatorname{tr}M\).</li>
+<li><b>C3, not J-space.</b> Overlap of H25 with J25 \(\lt\) 0.5. (J25 here is the author's whitened “active J-space”.)</li>
+<li><b>C4, real at natural scale.</b> The median \(|I|\) of 1σ finite interactions along the top-6 H directions (15 pairs) is ≥ 10× that of 15 random whitened pairs.</li>
+<li><b>C5, used by the model.</b> Mean-ablating H25 raises next-token KL ≥ 3× more than mean-ablating random 25-dimensional subspaces.</li>
+<li><b>C6, double dissociation.</b> Deleting H25 damages “interaction tokens” at least 2× more than “additive tokens” (plus two further conditions).</li>
+</ul>
+<p><b>The rule.</b> VOID if C0 fails. PASS (“H-space found”) if C1 to C6 all hold at ≥ 2 of the 4 layers. FAIL otherwise, final for this definition and this model.</p>
+
+<div class="tablewrap">
+<table>
+<tr><th>layer</th><th>C0 control</th><th>C1 split@25 ≥ 0.7</th><th>C2 top-25 share ≥ 0.5</th><th>C3 H25–J25 \(\lt\) 0.5</th><th>C4 1σ ratio ≥ 10×</th><th>C5 KL ≥ 3×</th><th>C6 ≥ 2</th><th>PR</th></tr>
+<tr><td>16</td><td>0.997 (at L40) ✅</td><td><span class="hs" data-k="r1split:16">...</span> ❌</td><td><span class="hs" data-k="r1energy:16">...</span> ✅</td><td><span class="hs" data-k="r1j:16">...</span> ✅</td><td><span class="hs" data-k="r1c4:16">...</span> ✅</td><td>143× ✅</td><td>0.79 ❌</td><td><span class="hs" data-k="r1pr:16">...</span></td></tr>
+<tr><td>28</td><td></td><td><span class="hs" data-k="r1split:28">...</span> ❌</td><td><span class="hs" data-k="r1energy:28">...</span> ✅</td><td><span class="hs" data-k="r1j:28">...</span> ✅</td><td><span class="hs" data-k="r1c4:28">...</span> ✅</td><td>84× ✅</td><td>0.35 ❌</td><td><span class="hs" data-k="r1pr:28">...</span></td></tr>
+<tr><td>40</td><td></td><td><span class="hs" data-k="r1split:40">...</span> ❌</td><td><span class="hs" data-k="r1energy:40">...</span> ✅</td><td><span class="hs" data-k="r1j:40">...</span> ✅</td><td><span class="hs" data-k="r1c4:40">...</span> ✅</td><td>144× ✅</td><td>1.21 ❌</td><td><span class="hs" data-k="r1pr:40">...</span></td></tr>
+<tr><td>52</td><td></td><td><span class="hs" data-k="r1split:52">...</span> ❌</td><td><span class="hs" data-k="r1energy:52">...</span> ✅</td><td><span class="hs" data-k="r1j:52">...</span> ✅</td><td><span class="hs" data-k="r1c4:52">...</span> ✅</td><td>197× ✅</td><td>1.86 ❌</td><td><span class="hs" data-k="r1pr:52">...</span></td></tr>
+</table>
+</div>
+<p class="small">C1 to C4 and PR are printed live from <code>HS.run1</code> (<code>results/hspace_full.json</code>). C0, C5 and C6 are quoted from <code>README.md</code> and <code>hlens/paper/hspace-paper.md</code> §4 (they are not in <code>HS</code>). C6 95% CIs: [−1.0, 10.1] at L16, [0.43, 18.4] at L52 (paper §4).</p>
+
+<p><b>Verdict: FAIL.</b> C1 fails at all four layers. Every non-FAIL outcome needs C1 at ≥ 2 layers, so nothing else could change the verdict (theory-v2 §6A). C0 passed, so the instrument works: these are findings, not a broken instrument.</p>
+<p><b>What the passes do and do not mean</b> (theory-v2 §6A and paper §4):</p>
+<ul>
+<li><b>C2 passes because a few eigenvalues dominate.</b> PR is 1.3 to 8.5 and \(\lambda_1/\lambda_2\) reaches 13 (Figure 15.3), in an operator whose top-25 does not reproduce. That fits heavy-tailed samples, not a stable low-dimensional \(M^{\text{row}}\).</li>
+<li><b>C3's pass is uninformative.</b> Two halves of the <i>same</i> estimate overlap only 0.33 to 0.41, so a J-overlap of 0.15 to 0.29 cannot separate “H differs from J” from estimation noise.</li>
+<li><b>C4 has no variance-matched control.</b> On 0.8B the pair-norm product alone gave 23 to 29× (theory-v2 §6A).</li>
+<li><b>C5:</b> deleting H25 damages predictions 84 to 197× more than deleting random subspaces; at L40 and L52 more than deleting J25 (KL 0.34 vs 0.30, and 0.56 vs 0.50; paper §4). But a high-variance subspace does that anyway: on 0.8B, H25's ablation KL was only 1.03 to 1.21× that of raw PCA25 (theory-v2 §6A).</li>
+<li><b>C6 is a ratio whose denominator is near 0,</b> so its CIs span 10 to 20× the estimate. It also tests damage, not the interaction itself (paper §4).</li>
+</ul>
+<div class="box warn">
+<span class="boxtitle">Why C1 at \(k = 25\) was the wrong yardstick</span>
+If only about \(m\) directions carry signal, the other \(25 - m\) eigenvectors of each half are noise and do not match. Even a perfectly stable \(m\)-dimensional structure scores about \(m/25\). With PR between 2 and 8, the ceiling is roughly 0.1 to 0.3 (<code>SCOPE-hspace-v3.md</code>; paper §4). This diagnosis was written down before any follow-up data existed. It does not reinterpret run 1: the FAIL stands.
+</div>
+<p>One more diagnostic (paper §4, <code>hs_diag_top.py</code>): the top direction puts 42% / 37% / 17% / 14% of its mass on the massive-activation coordinate (dim 3994) at L16 / L28 / L40 / L52.</p>
+
+<figure class="sim" id="sim-run1">
+<figcaption><b>Figure 15.3.</b> Run 1, real data: the top 64 eigenvalues of the estimated \(M^{\text{row}}\) at each layer, on a log scale (pu²). Pick a layer to highlight it and read its numbers; tick “divide by \(\lambda_1\)” to compare shapes. The dashed line marks \(k = 25\). Look at how fast each curve drops: a handful of eigenvalues carry almost everything, which is what PR says. Source: <code>HS.run1</code> (<code>results/hspace_full.json</code>).</figcaption>
+</figure>
+
+<h2>15.9 Run 2, the v3 test, and heavy tails (Observation 8.2)</h2>
+<p><b>Run 2</b> (paper §4b) re-estimated the per-position energy at the same four layers with four estimators: raw (one sign vector, → \(M^{\text{row}}\)), cross-moment <code>x</code> (two sign vectors, → \(M^{\text{diag}}\)), spatial sign <code>norm</code>, and spatial-sign cross-moment <code>xnorm</code>. 256 probes × 4 windows per layer; 64 rows per probe were kept for offline tests. It was designed after seeing run 1, so it is exploratory except where a new preregistration governs it.</p>
+<p><b>v3</b> (<code>SCOPE-hspace-v3.md</code>, frozen before run-2 data existed) fixed C1 by measuring reliability at the signal dimension:</p>
+<ul>
+<li><b>Noise floor</b> = \(|\lambda_{\min}|\) of the signed cross-moment matrix. The population matrix \(M^{\text{diag}}\) is positive semidefinite, so any negative eigenvalue is pure sampling noise, and any positive eigenvalue below that size is indistinguishable from noise.</li>
+<li>\(k_{\text{floor}}\) = min(25, number of eigenvalues above the floor in each half). C1′ passes if \(k_{\text{floor}}\ge 3\), split@\(k_{\text{floor}}\ge 0.7\) and split@5 ≥ 0.7.</li>
+</ul>
+<p><b>v3 verdict: not found.</b> The primary <code>loc_x</code> fails C1′ at all four layers: split@25 is 0.13 / 0.15 / 0.17 / 0.29, and the counts of eigenvalues above the floor are 0 / 2 / 5 / 2 of 5,120 at L16 / L28 / L40 / L52, so \(k_{\text{floor}} = 1\) everywhere (paper §4b; corrected count in <code>results/CORRECTIONS.md</code>, Oct 6 ~18:29).</p>
+
+<h3>Observation 8.2: heavy tails explain C1 and C1′</h3>
+<p>Each run-2 row \(y_p\) is one (position, probe) sample. Sort the rows by their squared length \(\lVert y_p\rVert^2\). At L16, the heaviest <span class="hs" data-k="htn01:16">...</span> rows (0.1% of <span class="hs" data-k="htn:16">...</span>) carry <span class="hs" data-k="httop:16:0.001">...</span> of the raw second moment. Digit tokens are <span class="hs" data-k="htR:16:digit">...</span> of rows but <span class="hs" data-k="htE:16:digit">...</span> of the energy. L28 is similarly concentrated (top 0.1%: <span class="hs" data-k="httop:28:0.001">...</span>), but there digits carry only <span class="hs" data-k="htE:28:digit">...</span>.</p>
+<p><b>Consequence.</b> An average of \(y_py_p^\top\) is then an average of about a dozen big outer products plus dust. Split the probes in half and each half gets a different handful of giants, so the top eigenvectors change between halves. That is C1 (0.33 to 0.41) and C1′. The Kish effective sample size of the rows is 0.01 to 0.06% of rows, about 2 to 10 effective rows out of 16,384 (theory-v2 Obs. 8.3).</p>
+<p><b>Trimming fixes reproducibility.</b> Dropping the heaviest 5% of rows gives raw split@5 of <span class="hs" data-k="htsh:16:trim5:k5">...</span> at L16, and split@25 of <span class="hs" data-k="htsh:16:trim5:k25">...</span> / <span class="hs" data-k="htsh:28:trim5:k25">...</span> at L16 / L28 (Figure 15.5).</p>
+<div class="box warn">
+<span class="boxtitle">The catch with robust estimators</span>
+The spatial sign \(\hat y = y/\lVert y\rVert\) gives every row equal weight, so it is robust. But it estimates a different population object (the shape operator). Its eigenvectors equal those of the raw operator only for elliptical row laws (theory-v2 §6B). And, as the next section shows, its excellent reproducibility is mostly not about the Hessian at all.
+</div>
+
+<figure class="sim" id="sim-tails">
+<figcaption><b>Figure 15.4.</b> Real data (run-2 dumps): where the energy lives. Left: the share of total row energy carried by the heaviest 0.1%, 1% and 5% of rows (red), against the share they would carry if all rows were equal (grey). Right: for each token class, its share of rows (grey) and its share of energy (red). Switch layers: at L16 digits dominate; at L28 the concentration stays but digits do not. Source: <code>HS.heavy_tails</code> (<code>results/hs_dump_analysis_full.json</code>).</figcaption>
+</figure>
+
+<figure class="sim" id="sim-trim">
+<figcaption><b>Figure 15.5.</b> Real data: split-half overlap of the top-\(k\) subspace from the same dumped rows, for six ways of building the estimate. “raw”: plain average of \(yy^\top\). “trim1”, “trim5”: drop the heaviest 1% or 5% of rows first. “norm”: spatial sign. “x”: cross-moment. “x_trim1”: cross-moment after dropping 1%. The dashed line is the 0.7 bar. Raw and x stay low; trimming and the spatial sign jump. Source: <code>HS.heavy_tails</code>, <code>split_half_from_dump</code>.</figcaption>
+</figure>
+
+<h2>15.10 The Σ prior (Proposition 8)</h2>
+<p>The spatial-sign estimators reproduced at 0.92 to 0.99 (paper §4b). That looked like success. Then a problem was proved: whitened curvature estimators reproduce PCA axes whenever the curvature has no preferred direction beyond what \(\Sigma\) already gives it.</p>
+<p><b>Setup</b> (theory-v2 §6B). A run-2 row is \(y_p = \sum_qs_ps_q\tilde H_{pq}z\), with \(z\sim\mathcal N(0,I_d)\) shared by every row of a probe. \(P\) is the PCA basis of \(\Sigma\). The sign-flip group is</p>
+$$ \mathcal D = \{P\operatorname{diag}(\pm1,\dots,\pm1)P^\top\}\quad(2^d\ \text{matrices}). $$
+<p>Three properties of every \(D\in\mathcal D\), each one line:</p>
+<ul>
+<li>\(D^\top = D\) and \(D^2 = P\operatorname{diag}(\pm1)^2P^\top = PP^\top = I_d\). So \(D\) is orthogonal and its own inverse.</li>
+<li>$$\begin{aligned} D\Sigma D &= P\operatorname{diag}(\pm1)P^\top\, P\operatorname{diag}(\sigma^2)P^\top\, P\operatorname{diag}(\pm1)P^\top \\ &= P\operatorname{diag}(\pm1)\operatorname{diag}(\sigma^2)\operatorname{diag}(\pm1)P^\top = \Sigma, \end{aligned}$$ because diagonal matrices commute and \((\pm1)^2 = 1\). The same holds for \(\Sigma^{1/2}\) and any function of \(\Sigma\).</li>
+<li>In PCA coordinates, \(D\) just flips the signs of some coordinates.</li>
+</ul>
+
+<h3>Proposition 8</h3>
+<p><b>In words.</b> Suppose that flipping the signs of any PCA axes, applied to every whitened Hessian block at once, does not change the statistical law of those blocks. Then the expected estimator matrix has no off-diagonal entries in the PCA basis. Its eigenvectors are PCA axes. This holds for all four run-2 estimators.</p>
+<p><b>In symbols.</b> If the joint law of \(\{\tilde H_{pq}\}\) (over windows and positions) is invariant under \(\tilde H\mapsto D\tilde HD\) for every \(D\in\mathcal D\), then \(\mathbb{E}[M]\) is diagonal in \(P\) for the raw, spatial-sign, cross-moment and spatial-sign cross-moment estimators.</p>
+<p><b>Proof, line by line.</b></p>
+<ol>
+<li>\(z\mapsto Dz\) preserves \(\mathcal N(0,I_d)\): \(Dz\) is Gaussian with mean 0 and covariance \(DI_dD^\top = I_d\).</li>
+<li>Replace every block by \(D\tilde H_{pq}D\) and \(z\) by \(Dz\). A row becomes \(\sum_qs_ps_qD\tilde H_{pq}D\,Dz = D\sum_qs_ps_q\tilde H_{pq}z = Dy_p\), because \(D^2 = I_d\). By the hypothesis and step 1 (blocks and \(z\) are independent), the replaced inputs have the same joint law as the originals. So the rows \(\{Dy_p\}\) of a probe have the same joint law as \(\{y_p\}\).</li>
+<li>Each estimator is equivariant: \(M(Dy) = DM(y)D\). Raw: \((Dy)(Dy)^\top = Dyy^\top D\). Spatial sign: \(\lVert Dy\rVert = \lVert y\rVert\) because \(D\) is orthogonal, so \(Dy/\lVert Dy\rVert = D(y/\lVert y\rVert)\). Cross-moments: \(Dy^1(Dy^2)^\top = D\,y^1y^{2\top}D\).</li>
+<li>Steps 2 and 3 give \(\mathbb{E}[M] = \mathbb{E}[M(Dy)] = D\,\mathbb{E}[M]\,D\) for every \(D\in\mathcal D\).</li>
+<li>Write \(\mathbb{E}[M]\) in PCA coordinates: \(\Gamma = P^\top\mathbb{E}[M]P\). Choose \(D\) that flips only axis \(i\). Then \(P^\top DP = P^\top P\operatorname{diag}(\pm1)P^\top P = \operatorname{diag}(1,\dots,-1,\dots,1)\), with the \(-1\) in place \(i\), because \(P^\top P = I_d\).</li>
+<li>Sandwich step 4 between \(P^\top\) and \(P\), and insert \(PP^\top = I_d\) on both sides of \(\mathbb{E}[M]\): \(\Gamma = P^\top D\,\mathbb{E}[M]\,DP = (P^\top DP)(P^\top\mathbb{E}[M]P)(P^\top DP) = \operatorname{diag}(\ldots)\,\Gamma\,\operatorname{diag}(\ldots)\).</li>
+<li>A diagonal matrix on the left multiplies row \(i\) by its \(i\)-th entry; on the right it multiplies column \(j\) by its \(j\)-th entry. So entry \((i,j)\) becomes \((-1)\,\Gamma_{ij}\,(+1)\) for every \(j\ne i\): \(\Gamma_{ij} = -\Gamma_{ij}\). Toy with \(d = 2\), \(i = 1\): \(\begin{pmatrix}-1&0\\0&1\end{pmatrix}\begin{pmatrix}5&2\\2&3\end{pmatrix}\begin{pmatrix}-1&0\\0&1\end{pmatrix} = \begin{pmatrix}5&-2\\-2&3\end{pmatrix}\). The diagonal survives, the off-diagonal flips, so the two can only be equal if the off-diagonal entry is 0.</li>
+<li>A number equal to its own negative is 0. So every off-diagonal entry of \(\Gamma\) is 0: \(\mathbb{E}[M]\) is diagonal in \(P\). ∎</li>
+</ol>
+<p><b>Laws that satisfy the hypothesis</b> (theory-v2 §6B), with the one-line reason:</p>
+<ul>
+<li>\(H = cI_d\), and any \(H = f(\Sigma)\): then \(\tilde H = \Sigma^{1/2}f(\Sigma)\Sigma^{1/2}\) is diagonal in \(P\), and \(D\tilde HD = \tilde H\) exactly.</li>
+<li>GOE- or Haar-random curvature: the law of a GOE matrix \(G\) is unchanged by any orthogonal conjugation, and \(D\) commutes with \(\Sigma^{1/2}\), so \(D\tilde HD = \Sigma^{1/2}(DGD)\Sigma^{1/2}\) has the law of \(\tilde H\).</li>
+<li>The isotropic RMSNorm curvature term of theory-v2 §2.</li>
+</ul>
+<div class="box key">
+<span class="boxtitle">Consequences (theory-v2 §6B)</span>
+<ul>
+<li>Under such laws, the whitened lens returns PCA-ordered directions (ranked by the diagonal of \(\mathbb{E}[M]\) in the PCA basis).</li>
+<li>With many near-independent rows, it does so <b>reproducibly</b>. A simulated GOE-type null at the run-2 budget gave split-half 0.98 and PCA-25 overlap 0.997, with PR 52 to 125.</li>
+<li>So three things are <b>not</b> evidence of H-specific structure: high split-half, large overlap with PCA, a flat spectrum. And \(25/d\) is the wrong baseline.</li>
+</ul>
+</div>
+<p>The real numbers fit the prior. The spatial-sign top-25 (<code>loc_norm</code>) overlaps PCA-25 by 0.776 at L16 and 0.78 to 0.83 across layers, against 0.005 at random (paper §4b; <code>results/hs_pca_overlap_run2.json</code>). A similar prior plausibly affects any lens computed in \(\Sigma^{1/2}\)-whitened coordinates, such as the author's J25, which overlaps PCA-25 by 0.30 to 0.61. Proposition 8 itself is proved only for these curvature estimators, and Anthropic's released J-lens does not whiten (README).</p>
+<div class="box plain">
+<span class="boxtitle">A retracted fix</span>
+A “relative-curvature H-lens” divided out the \(H = cI\) null by a generalised eigenproblem. It was retracted (<code>results/CORRECTIONS.md</code>, Oct 6 07:35). It returned filters (\(\propto M_0^{-1}w\)) rather than patterns, so “zero PCA overlap” was guaranteed; its simulated null had rank ≤ 256, so “data beats null” was guaranteed; and the ridge decided which PCA band the “excess” landed in.
+</div>
+
+<figure class="sim" id="sim-sigprior">
+<figcaption><b>Figure 15.6.</b> Toy (\(d = 6\), made-up \(\Sigma\) with variances 4, 2.5, 1.6, 1, 0.6, 0.4 along a random PCA basis). Rows \(y = \tilde Hz\) are drawn from a curvature law you choose, four rows per probe, and \(M\) is the raw average of \(yy^\top\). Left: \(M\) in PCA coordinates, normalised so the diagonal is 1; colour shows off-diagonal entries (red positive, blue negative). Right: the top two eigenvectors of \(M\) from half A (blue) and half B (red), as components on the six PCA axes. For “\(f(\Sigma)\)” and “rotation-invariant”, the eigenvectors sit on PCA axes and agree across halves: reproducible, but just PCA. Choose “planted”: the off-diagonal pattern appears and the eigenvectors leave the axes. Set the exponent to −1 in the \(f(\Sigma)\) law: \(\tilde H = I_d\), the spectrum is flat, and reproducibility collapses.</figcaption>
+</figure>
+
+<h2>15.11 An exact test: PCA sign flips (Corollary 8.1)</h2>
+<p>Proposition 8 turns a problem into a test. If the null is “the curvature law is invariant under \(\mathcal D\)”, then flipping PCA signs does not change the law of the data. So flipped datasets are exact samples from the null.</p>
+<h3>Corollary 8.1</h3>
+<p><b>In words.</b> Flip random PCA signs on every row of each probe (the same flips within a probe), recompute your statistic, and repeat \(N\) times. Under the null, the real statistic is just one more draw from the same pool, so its rank among the \(N + 1\) values gives an exact p-value.</p>
+<p><b>In symbols.</b> \(H_0\): the law of the blocks is invariant under \(\mathcal D\). For replicate \(r = 1,\dots,N\), draw one \(D\in\mathcal D\) uniformly per probe and apply it to every row of that probe. Let \(\tau_0\) be the statistic on the real data and \(\tau_r\) on replicate \(r\). Then</p>
+$$ p = \frac{1 + \#\{r : \tau_r\ge\tau_0\}}{N+1} $$
+<p>satisfies \(\Pr(p\le\alpha)\le\alpha\) under \(H_0\), for every \(\alpha\) and every statistic \(\tau\).</p>
+<p><b>Proof, line by line.</b></p>
+<ol>
+<li>Write \(Y\) for the real data (all probes) and \(\mathbf D = (D^{(1)},\dots)\) for a choice of one flip per probe. The set of all such choices is a group: composing two choices or inverting one gives another choice.</li>
+<li>By step 2 of Proposition 8, applied probe by probe (probes are independent), \(\mathbf DY\) has the same law as \(Y\) for every fixed \(\mathbf D\). So it also does for a random \(\mathbf D\) drawn independently of \(Y\).</li>
+<li>Draw \(\mathbf D_0\) uniformly and set \(Y' = \mathbf D_0Y\). By step 2, \(Y'\) has the law of \(Y\); and because each \(\mathbf D\) is its own inverse, \(Y = \mathbf D_0Y'\).</li>
+<li>The real statistic is \(\tau(\mathbf D_0Y')\) and replicate \(r\) is \(\tau(\mathbf D_r\mathbf D_0Y')\). The group elements \(\mathbf D_0, \mathbf D_1\mathbf D_0,\dots,\mathbf D_N\mathbf D_0\) are independent and uniform (multiplying a uniform group element by a fixed one gives a uniform one), and independent of \(Y'\).</li>
+<li>So \((\tau_0,\tau_1,\dots,\tau_N)\) are exchangeable: \(N + 1\) values made the same way from the same \(Y'\). The rank of \(\tau_0\) among them is uniform (ties counted against \(\tau_0\), which is what the “≥” does).</li>
+<li>Name the rank. \(1 + \#\{r : \tau_r\ge\tau_0\}\) is the position of \(\tau_0\) when the \(N + 1\) values are sorted from the top, ties counted against \(\tau_0\). With no ties it is equally likely to be any of \(1, 2, \dots, N+1\). Ties can only push it down the list. So for any whole number \(m\) from 1 to \(N+1\), \(\Pr(\text{rank}\le m)\le m/(N+1)\). Toy: \(N = 3\), four exchangeable values, no ties: the real one is top with probability \(\tfrac14\), in the top two with probability \(\tfrac24\).</li>
+<li>Translate to \(p\). By definition \(p = \text{rank}/(N+1)\). So \(p\le\alpha\) means \(\text{rank}\le\alpha(N+1)\), that is \(\text{rank}\le m\) with \(m\) the largest whole number not above \(\alpha(N+1)\). Step 6 gives \(\Pr(p\le\alpha)\le m/(N+1)\le\alpha\). ∎</li>
+</ol>
+<p>The “+1” in numerator and denominator counts the real data as one of the draws. With \(N = 200\), the smallest possible p-value is \(1/201\approx\) <span class="hs" data-k="f5p:40:norm">...</span>, which is exactly what every v5 test returned.</p>
+
+<h3>Which statistic: the diagonal-normalised operator</h3>
+<p>Under \(H_0\), \(\mathbb{E}[M]\) is diagonal in PCA coordinates, but its diagonal is not flat. So the raw top eigenvector is a PCA axis under the null, and split-half would be high under the null too. The fix in <code>hlens/hs_flip5.py</code> (header comment) is to divide out the diagonal. In PCA coordinates,</p>
+$$ R = \operatorname{diag}(M)^{-1/2}\,M\,\operatorname{diag}(M)^{-1/2}. $$
+<p>Under \(H_0\), \(R\) is close to \(I_d\) for large samples: all eigenvalues near 1, no preferred direction. Structure that is consistent across windows but not aligned with PCA axes survives as off-diagonal entries, so \(\lambda_1(R)\) rises above 1. The eigenvectors of \(R\) live in rescaled coordinates; multiplying them by \(\operatorname{diag}(M)^{1/2}\) and orthonormalising gives the <b>patterns</b>. split@3 is the overlap of the top-3 patterns from the two probe-parity halves.</p>
+
+<h3>Which preprocessing keeps the test useful</h3>
+<p>Before estimating, the run removes confounds such as the massive-activation span. How you remove them matters.</p>
+<ul>
+<li><b>Axis-aligned removal</b> (mask some PCA axes, normalise rows, keep some PCA coordinates). A mask \(K = P\operatorname{diag}(0\text{ or }1)P^\top\) commutes with every \(D\). <b>Step 1:</b> multiply, using \(P^\top P = I_d\) in the middle: \(KD = P\operatorname{diag}(0\text{ or }1)\operatorname{diag}(\pm1)P^\top\) and \(DK = P\operatorname{diag}(\pm1)\operatorname{diag}(0\text{ or }1)P^\top\). <b>Step 2:</b> diagonal matrices commute (their product just multiplies matching diagonal entries, and \(0\times(-1) = (-1)\times0\), \(1\times(-1) = (-1)\times1\)), so \(KD = DK\), and \(KDy = DKy\). So preprocessing the flipped data equals flipping the preprocessed data. The test stays exact, and the null adds no structure.</li>
+<li><b>A fixed projection that is not axis-aligned,</b> \(\pi_Q(y) = (I_d - QQ^\top)y\). The test is still exact, because \(\pi_Q\) is fixed. But \(\pi_Q(Dy) = Dy - QQ^\top Dy\): the second term always lies in the same fixed span of \(Q\), whatever \(D\) is. For the raw estimator, in steps. <b>Step 1:</b> a replicate's rows are \(\pi_Q(Dy) = (I_d - QQ^\top)Dy\), so its \(M\) is the average of \((I_d - QQ^\top)Dyy^\top D(I_d - QQ^\top)\) (transpose of a product, reversed, with \(D^\top = D\) and \((I_d - QQ^\top)^\top = I_d - QQ^\top\)), which is \((I_d - QQ^\top)DMD(I_d - QQ^\top)\). <b>Step 2:</b> average over the random flips. In PCA coordinates \(DMD\) keeps each diagonal entry and multiplies entry \((i,j)\) by the product of two independent random signs, which averages 0. So the flip average of \(DMD\) is \(\Lambda\), the diagonal part of \(M\) in PCA coordinates. <b>Step 3:</b> the replicates therefore centre on \((I_d - QQ^\top)\Lambda(I_d - QQ^\top)\). Unless \(Q\) lies along PCA axes, this is not diagonal in PCA coordinates, and it is the same fixed matrix for every replicate. So the null patterns themselves reproduce, and split-half loses all power.</li>
+</ul>
+<p>This happened. The first flip test (variant b, frozen rule, L16 and L28) projected out the massive span. \(\lambda_1\) beat all 200 flips for every estimator (1.4 to 2.1× the flip maximum), but the null split@3 maximum was 0.95 to 0.98, so the split condition could not pass. <b>Verdict: FAIL</b> (paper §4b; theory-v2 §6B).</p>
+
+<figure class="sim" id="sim-flip">
+<figcaption><b>Figure 15.7.</b> Toy (\(d = 10\), rows built directly in PCA coordinates with random positive gains per axis, which is \(\Sigma\)-commuting; spatial sign applied; 200 flips). Grey bars: the null distribution of the statistic over flipped replicates. Red line: the real (unflipped) value. The readout gives the exact p-value \((1 + \#\{\tau_r\ge\tau_0\})/201\). Try: planted strength 0 with \(\lambda_1\), and press “new data” a few times (p wanders over 0 to 1, as it should under the null); planted strength 2 (p drops to 1/201); then statistic split@1 with “project out a fixed non-axis direction”: the null replicates themselves reproduce (grey bars pile up near 1), so a real planted direction no longer stands out. Switch to “drop PCA axis 1 (axis-aligned)” and the power returns. With only 10 dimensions and a few hundred rows the null split@1 is noisy; the real runs had \(d\) in the hundreds to thousands, where a random overlap is near 0.</figcaption>
+</figure>
+
+<h2>15.12 v5: the held-out PASS</h2>
+<p><b>Design</b> (<code>hs_flip5.py</code>; paper §4b). Variant d: drop PCA axes 1 to 5, plus the axes carrying the most massive/radial-span mass until 90% of that mass is removed. This is axis-aligned, so it commutes with the flips. It was frozen before any flip computation on <b>held-out layers 40 and 52</b>. The rule (<code>hs_flip5.py</code>): at both layers, for both <code>norm</code> and <code>xnorm</code>, \(\lambda_1(R)\) and split@3 each beat all 200 flips, split@3 ≥ 0.7, and a planted rank-3 control (at 0.1% of row energy per direction) is detected.</p>
+<p><b>Result: PASS.</b> \(\lambda_1\) is <span class="hs" data-k="f5ratiorange">...</span> the flip maximum; split@3 is <span class="hs" data-k="f5s3range">...</span>, against null maxima of <span class="hs" data-k="f5n3range">...</span>. Planted control detected for every estimator at both layers.</p>
+
+<figure class="sim" id="sim-v5">
+<figcaption><b>Figure 15.8.</b> Real data, v5. Left: observed \(\lambda_1(R)\) (bars) against the largest of 200 flip replicates (black tick), per layer and estimator. Right: observed split@3 against the flip maximum. <code>raw_trim5</code> (grey) is descriptive, not part of the rule. Every bar clears its tick by a wide margin. Source: <code>HS.flip5</code> (<code>results/hs_flip5_full.json</code>).</figcaption>
+</figure>
+
+<p><b>What the v5 structure is not</b> (paper §4b):</p>
+<ul>
+<li>J-space: its top-10 patterns sit 0.02 inside J25, chance level.</li>
+<li>The massive/radial span: 0.002 of their mass (largely by construction: those axes are masked).</li>
+<li>The top PCs: 0 in PCA-25 and 0.07 to 0.11 in PCA-100.</li>
+<li>An axis-aligned artefact: its participation ratio in PCA coordinates is 59 to 204, so it is diffuse.</li>
+</ul>
+<p><b>Robustness to a mis-estimated PCA basis</b> (<code>hs_flip5_misspec*.py</code>; paper §4b). Rows that are \(\Sigma\)-commuting with respect to the <i>true</i> \(\Sigma\) look non-commuting in an estimated basis. Using run 1's independent \(\Sigma\) as a stand-in for the truth:</p>
+<ul>
+<li>A steep \(f = \Sigma\) null <i>can</i> fake v5 (simulated \(\lambda_1\) 122 to 221, split@3 0.88 to 0.93). But that null has spectrum PR 3 to 4, and the data's is 58 to 91, so the data rule that regime out.</li>
+<li>Calibrating \(f = \Sigma^a\) to match the data's flatness gives simulated split@3 of 0.01 to 0.07 against 0.82 to 0.94 in the data. Its simulated \(\lambda_1\) still beats the flip maximum (1.0 to 1.8×, against 3 to 6.6× for the data). The calibration matches PR only.</li>
+</ul>
+<p>So v5's split-half result survives this null; its \(\lambda_1\) result alone would not. The planted control at L52 was detected but recovered only 0.01 / 0.24 (norm / xnorm), because the real structure dominates. <b>Open caveat:</b> position-dependent covariance could produce non-\(\Sigma\)-commuting structure; several patterns carry 1.2 to 1.6× more energy early in the window, and the dumps cannot rule this out (paper §4b).</p>
+
+<h2>15.13 The causal Σ-orbit twin test: FAIL</h2>
+<p>v5 shows reproducible non-\(\Sigma\)-commuting structure. Does it do second-order work? The frozen causal test (<code>hs_c6twin.py --v5</code>) deleted the top-5 v5 patterns (EX) and compared with deleting <b>Σ-orbit twins</b>.</p>
+<div class="box key">
+<span class="boxtitle">Σ-orbit twins, and why they are exactly matched</span>
+<p>In whitened PCA coordinates, twin \(j\) is \(Q_j = D_j\,\mathrm{EX}\) with \(D_j\in\mathcal D\) random; the v9 prereg writes this as \(Q_j = P(s_j\odot P^\top\mathrm{EX})\). Claim: a twin has exactly the raw variance and the per-PCA-axis profile of EX.</p>
+<ol>
+<li>Raw directions are \(\Sigma^{1/2}\mathrm{EX}\) and \(\Sigma^{1/2}Q_j\). Compare their Gram matrices (all dot products between the columns), in steps. <b>Substitute</b> \(Q_j = D_j\mathrm{EX}\): \((\Sigma^{1/2}D_j\mathrm{EX})^\top(\Sigma^{1/2}D_j\mathrm{EX})\). <b>Transpose the product</b>, reversing the order: \(\mathrm{EX}^\top D_j^\top(\Sigma^{1/2})^\top\,\Sigma^{1/2}D_j\mathrm{EX}\). <b>Use symmetry</b>: \(D_j^\top = D_j\) and \((\Sigma^{1/2})^\top = \Sigma^{1/2}\), and \(\Sigma^{1/2}\Sigma^{1/2} = \Sigma\): \(\mathrm{EX}^\top D_j\Sigma D_j\mathrm{EX}\). <b>Use</b> \(D_j\Sigma D_j = \Sigma\) (15.10): \(\mathrm{EX}^\top\Sigma\,\mathrm{EX}\), which is the Gram matrix of \(\Sigma^{1/2}\mathrm{EX}\) by the same steps without \(D_j\). So every variance and covariance the subspace carries in raw units is identical.</li>
+<li>Profile: \(P^\top Q_j = P^\top D_j\mathrm{EX} = P^\top P\operatorname{diag}(s_j)P^\top\mathrm{EX} = \operatorname{diag}(s_j)P^\top\mathrm{EX}\), writing \(D_j = P\operatorname{diag}(s_j)P^\top\) with \(s_j\) its list of ±1 and using \(P^\top P = I_d\). The PCA coordinates differ only in sign, so their squares (the energy on each PCA axis) are identical.</li>
+<li>Yet the twins point elsewhere: their overlap with EX was 0.01 to 0.03 (v9 prereg).</li>
+</ol>
+<p>So anything that depends only on \(\Sigma\) cannot tell EX from its twins. If EX beats them, the difference is not explained by the covariance (global covariance, in the estimated basis).</p>
+</div>
+<p><b>The measure</b> (C6′ machinery, <code>SCOPE-hspace-v3.md</code>). For <span class="hs" data-k="twN:40">...</span> held-out windows, two 8-token spans are removed in a 2×2 design and the interaction \(I\) and main effects of the target log-prob are measured, with and without the ablation. Retention scores \(r_I = \sum_tI_{A,t}I_{0,t}/\sum_tI_{0,t}^2\) and \(r_M\) (same for main effects); specificity \(S = r_M - r_I\), positive when the ablation removes interactions more than main effects.</p>
+<div class="tablewrap">
+<table>
+<tr><th>layer</th><th>S(EX)</th><th>twin mean S</th><th>rank of EX among 9</th><th>CI of ΔS</th><th>KL(EX) vs twin range</th><th>REAL?</th></tr>
+<tr><td>40</td><td><span class="hs" data-k="twS:40">...</span></td><td><span class="hs" data-k="twSm:40">...</span></td><td><span class="hs" data-k="twRank:40">...</span></td><td><span class="hs" data-k="twCI:40">...</span></td><td><span class="hs" data-k="twKL:40">...</span></td><td><span class="hs" data-k="twReal:40">...</span></td></tr>
+<tr><td>52</td><td><span class="hs" data-k="twS:52">...</span></td><td><span class="hs" data-k="twSm:52">...</span></td><td><span class="hs" data-k="twRank:52">...</span></td><td><span class="hs" data-k="twCI:52">...</span></td><td><span class="hs" data-k="twKL:52">...</span></td><td><span class="hs" data-k="twReal:52">...</span></td></tr>
+</table>
+</div>
+<p class="small">Printed live from <code>HS.twin5</code> (<code>results/c6twin5_full.json</code>): \(S\) and KL of EX and of the 8 twins, the ΔS CI (<code>dS_ci95</code>), the rank (<code>rank_EX_among_9</code>) and the verdict (<code>REAL</code>). The twin mean and the KL range are computed here from the 8 twin entries. They match the table in <code>hlens/paper/hspace-paper.md</code> §4b.</p>
+<p><b>Verdict: FAIL at both layers.</b> Deleting EX does <span class="hs" data-k="twKLratio">...</span>× more general damage (KL) than deleting the exact twins (EX's KL over each twin's, both layers), but it is not detectably more interaction-specific. For scale, deleting PCA-25 gives \(S\) = <span class="hs" data-k="twPca:40">...</span> at L40 and <span class="hs" data-k="twPca:52">...</span> at L52. The scoped claim at this point (paper §4b): a reproducible non-\(\Sigma\)-commuting curvature structure without a demonstrated function.</p>
+<div class="box warn">
+<span class="boxtitle">A related correction: C6′ was mostly dose</span>
+An earlier claim that deleting <code>loc_norm</code> was about 2× as interaction-specific as deleting J25 was withdrawn (<code>results/CORRECTIONS.md</code>, Oct 6 ~11:00). At L16, \(S\) is nearly linear in the raw variance each ablation removes (\(r = 0.999\)), and the interaction-per-main-effect damage ratios are equal (4.7 vs 4.6). This is why the twin test matches variance exactly.
+</div>
+
+<h2>15.14 v7 and v8: a punctuation-conditional subspace that replicates</h2>
+<p><b>v7</b> (laptop, run-2 dumps, frozen rule; digits): <b>not found</b>, 0 of 4 layers. Digit rows had large \(\lambda_1\) (2.7 to 5.3× the flip maximum) but no stable 3-dimensional subspace (split@3 0.40 to 0.68) (paper §4c; corrected range in <code>results/CORRECTIONS.md</code>). Punctuation rows were the <b>descriptive</b> exception: split@3 0.60 to 0.80.</p>
+<div class="box warn">
+<span class="boxtitle">The forking path, stated plainly</span>
+Punctuation was chosen after a descriptive look at run-2 data. A pattern spotted in data cannot be confirmed on the same data. That is why v8 used fresh windows. And v8 is the 10th test in the sequence: run 1, v3, flip L16/L28, v5, twin, C6′, v6 (designed, not run), v7, the importance analysis, v8 (<code>SCOPE-hspace-v8.md</code>). v9 is the 11th.
+</div>
+<p><b>v8 design</b> (<code>SCOPE-hspace-v8.md</code>, pushed before the pod existed). Fresh wikitext-103 train windows, 64 probes × 4 windows, L16 and L40, run 2's whitening frame, two HVPs per probe. The v5 machinery restricted to punctuation rows. Rule, at both layers: for norm and xnorm, \(\lambda_1\) and split@3 beat every flip; split@3 ≥ 0.7; the planted control is detected; and the top-5 punctuation patterns overlap run 2's top-5 punctuation patterns at ≥ 0.5 (chance about 5/820).</p>
+<div class="tablewrap">
+<table>
+<tr><th>layer</th><th>norm \(\lambda_1\) (flip max)</th><th>norm split@3</th><th>xnorm \(\lambda_1\) (flip max)</th><th>xnorm split@3</th><th>top-5 overlap with run 2, as first logged</th><th>after excluding shared windows</th><th>chance</th></tr>
+<tr><td>16</td><td><span class="hs" data-k="v8lam:16:norm">...</span> (<span class="hs" data-k="v8null:16:norm">...</span>)</td><td><span class="hs" data-k="v8s3:16:norm">...</span></td><td><span class="hs" data-k="v8lam:16:xnorm">...</span> (<span class="hs" data-k="v8null:16:xnorm">...</span>)</td><td><span class="hs" data-k="v8s3:16:xnorm">...</span></td><td><span class="hs" data-k="v8ov:16:all">...</span></td><td><b><span class="hs" data-k="v8ov:16:clean">...</span></b></td><td><span class="hs" data-k="v8chance:16">...</span></td></tr>
+<tr><td>40</td><td><span class="hs" data-k="v8lam:40:norm">...</span> (<span class="hs" data-k="v8null:40:norm">...</span>)</td><td><span class="hs" data-k="v8s3:40:norm">...</span></td><td><span class="hs" data-k="v8lam:40:xnorm">...</span> (<span class="hs" data-k="v8null:40:xnorm">...</span>)</td><td><span class="hs" data-k="v8s3:40:xnorm">...</span></td><td><span class="hs" data-k="v8ov:40:all">...</span></td><td><b><span class="hs" data-k="v8ov:40:clean">...</span></b></td><td><span class="hs" data-k="v8chance:40">...</span></td></tr>
+</table>
+</div>
+<p class="small">All printed live. \(\lambda_1\), flip maximum, split@3 and chance from <code>HS.v8_full</code> (<code>results/hs_v8_full.json</code>: <code>punct</code>, <code>random_expect_top5</code>). Overlaps from <code>HS.v8</code> (<code>results/hs_v8_dedup.json</code>); the “as first logged” value equals <code>cross_run_top5_overlap</code> in <code>hs_v8_full.json</code>. They match <code>hlens/paper/hspace-paper.md</code> §4c.</p>
+<p><b>Verdict: REPLICATED.</b> A correction applies (<code>results/CORRECTIONS.md</code>, Oct 6 ~13:30). The script deduplicated against run 1, not run 2. 15 of the 256 v8 windows were identical to run-2 estimation windows. Removing their <span class="hs" data-k="v8rm:16">...</span> punctuation rows (leaving <span class="hs" data-k="v8pr:16">...</span>) moves the overlap from <span class="hs" data-k="v8ov:16:all">...</span> to <span class="hs" data-k="v8ov:16:clean">...</span> at L16 and from <span class="hs" data-k="v8ov:40:all">...</span> to <span class="hs" data-k="v8ov:40:clean">...</span> at L40. The bar was 0.5, so the verdict is unchanged. The planted control was detected but recovered only <span class="hs" data-k="v8plant">...</span>, a weak power check (paper §4c; <code>HS.v8_full</code> <code>planted</code>).</p>
+<p><b>What v8 licenses:</b> at two layers, curvature at punctuation positions has a low-dimensional, non-\(\Sigma\)-commuting subspace that reproduces within a run and across independent runs on fresh data. <b>What it does not:</b> function. There is no causal test in v8, and the earlier causal test of the all-rows v5 patterns failed.</p>
+<p><b>A first-order screen</b> (paper §4c; theory-v2 Proposition 9 and Observation 8.3). The v8 run also tested whether a cheap gradient predicts where the curvature lives. The rows are extremely heavy-tailed: the Kish effective sample size is <span class="hs" data-k="scKish:16">...</span> / <span class="hs" data-k="scKish:40">...</span> of the <span class="hs" data-k="scRows:16">...</span> rows at L16 / L40. The screen is \(\lVert\Sigma^{1/2}\,\partial F_c/\partial h_\ell[p]\rVert^2\), one backward pass per window (the J-lens cost). Its Spearman correlation with each row's curvature energy is <span class="hs" data-k="scSpR:16">...</span> / <span class="hs" data-k="scSpR:40">...</span> over rows and <span class="hs" data-k="scSpW:16">...</span> / <span class="hs" data-k="scSpW:40">...</span> over windows. Sampling windows in proportion to screen mass (Proposition 9) would cut the HVPs needed at equal Frobenius variance by <span class="hs" data-k="scVR:16:proxy">...</span>× at L16 and <span class="hs" data-k="scVR:40:proxy">...</span>× at L40. The oracle bound is <span class="hs" data-k="scVR:16:oracle">...</span>× / <span class="hs" data-k="scVR:40:oracle">...</span>×. These are retrospective, on the same <span class="hs" data-k="scWin:16">...</span> windows, for the raw energy estimator, with no CI. End to end the saving is much smaller: about 1.7 to 3.8× if one HVP costs 2 to 4 screening passes (paper §4c).</p>
+<p class="small">Printed live from <code>HS.v8_full</code> <code>screen</code> (<code>results/hs_v8_full.json</code>); they match paper §4c. The end-to-end range is quoted from paper §4c. theory-v2 Observation 8.3 gives Spearman 0.73 to 0.83 over rows: that is the 0.8B laptop run, where it calls the 27B screen untested. The numbers above are the 27B test.</p>
+
+<h2>15.15 v9: interaction concentrates in EX (preregistered PASS)</h2>
+<p><b>Object.</b> EX is now the top-5 punctuation-conditional patterns from the fresh v8 data at L16 and L40 (<code>SCOPE-hspace-v9.md</code>). <b>Controls:</b> 8 Σ-orbit twins (15.13). <b>Data:</b> wikitext-103 <b>validation</b> windows, a split never used at 27B (the 0.8B development runs used it); <span class="hs" data-k="v9n:16">...</span> windows completed at each layer (96 planned), one punctuation position \(p\) per window. All trunk forwards in exact fp32, the log-softmax in float64 (an adversarial review had found that a bf16 trunk would have measured rounding noise).</p>
+<p><b>The measurement</b> (<code>hlens/hs_v9.py</code>, header). A move \(a\) is a unit vector in whitened coordinates; it is applied as \(h_\ell[p]\mathrel{+}=\Sigma^{1/2}a\), a 1σ move. Let \(f\) be the summed log-likelihood of the next 16 tokens (nats). Then</p>
+$$ I = f(a+b) - f(a) - f(b) + f(0),\qquad I_{\text{trunk}} = f(a+b) - f_{\text{add}},\qquad I_{\text{soft}} = I - I_{\text{trunk}}, $$
+<p>where \(f_{\text{add}}\) is \(f\) evaluated on the pre-norm last-layer state \(h_a + h_b - h_0\) (the sum of the two single-move effects on the trunk). So \(I_{\text{trunk}}\) is the part of the interaction already present in the residual stream, before the final norm and softmax. By the rectangle identity (<a href="12.html">Level 12</a>, Lemma 3), \(I\) equals the Hessian of \(f\) averaged over the rectangle the two moves span: it is a second-order quantity at natural scale, with no Taylor truncation.</p>
+<p><b>The statistics, per window.</b> Use three matched pairs of directions, (0,1), (2,3), (1,4), for EX and for each twin. Let \(\text{ex}_3\) be the mean of \(|I|\) over the three EX pairs, and \(\text{tw}_{3,j}\) the same for twin \(j\). Let \(\Delta f_a = f(a) - f(0)\) be a main effect, and \(m\) the mean of \(|\Delta f_a| + |\Delta f_b|\) over the matched pairs (for EX or for twin \(j\)). Then</p>
+$$ T_1 = \operatorname*{mean}_{j}\log\frac{\text{ex}_3}{\text{tw}_{3,j}},\qquad T_3 = \operatorname*{mean}_{j}\log\frac{\text{ex}_3/m_{\text{EX}}}{\text{tw}_{3,j}/m_{j}}, $$
+<p>averaged over windows, with 95% CIs from an article-level bootstrap (B = 2000). \(e^{T_1}\) is a geometric-mean ratio of interaction sizes. The rank is EX's place among the 9 subspaces by mean \(\text{ex}_3\).</p>
+<p><b>The rule.</b> REAL9 at a layer iff, for both \(I\) and \(I_{\text{trunk}}\): \(T_1\gt\log 2\) with CI low \(\gt 0\), \(T_3\) CI low \(\gt 0\), and rank 1 of 9. PASS iff REAL9 at both L16 and L40. A $0 laptop validation on the final code passed first: a random EX gave “not shown” (\(T_1 = +0.23\), CI [−0.13, 0.59]); a planted bilinear gate gave “REAL9” (<code>SCOPE-hspace-v9.md</code>).</p>
+
+<figure class="sim" id="sim-v9">
+<figcaption><b>Figure 15.9.</b> Real data, v9. Each dot is \(e^{T_1}\), the geometric-mean ratio of EX's interaction to a twin's, with its 95% CI (exp of the stored log CI), on a log scale. Blue: \(I\). Red: \(I_{\text{trunk}}\). The dashed line at 2 is the rule's threshold (\(T_1\gt\log 2\)); the solid line at 1 is “no excess”. Tick the box to show \(T_3\) (per unit of main effect), whose rule is “CI above 1”. Source: <code>HS.v9</code> (<code>results/hs_v9_full.json</code>).</figcaption>
+</figure>
+
+<p><b>Result: PASS (REAL9 at both layers).</b> At L16 \(e^{T_1}\) is <span class="hs" data-k="v9r:16:I">...</span>× (log CI <span class="hs" data-k="v9lci:16:I">...</span>); at L40 it is <span class="hs" data-k="v9r:40:I">...</span>× (log CI <span class="hs" data-k="v9lci:40:I">...</span>). On \(I_{\text{trunk}}\): <span class="hs" data-k="v9r:16:I_trunk">...</span>× and <span class="hs" data-k="v9r:40:I_trunk">...</span>×. EX ranks <span class="hs" data-k="v9rank:16:I">...</span> of 9 at L16 and <span class="hs" data-k="v9rank:40:I">...</span> at L40.</p>
+<ul>
+<li><b>5.8×, not 5.9×.</b> \(T_1 = 1.766\), and \(e^{1.766} = 5.85\), which rounds to 5.8. Earlier text said 5.9× (<code>results/CORRECTIONS.md</code>, Oct 6 ~18:25).</li>
+<li><b>Two kinds of average.</b> The headline is a geometric mean over windows. The ratio of mean \(|I|\) is <span class="hs" data-k="v9rom:16:I">...</span>× / <span class="hs" data-k="v9rom:40:I">...</span>× (computed here from <code>mean_ex3 / mean_tw3</code>; <code>CORRECTIONS.md</code> gives 6.6× / 3.3×).</li>
+<li><b>Absolute size is small.</b> Mean \(|I|\) along EX pairs is <span class="hs" data-k="v9ex:16:I">...</span> / <span class="hs" data-k="v9ex:40:I">...</span> nats at L16 / L40, against <span class="hs" data-k="v9tw:16:I">...</span> / <span class="hs" data-k="v9tw:40:I">...</span> for the twins.</li>
+<li><b>Mostly in the trunk:</b> \(|I_{\text{trunk}}|\) is 2.4e-3 against 6.6e-4 for \(|I_{\text{soft}}|\) (paper §4d).</li>
+<li><b>Not driven by a few windows</b> (paper §4d; <code>results/hs_v9_robust.json</code>): EX beats every twin in 88% of windows at L16 (69% at L40); the median per-window ratio is 4.95× (2.26×); dropping the 5 strongest windows leaves 5.2× (2.3×). An earlier “4.3× (2.4×)” did not reproduce and was corrected.</li>
+</ul>
+<div class="box warn">
+<span class="boxtitle">What v9 is and is not</span>
+v9 is a <b>perturbation test</b>. It shows that natural-scale, same-position pairwise interaction concentrates in EX more than in exact global-covariance twins, per unit of main effect too. That is predictive validity in a narrow sense. It is not evidence that the model relies on EX: nothing was decoded, ablated or steered. The twins match the <b>global</b> covariance, not the punctuation-row covariance. About 15 to 23% of the “punctuation” positions are wikitext markup. A fail would have refuted only within-span, single-position pairwise interaction.
+</div>
+
+<h2>15.16 After v9: v10a, v10, v11a and v11</h2>
+<p>v9 showed that EX carries more natural-scale interaction than its twins. Four more tests followed, each frozen before its data existed. They ask four questions in turn.</p>
+<ol>
+<li><b>v10a:</b> does any other token class have its own replicable H-space?</li>
+<li><b>v10:</b> is the frozen punctuation H-space real, used by the model, and distinct from J-space?</li>
+<li><b>v11a:</b> is there a position-general H-space, pooled over all tokens?</li>
+<li><b>v11:</b> is that position-general H-space used, and distinct from J-space?</li>
+</ol>
+<p>Every number below is printed live from <code>assets/hspace_numbers.js</code>, generated from <code>results/hs_v10a.json</code>, <code>results/v10/hs_v10_full.json</code>, <code>results/hs_v11a.json</code> and <code>results/v11/hs_v11_full.json</code>. Numbers marked “(log)” are quoted from <code>results/v10/hs_v10.log</code>, <code>results/v11/hs_v11.log</code> or <code>results/runlog_laptop.md</code>. The rules are in <code>hlens/paper/SCOPE-hspace-v10a.md</code>, <code>-v10.md</code>, <code>-v11a.md</code> and <code>-v11.md</code>.</p>
+
+<h3>New names used in this section</h3>
+<ul>
+<li><b>H</b> is the name of the frozen subspace under test. In v10, H is EX renamed. In v11, H is the new all-position subspace from v11a. Like J-space, the name is a definition, not a claim.</li>
+<li><b>J5</b> is the top 5 directions of the author's whitened J25. <b>PC5</b> is the top 5 eigenvectors of the whitened punctuation covariance.</li>
+<li><b>HJ</b> is H with its J25 part projected out: \(\mathrm{HJ} = \operatorname{orth}\big((I_d - Q_JQ_J^\top)H\big)\), where \(Q_J\) holds J25's orthonormalised directions. If HJ still beats its twins, the effect does not come from the small part of H that lies in J-space.</li>
+<li><b>DiD</b> is a task's own 2×2 interaction (Level 6): \(\text{DiD} = f_{11} - f_{10} - f_{01} + f_{00}\), where the subscripts say which of two factors are switched on in the prompt, and \(f\) is the log-probability difference between the two answer tokens (nats).</li>
+<li><b>\(p_{\text{PI}}\)</b> is a one-sided prediction-interval p-value: how unusual H's \(T_1\) is compared with what each twin scores against the other twins.</li>
+<li>The checks M2 to M7, M3res, R and TOST are explained where they first appear.</li>
+</ul>
+
+<h3>v10a: does another token class carry its own H-space? (12th test, laptop, $0)</h3>
+<p><b>Rule.</b> The v8 rule, word for word, applied separately to four new token classes: function words (articles, pronouns, prepositions and so on), content words, digits and whitespace. A class replicates at a layer if both robust estimators beat every flip on \(\lambda_1\) and split@3, split@3 is at least 0.7, the planted control is found, and the top-5 overlap with run 2 is at least 0.5. A class passes if it replicates at both L16 and L40. Punctuation is the reference row.</p>
+<div class="tablewrap">
+<table id="tbl-v10a">
+<tr><th>class</th><th>L16 split@3 (norm / xnorm)</th><th>L16 cross-run</th><th>L16</th><th>L40 split@3 (norm / xnorm)</th><th>L40 cross-run</th><th>L40</th></tr>
+</table>
+</div>
+<p><b>Verdict:</b> <span class="hs" data-k="v10aV">...</span>. Function and content words replicate at L16 only. Punctuation reproduces at both layers, as it should. So the replicable structure, at this budget and under this rule, is punctuation-specific.</p>
+
+<h3>v10: the registered report on the frozen H-space (13th test, one pod, about $3.6)</h3>
+<p>v10 froze H (EX) and asked a full list of questions, each with a pass/fail rule written in advance. The verdict “I found H-space” needed every check in the MUST tier to pass. The checks, in plain words:</p>
+<ul>
+<li><b>M2, kill check: is H just punctuation geometry?</b> Measure how much of H lies along the top 25 directions of the punctuation covariance, and along the punctuation mean. Kill if either is at least 0.25 and larger than for 200 global twins. Measured (log): 0.026 and 0.003 at L16, 0.024 and 0.004 at L40. No kill, so M2 passes. But the covariance overlap sits just above the twins' maximum at both layers (0.023 and 0.017), so the forced qualifier “punctuation-moment-aligned” is printed.</li>
+<li><b>M3, real:</b> on 40 fresh text windows, at a random punctuation position each, compare H's 1σ interaction with 16 punctuation twins. These twins are a new, stricter control: they match H not only in the global covariance but also in the punctuation rows' second moments. M3 also requires an RMS-freeze arm: freeze every normalisation denominator downstream, and the excess must keep at least half its size, so it is not just the norms bending.</li>
+<li><b>R, random weights:</b> shuffle the weights of every later block and repeat. The excess must drop below half. This rules out an artefact of the architecture alone.</li>
+<li><b>M6, transfer:</b> does H also carry excess interaction inside real two-factor tasks (negation, entity attributes, relational composition)?</li>
+<li><b>M4, routing, and M5, ablation (“used”):</b> at the token where the task's interaction happens, does deleting H remove the interaction more than deleting twins or J5 does?</li>
+<li><b>M7, gold rank:</b> do H's interaction logits rank the task's correct answer?</li>
+<li><b>TOST, negative control:</b> on an unrelated task bank, H's effect must be equivalent to the twins' (90% CI inside ±0.10 of the task interaction).</li>
+</ul>
+<div class="tablewrap">
+<table id="tbl-v10">
+<tr><th>check</th><th>verdict</th></tr>
+</table>
+</div>
+<p><b>Real (M3 passed).</b> Against the 16 punctuation twins, H carries <span class="hs" data-k="vxr:v10:16:I">...</span>× the interaction at L16 and <span class="hs" data-k="vxr:v10:40:I">...</span>× at L40, ranking 1st of 17 both times. That is larger than v9's 5.8× and 2.5×, on different windows and against stricter controls. In the trunk alone it is <span class="hs" data-k="vxr:v10:16:I_trunk">...</span>× and <span class="hs" data-k="vxr:v10:40:I_trunk">...</span>×. With the norms frozen, the excess keeps <span class="hs" data-k="v10ret:16">...</span> and <span class="hs" data-k="v10ret:40">...</span> of its size. On random weights the excess is <span class="hs" data-k="v10R:16">...</span> and <span class="hs" data-k="v10R:40">...</span> of the trained value.</p>
+<p><b>Not only at punctuation.</b> At a random <i>word</i> position, against 8 word-class twins, H still carries <span class="hs" data-k="vxr:v10:16:I_word">...</span>× (L16) and <span class="hs" data-k="vxr:v10:40:I_word">...</span>× (L40). So the forced qualifier “position-general” is printed.</p>
+<p><b>Not used, as far as v10 could test.</b> The task probe site was the last punctuation token. It carried only 0 to 8% of each task's interaction (log), so the site gate failed everywhere and M4 and M5 are inconclusive. M6's transfer also showed up on the <i>unrelated</i> null bank (about 4× at L16, log), so it measures generic curvature, not task use. M6 and M7 fail.</p>
+<p><b>Much smaller than J-space's interaction.</b> On the same windows, J5's 1σ moves carry <span class="hs" data-k="vxj:v10:16">...</span>× (L16) and <span class="hs" data-k="vxj:v10:40">...</span>× (L40) H's raw interaction. H's excess is relative to matched twins, not to J-space.</p>
+<p><b>Verdict (mechanical):</b> MUST tier not passed. Fail: M6, M7. Inconclusive: M4, M5. Pass: M2, M3, R, TOST.</p>
+
+<h3>v11a: a position-general H-space? (14th test, laptop, $0)</h3>
+<p>J-space is defined over all token positions. H-space so far was punctuation-conditional. v11a pools rows from every position (“all”), and separately every non-punctuation position (“nonpunct”), and applies the v10a rule unchanged to the v8 rows. The class was fixed before estimation, so this object is not cherry-picked.</p>
+<div class="tablewrap">
+<table id="tbl-v11a">
+<tr><th>rows</th><th>layer</th><th>λ₁ norm (flip max)</th><th>split@3 norm / xnorm</th><th>split@5 norm / xnorm</th><th>cross-run top-5</th><th>replicates</th></tr>
+</table>
+</div>
+<p><b>Frozen verdict:</b> “<span class="hs" data-k="v11aV">...</span>”. “all” misses at L16 only on split@3 (0.63 and 0.62 against the 0.7 bar), and nonpunct misses at L40 on xnorm. Descriptively (not part of the rule), the top-5 subspace, the size H-space is defined at, is stable at both layers, and it replicates across independent runs at about 0.94. The L16 miss is a top-3 instability from near-tied 3rd and 4th eigenvalues, not a lack of structure (log).</p>
+
+<h3>v11: is the position-general H-space used and distinct? (15th test, one pod, about $4)</h3>
+<p>v11 takes v11a's frozen all-position top 5 as H. It keeps v10's machinery, with three changes decided before the data:</p>
+<ul>
+<li>M6 and M7 are dropped: v10 showed M6 measures generic curvature, and a curvature space is not expected to steer toward a gold answer.</li>
+<li>The site where “used” is tested is chosen by an <b>H-blind localisation scan</b> over the last 6 tokens, on one half of the items, then tested on the other half. It picks the place where the task's interaction lives.</li>
+<li><b>M3res</b> is new: HJ (H minus its J25 part) against its own 16 twins. If HJ passes, the excess is geometrically outside J-space. Known before any data: H overlaps J25 by only 0.060 at L16 and 0.019 at L40, so HJ is nearly H.</li>
+</ul>
+<div class="tablewrap">
+<table id="tbl-v11">
+<tr><th>check</th><th>verdict</th></tr>
+</table>
+</div>
+<p><b>Real at random positions, but below the bar.</b> On 40 fresh windows, at one random position from all tokens, H carries <span class="hs" data-k="vxr:v11:16:I">...</span>× its 16 twins' interaction at L16 and <span class="hs" data-k="vxr:v11:40:I">...</span>× at L40, ranking 1st of 17 at both, with tiny \(p_{\text{PI}}\). L40 fails the preregistered 2× bar. L16 fails only because the RMS-freeze retention came out undefined: one non-finite value in 1 of 40 windows of the freeze arm. Excluding that window, retention is 1.46 (log; descriptive, not part of the rule). The random-weights check passes (<span class="hs" data-k="v11R:16">...</span> and <span class="hs" data-k="v11R:40">...</span> of the trained excess).</p>
+<p><b>Outside J-space geometrically.</b> HJ still beats its twins at both layers (<span class="hs" data-k="vxr:v11:16:HJ_I">...</span>× and <span class="hs" data-k="vxr:v11:40:HJ_I">...</span>×, rank 1 of 17), but below 2×, so M3res fails.</p>
+<p><b>Much weaker than J-space.</b> J5 carries <span class="hs" data-k="vxj:v11:16">...</span>× (L16) and <span class="hs" data-k="vxj:v11:40">...</span>× (L40) H's raw interaction.</p>
+<p><b>“Used” still untestable.</b> All three task banks pass the behavioural gate (the model really does compute their 2×2 interaction). But the localisation scan found a site that carries it in only one context: negation, at L40, 2 tokens from the end (log). Entity attributes and relational composition do not route through any single suffix position at L16 or L40. M4 and M5 need at least 2 evaluable contexts, so both are inconclusive. At the one evaluable site, curvature share was −0.13 and M5 failed there (log). The unrelated-bank TOST passes at L40.</p>
+<p><b>Verdict (mechanical):</b> MUST tier not passed. Fail: M3, M3res. Inconclusive: M4, M5. Pass: R, TOST.</p>
+
+<figure class="sim" id="sim-v10v11">
+<figcaption><b>Figure 15.10.</b> Real data: how much more 1σ interaction the frozen subspace carries than its matched twins, \(e^{T_1}\) with its 95% CI, at each layer, across v9, v10 and v11. Grey dashed line: the 2× bar every test used. Solid line: no excess. Tick the box to switch to the comparison with J-space: \(e^{\log(H/J5)}\), H's raw interaction as a fraction of J5's (below 1 means J5 carries more). Sources: HS.v9, HS.v10, HS.v11.</figcaption>
+</figure>
+
+<h3>What the four tests changed</h3>
+<ul>
+<li><b>Stronger evidence that the structure is real.</b> Against stricter controls (punctuation-moment twins, an RMS freeze, random weights), the punctuation H-space's excess grew (v10). An all-position version replicates across runs at about 0.94 and still beats exact twins at random positions (v11a, v11).</li>
+<li><b>No evidence yet that the model uses it.</b> In v10 the probe site carried almost none of the task interaction. In v11 the tasks mostly do not route through any single suffix position, so only one context could be tested.</li>
+<li><b>Distinct from J-space only geometrically.</b> H lies almost entirely outside J25. But J-space's top directions carry 5 to 13 times more raw interaction than H. H's claim is “more than matched controls”, not “more than J-space”.</li>
+</ul>
+
+<h2>15.17 What is and is not established</h2>
+<p>This list follows paper §4d, README and theory-v2 §8. Everything is about Qwen3.6-27B only.</p>
+<div class="box key">
+<span class="boxtitle">Established (with the scope stated)</span>
+<ol>
+<li><b>Run 1 FAIL.</b> H-space as the top-25 of \(M^{\text{row}}\) is not reproducible at this budget (C1 at all four layers). Final for that definition.</li>
+<li><b>v3 not found.</b> \(M^{\text{diag}}\) via <code>loc_x</code> is unmeasurable at this budget because of heavy tails.</li>
+<li><b>Proposition 8 (proved).</b> Whitened curvature estimators return reproducible PCA axes under any \(\mathcal D\)-invariant curvature law. Reproducibility and PCA overlap of the spatial-sign estimators are therefore not evidence of H-specific structure.</li>
+<li><b>v5 PASS</b> (L40, L52, held out): reproducible non-\(\Sigma\)-commuting curvature structure, not J-space, not the massive span (largely by construction), with split-half surviving a flatness-matched misspecification null.</li>
+<li><b>Twin causal test FAIL:</b> deleting that structure is not more interaction-specific than deleting exact twins.</li>
+<li><b>v8 REPLICATED</b> (L16, L40): a punctuation-conditional subspace reproduces within and across runs (<span class="hs" data-k="v8ov:16:clean">...</span> / <span class="hs" data-k="v8ov:40:clean">...</span> cross-run top-5 overlap after the correction).</li>
+<li><b>v9 PASS</b> (L16, L40): on fresh text, 1σ same-position moves along EX pairs produce more natural-scale pairwise interaction than 8 exact global-covariance twins (<span class="hs" data-k="v9r:16:I">...</span>× and <span class="hs" data-k="v9r:40:I">...</span>×), in the trunk and per unit of main effect.</li>
+<li><b>v10a:</b> no other single token class replicates at both layers; function and content words replicate at L16 only.</li>
+<li><b>v10 M3, R and TOST pass:</b> the frozen punctuation H-space carries <span class="hs" data-k="vxr:v10:16:I">...</span>× and <span class="hs" data-k="vxr:v10:40:I">...</span>× the interaction of 16 punctuation-moment twins, survives an RMS freeze, and vanishes on random weights. The excess also appears at word positions.</li>
+<li><b>v11a and v11:</b> an all-position top-5 subspace replicates across runs (about 0.94), and on fresh text at random positions beats all 16 exact twins (<span class="hs" data-k="vxr:v11:16:I">...</span>× and <span class="hs" data-k="vxr:v11:40:I">...</span>×), also with J-space removed. But this is below the 2× bar at L40, so v11's M3 fails.</li>
+<li><b>v10 and v11 MUST tiers not passed.</b> So, in the J-space sense, “I found H-space” is not established.</li>
+</ol>
+</div>
+<div class="box warn">
+<span class="boxtitle">Not established</span>
+<ul>
+<li>Decoded or verbalisable content of EX.</li>
+<li>Steering or ablation function, or that the model relies on H. “Used” (M4/M5) is still untestable: in v10 the probe site carried 0 to 8% of task interaction, and in v11 the tasks did not route through any single suffix position, so only 1 of 3 contexts localised.</li>
+<li>Functional distinctness from J-space: H lies almost entirely outside J25, but J5 carries about 5 to 13 times more raw interaction.</li>
+<li>Transfer to tasks beyond generic curvature (v10's M6 effect also appeared on the unrelated bank).</li>
+<li>That the excess is independent of the punctuation mean and norms: v10 fixed twins matched in punctuation second moments (and still passed), but the “mean/norm-aligned” and “punctuation-moment-aligned” qualifiers fired.</li>
+<li>Cross-position interactions.</li>
+<li>Generality across models, corpora or other token classes.</li>
+<li>An H-space “as provable as J-space”. The README's phrase is a “validated H-subspace candidate”.</li>
+</ul>
+<p><b>And the meta-caveats:</b> punctuation was chosen after a descriptive look at run-2 data; v8 and v9 are the 10th and 11th tests in the sequence, and v10a, v10, v11a and v11 the 12th to 15th; absolute effects are small (about 1e-3 nats); everything is one model at 27B.</p>
+</div>
+
+<h2>15.18 Open questions (theory-v2 §8)</h2>
+<ol>
+<li><b>Does H-space exist at 27B?</b> For \(M^{\text{row}}\): FAIL. For \(M^{\text{diag}}\): not found (heavy tails). The spatial-sign operator is reproducible mostly through the Σ prior. Its non-\(\Sigma\)-commuting part reproduces (v5) but was not interaction-specific under the twin test. Since then, v8 and v9 give a replicated punctuation-conditional subspace with predictive validity, v10 confirms it against stricter twins, and v11a/v11 find an all-position version that beats exact twins but misses the 2× bar at L40 (README, Oct 8). Still open: a non-\(\Sigma\)-commuting H-structure with demonstrated function, which needs tasks whose interaction is computed at one position at these layers; better causal readouts (for example interactions on the lens objective itself, or on clause-initial subject tokens); ruling out position-dependent covariance.</li>
+<li><b>Does the integrated H-lens fix v1's effective-scale failure?</b> Not at 0.8B, \(\ell = 12\), \(\lambda = 1\) (r 0.16 vs 0.25 for the local lens). Other layers, the triangular weight and v1's own setting are open.</li>
+<li><b>Does the potential lens find the planted pirate × animal sleeper from honest data?</b> Open; nothing implemented. The gate is cross-position, which a per-position MLP lens may not see.</li>
+<li><b>Is H-space distinct from J-space?</b> At 0.8B, H25 under \(M^{\text{row}}\) is largely the high-variance subspace. At 27B, H25–J25 of 0.15 to 0.29 is uninformative given split-half 0.33 to 0.41. (The v5 patterns and EX lie mostly outside J25, per paper §4b and §4d.)</li>
+<li><b>Real-model verification</b> of the attention atom formula (Lemma 2.2) and the MLP atom split: open until the test scripts are committed.</li>
+<li><b>Quadrature convergence</b> for the rectangle average on all draws: open.</li>
+<li><b>Does the local J-adjoint H-lens (Construction 6.1) keep the J-orthogonal part of H-space?</b> Also held-out fidelity, and fidelity at 27B with normalised estimators: open.</li>
+<li><b>Is the signal-capture fraction \(\rho\) of J25/H25 much larger than 0.07 for agent intent (goal 3, G2)?</b> Open.</li>
+</ol>
+
+<h2>15.19 Why this matters for H-space</h2>
+<p>This level is the place every earlier idea gets used. A map back down the ladder:</p>
+<ul>
+<li><b>Units and rates</b> (<a href="00.html">Level 0</a>): whitening changes curvature from “per a.u.²” to “per (1σ)²”, and that change is exactly what creates the Σ prior. The v9 ratio is a pure number because both sides are in nats.</li>
+<li><b>The 2×2 interaction</b> (<a href="06.html">Level 6</a>) is the \(I\) of C4 and of v9, and the rectangle identity (<a href="12.html">Level 12</a>) says it is a rectangle-averaged Hessian.</li>
+<li><b>Hessians, eigenvectors, Weyl</b> (<a href="09.html">Level 9</a>) give H-space\(_k\) and Proposition 0.</li>
+<li><b>HVPs and the bf16/fp32 trick</b> (<a href="11.html">Level 11</a>) make every row \(y_p\) computable at 27B.</li>
+<li><b>Covariance, whitening, split-half, heavy tails, Rademacher signs, randomization tests</b> (<a href="13.html">Level 13</a>) are, respectively, \(\Sigma\), \(\tilde H\), C1, Observation 8.2, Proposition 6 and Corollary 8.1.</li>
+<li><b>The residual stream and the J-lens</b> (<a href="14.html">Level 14</a>) define \(h_\ell\), \(F_c\) and the first-order baseline H-space is measured against.</li>
+</ul>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="18" data-tol="0.001" data-unit="pu">
+<p><b>Exercise 15.1.</b> \(\Sigma = \operatorname{diag}(9, 1)\) a.u.² and \(H = \begin{pmatrix}2&0.5\\0.5&3\end{pmatrix}\) pu per a.u.². Compute \(\tilde H_{11}\), the whitened curvature along PCA axis 1.</p>
+<details><summary>Show answer</summary>
+<p>\(\Sigma^{1/2} = \operatorname{diag}(3, 1)\) a.u. Entry \((i,j)\) of \(\Sigma^{1/2}H\Sigma^{1/2}\) for diagonal \(\Sigma^{1/2}\) is \(\sigma_i H_{ij}\sigma_j\). So \(\tilde H_{11} = 3\times2\times3 = 18\) pu, \(\tilde H_{12} = 3\times0.5\times1 = 1.5\) pu, \(\tilde H_{22} = 3\) pu. In raw units axis 2 curved more (3 vs 2); per standard deviation, axis 1 curves six times more (18 vs 3), because the data move 3 a.u. along it per 1σ.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="5" data-tol="0.001" data-unit="pu²">
+<p><b>Exercise 15.2.</b> Take \(d = 1\) (blocks are numbers), one covector, \(V = \{1, 2\}\), and two equally likely contexts. Context 1: \(\tilde H_{11} = 1\), \(\tilde H_{22} = 3\), \(\tilde H_{12} = \tilde H_{21} = 2\). Context 2: \(\tilde H_{11} = -1\), \(\tilde H_{22} = 1\), \(\tilde H_{12} = \tilde H_{21} = 0\) (all pu). Compute \(M^{\text{lens}}\), \(M^{\text{diag}}\) and \(M^{\text{row}}\). Enter \(M^{\text{row}}\).</p>
+<details><summary>Show answer</summary>
+<p>\(\tilde T = \) mean of the four diagonal values \(= (1 + 3 - 1 + 1)/4 = 1\), so \(M^{\text{lens}} = 1^2 = 1\) pu².</p>
+<p>\(M^{\text{diag}} = (1^2 + 3^2 + (-1)^2 + 1^2)/4 = 12/4 = 3\) pu².</p>
+<p>\(M^{\text{row}} = M^{\text{diag}} + \operatorname{mean}_{x,p}\sum_{q\ne p}\tilde H_{pq}^2 = 3 + (2^2 + 2^2 + 0 + 0)/4 = 3 + 2 = 5\) pu². Ordering \(5\ge3\ge1\), as Proposition 0 says. The gap \(3 - 1 = 2\) is the variance of the diagonal values: \(((1-1)^2 + (3-1)^2 + (-1-1)^2 + (1-1)^2)/4 = 8/4 = 2\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="5" data-tol="0.001" data-unit="pu²">
+<p><b>Exercise 15.3.</b> Use context 1 of Exercise 15.2 only, with \(\xi\sim\mathcal N(0,1)\) and independent signs \(s_1, s_2\). Compute \(\mathbb{E}[y_1^2]\) for the one-sign-vector row \(y_1 = s_1(s_1\tilde H_{11} + s_2\tilde H_{12})\xi\).</p>
+<details><summary>Show answer</summary>
+<p>\(y_1 = (s_1^2\cdot1 + s_1s_2\cdot2)\xi = (1 + 2s_1s_2)\xi\). Square: \((1 + 4s_1s_2 + 4s_1^2s_2^2)\xi^2 = (5 + 4s_1s_2)\xi^2\). Expectation: \(\mathbb{E}[s_1s_2] = 0\), \(\mathbb{E}[\xi^2] = 1\), so \(\mathbb{E}[y_1^2] = 5\) pu². This is \(\tilde H_{11}^2 + \tilde H_{12}^2 = 1 + 4\), the row energy, as Prop. 6(a) says. With two independent sign vectors, \(\mathbb{E}[y^1_1y^2_1] = \tilde H_{11}^2 = 1\): the diagonal energy (Prop. 6b).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.004975" data-tol="0.01">
+<p><b>Exercise 15.4.</b> A sign-flip test uses \(N = 200\) replicates, and none of them reaches the observed statistic. What is the exact p-value? Why can it not be smaller?</p>
+<details><summary>Show answer</summary>
+<p>\(p = (1 + 0)/(200 + 1) = 1/201 \approx 0.004975\). It cannot be smaller because, under the null, the observed value is one of 201 exchangeable draws, so it is the largest with probability exactly 1/201. This is the <code>p_lam1</code> value stored for every v5 cell.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="5.85" data-tol="0.005">
+<p><b>Exercise 15.5.</b> v9 at L16 stores \(T_1 = 1.766\). Compute \(e^{T_1}\) to two decimals, and say why the headline is “5.8×”.</p>
+<details><summary>Show answer</summary>
+<p>\(e^{1.766} \approx 5.847\), so 5.85. To one decimal that is 5.8, not 5.9 (the correction of Oct 6 ~18:25). It is a geometric mean over windows of EX-to-twin interaction ratios, not a ratio of means (which is about 6.6).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="8" data-tol="0.1">
+<p><b>Exercise 15.6.</b> At L16 there are 16,384 dumped rows, and the heaviest 0.1% carry about 97.5% of the energy. About how many rows is that, and on average how many of them land in each half of a random split? Use this to explain the low split-half.</p>
+<details><summary>Show answer</summary>
+<p>\(0.001\times16384\approx16\) rows, so about 8 per half. Each half's \(M\) is then dominated by a different set of about 8 outer products \(y_py_p^\top\), whose directions are whatever those few rows happened to point at. Two different handfuls give two different top eigenvectors, so split-half is low even if the population \(M\) is perfectly well defined.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.2" data-tol="0.01">
+<p><b>Exercise 15.7.</b> Suppose a perfectly stable signal occupies 5 dimensions and the other eigenvectors are pure noise. Roughly what split@25 do you expect? What does this say about C1?</p>
+<details><summary>Show answer</summary>
+<p>The 5 signal directions match (each contributes about 1 to \(\lVert A^\top B\rVert_F^2\)); the 20 noise directions of each half are random within the \(5120 - 5 = 5115\) remaining dimensions, so they contribute about \(20\times20/5115\approx0.08\). So split@25 \(\approx(5 + 0.08)/25\approx0.2\). C1's bar of 0.7 at \(k = 25\) could not be passed by a stable 5-dimensional structure. That is the v3 diagnosis; it did not change run 1's FAIL.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 15.8.</b> Prove that a Σ-orbit twin \(Q = D\,\mathrm{EX}\) (\(D\in\mathcal D\)) removes exactly the same raw variance as EX from data with covariance \(\Sigma\).</p>
+<details><summary>Show answer</summary>
+<p>Work in whitened coordinates, where the centred data \(z = \Sigma^{-1/2}(h - \mu)\) have covariance \(I_d\). Removing the subspace spanned by the orthonormal columns of EX takes away \(\mathrm{EX}\,\mathrm{EX}^\top z\), which in raw units is \(\Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top z\) (a.u.).</p>
+<p>Write \(A = \Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top\), so the removed part is \(Az\). Its mean squared size, step by step.</p>
+<p><b>Step 1: squared length as a trace.</b> For any vector, \(\lVert Az\rVert^2 = (Az)^\top(Az)\), a single number. A single number is its own trace, and the trace of a product of two matrices does not change if their order is swapped (the cyclic property; check with a column \((1,2)^\top\) and a row \((3,4)\): the 2×2 product has trace \(3 + 8 = 11\), the 1×1 product is \(3 + 8 = 11\)). So \(\lVert Az\rVert^2 = \operatorname{tr}\big((Az)(Az)^\top\big) = \operatorname{tr}(Azz^\top A^\top)\).</p>
+<p><b>Step 2: average.</b> The trace is a sum of entries, so it passes through the average (linearity), and \(A\) is fixed: \(\mathbb{E}\lVert Az\rVert^2 = \operatorname{tr}(A\,\mathbb{E}[zz^\top]\,A^\top) = \operatorname{tr}(AA^\top)\), because \(\mathbb{E}[zz^\top] = I_d\).</p>
+<p><b>Step 3: multiply out.</b> \(A^\top = \mathrm{EX}\,\mathrm{EX}^\top\Sigma^{1/2}\) (transpose of a product, reversed; both \(\mathrm{EX}\,\mathrm{EX}^\top\) and \(\Sigma^{1/2}\) are symmetric). So \(AA^\top = \Sigma^{1/2}\mathrm{EX}\,(\mathrm{EX}^\top\mathrm{EX})\,\mathrm{EX}^\top\Sigma^{1/2} = \Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top\Sigma^{1/2}\), because the columns of EX are orthonormal: \(\mathrm{EX}^\top\mathrm{EX} = I_5\).</p>
+<p><b>Step 4: cycle the trace.</b> Move \(\Sigma^{1/2}\mathrm{EX}\) from the front to the back: \(\operatorname{tr}(\Sigma^{1/2}\mathrm{EX}\,\mathrm{EX}^\top\Sigma^{1/2}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma^{1/2}\Sigma^{1/2}\mathrm{EX}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma\,\mathrm{EX})\) a.u.².</p>
+<p><b>Step 5: the twin.</b> Replace EX by \(Q = D\,\mathrm{EX}\). Its columns are still orthonormal: \(Q^\top Q = \mathrm{EX}^\top D^\top D\,\mathrm{EX} = \mathrm{EX}^\top D^2\mathrm{EX} = I_5\), since \(D^\top = D\) and \(D^2 = I_d\). So Steps 1 to 4 apply and give \(\operatorname{tr}(Q^\top\Sigma Q) = \operatorname{tr}(\mathrm{EX}^\top D\Sigma D\,\mathrm{EX}) = \operatorname{tr}(\mathrm{EX}^\top\Sigma\,\mathrm{EX})\), because \(D\Sigma D = \Sigma\). The removed raw variance is identical.</p>
+<p><b>Toy check</b> with \(d = 2\), one direction: \(\Sigma = \operatorname{diag}(4, 1)\), \(\mathrm{EX} = (0.6, 0.8)\), and \(D\) flipping axis 2 so \(Q = (0.6, -0.8)\). Then \(\mathrm{EX}^\top\Sigma\,\mathrm{EX} = 4\times0.36 + 1\times0.64 = 2.08\), and \(Q^\top\Sigma Q = 4\times0.36 + 1\times0.64 = 2.08\). Same.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 15.9.</b> The first flip test (variant b) projected out a fixed, non-axis-aligned span \(Q\). Explain why the test was still exact but its split-half condition had no power, and why v5's axis-aligned drop avoids this.</p>
+<details><summary>Show answer</summary>
+<p>Exact: \(\pi_Q\) is a fixed function, so the flipped-then-projected replicates are still exchangeable with the projected real data. No power: each replicate's operator is \((I_d - QQ^\top)DMD(I_d - QQ^\top)\). Averaged over flips this is \((I_d - QQ^\top)\Lambda(I_d - QQ^\top)\), the same non-diagonal matrix for every replicate. Its patterns are reproducible, so the null split@3 is high (0.95 to 0.98 measured) and the observed split cannot beat it. An axis-aligned mask \(K\) commutes with every \(D\), so masking adds no fixed off-diagonal structure: \(KDMDK = DKMKD\), whose flip average is diagonal.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 15.10.</b> v5 passed, the twin causal test failed, and v9 passed. Explain why these three results do not contradict each other.</p>
+<details><summary>Show answer</summary>
+<p>They test different things on different objects. v5 tests whether curvature energy has reproducible structure beyond \(\Sigma\) (all rows, L40/L52): yes. The twin test asks whether <i>deleting</i> that structure removes span-to-span interactions more than main effects: not detectably. v9 uses a different subspace (punctuation-conditional EX, from fresh v8 data, L16/L40) and asks whether 1σ moves along it <i>create</i> more same-position pairwise interaction than twin moves: yes. Ablating a subspace and perturbing along it are different interventions, and the twin test's interactions were between two 8-token spans of context (cross-position), while v9's are between two moves at one position.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/hspace_numbers.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  "use strict";
+  var LA = S.linalg;
+  var HSd = window.HS;
+
+  /* ---------- helpers ---------- */
+  function hostOf(h) {
+    var cap = h.querySelector("figcaption"), w = document.createElement("div");
+    h.insertBefore(w, cap); return w;
+  }
+  function ctlOf(wrap) {
+    var c = wrap.querySelector(":scope > .controls");
+    if (!c) { c = document.createElement("div"); c.className = "controls"; wrap.appendChild(c); }
+    return c;
+  }
+  function makeSelect(wrap, label, opts, onchange) {
+    var sel = document.createElement("select");
+    opts.forEach(function (o, i) { var e = document.createElement("option"); e.value = i; e.textContent = o; sel.appendChild(e); });
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = label + ": ";
+    lab.style.marginRight = "14px"; lab.appendChild(sel); ctlOf(wrap).appendChild(lab);
+    sel.addEventListener("change", function () { onchange(+sel.value); });
+    return sel;
+  }
+  function zeros(n, m) { var A = []; for (var i = 0; i < n; i++) { A.push([]); for (var j = 0; j < m; j++) A[i].push(0); } return A; }
+  function mm(A, B) {
+    var n = A.length, m = B[0].length, k = B.length, C = zeros(n, m);
+    for (var i = 0; i < n; i++) for (var j = 0; j < m; j++) { var s = 0; for (var t = 0; t < k; t++) s += A[i][t] * B[t][j]; C[i][j] = s; }
+    return C;
+  }
+  function tp(A) { var n = A.length, m = A[0].length, B = zeros(m, n); for (var i = 0; i < n; i++) for (var j = 0; j < m; j++) B[j][i] = A[i][j]; return B; }
+  function addM(A, B, s) { if (s == null) s = 1; return A.map(function (r, i) { return r.map(function (a, j) { return a + s * B[i][j]; }); }); }
+  function scM(A, s) { return A.map(function (r) { return r.map(function (a) { return a * s; }); }); }
+  function outerM(a, b) { return a.map(function (x) { return b.map(function (y) { return x * y; }); }); }
+  function frob(A) { var s = 0; A.forEach(function (r) { r.forEach(function (a) { s += a * a; }); }); return Math.sqrt(s); }
+  function relErr(A, B) { return frob(addM(A, B, -1)) / frob(B); }
+  function randn(rng, n) { var v = []; for (var i = 0; i < n; i++) v.push(rng.n()); return v; }
+  function unit(v) { var n = LA.norm(v) || 1; return v.map(function (a) { return a / n; }); }
+  function randMat(rng, n, m) { var A = zeros(n, m); for (var i = 0; i < n; i++) for (var j = 0; j < m; j++) A[i][j] = rng.n(); return A; }
+  function randSym(rng, n) { var A = randMat(rng, n, n); return scM(addM(A, tp(A)), 0.5); }
+  function goe(rng, n) {
+    var A = zeros(n, n);
+    for (var i = 0; i < n; i++) {
+      A[i][i] = rng.n() * Math.sqrt(2 / n);
+      for (var j = i + 1; j < n; j++) { var g = rng.n() / Math.sqrt(n); A[i][j] = g; A[j][i] = g; }
+    }
+    return A;
+  }
+  function randOrth(rng, n) {
+    var cols = [];
+    for (var j = 0; j < n; j++) {
+      var v = randn(rng, n);
+      cols.forEach(function (c) { var d = LA.dot(v, c); v = v.map(function (a, i) { return a - d * c[i]; }); });
+      cols.push(unit(v));
+    }
+    return tp(cols); /* column j = axis j */
+  }
+  function f2(x) { return S.fmt(x, 2); }
+  function pct(x, d) { return S.fmt(100 * x, d == null ? 1 : d) + "%"; }
+  function sci(x, d) { return x.toExponential(d == null ? 1 : d); }
+  function sciTimes(x) { var s = x.toExponential(2).split("e"); return s[0] + " × 10^" + (+s[1]); }
+  function commas(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+  /* ---------- live numbers from window.HS ---------- */
+  var r1 = HSd.run1.layers, ht = HSd.heavy_tails.layers, f5 = HSd.flip5.layers, v8 = HSd.v8.layers, v9 = HSd.v9.layers;
+  function f5cells() { var o = []; ["40", "52"].forEach(function (L) { ["norm", "xnorm"].forEach(function (e) { o.push(f5[L][e]); }); }); return o; }
+  var tw5 = HSd.twin5.layers, v8f = HSd.v8_full.layers;
+  function twins(L) { var o = []; for (var j = 0; j < 8; j++) o.push(tw5[L].conds["tw_" + j]); return o; }
+  function sgn(x, d) { var t = S.fmt(x, d); return (x > 0 && /[1-9]/.test(t) ? "+" : "") + t; }
+  function span(arr, d, suf) { return S.fmt(Math.min.apply(null, arr), d) + " to " + S.fmt(Math.max.apply(null, arr), d) + (suf || ""); }
+  var GET = {
+    r1rand: function () { return S.fmt(r1["16"].random_overlap, 4); },
+    r1split: function (L) { return f2(r1[L].split_half_top25); },
+    r1energy: function (L) { return f2(r1[L].top25_energy_frac); },
+    r1j: function (L) { return f2(r1[L].H25_vs_J25_overlap); },
+    r1c4: function (L) { return S.fmt(r1[L].interaction_ratio_1sigma, 0) + "×"; },
+    r1pr: function (L) { return S.fmt(r1[L].participation_ratio, 1); },
+    htn: function (L) { return commas(ht[L].n_rows); },
+    htn01: function (L) { return "≈ " + Math.round(ht[L].n_rows * 0.001); },
+    httop: function (L, q) { return pct(ht[L].energy_share_top[q]); },
+    htR: function (L, k) { return pct(ht[L].rows_by_token_class[k]); },
+    htE: function (L, k) { return pct(ht[L].energy_by_token_class[k]); },
+    htsh: function (L, w, k) { return f2(ht[L].split_half_from_dump[w][k]); },
+    f5p: function (L, e) { return S.fmt(f5[L][e].p_lam1, 6); },
+    f5ratiorange: function () { return span(f5cells().map(function (c) { return c.obs_lam[0] / c.null_lam1_max; }), 1, "×"); },
+    f5s3range: function () { return span(f5cells().map(function (c) { return c.obs_split.k3; }), 2); },
+    f5n3range: function () { return span(f5cells().map(function (c) { return c.null_split3_max; }), 3); },
+    v8ov: function (L, w) { return S.fmt(w === "all" ? v8[L].overlap_all_vs_run2 : v8[L].overlap_clean_vs_run2, 3); },
+    v8rm: function (L) { return String(v8[L].rows_removed); },
+    v8pr: function (L) { return commas(v8[L].punct_rows_clean); },
+    v9n: function (L) { return String(HSd.v9.n_windows[L]); },
+    v9r: function (L, X) { return S.fmt(Math.exp(v9[L][X].T1), 1); },
+    v9lci: function (L, X) { var c = v9[L][X].T1_ci; return "[" + f2(c[0]) + ", " + f2(c[1]) + "]"; },
+    v9rank: function (L, X) { return String(v9[L][X].rank); },
+    v9rom: function (L, X) { return S.fmt(v9[L][X].mean_ex3 / v9[L][X].mean_tw3, 1); },
+    v9ex: function (L, X) { return sci(v9[L][X].mean_ex3); },
+    v9tw: function (L, X) { return sci(v9[L][X].mean_tw3); },
+    twN: function (L) { return String(tw5[L].n_windows); },
+    twS: function (L) { return sgn(tw5[L].conds.EX.S, 3); },
+    twSm: function (L) { return sgn(twins(L).reduce(function (a, t) { return a + t.S; }, 0) / 8, 3); },
+    twRank: function (L) { return String(tw5[L].rank_EX_among_9); },
+    twCI: function (L) { var c = tw5[L].dS_ci95; return "[" + sgn(c[0], 3) + ", " + sgn(c[1], 3) + "]"; },
+    twKL: function (L) { var k = twins(L).map(function (t) { return t.KL; }); return S.fmt(tw5[L].conds.EX.KL, 4) + " vs [" + S.fmt(Math.min.apply(null, k), 4) + ", " + S.fmt(Math.max.apply(null, k), 4) + "]"; },
+    twReal: function (L) { return tw5[L].REAL ? "yes" : "no"; },
+    twKLratio: function () { var r = []; ["40", "52"].forEach(function (L) { twins(L).forEach(function (t) { r.push(tw5[L].conds.EX.KL / t.KL); }); }); return span(r, 1); },
+    twPca: function (L) { return sgn(tw5[L].conds.pca25.S, 2); },
+    v8lam: function (L, e) { return S.fmt(v8f[L].punct[e].obs_lam[0], 1); },
+    v8null: function (L, e) { return S.fmt(v8f[L].punct[e].null_lam1_max, 1); },
+    v8s3: function (L, e) { return f2(v8f[L].punct[e].obs_split.k3); },
+    v8chance: function (L) { return S.fmt(v8f[L].random_expect_top5, 4); },
+    v8plant: function () { var r = []; ["16", "40"].forEach(function (L) { ["norm", "xnorm"].forEach(function (e) { r.push(v8f[L].planted[e].planted_recovered_top3); }); }); return span(r, 2); },
+    scKish: function (L) { return pct(v8f[L].screen.kish_ess_frac_rows, 3); },
+    scRows: function (L) { return commas(v8f[L].screen.n_rows); },
+    scWin: function (L) { return String(v8f[L].screen.n_windows); },
+    scSpR: function (L) { return f2(v8f[L].screen.spearman_rows); },
+    scSpW: function (L) { return f2(v8f[L].screen.spearman_windows); },
+    scVR: function (L, w) { var x = v8f[L].screen["window_var_reduction_" + w]; return x >= 100 ? commas(Math.round(x)) : String(+x.toPrecision(3)); }
+  };
+  Array.prototype.forEach.call(document.querySelectorAll(".hs[data-k]"), function (el) {
+    var parts = el.getAttribute("data-k").split(":"), fn = GET[parts[0]];
+    try { el.textContent = fn ? fn.apply(null, parts.slice(1)) : "?"; } catch (e) { el.textContent = "?"; }
+  });
+
+
+  /* ---------- v10a, v10, v11a, v11 (section 15.16) ---------- */
+  var VX = { v10: HSd.v10, v11: HSd.v11 };
+  function vxJ5(t, L) { var w = VX[t].W[L]; return Math.exp(-(t === "v10" ? w.I_vs_J5.mean : w.log_H_over_J5.mean)); }
+  function vxR(t, L) { var r = VX[t].R[L]; return r.I_random.T1 / r.T1_trained_same_windows; }
+  GET.v10aV = function () { return HSd.v10a.verdict; };
+  GET.v11aV = function () { return HSd.v11a.verdict; };
+  GET.vxr = function (t, L, X) { return S.fmt(Math.exp(VX[t].W[L][X].T1), 1); };
+  GET.vxj = function (t, L) { return S.fmt(vxJ5(t, L), 1); };
+  GET.v10ret = function (L) { return f2(HSd.v10.W[L].freeze_retained); };
+  GET.v10R = function (L) { return f2(vxR("v10", L)); };
+  GET.v11R = function (L) { return f2(vxR("v11", L)); };
+  (function () {
+    function rows(id, html) { var t = document.getElementById(id); if (t) t.insertAdjacentHTML("beforeend", html); }
+    var a = HSd.v10a.layers, h = "";
+    ["function", "content", "digit", "whitespace", "punctuation"].forEach(function (c) {
+      h += "<tr><td>" + c + (c === "punctuation" ? " (reference)" : "") + "</td>";
+      ["16", "40"].forEach(function (L) {
+        var r = a[L][c];
+        h += "<td>" + f2(r.split3.norm) + " / " + f2(r.split3.xnorm) + "</td><td>" + f2(r.cross_run_top5_overlap) + "</td><td>" + (r.replicates ? "replicates" : "no") + "</td>";
+      });
+      h += "</tr>";
+    });
+    rows("tbl-v10a", h);
+    function verdictRows(V, order) {
+      return order.filter(function (k) { return V[k]; }).map(function (k) { return "<tr><td>" + k + "</td><td>" + V[k] + "</td></tr>"; }).join("");
+    }
+    rows("tbl-v10", verdictRows(HSd.v10.verdict, ["M2", "M3", "R", "M6", "M4", "M5", "M7", "TOST"]));
+    rows("tbl-v11", verdictRows(HSd.v11.verdict, ["M3", "M3res", "R", "M4", "M5", "M4_HJ", "M5_HJ", "TOST"]));
+    var b = HSd.v11a.layers; h = "";
+    ["all", "nonpunct", "punctuation"].forEach(function (c) {
+      ["16", "40"].forEach(function (L) {
+        var r = b[L][c];
+        h += "<tr><td>" + c + "</td><td>L" + L + "</td><td>" + S.fmt(r.lam1.norm, 2) + " (" + S.fmt(r.null_lam1_max.norm, 2) + ")</td><td>" +
+          f2(r.split3.norm) + " / " + f2(r.split3.xnorm) + "</td><td>" + f2(r.split5.norm) + " / " + f2(r.split5.xnorm) + "</td><td>" +
+          S.fmt(r.cross_run_top5_overlap, 3) + "</td><td>" + (r.replicates ? "yes" : "no") + "</td></tr>";
+      });
+    });
+    rows("tbl-v11a", h);
+  })();
+  Array.prototype.forEach.call(document.querySelectorAll(".hs[data-k]"), function (el) {
+    var parts = el.getAttribute("data-k").split(":"), fn = GET[parts[0]];
+    if (el.textContent !== "..." && el.textContent !== "?") return;
+    try { el.textContent = fn ? fn.apply(null, parts.slice(1)) : "?"; } catch (e) { el.textContent = "?"; }
+  });
+
+  /* ---------- Figure 15.10: v9, v10, v11 against twins and J5 ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-v10v11"));
+    var c = S.canvas(wrap, { aspect: 0.55, maxH: 420 });
+    var vJ = false;
+    S.checkbox(wrap, "show H's raw interaction as a fraction of J5's instead", false, function (b) { vJ = b; c.redraw(); });
+    var out = S.readout(wrap);
+    var LN10 = Math.LN10;
+    var arms = [
+      { lab: "v9 EX", sub: "8 global twins, punct.", get: function (L) { var o = v9[L].I; return [o.T1, o.T1_ci]; } },
+      { lab: "v10 H", sub: "16 punct. twins", get: function (L) { var o = HSd.v10.W[L].I; return [o.T1, o.ci95]; }, j: function (L) { var o = HSd.v10.W[L].I_vs_J5; return [o.mean, o.ci95]; } },
+      { lab: "v10 H", sub: "word positions", get: function (L) { var o = HSd.v10.W[L].I_word; return [o.T1, o.ci95]; } },
+      { lab: "v11 H", sub: "all positions", get: function (L) { var o = HSd.v11.W[L].I; return [o.T1, o.ci95]; }, j: function (L) { var o = HSd.v11.W[L].log_H_over_J5; return [o.mean, o.ci95]; } },
+      { lab: "v11 HJ", sub: "H minus J25", get: function (L) { var o = HSd.v11.W[L].HJ_I; return [o.T1, o.ci95]; }, j: function (L) { var o = HSd.v11.W[L].log_HJ_over_J5; return [o.mean, o.ci95]; } }
+    ];
+    var v = S.view(c, { xmin: 0, xmax: arms.length + 0.2, ymin: Math.log10(0.8), ymax: Math.log10(12), padLeft: 52, padBottom: 52 });
+    c.draw = function () {
+      var list = vJ ? arms.filter(function (a) { return a.j; }) : arms;
+      v.set({ xmax: list.length + 0.2, ymin: vJ ? Math.log10(0.05) : Math.log10(0.8), ymax: vJ ? Math.log10(1.5) : Math.log10(12) });
+      (vJ ? [0.05, 0.1, 0.2, 0.5, 1] : [1, 2, 3, 5, 10]).forEach(function (t) {
+        var y = Math.log10(t);
+        v.line(0, y, v.r.xmax, y, { color: t === 1 ? S.col.ink : S.col.faint, width: t === 1 ? 1.2 : 1 });
+        v.text(t + "×", 0, y, { align: "right", dx: -6, dy: 4, font: S.fontSmall });
+      });
+      v.line(0, v.r.ymin, 0, v.r.ymax, { color: S.col.ink, width: 1 });
+      if (!vJ) {
+        v.line(0, Math.log10(2), v.r.xmax, Math.log10(2), { dash: [6, 4], color: S.col.gray, width: 1.2 });
+        v.text("2× bar", v.r.xmax - 0.05, Math.log10(2), { align: "right", dy: -5, font: S.fontSmall });
+      }
+      v.text(vJ ? "H's raw interaction ÷ J5's (log scale)" : "e^T1: interaction vs matched twins (log scale)", 0.1, v.r.ymax, { dy: 14, font: S.fontSmall });
+      var lines = [];
+      list.forEach(function (a, i) {
+        ["16", "40"].forEach(function (L, li) {
+          var g = vJ ? a.j(L) : a.get(L), x = 0.75 + i + li * 0.35, col = li ? S.col.red : S.col.blue;
+          var y = g[0] / LN10, ya = g[1][0] / LN10, yb = g[1][1] / LN10;
+          v.line(x, ya, x, yb, { color: col, width: 2 });
+          v.line(x - 0.06, ya, x + 0.06, ya, { color: col, width: 2 });
+          v.line(x - 0.06, yb, x + 0.06, yb, { color: col, width: 2 });
+          v.dot(x, y, { color: col, r: 4.5 });
+          lines.push((a.lab + " (" + a.sub + ") L" + L + "                                   ").slice(0, 38) +
+            S.fmt(Math.exp(g[0]), 2) + "×  [" + S.fmt(Math.exp(g[1][0]), 2) + ", " + S.fmt(Math.exp(g[1][1]), 2) + "]");
+        });
+        v.text(a.lab, 0.92 + i, v.r.ymin, { align: "center", dy: 16, font: S.fontSmall });
+        v.text(a.sub, 0.92 + i, v.r.ymin, { align: "center", dy: 30, font: S.fontSmall });
+      });
+      v.text("blue L16, red L40", v.r.xmax - 0.05, v.r.ymin, { align: "right", dy: -6, font: S.fontSmall });
+      out.textContent = lines.join("\n");
+    };
+    c.redraw();
+  })();
+
+  /* ---------- Figure 15.1: Proposition 0 toy ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-prop0"));
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 380 });
+    var vb = S.view(c, { xmin: 0, xmax: 9, ymin: 0, ymax: 1, padLeft: 48, padBottom: 40, padTop: 16 });
+    var vr = S.view(c, { xmin: -1.3, xmax: 1.3, ymin: -1.3, ymax: 1.3, pad: 16 });
+    var NX = 3, NV = 3, B0 = [[1.2, 0.5], [0.5, 0.4]], seed = 3, blocks = [];
+    var vary = S.slider(wrap, { label: "variation over contexts", min: 0, max: 2, step: 0.05, value: 0.8, unit: "pu", digits: 2, oninput: function () { c.redraw(); } });
+    var cross = S.slider(wrap, { label: "cross-position strength", min: 0, max: 1.5, step: 0.05, value: 0.5, unit: "pu", digits: 2, oninput: function () { c.redraw(); } });
+    S.button(wrap, "new random blocks", function () { seed++; gen(); c.redraw(); });
+    var out = S.readout(wrap);
+    function gen() {
+      var rng = S.rng(1000 + seed); blocks = [];
+      for (var x = 0; x < NX; x++) {
+        var E = [], F = [];
+        for (var p = 0; p < NV; p++) { E.push(randSym(rng, 2)); F.push([]); for (var q = 0; q < NV; q++) F[p].push(randMat(rng, 2, 2)); }
+        blocks.push({ E: E, F: F });
+      }
+    }
+    function Hb(x, p, q) {
+      var b = blocks[x];
+      if (p === q) return addM(B0, b.E[p], vary.get());
+      if (p < q) return scM(b.F[p][q], cross.get());
+      return tp(scM(b.F[q][p], cross.get()));
+    }
+    function ops() {
+      var T = zeros(2, 2), Md = zeros(2, 2), Mr = zeros(2, 2), n = NX * NV;
+      for (var x = 0; x < NX; x++) for (var p = 0; p < NV; p++) {
+        var A = Hb(x, p, p);
+        T = addM(T, A, 1 / n); Md = addM(Md, mm(A, A), 1 / n);
+        for (var q = 0; q < NV; q++) { var Bq = Hb(x, p, q); Mr = addM(Mr, mm(Bq, tp(Bq)), 1 / n); }
+      }
+      return { lens: mm(T, T), diag: Md, row: Mr };
+    }
+    var names = ["row", "diag", "lens"];
+    var col = { row: S.col.red, diag: S.col.blue, lens: S.col.ink }, lab = { row: "M row", diag: "M diag", lens: "M lens" };
+    function ang(a, b) { return Math.acos(Math.min(1, Math.abs(LA.dot(a, b)))) * 180 / Math.PI; }
+    c.draw = function () {
+      var sp = Math.round(c.W * 0.6);
+      vb.set({ left: 0, width: sp }); vr.set({ left: sp, width: c.W - sp });
+      var o = ops(), E = {};
+      names.forEach(function (k) { E[k] = LA.eigSym(o[k]); });
+      vb.set({ ymax: Math.max(0.5, E.row.vals[0] * 1.15) });
+      vb.axes({ ylabel: "eigenvalue (pu²)", xnums: false });
+      names.forEach(function (k, g) {
+        for (var i = 0; i < 2; i++) {
+          var x0 = 0.5 + g * 2.9 + i * 1.1;
+          vb.rect(x0, 0, 0.9, Math.max(0, E[k].vals[i]), { color: col[k], fill: col[k], fillAlpha: i === 0 ? 0.55 : 0.2 });
+          vb.text("λ" + (i + 1), x0 + 0.45, 0, { align: "center", dy: 14, font: S.fontSmall });
+        }
+        vb.text(lab[k], 0.5 + g * 2.9 + 1.0, 0, { align: "center", dy: 31, color: col[k], font: S.fontSmall });
+      });
+      var circ = []; for (var t = 0; t <= 64; t++) circ.push([Math.cos(t * Math.PI / 32), Math.sin(t * Math.PI / 32)]);
+      vr.poly(circ, { color: S.col.light, width: 1 });
+      vr.line(-1.3, 0, 1.3, 0, { color: S.col.faint, width: 1 }); vr.line(0, -1.3, 0, 1.3, { color: S.col.faint, width: 1 });
+      names.forEach(function (k) {
+        var e = E[k].vecs[0];
+        vr.line(-e[0], -e[1], e[0], e[1], { color: col[k], width: k === "lens" ? 2 : 3, dash: k === "lens" ? [5, 4] : [] });
+      });
+      vr.text("top eigenvectors", -1.25, 1.18, { font: S.fontSmall });
+      vr.text("coordinate 1 →", 0.35, -0.08, { font: S.fontSmall, color: S.col.gray });
+      var ok1 = E.row.vals[0] >= E.diag.vals[0] - 1e-12 && E.diag.vals[0] >= E.lens.vals[0] - 1e-12;
+      var ok2 = E.row.vals[1] >= E.diag.vals[1] - 1e-12 && E.diag.vals[1] >= E.lens.vals[1] - 1e-12;
+      out.textContent =
+        "eigenvalues (pu²):  M row " + f2(E.row.vals[0]) + ", " + f2(E.row.vals[1]) +
+        "   M diag " + f2(E.diag.vals[0]) + ", " + f2(E.diag.vals[1]) +
+        "   M lens " + f2(E.lens.vals[0]) + ", " + f2(E.lens.vals[1]) + "\n" +
+        "traces (pu²): row " + f2(E.row.vals[0] + E.row.vals[1]) + " ≥ diag " + f2(E.diag.vals[0] + E.diag.vals[1]) + " ≥ lens " + f2(E.lens.vals[0] + E.lens.vals[1]) + "\n" +
+        "λ1 ordering row ≥ diag ≥ lens: " + (ok1 ? "holds" : "BROKEN") + "    λ2 ordering: " + (ok2 ? "holds" : "BROKEN") + "\n" +
+        "angle between top eigenvectors: row vs diag " + S.fmt(ang(E.row.vecs[0], E.diag.vecs[0]), 0) + "°, diag vs lens " + S.fmt(ang(E.diag.vecs[0], E.lens.vecs[0]), 0) + "°";
+    };
+    gen(); c.redraw();
+  })();
+
+  /* ---------- Figure 15.2: Proposition 6 toy ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-prop6"));
+    var c = S.canvas(wrap, { aspect: 0.55, maxH: 400 });
+    var v = S.view(c, { xmin: 1, xmax: 6, ymin: -3, ymax: 0.5, padLeft: 48, padBottom: 34 });
+    var NX = 3, NV = 4, H = [], target = {};
+    (function build() {
+      var rng = S.rng(77), B0 = [[1.0, 0.4], [0.4, 0.6]], x, p, q;
+      for (x = 0; x < NX; x++) { H.push([]); for (p = 0; p < NV; p++) H[x].push([]); }
+      for (x = 0; x < NX; x++) for (p = 0; p < NV; p++) {
+        H[x][p][p] = addM(B0, randSym(rng, 2), 0.7);
+        for (q = p + 1; q < NV; q++) { var F = scM(randMat(rng, 2, 2), 0.5); H[x][p][q] = F; H[x][q][p] = tp(F); }
+      }
+      var Mr = zeros(2, 2), Md = zeros(2, 2), n = NX * NV;
+      for (x = 0; x < NX; x++) for (p = 0; p < NV; p++) {
+        Md = addM(Md, mm(H[x][p][p], H[x][p][p]), 1 / n);
+        for (q = 0; q < NV; q++) Mr = addM(Mr, mm(H[x][p][q], tp(H[x][p][q])), 1 / n);
+      }
+      target.row = Mr; target.diag = Md;
+    })();
+    var rng, Ma, Mb, nP, cnt, hist;
+    function rowOf(x, s, xi, p) {
+      var y0 = 0, y1 = 0;
+      for (var q = 0; q < NV; q++) {
+        var Hq = H[x][p][q], sq = s[p] * s[q];
+        y0 += sq * (Hq[0][0] * xi[0] + Hq[0][1] * xi[1]);
+        y1 += sq * (Hq[1][0] * xi[0] + Hq[1][1] * xi[1]);
+      }
+      return [y0, y1];
+    }
+    function est(M) { return [[M[0][0] / cnt, M[0][1] / cnt], [M[0][1] / cnt, M[1][1] / cnt]]; }
+    function snap() {
+      var A = est(Ma), B = est(Mb);
+      return { n: nP, aa: relErr(A, target.row), ad: relErr(A, target.diag), bd: relErr(B, target.diag), br: relErr(B, target.row), bmin: LA.eigSym(B).vals[1] };
+    }
+    function run(m) {
+      for (var it = 0; it < m; it++) {
+        var x = Math.floor(rng.u() * NX), xi = [rng.n(), rng.n()], s1 = [], s2 = [], p;
+        for (p = 0; p < NV; p++) { s1.push(rng.u() < 0.5 ? -1 : 1); s2.push(rng.u() < 0.5 ? -1 : 1); }
+        for (p = 0; p < NV; p++) {
+          var a = rowOf(x, s1, xi, p), b = rowOf(x, s2, xi, p);
+          Ma[0][0] += a[0] * a[0]; Ma[0][1] += a[0] * a[1]; Ma[1][1] += a[1] * a[1];
+          Mb[0][0] += a[0] * b[0]; Mb[0][1] += 0.5 * (a[0] * b[1] + a[1] * b[0]); Mb[1][1] += a[1] * b[1];
+          cnt++;
+        }
+        nP++;
+      }
+      if (m > 0) hist.push(snap());
+    }
+    function reset() {
+      rng = S.rng(4242); Ma = zeros(2, 2); Mb = zeros(2, 2); nP = 0; cnt = 0; hist = [];
+      [10, 20, 50, 100, 200, 500, 1000].forEach(function (t) { run(t - nP); });
+      c.redraw();
+    }
+    function add(m) { if (nP + m > 1e6) m = Math.max(0, 1e6 - nP); run(m); c.redraw(); }
+    S.button(wrap, "+1,000 probes", function () { add(1000); });
+    S.button(wrap, "+10,000 probes", function () { add(10000); });
+    S.button(wrap, "+100,000 probes", function () { add(100000); });
+    S.button(wrap, "reset", reset);
+    var out = S.readout(wrap);
+    var series = [
+      { k: "aa", color: S.col.blue, dash: [], name: "(a) vs M row" },
+      { k: "ad", color: S.col.blue, dash: [6, 4], name: "(a) vs M diag" },
+      { k: "bd", color: S.col.red, dash: [], name: "(b) vs M diag" },
+      { k: "br", color: S.col.red, dash: [6, 4], name: "(b) vs M row" }
+    ];
+    c.draw = function () {
+      v.axes({ xlabel: "log₁₀(probes)", ylabel: "log₁₀(relative error)", xticks: 1, yticks: 0.5, frame: true });
+      var h0 = hist[0];
+      v.fn(function (t) { return Math.log10(h0.aa) - 0.5 * (t - Math.log10(h0.n)); }, { color: S.col.gray, dash: [2, 3], width: 1 });
+      series.forEach(function (s, si) {
+        var pts = hist.map(function (h) { return [Math.log10(h.n), Math.log10(h[s.k])]; });
+        v.poly(pts, { close: false, color: s.color, dash: s.dash, width: 2 });
+        var ly = -2.0 - 0.22 * si;
+        v.line(1.1, ly, 1.45, ly, { color: s.color, dash: s.dash, width: 2 });
+        v.text(s.name, 1.52, ly, { dy: 4, font: S.fontSmall, color: s.color });
+      });
+      v.line(1.1, -2.88, 1.45, -2.88, { color: S.col.gray, dash: [2, 3], width: 1 });
+      v.text("slope −1/2 (error ∝ 1/√n)", 1.52, -2.88, { dy: 4, font: S.fontSmall, color: S.col.gray });
+      var h = hist[hist.length - 1];
+      out.textContent =
+        "probes n = " + commas(h.n) + "   (rows = n × 4 positions)\n" +
+        "(a) one sign vector:  vs its target M row " + pct(h.aa, 2) + "   vs M diag " + pct(h.ad, 1) + "\n" +
+        "(b) two sign vectors: vs its target M diag " + pct(h.bd, 2) + "   vs M row " + pct(h.br, 1) + "\n" +
+        "smallest eigenvalue of the (b) estimate: " + S.fmt(h.bmin, 3) + " pu²   (target's smallest: " + S.fmt(LA.eigSym(target.diag).vals[1], 3) + " pu²)";
+    };
+    reset();
+  })();
+
+  /* ---------- Figure 15.3: run-1 spectra ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-run1"));
+    var c = S.canvas(wrap, { aspect: 0.55, maxH: 420 });
+    var v = S.view(c, { xmin: 0, xmax: 71, ymin: 0, ymax: 7, padLeft: 48, padBottom: 34 });
+    var Ls = ["16", "28", "40", "52"], colr = { "16": S.col.blue, "28": S.col.red, "40": S.col.green, "52": S.col.orange };
+    var cur = 0, norm = false;
+    makeSelect(wrap, "highlight layer", Ls.map(function (l) { return "L" + l; }), function (i) { cur = i; c.redraw(); });
+    S.checkbox(wrap, "divide by λ1", false, function (b) { norm = b; c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var lo = 1e9, hi = -1e9;
+      Ls.forEach(function (l) {
+        var e = r1[l].eigs_top64, s = norm ? e[0] : 1;
+        e.forEach(function (x) { var y = Math.log10(x / s); lo = Math.min(lo, y); hi = Math.max(hi, y); });
+      });
+      v.set({ ymin: Math.floor(lo) - 0.5, ymax: Math.ceil(hi) + (norm ? 0.2 : 0) });
+      v.axes({ xlabel: "index i", ylabel: norm ? "log₁₀(λi / λ1)" : "log₁₀ λi   (λ in pu²)", xticks: 8, yticks: 1, frame: true });
+      v.line(25, v.r.ymin, 25, v.r.ymax, { color: S.col.gray, dash: [4, 4], width: 1 });
+      v.text("k = 25", 25, v.r.ymax, { dx: 4, dy: 14, font: S.fontSmall, color: S.col.gray });
+      Ls.forEach(function (l, i) {
+        var e = r1[l].eigs_top64, s = norm ? e[0] : 1;
+        var pts = e.map(function (x, j) { return [j + 1, Math.log10(x / s)]; });
+        v.poly(pts, { close: false, color: colr[l], width: i === cur ? 3 : 1.2, alpha: i === cur ? 1 : 0.5 });
+        v.text("L" + l, 65, pts[63][1], { dx: 2, dy: 4, color: colr[l], font: S.fontSmall });
+      });
+      var L = Ls[cur], o = r1[L], e = o.eigs_top64;
+      out.textContent =
+        "layer " + L + ":  λ1 = " + sciTimes(e[0]) + " pu²,  λ1/λ2 = " + S.fmt(e[0] / e[1], 1) + ",  λ25 = " + sciTimes(e[24]) + " pu²\n" +
+        "participation ratio PR = " + S.fmt(o.participation_ratio, 2) + "    top-25 share of trace (C2, needs ≥ 0.5) = " + f2(o.top25_energy_frac) + "\n" +
+        "split-half top-25 (C1, needs ≥ 0.7) = " + f2(o.split_half_top25) + "    H25–J25 overlap (C3, needs < 0.5) = " + f2(o.H25_vs_J25_overlap) + "    random = " + S.fmt(o.random_overlap, 4) + "\n" +
+        "1σ interaction ratio, top-6 H pairs vs random pairs (C4, needs ≥ 10) = " + S.fmt(o.interaction_ratio_1sigma, 1) + "×";
+    };
+    c.redraw();
+  })();
+
+  /* ---------- Figure 15.4: heavy tails ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-tails"));
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 380 });
+    var vl = S.view(c, { xmin: 0, xmax: 3.3, ymin: 0, ymax: 1.22, padLeft: 44, padBottom: 40, padTop: 18 });
+    var vr = S.view(c, { xmin: 0, xmax: 4.35, ymin: 0, ymax: 1.22, padLeft: 44, padBottom: 40, padTop: 18 });
+    var Ls = ["16", "28"], cur = 0;
+    makeSelect(wrap, "layer", ["L16", "L28"], function (i) { cur = i; c.redraw(); });
+    var out = S.readout(wrap);
+    var qs = ["0.001", "0.01", "0.05"], qlab = ["top 0.1%", "top 1%", "top 5%"];
+    var cls = ["digit", "word", "punctuation", "whitespace/newline"], clab = ["digit", "word", "punct.", "space/nl"];
+    c.draw = function () {
+      var sp = Math.round(c.W * 0.45);
+      vl.set({ left: 0, width: sp }); vr.set({ left: sp, width: c.W - sp });
+      var L = Ls[cur], o = ht[L];
+      vl.axes({ ylabel: "share of row energy", xnums: false, yticks: 0.2, frame: true });
+      qs.forEach(function (q, i) {
+        var x0 = 0.2 + i * 1.05, e = o.energy_share_top[q];
+        vl.rect(x0, 0, 0.4, +q, { color: S.col.gray, fill: S.col.gray, fillAlpha: 0.5 });
+        vl.rect(x0 + 0.42, 0, 0.4, e, { color: S.col.red, fill: S.col.red, fillAlpha: 0.5 });
+        vl.text(qlab[i], x0 + 0.41, 0, { align: "center", dy: 16, font: S.fontSmall });
+        vl.text(pct(e, i ? 2 : 1), x0 + 0.62, e, { align: "center", dy: -4, font: S.fontSmall, color: S.col.red });
+      });
+      vr.axes({ ylabel: "share", xnums: false, yticks: 0.2, frame: true });
+      cls.forEach(function (k, i) {
+        var x0 = 0.15 + i * 1.05;
+        vr.rect(x0, 0, 0.4, o.rows_by_token_class[k], { color: S.col.gray, fill: S.col.gray, fillAlpha: 0.5 });
+        vr.rect(x0 + 0.42, 0, 0.4, o.energy_by_token_class[k], { color: S.col.red, fill: S.col.red, fillAlpha: 0.5 });
+        vr.text(clab[i], x0 + 0.41, 0, { align: "center", dy: 16, font: S.fontSmall });
+      });
+      vr.text("grey: share of rows   red: share of energy", 0.6, 1.1, { font: S.fontSmall });
+      var nq = o.norm_quantiles;
+      out.textContent =
+        "layer " + L + ": " + commas(o.n_rows) + " rows (position, probe); the top 0.1% is about " + Math.round(o.n_rows * 0.001) + " rows\n" +
+        "energy share of the heaviest 0.1% / 1% / 5% of rows: " + pct(o.energy_share_top["0.001"]) + " / " + pct(o.energy_share_top["0.01"], 2) + " / " + pct(o.energy_share_top["0.05"], 2) + "\n" +
+        "row length ‖y‖ quantiles (pu): median " + S.fmt(nq["0.5"], 1) + ", 90% " + S.fmt(nq["0.9"], 1) + ", 99% " + S.fmt(nq["0.99"], 0) + ", 99.9% " + S.fmt(nq["0.999"], 0) + "\n" +
+        cls.map(function (k) { return k + ": " + pct(o.rows_by_token_class[k]) + " of rows, " + pct(o.energy_by_token_class[k]) + " of energy"; }).join("\n");
+    };
+    c.redraw();
+  })();
+
+  /* ---------- Figure 15.5: trimming and split-half ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-trim"));
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 360 });
+    var v = S.view(c, { xmin: -0.3, xmax: 4.9, ymin: 0, ymax: 1.1, padLeft: 44, padBottom: 34 });
+    var ks = ["k1", "k3", "k5", "k10", "k25"], kl = ["1", "3", "5", "10", "25"];
+    var vars = ["raw", "trim1", "trim5", "norm", "x", "x_trim1"];
+    var vc = [S.col.ink, S.col.gray, S.col.blue, S.col.green, S.col.orange, S.col.purple];
+    var Ls = ["16", "28"], cur = 0;
+    makeSelect(wrap, "layer", ["L16", "L28"], function (i) { cur = i; c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var o = ht[Ls[cur]].split_half_from_dump;
+      v.axes({ xnums: false, ylabel: "split-half overlap", xlabel: "k", yticks: 0.2, frame: true });
+      ks.forEach(function (k, i) { v.text(kl[i], i, 0, { align: "center", dy: 16, font: S.fontSmall }); });
+      v.line(-0.3, 0.7, 4.9, 0.7, { dash: [5, 4], color: S.col.gray, width: 1 });
+      v.text("0.7 bar", -0.25, 0.7, { dy: -4, font: S.fontSmall, color: S.col.gray });
+      vars.forEach(function (n, j) {
+        var pts = ks.map(function (k, i) { return [i, o[n][k]]; });
+        v.poly(pts, { close: false, color: vc[j], width: 2 });
+        pts.forEach(function (p) { v.dot(p[0], p[1], { color: vc[j], r: 3 }); });
+      });
+      var labs = vars.map(function (n, j) { return { n: n, j: j, y: o[n].k25 }; }).sort(function (a, b) { return a.y - b.y; });
+      for (var li = 1; li < labs.length; li++) if (labs[li].y < labs[li - 1].y + 0.06) labs[li].y = labs[li - 1].y + 0.06;
+      labs.forEach(function (L) { v.text(L.n, 4.12, L.y, { color: vc[L.j], font: S.fontSmall, dy: 4 }); });
+      out.textContent = "layer " + Ls[cur] + ", split-half at k = 1 / 3 / 5 / 10 / 25:\n" + vars.map(function (n) {
+        return (n + "         ").slice(0, 9) + ks.map(function (k) { return f2(o[n][k]); }).join(" / ");
+      }).join("\n");
+    };
+    c.redraw();
+  })();
+
+  /* ---------- Figure 15.6: the Sigma prior (toy) ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-sigprior"));
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 380 });
+    var vh = S.view(c, { xmin: 0, xmax: 6, ymin: 0, ymax: 6, padLeft: 34, padBottom: 26, padTop: 22, padRight: 10 });
+    var vb = S.view(c, { xmin: 0, xmax: 13.4, ymin: -1, ymax: 1.12, padLeft: 30, padBottom: 26, padTop: 22 });
+    var d = 6, sig2 = [4, 2.5, 1.6, 1, 0.6, 0.4];
+    var g0 = S.rng(606), P = randOrth(g0, d), Pt = tp(P);
+    var pa = unit(randn(g0, d));
+    function powS(e) { var D = zeros(d, d); for (var i = 0; i < d; i++) D[i][i] = Math.pow(sig2[i], e); return mm(mm(P, D), Pt); }
+    var Sh = powS(0.5), law = 0, seed = 1;
+    makeSelect(wrap, "curvature law", ["f(Σ) = Σ^a, times a random number per row", "rotation-invariant random (GOE)", "GOE plus a planted direction a aᵀ"], function (i) { law = i; c.redraw(); });
+    var ex = S.slider(wrap, { label: "exponent a (law 1)", min: -1, max: 1, step: 0.1, value: 0, digits: 1, oninput: function () { c.redraw(); } });
+    var beta = S.slider(wrap, { label: "planted strength (law 3)", min: 0, max: 8, step: 0.25, value: 4, unit: "pu", digits: 2, oninput: function () { c.redraw(); } });
+    var np = S.slider(wrap, { label: "probes", min: 20, max: 600, step: 20, value: 200, digits: 0, oninput: function () { c.redraw(); } });
+    S.button(wrap, "new sample", function () { seed++; c.redraw(); });
+    var out = S.readout(wrap);
+    function sample() {
+      var rng = S.rng(9000 + seed), rows = [], half = [], NP = np.get();
+      var Ff = powS(ex.get() + 1), Pab = outerM(pa, pa);
+      for (var k = 0; k < NP; k++) {
+        var z = randn(rng, d);
+        for (var r = 0; r < 4; r++) {
+          var Ht;
+          if (law === 0) Ht = scM(Ff, rng.n());
+          else { Ht = mm(mm(Sh, goe(rng, d)), Sh); if (law === 2) Ht = addM(Ht, Pab, beta.get() * rng.n()); }
+          rows.push(LA.matVec(Ht, z)); half.push(k % 2);
+        }
+      }
+      return { rows: rows, half: half };
+    }
+    function second(rows, half, h) {
+      var M = zeros(d, d), n = 0;
+      rows.forEach(function (y, i) {
+        if (h != null && half[i] !== h) return;
+        n++;
+        for (var a = 0; a < d; a++) for (var b = 0; b < d; b++) M[a][b] += y[a] * y[b];
+      });
+      return scM(M, 1 / n);
+    }
+    function ovk(U, V, k) { var s = 0; for (var i = 0; i < k; i++) for (var j = 0; j < k; j++) { var t = LA.dot(U[i], V[j]); s += t * t; } return s / k; }
+    function pc(v) { return LA.matVec(Pt, v); }
+    function orient(v) { var m = 0; v.forEach(function (a, i) { if (Math.abs(a) > Math.abs(v[m])) m = i; }); return v[m] < 0 ? v.map(function (a) { return -a; }) : v; }
+    c.draw = function () {
+      var hw = Math.min(Math.round(c.W * 0.42), c.H + 20);
+      vh.set({ left: 0, width: hw }); vb.set({ left: hw, width: c.W - hw });
+      var smp = sample(), M = second(smp.rows, smp.half), MA = second(smp.rows, smp.half, 0), MB = second(smp.rows, smp.half, 1);
+      var N = mm(mm(Pt, M), P);
+      var R = N.map(function (r, i) { return r.map(function (a, j) { return a / Math.sqrt(N[i][i] * N[j][j]); }); });
+      var ctx = c.ctx, i, j, offmax = 0;
+      for (i = 0; i < d; i++) for (j = 0; j < d; j++) {
+        var x0 = vh.X(j), y0 = vh.Y(d - i), x1 = vh.X(j + 1), y1 = vh.Y(d - i - 1);
+        ctx.fillStyle = i === j ? "#bbbbbb" : S.diverge(R[i][j], -1, 1);
+        ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+        if (i !== j) offmax = Math.max(offmax, Math.abs(R[i][j]));
+      }
+      ctx.strokeStyle = S.col.ink; ctx.lineWidth = 1; ctx.strokeRect(vh.X(0), vh.Y(d), vh.X(d) - vh.X(0), vh.Y(0) - vh.Y(d));
+      for (i = 0; i < d; i++) {
+        vh.text("PC" + (i + 1), i + 0.5, 0, { align: "center", dy: 14, font: S.fontSmall });
+        vh.text("PC" + (i + 1), 0, d - i - 0.5, { align: "right", dx: -3, dy: 4, font: S.fontSmall });
+      }
+      vh.text("M in PCA coords, diagonal = 1", 0, d, { dy: -6, font: S.fontSmall });
+      var EA = LA.eigSym(MA), EB = LA.eigSym(MB), E = LA.eigSym(M);
+      vb.line(0, 0, 13.4, 0, { color: S.col.ink, width: 1 });
+      for (var g = 0; g < 2; g++) {
+        var a = orient(pc(EA.vecs[g])), b = pc(EB.vecs[g]);
+        if (LA.dot(a, b) < 0) b = b.map(function (q) { return -q; });
+        for (i = 0; i < d; i++) {
+          var xx = 0.4 + g * 6.8 + i * 1.05;
+          vb.rect(xx, 0, 0.42, a[i], { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.5 });
+          vb.rect(xx + 0.44, 0, 0.42, b[i], { color: S.col.red, fill: S.col.red, fillAlpha: 0.5 });
+          vb.text(String(i + 1), xx + 0.43, -1, { align: "center", dy: 14, font: S.fontSmall });
+        }
+        vb.text("eigenvector " + (g + 1) + " (on PC1..PC6)", 0.4 + g * 6.8, 1.12, { dy: -6, font: S.fontSmall });
+      }
+      var s1 = ovk(EA.vecs, EB.vecs, 1), s2 = ovk(EA.vecs, EB.vecs, 2), al = 0, po = 0;
+      for (g = 0; g < 2; g++) {
+        var cp = pc(E.vecs[g]);
+        al += Math.max.apply(null, cp.map(function (q) { return q * q; }));
+        po += cp[0] * cp[0] + cp[1] * cp[1];
+      }
+      al /= 2; po /= 2;
+      var lawTxt = law === 0 ? "f(Σ) = Σ^" + S.fmt(ex.get(), 1) + ": whitened curvature Σ^(a+1), so E[M] = Σ^(" + S.fmt(2 * ex.get() + 2, 1) + ")" :
+        law === 1 ? "GOE: E[M] = (tr Σ · Σ + Σ²)/d, a function of Σ" : "GOE + planted: not Σ-commuting";
+      out.textContent =
+        lawTxt + "\n" +
+        "split@1 = " + f2(s1) + "   split@2 = " + f2(s2) + "   (random: " + f2(1 / 6) + " and " + f2(2 / 6) + ")\n" +
+        "top-2 eigenvectors: axis alignment (mean of max cos² with one PCA axis) = " + f2(al) + "   overlap with PCA axes 1–2 = " + f2(po) + "\n" +
+        "largest |off-diagonal| of the normalised M in PCA coords = " + f2(offmax) + "   rows = " + (np.get() * 4);
+    };
+    c.redraw();
+  })();
+
+  /* ---------- Figure 15.7: sign-flip randomization test (toy) ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-flip"));
+    var c = S.canvas(wrap, { aspect: 0.45, maxH: 340 });
+    var v = S.view(c, { xmin: 0, xmax: 1, ymin: 0, ymax: 1, padLeft: 44, padBottom: 36 });
+    var d = 10, sig = [4, 3, 2.3, 1.8, 1.4, 1.1, 0.9, 0.7, 0.55, 0.45].map(Math.sqrt), NREP = 200;
+    var g0 = S.rng(717), pa = unit(randn(g0, d)), qd = unit(randn(g0, d));
+    var stat = 0, pre = 0, seed = 1, res = null;
+    makeSelect(wrap, "statistic", ["λ1 of R", "split@1 of patterns"], function (i) { stat = i; recompute(); });
+    makeSelect(wrap, "preprocessing", ["none", "drop PCA axis 1 (axis-aligned)", "project out a fixed non-axis direction"], function (i) { pre = i; recompute(); });
+    var beta = S.slider(wrap, { label: "planted strength", min: 0, max: 4, step: 0.1, value: 0, digits: 1, oninput: recompute });
+    var np = S.slider(wrap, { label: "probes", min: 40, max: 300, step: 20, value: 200, digits: 0, oninput: recompute });
+    S.button(wrap, "new data", function () { seed++; recompute(); });
+    var out = S.readout(wrap);
+    function data() {
+      var rng = S.rng(31 + 977 * seed), rows = [], probe = [], B = beta.get();
+      for (var k = 0; k < np.get(); k++) {
+        var z = randn(rng, d), az = LA.dot(pa, z);
+        for (var r = 0; r < 4; r++) {
+          var g = rng.n(), y = [];
+          for (var i = 0; i < d; i++) y.push(sig[i] * Math.exp(0.5 * rng.n()) * z[i] + B * g * pa[i] * az);
+          rows.push(y); probe.push(k);
+        }
+      }
+      return { rows: rows, probe: probe };
+    }
+    var keep;
+    function stats(rows, probe, flips) {
+      keep = []; for (var kk0 = pre === 1 ? 1 : 0; kk0 < d; kk0++) keep.push(kk0);
+      var m = keep.length, MA = zeros(m, m), MB = zeros(m, m), MF = zeros(m, m), nA = 0, nB = 0;
+      for (var i = 0; i < rows.length; i++) {
+        var y = rows[i].slice(), f = flips ? flips[probe[i]] : null, a, b;
+        if (f) for (a = 0; a < d; a++) y[a] *= f[a];
+        if (pre === 1) y[0] = 0;
+        else if (pre === 2) { var t = LA.dot(y, qd); for (a = 0; a < d; a++) y[a] -= t * qd[a]; }
+        var nn = LA.norm(y) || 1, u = keep.map(function (kk) { return y[kk] / nn; });
+        var T = probe[i] % 2 ? MB : MA;
+        if (probe[i] % 2) nB++; else nA++;
+        for (a = 0; a < m; a++) for (b = 0; b < m; b++) { T[a][b] += u[a] * u[b]; MF[a][b] += u[a] * u[b]; }
+      }
+      function Rof(M) { return M.map(function (r, i2) { return r.map(function (q, j2) { return q / Math.sqrt(M[i2][i2] * M[j2][j2]); }); }); }
+      if (stat === 0) return LA.eigSym(Rof(MF)).vals[0];
+      function pat(M) { var e = LA.eigSym(Rof(M)).vecs[0]; return unit(e.map(function (q, i2) { return q * Math.sqrt(M[i2][i2]); })); }
+      var tt = LA.dot(pat(scM(MA, 1 / nA)), pat(scM(MB, 1 / nB)));
+      return tt * tt;
+    }
+    function recompute() {
+      var D = data(), frng = S.rng(5 + 131 * seed), t0 = stats(D.rows, D.probe, null), reps = [];
+      for (var r = 0; r < NREP; r++) {
+        var flips = [];
+        for (var k = 0; k < np.get(); k++) { var f = []; for (var i = 0; i < d; i++) f.push(frng.u() < 0.5 ? -1 : 1); flips.push(f); }
+        reps.push(stats(D.rows, D.probe, flips));
+      }
+      res = { t0: t0, reps: reps };
+      c.redraw();
+    }
+    c.draw = function () {
+      if (!res) return;
+      var all = res.reps.concat([res.t0]), lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+      if (stat === 1) { lo = 0; hi = 1; }
+      var padx = (hi - lo) * 0.08 || 0.05, nb = 30, bins = [], i;
+      for (i = 0; i < nb; i++) bins.push(0);
+      var x0 = lo - padx, x1 = hi + padx, w = (x1 - x0) / nb;
+      res.reps.forEach(function (t) { bins[Math.min(nb - 1, Math.floor((t - x0) / w))]++; });
+      var bm = Math.max.apply(null, bins);
+      v.set({ xmin: x0, xmax: x1, ymin: 0, ymax: bm * 1.2 + 1 });
+      v.axes({ ylabel: "replicates", frame: true });
+      v.text(stat === 0 ? "statistic: λ1 of R (pure number)" : "statistic: split@1 (0 to 1)", x1, v.r.ymax, { align: "right", dy: 14, font: S.fontSmall });
+      for (i = 0; i < nb; i++) if (bins[i]) v.rect(x0 + i * w, 0, w * 0.92, bins[i], { color: S.col.gray, fill: S.col.gray, fillAlpha: 0.6 });
+      v.line(res.t0, 0, res.t0, v.r.ymax, { color: S.col.red, width: 2.5 });
+      v.text("observed", res.t0, v.r.ymax, { dx: 4, dy: 14, color: S.col.red, font: S.fontSmall });
+      var ge = res.reps.filter(function (t) { return t >= res.t0; }).length;
+      var mx = Math.max.apply(null, res.reps);
+      out.textContent =
+        "observed τ0 = " + S.fmt(res.t0, 3) + "    largest of " + NREP + " flips = " + S.fmt(mx, 3) + "    #{τr ≥ τ0} = " + ge + "\n" +
+        "exact p = (1 + " + ge + ") / (" + NREP + " + 1) = " + S.fmt((1 + ge) / (NREP + 1), 4) + "    (smallest possible: " + S.fmt(1 / (NREP + 1), 4) + ")\n" +
+        "rows = " + (np.get() * 4) + " in " + np.get() + " probes; coordinates used: " + keep.map(function (k) { return "PC" + (k + 1); }).join(", ");
+    };
+    recompute();
+  })();
+
+  /* ---------- Figure 15.8: v5 ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-v5"));
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 380 });
+    var vl = S.view(c, { xmin: 0, xmax: 7.2, ymin: 0, ymax: 14, padLeft: 44, padBottom: 44, padTop: 18 });
+    var vr = S.view(c, { xmin: 0, xmax: 7.2, ymin: 0, ymax: 1.08, padLeft: 44, padBottom: 44, padTop: 18 });
+    var Ls = ["40", "52"], Es = ["norm", "xnorm", "raw_trim5"], en = ["norm", "xnorm", "trim5"], ec = [S.col.blue, S.col.red, S.col.gray];
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var sp = Math.round(c.W / 2);
+      vl.set({ left: 0, width: sp }); vr.set({ left: sp, width: c.W - sp });
+      var ymx = 0;
+      Ls.forEach(function (L) { Es.forEach(function (e) { ymx = Math.max(ymx, f5[L][e].obs_lam[0]); }); });
+      vl.set({ ymax: Math.ceil(ymx * 1.12) });
+      vl.axes({ ylabel: "λ1 of R", xnums: false, frame: true });
+      vr.axes({ ylabel: "split@3", xnums: false, yticks: 0.2, frame: true });
+      vr.line(0, 0.7, 7.2, 0.7, { dash: [5, 4], color: S.col.gray, width: 1 });
+      Ls.forEach(function (L, li) {
+        Es.forEach(function (e, ei) {
+          var o = f5[L][e], x0 = 0.3 + li * 3.55 + ei * 1.05;
+          vl.rect(x0, 0, 0.8, o.obs_lam[0], { color: ec[ei], fill: ec[ei], fillAlpha: 0.45 });
+          vl.line(x0 - 0.12, o.null_lam1_max, x0 + 0.92, o.null_lam1_max, { color: S.col.ink, width: 3 });
+          vl.text(en[ei], x0 + 0.4, 0, { align: "center", dy: 14, font: S.fontSmall });
+          vr.rect(x0, 0, 0.8, o.obs_split.k3, { color: ec[ei], fill: ec[ei], fillAlpha: 0.45 });
+          vr.line(x0 - 0.12, o.null_split3_max, x0 + 0.92, o.null_split3_max, { color: S.col.ink, width: 3 });
+          vr.text(en[ei], x0 + 0.4, 0, { align: "center", dy: 14, font: S.fontSmall });
+        });
+        vl.text("L" + L, 0.3 + li * 3.55 + 1.45, 0, { align: "center", dy: 32 });
+        vr.text("L" + L, 0.3 + li * 3.55 + 1.45, 0, { align: "center", dy: 32 });
+      });
+      vl.text("black tick = flip max", 2.6, vl.r.ymax, { dy: 12, font: S.fontSmall });
+      var lines = [];
+      Ls.forEach(function (L) {
+        Es.forEach(function (e) {
+          var o = f5[L][e], s = "L" + L + " " + (e + "       ").slice(0, 9) + " λ1 " + S.fmt(o.obs_lam[0], 2) + " vs flip max " + S.fmt(o.null_lam1_max, 2) +
+            " (" + S.fmt(o.obs_lam[0] / o.null_lam1_max, 1) + "×, p " + S.fmt(o.p_lam1, 4) + ");  split@3 " + f2(o.obs_split.k3) + " vs " + S.fmt(o.null_split3_max, 3) + " (p " + S.fmt(o.p_split3, 4) + ")";
+          if (f5[L].planted[e]) s += ";  planted: " + (f5[L].planted[e].detected ? "detected" : "missed") + ", recovery " + f2(f5[L].planted[e].planted_recovered_top3);
+          else s += ";  descriptive only";
+          lines.push(s);
+        });
+      });
+      out.textContent = lines.join("\n");
+    };
+    c.redraw();
+  })();
+
+  /* ---------- Figure 15.9: v9 ---------- */
+  (function () {
+    var wrap = hostOf(document.getElementById("sim-v9"));
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 380 });
+    var v = S.view(c, { xmin: 0, xmax: 4.4, ymin: Math.log10(0.8), ymax: Math.log10(12), padLeft: 52, padBottom: 40 });
+    var showT3 = false;
+    S.checkbox(wrap, "show T3 (per unit of main effect) instead of T1", false, function (b) { showT3 = b; c.redraw(); });
+    var out = S.readout(wrap);
+    var LN10 = Math.LN10;
+    c.draw = function () {
+      [1, 2, 3, 5, 10].forEach(function (t) {
+        var y = Math.log10(t);
+        v.line(0, y, 4.4, y, { color: t === 1 ? S.col.ink : S.col.faint, width: t === 1 ? 1.2 : 1 });
+        v.text(t + "×", 0, y, { align: "right", dx: -6, dy: 4, font: S.fontSmall });
+      });
+      v.line(0, v.r.ymin, 0, v.r.ymax, { color: S.col.ink, width: 1 });
+      if (!showT3) {
+        v.line(0, Math.log10(2), 4.4, Math.log10(2), { dash: [6, 4], color: S.col.ink, width: 1.2 });
+        v.text("rule: e^T1 > 2", 4.35, Math.log10(2), { align: "right", dy: -5, font: S.fontSmall });
+      } else v.text("rule: CI above 1×", 4.35, 0, { align: "right", dy: -5, font: S.fontSmall });
+      v.text(showT3 ? "e^T3 (EX vs twin, per main effect)" : "e^T1 (EX vs twin interaction)", 0.1, v.r.ymax, { dy: 14, font: S.fontSmall });
+      ["16", "40"].forEach(function (L, li) {
+        ["I", "I_trunk"].forEach(function (X, xi) {
+          var o = v9[L][X], t = showT3 ? o.T3 : o.T1, ci = showT3 ? o.T3_ci : o.T1_ci, x = 0.8 + li * 2 + xi * 0.7, col = xi ? S.col.red : S.col.blue;
+          var y = t / LN10, ya = ci[0] / LN10, yb = ci[1] / LN10;
+          v.line(x, ya, x, yb, { color: col, width: 2 });
+          v.line(x - 0.08, ya, x + 0.08, ya, { color: col, width: 2 });
+          v.line(x - 0.08, yb, x + 0.08, yb, { color: col, width: 2 });
+          v.dot(x, y, { color: col, r: 5 });
+          v.text(S.fmt(Math.exp(t), 1) + "×", x, y, { dx: 9, dy: 4, font: S.fontSmall, color: col });
+          v.text(xi ? "I_trunk" : "I", x, v.r.ymin, { align: "center", dy: 14, font: S.fontSmall, color: col });
+        });
+        v.text("L" + L, 1.15 + li * 2, v.r.ymin, { align: "center", dy: 30 });
+      });
+      var lines = [];
+      ["16", "40"].forEach(function (L) {
+        lines.push("L" + L + " (" + HSd.v9.n_windows[L] + " windows), status " + v9[L].status + ":");
+        ["I", "I_trunk"].forEach(function (X) {
+          var o = v9[L][X];
+          lines.push("  " + (X + "       ").slice(0, 8) + "e^T1 = " + S.fmt(Math.exp(o.T1), 2) + "× [" + S.fmt(Math.exp(o.T1_ci[0]), 2) + ", " + S.fmt(Math.exp(o.T1_ci[1]), 2) + "]" +
+            "  (T1 = " + S.fmt(o.T1, 3) + ", log CI [" + f2(o.T1_ci[0]) + ", " + f2(o.T1_ci[1]) + "]);  T3 CI [" + f2(o.T3_ci[0]) + ", " + f2(o.T3_ci[1]) + "];  rank " + o.rank + " of 9;" +
+            "  mean |X| EX " + sci(o.mean_ex3) + " vs twins " + sci(o.mean_tw3) + " nats (ratio of means " + S.fmt(o.mean_ex3 / o.mean_tw3, 1) + "×);  pass " + (o.pass ? "yes" : "no"));
+        });
+      });
+      out.textContent = lines.join("\n");
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

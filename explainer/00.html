@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 0: Numbers, units and rates</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="0">
+<div class="page">
+
+<h1>Level 0: Numbers, units and rates</h1>
+<p class="subtitle">Everything later on is built from one idea: a rate says how much one thing changes for each unit of another.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>say what a quantity is and why the unit matters as much as the number;</li>
+<li>compute a rate and say its unit without guessing;</li>
+<li>use units to catch a wrong formula before you trust it.</li>
+</ul>
+<p class="small">Prerequisites: counting, adding, multiplying and dividing. That is all.</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first. Nothing appears out of nowhere.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(d\)</td><td>“d”</td><td>distance travelled</td><td>metres (m)</td><td>\(d = 100\) m</td></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>time taken</td><td>seconds (s); minutes (min) in section 0.5</td><td>\(t = 20\) s</td></tr>
+<tr><td>\(v\)</td><td>“v”</td><td>average speed: distance per unit of time</td><td>metres per second (m/s)</td><td>\(v = 5\) m/s</td></tr>
+<tr><td>\(V\)</td><td>“capital v”</td><td>volume of water in a bath (section 0.5 only)</td><td>litres (L)</td><td>\(V = 120\) L</td></tr>
+<tr><td>\(n\)</td><td>“n”</td><td>a count of apples</td><td>apples</td><td>\(n = 6\)</td></tr>
+<tr><td>\(P\)</td><td>“capital p”</td><td>total price paid</td><td>dollars ($)</td><td>\(P = 3\) $</td></tr>
+<tr><td>\(\Delta\)</td><td>“delta”</td><td>“change in”. \(\Delta d\) is a change in distance, not \(\Delta\) times \(d\).</td><td>same as what follows it</td><td>\(\Delta d = 30\) m</td></tr>
+</table>
+</div>
+
+<h2>0.1 A number on its own says too little</h2>
+<p>Suppose a friend texts you “I walked 5”. Five what? Five metres is a step outside. Five kilometres is an hour's walk. The digit is the same; the meaning is completely different.</p>
+<p>So we never use a bare number to describe something real. We use a quantity: a number together with its unit.</p>
+<div class="box key">
+<span class="boxtitle">Rule 0</span>
+Write every quantity as <i>number × unit</i>. “5 m” really does mean 5 × (one metre). We will treat the unit like a letter in algebra: it can be multiplied, divided and cancelled.
+</div>
+<p>This rule sounds fussy. It is the single best habit in all of mathematics that touches the real world. At Level 15 the same habit tells you whether a curvature is measured “per unit of raw activation” or “per unit of natural activation spread”, and that choice changes the answer.</p>
+
+<h2>0.2 Rates: how much per one</h2>
+<p>A rate answers the question “how much of this for each one of that?”. You already use rates:</p>
+<ul>
+<li>Apples cost 50 cents <i>per</i> apple.</li>
+<li>A car travels at 60 kilometres <i>per</i> hour.</li>
+<li>A tap fills 8 litres <i>per</i> minute.</li>
+</ul>
+<p>The word “per” means “divided by”. So to find a rate you divide one quantity by another, and you divide the units too.</p>
+
+<h3>Worked example: walking speed</h3>
+<p>You walk \(d = 100\) metres in \(t = 20\) seconds. Your average speed is</p>
+$$ v = \frac{d}{t} = \frac{100\ \text{m}}{20\ \text{s}} = 5\ \frac{\text{m}}{\text{s}}. $$
+<p>Read the last part as “5 metres per second”: in each second you cover 5 metres. The unit was not invented; it fell out of the division, metres on top and seconds on the bottom.</p>
+
+<figure class="sim" id="sim-walk">
+<figcaption><b>Figure 0.1.</b> A walker on a 100 m track. Change the distance and the time. The speed is always distance ÷ time, and its unit is always m/s. Press “Walk” to watch each second's 5-metre chunk (or whatever the speed is) get added.</figcaption>
+</figure>
+
+<p>Look at what happens in the picture when you double the distance and keep the time fixed: the speed doubles. Double the time and keep the distance: the speed halves. That is all a rate is.</p>
+
+<h3>Worked example: price per apple</h3>
+<p>You pay \(P = 3\) dollars for \(n = 6\) apples. The price per apple is</p>
+$$ \frac{P}{n} = \frac{3\ \$}{6\ \text{apples}} = 0.5\ \frac{\$}{\text{apple}}. $$
+<p>Now flip it. How many apples per dollar?</p>
+$$ \frac{n}{P} = \frac{6\ \text{apples}}{3\ \$} = 2\ \frac{\text{apples}}{\$}. $$
+<p>Both are correct rates; they answer different questions. The unit tells you which question you answered. This matters later: a <a href="08.html">Jacobian</a> entry is “output per input”, and getting top and bottom the wrong way round is a real, common bug.</p>
+
+<h2>0.3 Units cancel like letters</h2>
+<p>If you buy \(n = 4\) apples at \(0.5\ \$/\text{apple}\), the cost is</p>
+$$ 4\ \text{apples} \times 0.5\ \frac{\$}{\text{apple}} = 2\ \$. $$
+<p>The word “apples” appears once on top and once on the bottom, so it cancels, just as \(\tfrac{3x}{x} = 3\). What is left is dollars, which is exactly what a price should be. This is called dimensional analysis, and you can use it as a free error check.</p>
+
+<figure class="sim" id="sim-cancel">
+<figcaption><b>Figure 0.2.</b> Unit cancelling as a machine. Pick a starting quantity and a rate. Matching units on top and bottom are struck out; whatever survives is the unit of the answer. If nothing cancels, the multiplication is probably the wrong one.</figcaption>
+</figure>
+
+<div class="box plain">
+<span class="boxtitle">The free error check</span>
+Before you trust any formula, check that the units on both sides match. If a formula claims a time equals “metres × seconds”, it is wrong, whatever the numbers say.
+</div>
+
+<h2>0.4 Change, and the symbol Δ</h2>
+<p>Most interesting rates are about <i>change</i>. If a runner is at the 40 m mark at 8 s and at the 70 m mark at 14 s, then between those moments</p>
+$$ \Delta d = 70\ \text{m} - 40\ \text{m} = 30\ \text{m}, \qquad \Delta t = 14\ \text{s} - 8\ \text{s} = 6\ \text{s}. $$
+<p>The Greek letter \(\Delta\) (“delta”) just means “change in”: later value minus earlier value. The average speed over that stretch is</p>
+$$ \frac{\Delta d}{\Delta t} = \frac{30\ \text{m}}{6\ \text{s}} = 5\ \text{m/s}. $$
+<p>This fraction, “change on top ÷ change on bottom”, is the seed of everything that follows. At <a href="02.html">Level 2</a> we make \(\Delta t\) smaller and smaller and get the derivative. At <a href="06.html">Level 6</a> we take changes of changes in two directions and get an interaction. At <a href="09.html">Level 9</a> we collect all of those into the Hessian.</p>
+
+<h2>0.5 Negative rates</h2>
+<p>A rate can be a negative number. Let \(V\) be the volume of water in a bath, in litres (L), and let \(t\) be time in minutes (min). If the bath holds 120 litres and drains to 90 litres in 3 minutes,</p>
+$$ \frac{\Delta V}{\Delta t} = \frac{90\ \text{L} - 120\ \text{L}}{3\ \text{min}} = \frac{-30\ \text{L}}{3\ \text{min}} = -10\ \frac{\text{L}}{\text{min}}. $$
+<p>The minus sign is information: the amount goes <i>down</i> by 10 litres each minute. A rate of zero means nothing changes.</p>
+
+<h2>0.6 Proportional, and not proportional</h2>
+<p>If apples are 0.5 $ each, then 2 apples cost 1 $, 4 apples cost 2 $, 8 apples cost 4 $. Doubling the count doubles the price. Price is proportional to the count, and the rate (0.5 $/apple) is the same no matter how many you buy.</p>
+<p>Many things are not like that. A taxi might charge 3 $ to get in, plus 2 $ per kilometre. Then 1 km costs 5 $, but 2 km cost 7 $, not 10 $. The extra cost of each kilometre is still 2 $; that part is a rate. The 3 $ start fee is not.</p>
+
+<figure class="sim" id="sim-taxi">
+<figcaption><b>Figure 0.3.</b> Total taxi fare against distance. The blue line is fare = start fee + (rate × distance). The rate is how steep the line is: each extra kilometre adds the same amount. The start fee is where the line begins. Drag the sliders and notice that changing the start fee slides the line up without changing its steepness.</figcaption>
+</figure>
+
+<p>Hold onto that picture. A straight line has one steepness everywhere. At <a href="02.html">Level 2</a> we meet curves, whose steepness changes from place to place, and the whole of calculus is about measuring that changing steepness.</p>
+
+<h2>0.7 Why this matters for H-space</h2>
+<p>This is not decoration. Three habits from this page come back at the top of the ladder:</p>
+<ol>
+<li><b>Every symbol gets a unit.</b> A Hessian entry has unit “output per input per input”. A whitened Hessian measures curvature per unit of natural activation spread instead of per raw unit. Mixing the two silently changes which directions look big.</li>
+<li><b>Change ÷ change.</b> The derivative, the Jacobian, the Hessian and the 2×2 interaction tests in the v9 run are all built from this one fraction.</li>
+<li><b>Check units before trusting numbers.</b> A ratio of two quantities with the same unit is a pure number, like the “5.8×” in v9. A ratio with mismatched units is a bug.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="12" data-tol="0.001" data-unit="m/s">
+<p><b>Exercise 0.1.</b> A cyclist covers 360 m in 30 s. What is the average speed?</p>
+<details><summary>Show answer</summary>
+<p>\(v = \dfrac{360\ \text{m}}{30\ \text{s}} = 12\ \text{m/s}\). Metres on top, seconds on the bottom.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.25" data-tol="0.001" data-unit="$ per pencil">
+<p><b>Exercise 0.2.</b> 8 pencils cost 2 $. What is the price per pencil?</p>
+<details><summary>Show answer</summary>
+<p>\(\dfrac{2\ \$}{8\ \text{pencils}} = 0.25\ \$/\text{pencil}\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-4" data-tol="0.001" data-unit="°C per hour">
+<p><b>Exercise 0.3.</b> The temperature is 18 °C at 9 pm and 6 °C at midnight. What is the average rate of change of temperature, in °C per hour? Watch the sign.</p>
+<details><summary>Show answer</summary>
+<p>\(\Delta(\text{temperature}) = 6 - 18 = -12\ ^\circ\text{C}\) and \(\Delta t = 3\) hours, so the rate is \(-12/3 = -4\ ^\circ\text{C}\) per hour. Negative: it is getting colder.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="150" data-tol="0.001" data-unit="km">
+<p><b>Exercise 0.4.</b> A train runs at 60 km/h for 2.5 hours. How far does it go? Show how the units cancel.</p>
+<details><summary>Show answer</summary>
+<p>\(60\ \dfrac{\text{km}}{\text{h}} \times 2.5\ \text{h} = 150\ \text{km}\). “h” appears on top and bottom and cancels, leaving km.</p>
+</details>
+</div>
+
+<div class="ex" data-choices="minutes (min), so the formula could be right|litres (L), so it is wrong|litres squared per minute (L²/min), so it is wrong|litres per minute (L/min), so it is wrong" data-correct="2">
+<p><b>Exercise 0.5.</b> Someone claims the time to fill a tank is “volume × fill rate”, with volume in litres and fill rate in litres per minute. What unit does “volume × fill rate” have, and can the formula be right?</p>
+<details><summary>Show answer</summary>
+<p>Volume × rate has unit L × (L/min) = L²/min. That is not a time. The right formula is volume ÷ rate: L ÷ (L/min) = min. The units caught the bug without any numbers.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2" data-tol="0.001" data-unit="$/km">
+<p><b>Exercise 0.6.</b> A taxi ride of 4 km costs 11 $ and a ride of 7 km costs 17 $. The fare is a start fee plus a fixed amount per km. What is the rate per km?</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: write the rule.</b> Fare = start fee + (rate × distance). So the 4 km fare is start fee + rate × 4 km, and the 7 km fare is start fee + rate × 7 km.</p>
+<p><b>Step 2: subtract the two fares.</b> The start fee appears in both, so it cancels. What is left is rate × (7 km − 4 km) = rate × 3 km. In numbers: \(\Delta(\text{fare}) = 17\ \$ - 11\ \$ = 6\ \$\).</p>
+<p><b>Step 3: divide by the change in distance.</b> \(\Delta(\text{distance}) = 7\ \text{km} - 4\ \text{km} = 3\ \text{km}\), so</p>
+$$ \text{rate} = \frac{\Delta(\text{fare})}{\Delta(\text{distance})} = \frac{6\ \$}{3\ \text{km}} = 2\ \$/\text{km} . $$
+<p><b>Step 4 (bonus): the start fee.</b> Rearrange the 4 km fare: start fee = fare − rate × distance \(= 11\ \$ - 2\ \$/\text{km} \times 4\ \text{km} = 11\ \$ - 8\ \$ = 3\ \$\).</p>
+<p>Taking changes to cancel a constant is exactly what a derivative does.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  /* Figure 0.1: walker */
+  (function () {
+    var host = document.getElementById("sim-walk");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.32, maxH: 220 });
+    var v = S.view(c, { xmin: 0, xmax: 100, ymin: 0, ymax: 1, padLeft: 20, padRight: 20, padTop: 20, padBottom: 40 });
+    var d = S.slider(wrap, { label: "distance d", min: 10, max: 100, step: 5, value: 100, unit: "m", digits: 0, oninput: reset });
+    var t = S.slider(wrap, { label: "time t", min: 5, max: 40, step: 1, value: 20, unit: "s", digits: 0, oninput: reset });
+    var out = S.readout(wrap);
+    var clock = 0, timer = null;
+    S.button(wrap, "Walk", function () {
+      clearInterval(timer); clock = 0;
+      timer = setInterval(function () {
+        clock += 0.05;
+        if (clock >= t.get()) { clock = t.get(); clearInterval(timer); }
+        c.redraw();
+      }, 50);
+    });
+    function reset() { clearInterval(timer); clock = 0; c.redraw(); }
+    c.draw = function () {
+      var D = d.get(), T = t.get(), speed = D / T, pos = speed * clock;
+      v.set({ xmax: Math.max(100, D) });
+      v.line(0, 0.35, v.r.xmax, 0.35, { color: S.col.light, width: 6 });
+      v.line(0, 0.35, D, 0.35, { color: S.col.gray, width: 6 });
+      for (var x = 0; x <= v.r.xmax + 1e-9; x += 10) {
+        v.line(x, 0.25, x, 0.45, { color: S.col.ink, width: 1 });
+        v.text(x + " m", x, 0.1, { align: "center", font: S.fontSmall });
+      }
+      var whole = Math.floor(clock + 1e-9);
+      for (var k = 0; k < whole; k++) {
+        v.line(k * speed, 0.62, (k + 1) * speed, 0.62, { color: k % 2 ? S.col.blue : S.col.red, width: 5 });
+      }
+      v.dot(pos, 0.35, { color: S.col.red, r: 7 });
+      v.text("walker", pos, 0.75, { align: "center", font: S.fontSmall });
+      out.textContent =
+        "speed v = d / t = " + S.fmt(D, 0) + " m / " + S.fmt(T, 0) + " s = " + S.fmt(speed, 2) + " m/s\n" +
+        "clock = " + S.fmt(clock, 1) + " s   position = " + S.fmt(pos, 1) + " m   (each coloured chunk = 1 second = " + S.fmt(speed, 2) + " m)";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 0.2: unit cancelling */
+  (function () {
+    var host = document.getElementById("sim-cancel");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var cases = [
+      { q: [4, "apples"], r: [0.5, "$", "apple"], label: "4 apples × 0.5 $/apple" },
+      { q: [2.5, "h"], r: [60, "km", "h"], label: "2.5 h × 60 km/h" },
+      { q: [12, "min"], r: [8, "L", "min"], label: "12 min × 8 L/min" },
+      { q: [3, "kg"], r: [60, "km", "h"], label: "3 kg × 60 km/h (nothing cancels!)" }
+    ];
+    var sel = document.createElement("select");
+    cases.forEach(function (cs, i) { var o = document.createElement("option"); o.value = i; o.textContent = cs.label; sel.appendChild(o); });
+    var ctl = document.createElement("div"); ctl.className = "controls";
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = "Calculation: ";
+    lab.appendChild(sel); ctl.appendChild(lab); wrap.appendChild(ctl);
+    var box = document.createElement("div"); box.style.fontSize = "22px"; box.style.margin = "14px 0 4px"; box.style.textAlign = "center";
+    wrap.insertBefore(box, ctl);
+    function strike(s, on) { return on ? '<span style="text-decoration: line-through; color: #cc0000">' + s + "</span>" : s; }
+    function render() {
+      var cs = cases[+sel.value], cancel = cs.q[1] === cs.r[2];
+      var val = cs.q[0] * cs.r[0];
+      var unit = cancel ? cs.r[1] : cs.q[1] + "·" + cs.r[1] + "/" + cs.r[2];
+      box.innerHTML = cs.q[0] + " " + strike(cs.q[1], cancel) + " &times; " + cs.r[0] +
+        ' <span style="display:inline-block; vertical-align: middle; text-align:center; line-height:1.1"><span style="display:block; border-bottom:1px solid #000">' + cs.r[1] + "</span><span>" + strike(cs.r[2], cancel) + "</span></span>" +
+        " = <b>" + S.fmt(val, 1) + " " + unit + "</b>" + (cancel ? "" : ' <span class="small">(a strange unit: probably the wrong calculation)</span>');
+    }
+    sel.addEventListener("change", render); render();
+  })();
+
+  /* Figure 0.3: taxi */
+  (function () {
+    var host = document.getElementById("sim-taxi");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.55 });
+    var v = S.view(c, { xmin: 0, xmax: 10, ymin: 0, ymax: 40, padLeft: 40, padBottom: 30 });
+    var fee = S.slider(wrap, { label: "start fee", min: 0, max: 10, step: 0.5, value: 3, unit: "$", digits: 1, oninput: function () { c.redraw(); } });
+    var rate = S.slider(wrap, { label: "rate", min: 0, max: 3.5, step: 0.25, value: 2, unit: "$/km", digits: 2, oninput: function () { c.redraw(); } });
+    var km = S.slider(wrap, { label: "distance", min: 0, max: 9, step: 1, value: 4, unit: "km", digits: 0, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var F = fee.get(), R = rate.get(), K = km.get();
+      v.axes({ xlabel: "distance (km)", ylabel: "fare ($)", xticks: 1, yticks: 5 });
+      v.fn(function (x) { return F + R * x; }, { color: S.col.blue, width: 2 });
+      v.line(K, F + R * K, K + 1, F + R * K, { color: S.col.red, dash: [4, 3] });
+      v.line(K + 1, F + R * K, K + 1, F + R * (K + 1), { color: S.col.red, width: 2.5 });
+      v.text("+1 km", K + 0.5, F + R * K, { align: "center", dy: 16, color: S.col.red, font: S.fontSmall });
+      v.text("+" + S.fmt(R, 2) + " $", K + 1, F + R * (K + 0.5), { dx: 6, color: S.col.red, font: S.fontSmall });
+      v.dot(0, F, { color: S.col.ink });
+      v.text("start fee", 0, F, { dx: 8, dy: -6, font: S.fontSmall });
+      v.dot(K, F + R * K, { color: S.col.blue });
+      out.textContent = "fare at " + K + " km = " + S.fmt(F, 1) + " $ + " + S.fmt(R, 2) + " $/km × " + K + " km = " + S.fmt(F + R * K, 2) + " $\n" +
+        "one more km adds " + S.fmt(R, 2) + " $, wherever you are on the line";
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

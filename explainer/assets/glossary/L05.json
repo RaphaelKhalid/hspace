@@ -1,0 +1,9 @@
+{
+ "cosine": {"t": "cosine", "a": ["cosines"], "l": 5, "d": "cos θ: the across part of a length-1 arrow at angle θ (the sine is its up part). cos 0° = 1, cos 60° = 0.5, cos 90° = 0."},
+ "map unit": {"t": "map unit", "a": ["map units"], "l": 5, "d": "On the farm's contour map, one bucket of water and one bag of fertiliser are drawn the same length; that length is one map unit. It is a choice of ruler, and “steepest direction” depends on it."},
+ "slice": {"t": "slice", "a": ["slices", "W-slice", "F-slice", "W-slices"], "l": 5, "d": "The one-input function you get from a two-input function by freezing one input, like cutting a hill with a vertical knife and looking at the cut edge. The slope of a slice is a partial derivative."},
+ "marginal product": {"t": "marginal product", "a": ["marginal products"], "l": 5, "d": "Economics name for a partial derivative of output: the extra output from one more unit of one input, all other inputs held fixed. On the farm, the marginal product of water is ∂Y/∂W bushels per bucket."},
+ "ceteris paribus": {"t": "ceteris paribus", "a": [], "l": 5, "d": "Latin for “all else equal”. Changing one thing while holding everything else fixed: the idea behind a partial derivative."},
+ "isoquant": {"t": "isoquant", "a": ["isoquants"], "l": 5, "d": "Economics name for a contour line of a production function: all the input mixes that give the same output. Sliding along one swaps one input for another without losing output."},
+ "tangent plane": {"t": "tangent plane", "a": ["tangent planes"], "l": 5, "d": "The flat tilted sheet that touches a surface at one point and has the same slopes there in every direction. It is the two-input version of the tangent line: ΔY ≈ (∂Y/∂W)ΔW + (∂Y/∂F)ΔF."}
+}

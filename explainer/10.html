@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 10: The chain rule and backpropagation</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="10">
+<div class="page">
+
+<h1>Level 10: The chain rule and backpropagation</h1>
+<p class="subtitle">When machines are connected in a row, their rates multiply. Running that multiplication backwards from the output is how every neural network gets its gradient.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>differentiate a function of a function, and say the unit of each factor;</li>
+<li>explain why the derivatives of a chain multiply, with gears and with finite changes;</li>
+<li>write a small neural network as a chain of simple machines, and draw its computational graph;</li>
+<li>run the forward pass and the backward pass of a tiny network by hand, and check the result;</li>
+<li>say what a Jacobian-vector product and a vector-Jacobian product are, and why reverse mode wins when there is one output and many inputs;</li>
+<li>count the cost of a gradient in passes, not in entries.</li>
+</ul>
+<p class="small">Prerequisites: <a href="02.html">Level 2</a> (derivatives and their units), <a href="05.html">Level 5</a> (partial derivatives and the gradient), <a href="07.html">Level 7</a> (matrices, matrix multiplication, transpose) and <a href="08.html">Level 8</a> (the Jacobian).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first. The tiny network's quantities are pure numbers, so their unit column says so once and for all.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(f,\ g\)</td><td>“f”, “g”</td><td>two functions (machines), used in general statements</td><td>depends on the machine</td><td>\(f(x) = x^2\)</td></tr>
+<tr><td>\(g \circ f\)</td><td>“g after f”</td><td>the composition: first apply \(f\), then feed the result to \(g\). \((g\circ f)(x) = g(f(x))\)</td><td>unit of \(g\)'s output</td><td>\(\sin(x^2)\)</td></tr>
+<tr><td>\(f'(x)\)</td><td>“f prime of x”</td><td>derivative of \(f\) at \(x\): output change per unit of input change</td><td>output unit per input unit</td><td>\(f'(3) = 6\) for \(f(x)=x^2\)</td></tr>
+<tr><td>\(\dfrac{dy}{dx}\)</td><td>“d y d x”</td><td>derivative of \(y\) with respect to \(x\) (same thing as \(y'\))</td><td>unit of \(y\) per unit of \(x\)</td><td>\(\dfrac{dV}{dR} = 113.10\) cm³/cm</td></tr>
+<tr><td>\(\dfrac{\partial y}{\partial x_1}\)</td><td>“partial y partial x one”</td><td>partial derivative: change of \(y\) per unit change of \(x_1\) with every other input held fixed</td><td>unit of \(y\) per unit of \(x_1\)</td><td>\(-0.1306\) for the tiny network</td></tr>
+<tr><td>\(\Delta x,\ \Delta y\)</td><td>“delta x”</td><td>a finite change in \(x\), in \(y\)</td><td>same as \(x\), \(y\)</td><td>\(\Delta x = 0.1\)</td></tr>
+<tr><td>\(u,\ \Delta u\)</td><td>“u”, “delta u”</td><td>in 10.2 only: the middle quantity \(u = f(x)\) of a two-machine chain, and its finite change</td><td>unit of \(f\)'s output</td><td>\(u = R = 3\) cm</td></tr>
+<tr><td>\(r\)</td><td>“r”</td><td>in the adjoint rule of 10.7 only: a node that \(q\) feeds</td><td>its own unit</td><td>for \(q = z_1\), \(r = a_1\)</td></tr>
+<tr><td>\(\leftarrow\)</td><td>“is replaced by”</td><td>an update: the left side gets the value on the right</td><td>none</td><td>\(c_1 \leftarrow 1.4715\)</td></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>time (balloon example)</td><td>seconds (s)</td><td>\(t = 2\) s</td></tr>
+<tr><td>\(R\)</td><td>“capital r”</td><td>radius of a balloon</td><td>centimetres (cm)</td><td>\(R = 3\) cm</td></tr>
+<tr><td>\(V\)</td><td>“capital v”</td><td>volume of the balloon</td><td>cubic centimetres (cm³)</td><td>\(V = 113.10\) cm³</td></tr>
+<tr><td>\(\pi\)</td><td>“pi”</td><td>the circle constant 3.14159…</td><td>none (pure number)</td><td>\(36\pi = 113.10\)</td></tr>
+<tr><td>\(e\)</td><td>“e”</td><td>Euler's number 2.71828…, the base of the exponential</td><td>none (pure number)</td><td>\(e^{1} = 2.718\)</td></tr>
+<tr><td>\(\theta_A, \ldots, \theta_D\)</td><td>“theta A”</td><td>how far gear A (B, C, D) has turned</td><td>revolutions (rev)</td><td>\(\theta_A = 1\) rev</td></tr>
+<tr><td>\(x,\ p,\ q,\ y\)</td><td>“x, p, q, y”</td><td>the stages of the three-machine chain in Figure 10.1: \(p = x^2\), \(q = \sin p\), \(y = e^{q}\)</td><td>none (pure numbers)</td><td>\(x = 1,\ p = 1\)</td></tr>
+<tr><td>\(x_1,\ x_2\); \(\mathbf{x}\)</td><td>“x one”, “bold x”</td><td>the two inputs of the tiny network; \(\mathbf{x} = (x_1, x_2)\)</td><td>none (pure numbers)</td><td>\(\mathbf{x} = (1, 2)\)</td></tr>
+<tr><td>\(W,\ W_{ij}\)</td><td>“capital w”, “w i j”</td><td>the 2×2 weight matrix of the hidden layer; \(W_{ij}\) is the weight from input \(j\) into hidden neuron \(i\)</td><td>none (pure numbers)</td><td>\(W_{12} = -1\)</td></tr>
+<tr><td>\(b_1,\ b_2\); \(\mathbf{b}\)</td><td>“b one”</td><td>biases of the two hidden neurons</td><td>none (pure numbers)</td><td>\(b_1 = 0.5\)</td></tr>
+<tr><td>\(z_1,\ z_2\); \(\mathbf{z}\)</td><td>“z one”</td><td>pre-activations: \(z_i = W_{i1}x_1 + W_{i2}x_2 + b_i\)</td><td>none (pure numbers)</td><td>\(z_1 = -0.5\)</td></tr>
+<tr><td>\(a_1,\ a_2\); \(\mathbf{a}\)</td><td>“a one”</td><td>activations: \(a_i = \operatorname{silu}(z_i)\)</td><td>none (pure numbers)</td><td>\(a_2 = 1.2264\)</td></tr>
+<tr><td>\(c_1,\ c_2\); \(\mathbf{c}\)</td><td>“c one”</td><td>output weights: \(y = c_1 a_1 + c_2 a_2\)</td><td>none (pure numbers)</td><td>\(c_1 = 1.5\)</td></tr>
+<tr><td>\(y\)</td><td>“y”</td><td>the final output (of the chain in Figure 10.1, or of the tiny network). In 10.4 only, bold \(\mathbf{y}\) is a list of outputs with entries \(y_i\)</td><td>none (pure number)</td><td>\(y = -1.5095\)</td></tr>
+<tr><td>\(\sigma(z)\)</td><td>“sigma of z”</td><td>the sigmoid: \(1/(1+e^{-z})\), a smooth step from 0 to 1</td><td>none (pure number)</td><td>\(\sigma(0) = 0.5\)</td></tr>
+<tr><td>\(\operatorname{relu}(z)\)</td><td>“relu of z”</td><td>rectified linear unit: \(z\) if \(z \gt 0\), else 0</td><td>none (pure number)</td><td>\(\operatorname{relu}(-2) = 0\)</td></tr>
+<tr><td>\(\operatorname{silu}(z)\)</td><td>“silu of z”</td><td>sigmoid linear unit: \(z\,\sigma(z)\)</td><td>none (pure number)</td><td>\(\operatorname{silu}(1.5) = 1.2264\)</td></tr>
+<tr><td>\(\bar{q}\)</td><td>“q bar”</td><td>the adjoint of a quantity \(q\): \(\partial y/\partial q\), how much the final output moves per unit nudge of \(q\)</td><td>unit of \(y\) per unit of \(q\)</td><td>\(\bar{z}_1 = 0.3901\)</td></tr>
+<tr><td>\(\dot{q}\)</td><td>“q dot”</td><td>the tangent value of \(q\): how fast \(q\) changes when the input moves along \(\mathbf{v}\), per unit of movement</td><td>unit of \(q\) per unit of movement</td><td>\(\dot{z}_1 = 0.5\)</td></tr>
+<tr><td>\(\mathbf{v}\)</td><td>“bold v”</td><td>an input direction (a list of input nudges) for forward mode</td><td>input units</td><td>\(\mathbf{v} = (1, 0.5)\)</td></tr>
+<tr><td>\(\mathbf{u}\)</td><td>“bold u”</td><td>a list of weights on the outputs, used by reverse mode</td><td>none here</td><td>\(\mathbf{u} = (1)\) for one output</td></tr>
+<tr><td>\(J,\ J_f\)</td><td>“J”, “J of f”</td><td>a Jacobian (of \(f\)): rows are outputs, columns are inputs</td><td>output unit per input unit, entry by entry</td><td>\(J = W\) for \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\)</td></tr>
+<tr><td>\(J\mathbf{v}\)</td><td>“J v”</td><td>Jacobian-vector product (JVP): how every output moves when the inputs move along \(\mathbf{v}\)</td><td>output units</td><td>\(\dot{y} = -0.8463\)</td></tr>
+<tr><td>\(\mathbf{u}^\top J\)</td><td>“u transpose J”</td><td>vector-Jacobian product (VJP): how a weighted sum of outputs moves per unit of each input</td><td>per input unit</td><td>\(\nabla y\) when \(\mathbf{u} = (1)\)</td></tr>
+<tr><td>\(\nabla y\)</td><td>“grad y”</td><td>the gradient: the list of partial derivatives of \(y\), one per input</td><td>unit of \(y\) per input unit</td><td>\((-0.1306,\ -1.4314)\)</td></tr>
+<tr><td>\(D\)</td><td>“capital d”</td><td>the diagonal matrix \(\operatorname{diag}(\operatorname{silu}'(z_1), \operatorname{silu}'(z_2))\): the Jacobian of the activation layer</td><td>none (pure numbers)</td><td>\(D_{11} = 0.2600\)</td></tr>
+<tr><td>\(\operatorname{diag}(\ldots)\)</td><td>“diag”</td><td>the square matrix with the listed numbers on the diagonal and zeros elsewhere</td><td>as the entries</td><td>\(\operatorname{diag}(2,3)\)</td></tr>
+<tr><td>\(W^\top\)</td><td>“W transpose”</td><td>a matrix with rows and columns swapped (here \(W\); the same for any matrix)</td><td>as the matrix</td><td>\((W^\top)_{12} = W_{21} = 0.5\)</td></tr>
+<tr><td>\(k,\ s_1,\ldots,s_k\); \(\mathbf{s}\)</td><td>“k”, “s one”</td><td>in 10.4 only: the number of middle quantities, and the middle quantities themselves</td><td>count; depends on the example</td><td>\(k = 2\)</td></tr>
+<tr><td>\(i,\ j,\ l\)</td><td>“i, j, l”</td><td>whole-number labels (indices) that pick an entry: row \(i\), column \(j\), path \(l\)</td><td>none</td><td>\(W_{21}\): \(i=2, j=1\)</td></tr>
+<tr><td>\(F,\ G,\ P\)</td><td>“F, G, P”</td><td>in the product rule only: two functions \(F, G\) and their product \(P = FG\)</td><td>depends</td><td>\(F(z) = z,\ G = \sigma\)</td></tr>
+<tr><td>\(A\)</td><td>“capital a”</td><td>area of a puddle (Exercise 10.1)</td><td>square metres (m²)</td><td>\(A = 4\pi\) m²</td></tr>
+<tr><td>\(F_c,\ c,\ \ell,\ A_s,\ g_s\)</td><td>“F c”, “c”, “ell”</td><td>only in 10.11, previews of <a href="14.html">Level 14</a> and theory-v2: the H-space objective (one number), its fixed readout direction (the covector), the layer index, a sublayer's Jacobian, and an adjoint vector</td><td>see Level 14</td><td>\(\ell = 16\)</td></tr>
+<tr><td>\(\odot\)</td><td>“times, entry by entry”</td><td>multiply two lists of the same length position by position</td><td>product of the units</td><td>\((1,2)\odot(3,4) = (3,8)\)</td></tr>
+<tr><td>\(n,\ m\)</td><td>“n”, “m”</td><td>number of inputs, number of outputs of a function</td><td>counts (pure numbers)</td><td>\(n = 2,\ m = 1\)</td></tr>
+<tr><td>\(d,\ K\)</td><td>“d”, “capital k”</td><td>width of each layer (numbers per layer); number of layers in a chain</td><td>counts (pure numbers)</td><td>\(d = 5{,}120\)</td></tr>
+<tr><td>\(\mathcal{L}\)</td><td>“script L”</td><td>a loss function: one number saying how wrong the output is</td><td>none here (pure number)</td><td>\(\mathcal{L} = 1.1393\)</td></tr>
+<tr><td>\(y^\ast\)</td><td>“y star”</td><td>the target the output should hit</td><td>as \(y\)</td><td>\(y^\ast = 0\)</td></tr>
+<tr><td>\(\eta\)</td><td>“eta”</td><td>learning rate: how big a step gradient descent takes</td><td>none here (pure number)</td><td>\(\eta = 0.1\)</td></tr>
+</table>
+</div>
+
+<h2>10.1 Machines in a row: composition</h2>
+<p>At <a href="01.html">Level 1</a> a function was a machine: put an input in, get an output out. Very often the output of one machine is the input of the next. That is called composition.</p>
+<p><b>Real-world example.</b> A balloon is being inflated. Its radius grows with time, and its volume depends on its radius. Let \(t\) be the time in seconds, \(R\) the radius in centimetres and \(V\) the volume in cubic centimetres. Suppose</p>
+$$ R(t) = 2 + 0.5\,t \ \text{cm}, \qquad V(R) = \tfrac{4}{3}\pi R^3\ \text{cm}^3 . $$
+<p>Time goes into the first machine and comes out as a radius. The radius goes into the second machine and comes out as a volume. The whole thing, time in and volume out, is the composition \(V(R(t))\). In the notation of the symbols table it is \(V \circ R\), read “V after R”.</p>
+<p>The order matters. \(V(R(t))\) means: first compute \(R\), then \(V\). Writing it right to left (\(V \circ R\)) matches the order in which the brackets are evaluated, innermost first.</p>
+<p><b>The question of this level.</b> We know how fast each machine responds on its own: \(dR/dt\) and \(dV/dR\). How fast does the volume respond to time, \(dV/dt\)?</p>
+
+<h2>10.2 The chain rule in one dimension</h2>
+<div class="box key">
+<span class="boxtitle">The chain rule</span>
+If \(y = g(f(x))\), then
+$$ \frac{dy}{dx} = g'(f(x)) \cdot f'(x). $$
+In words: the rate of the chain is the rate of the outer machine (measured at the point where it is being used) times the rate of the inner machine. With an intermediate name \(u = f(x)\) it reads \(\dfrac{dy}{dx} = \dfrac{dy}{du}\cdot\dfrac{du}{dx}\), and the units cancel like fractions.
+</div>
+
+<h3>Why it is true: finite changes multiply exactly</h3>
+<p>Nudge \(x\) by a small finite amount \(\Delta x\). The middle quantity \(u = f(x)\) changes by some \(\Delta u\). Then \(y\) changes by some \(\Delta y\). As long as \(\Delta u\) is not zero, ordinary fraction algebra gives</p>
+$$ \frac{\Delta y}{\Delta x} = \frac{\Delta y}{\Delta u} \cdot \frac{\Delta u}{\Delta x}. $$
+<p>This is exact: the \(\Delta u\) on top cancels the \(\Delta u\) on the bottom. Now shrink \(\Delta x\) towards zero. The left side becomes \(dy/dx\). The second factor becomes \(f'(x)\). Because \(\Delta u\) shrinks too, the first factor becomes \(g'(u) = g'(f(x))\). The product of two limits is the limit of the product, so the chain rule follows. (When \(\Delta u\) happens to be exactly zero the fraction trick fails, but the rule is still true for differentiable functions; textbooks patch this with a slightly longer argument.)</p>
+
+<h3>Worked example: the balloon, with every unit</h3>
+<p>Take \(t = 2\) s.</p>
+<ol>
+<li>Inner value: \(R(2) = 2 + 0.5 \times 2 = 3\) cm.</li>
+<li>Inner rate: \(\dfrac{dR}{dt} = 0.5\ \dfrac{\text{cm}}{\text{s}}\) (the radius grows half a centimetre each second).</li>
+<li>Outer rate, as a formula: \(\dfrac{dV}{dR} = \tfrac{4}{3}\pi \cdot 3R^2 = 4\pi R^2\ \dfrac{\text{cm}^3}{\text{cm}}\). (Power rule from <a href="02.html">Level 2</a>.)</li>
+<li>Outer rate, at the point where it is used, \(R = 3\) cm: \(4\pi \times 9 = 36\pi \approx 113.10\ \dfrac{\text{cm}^3}{\text{cm}}\). Each extra centimetre of radius adds about 113 cm³ at this size.</li>
+<li>Multiply: \(\dfrac{dV}{dt} = 113.10\ \dfrac{\text{cm}^3}{\text{cm}} \times 0.5\ \dfrac{\text{cm}}{\text{s}} = 56.55\ \dfrac{\text{cm}^3}{\text{s}}\).</li>
+</ol>
+<p>The “cm” on the bottom of the first factor cancels the “cm” on top of the second, leaving cm³/s: a volume per time, which is what a filling rate should be.</p>
+<p><b>Check by finite differences.</b> \(V(R(2.001)) = \tfrac43\pi (3.0005)^3\) and \(V(R(1.999)) = \tfrac43\pi(2.9995)^3\). Their difference divided by 0.002 s is 56.5487 cm³/s. The chain rule said 56.5487 (18π). They agree.</p>
+
+<div class="box warn">
+<span class="boxtitle">The classic mistake</span>
+Evaluating the outer derivative at the wrong place. \(dV/dR\) must be taken at \(R = R(t) = 3\) cm, not at \(R = t = 2\). Using \(4\pi \times 2^2\) gives 25.13 cm³/s, which is wrong. The outer machine is being fed \(R(t)\), so its rate is measured there.
+</div>
+
+<h3>Mechanics: follow one nudge through</h3>
+<p>Move time from 2 s to 2.01 s. The radius moves by \(0.5 \times 0.01 = 0.005\) cm. The volume then moves by about \(113.10 \times 0.005 = 0.5655\) cm³. So 0.01 s produced 0.5655 cm³: that is 56.55 cm³ per second. Each stage hands its change to the next, and each stage multiplies it by its own rate.</p>
+
+<figure class="sim" id="sim-chain">
+<figcaption><b>Figure 10.1.</b> Three machines in a row: \(p = x^2\), then \(q = \sin p\), then \(y = e^{q}\). All four number lines use the same scale. The thick blue bar on the top line is a small interval of length \(\Delta x\), starting at the short black tick. Each later line shows where that interval lands. The bar's length grows or shrinks by each machine's local rate; when it turns red and points the other way, the interval has been flipped, so that machine's rate is negative. Move \(x\) and \(\Delta x\). Look at the readout: the three measured ratios always multiply exactly to \(\Delta y/\Delta x\), and as \(\Delta x\) shrinks each ratio approaches the derivative listed beside it.</figcaption>
+</figure>
+
+<h2>10.3 Intuition pump: gears in series</h2>
+<p>Gears are the cleanest physical picture of the chain rule. Let \(\theta_A\) be how far gear A has turned, in revolutions, and the same for B, C, D.</p>
+<ul>
+<li>Gear A has 40 teeth and meshes with gear B, which has 20. Each turn of A pushes 40 teeth past the contact point, which is 2 turns of B. Meshing gears also spin in opposite directions. So B turns \(-2\) rev per rev of A.</li>
+<li>Gear C is fixed to the same axle as B, so C turns \(+1\) rev per rev of B.</li>
+<li>Gear C has 30 teeth and meshes with gear D, which has 10. So D turns \(-3\) rev per rev of C.</li>
+</ul>
+$$ \frac{d\theta_D}{d\theta_A} = \frac{d\theta_D}{d\theta_C}\cdot\frac{d\theta_C}{d\theta_B}\cdot\frac{d\theta_B}{d\theta_A} = (-3)\,(+1)\,(-2) = +6\ \frac{\text{rev of D}}{\text{rev of A}}. $$
+<p>Three things to notice. First, ratios in series multiply; they never add. Second, the units chain: “rev of D per rev of C” times “rev of C per rev of B” times “rev of B per rev of A” leaves “rev of D per rev of A”. Third, signs multiply too: two reversals give the original direction.</p>
+<p>Real gears have a fixed ratio. A curved function is like a gear whose ratio changes as it turns (an oval gear). The chain rule says: at this instant, use each gear's ratio at this instant, and multiply. That is exactly the “evaluate the outer derivative where it is used” rule from 10.2.</p>
+
+<h2>10.4 Many inputs: add the paths, multiply along each path</h2>
+<p>Now let one input affect the output through several routes. <b>Real-world example</b> (made-up numbers): a rise in the oil price raises your monthly costs in two ways. Petrol goes up by 0.024 $ per litre for each extra dollar per barrel, and you buy 100 litres a month, so this route adds 0.024 × 100 = 2.4 $ a month per $/barrel. Delivered groceries go up by 0.5 $ a month per $/barrel. The total effect is the sum over the two routes: 2.4 + 0.5 = 2.9 $ a month per $/barrel. Along each route the rates multiply; across routes the effects add.</p>
+<div class="box key">
+<span class="boxtitle">The chain rule with several middle quantities</span>
+If \(y\) depends on \(k\) middle quantities \(s_1, \ldots, s_k\), and each of those depends on \(x\), then
+$$ \frac{\partial y}{\partial x} = \frac{\partial y}{\partial s_1}\frac{\partial s_1}{\partial x} + \cdots + \frac{\partial y}{\partial s_k}\frac{\partial s_k}{\partial x}. $$
+One product per path, then add the paths.
+</div>
+<p>Why add? Nudge \(x\) by \(\Delta x\). Each middle quantity \(s_i\) moves by about \(\frac{\partial s_i}{\partial x}\Delta x\). The output responds to all of those small moves together, and for small moves the responses add (this is the local linearity of <a href="08.html">Level 8</a>, the same reason the gradient works at <a href="05.html">Level 5</a>).</p>
+
+<h3>The same rule written with Jacobians</h3>
+<p>Suppose \(\mathbf{s} = f(\mathbf{x})\) turns \(n\) inputs into \(k\) middle numbers and \(\mathbf{y} = g(\mathbf{s})\) turns those into \(m\) outputs (here bold \(\mathbf{y}\) is the list of outputs and \(y_i\) its entries). Recall from <a href="08.html">Level 8</a>: the Jacobian \(J_f\) has one row per output of \(f\) and one column per input, and entry \((i, j)\) is \(\partial s_i/\partial x_j\). Then</p>
+$$ J_{g\circ f}(\mathbf{x}) = J_g\big(f(\mathbf{x})\big)\; J_f(\mathbf{x}). $$
+<p>Check that this is the path rule. Entry \((i, j)\) of a matrix product is row \(i\) of the left matrix dotted with column \(j\) of the right one:</p>
+$$ \big(J_g J_f\big)_{ij} = \sum_{l=1}^{k} \frac{\partial y_i}{\partial s_l}\,\frac{\partial s_l}{\partial x_j}. $$
+<p>That is “one product per path through \(s_l\), summed over the \(k\) paths”. Matrix multiplication is the chain rule for many variables. The shapes must fit: \((m\times k)\) times \((k \times n)\) gives \((m \times n)\), one row per final output and one column per original input. The units fit the same way: (output per middle) times (middle per input) gives output per input.</p>
+
+<h2>10.5 Neurons: weights, biases and activation functions</h2>
+<p>A neural network is a long chain of two kinds of simple machine.</p>
+<ul>
+<li><b>Weighted sums.</b> A neuron takes several inputs, multiplies each by a weight, adds them, and adds a bias. For neuron 1 with inputs \(x_1, x_2\): \(z_1 = W_{11}x_1 + W_{12}x_2 + b_1\). This is a linear map plus a shift. Its partial derivatives are the weights themselves: \(\partial z_1/\partial x_1 = W_{11}\).</li>
+<li><b>Activation functions.</b> The weighted sum \(z\) (the pre-activation) is passed through a fixed one-input curve. Without this bend, a chain of weighted sums would collapse into one weighted sum, and the network could only draw straight lines.</li>
+</ul>
+<p>Three activation functions matter here.</p>
+<ul>
+<li><b>ReLU:</b> \(\operatorname{relu}(z) = z\) if \(z \gt 0\), else 0. Its slope is 1 for positive \(z\), 0 for negative \(z\), and undefined at the corner \(z = 0\) (software uses 0 there). Its second derivative is zero everywhere except the corner.</li>
+<li><b>Sigmoid:</b> \(\sigma(z) = \dfrac{1}{1 + e^{-z}}\). A smooth step: near 0 for very negative \(z\), exactly 0.5 at \(z = 0\), near 1 for large \(z\).</li>
+<li><b>SiLU:</b> \(\operatorname{silu}(z) = z\,\sigma(z)\). For large positive \(z\) it is close to \(z\); for large negative \(z\) it is close to 0; in between it is a smooth bend that dips slightly below zero (its lowest value is about −0.28, near \(z = -1.28\)). It is a smooth ReLU. The Qwen models in this project use it inside their MLPs (<a href="14.html">Level 14</a>).</li>
+</ul>
+
+<h3>Two derivatives we will need, step by step</h3>
+<p><b>The sigmoid's slope.</b> Write \(\sigma(z) = (1 + e^{-z})^{-1}\). This is a chain: the inner machine computes \(1 + e^{-z}\); the outer machine takes one over its input.</p>
+<ol>
+<li>Outer rate: “one over the input” is the input to the power −1, so by the power rule its rate is \(-(\text{input})^{-2}\), here \(-(1+e^{-z})^{-2}\).</li>
+<li>Inner rate: \(\dfrac{d}{dz}(1 + e^{-z}) = -e^{-z}\). (This is itself a small chain: the exponential, whose rate is itself, fed by \(-z\), whose rate is \(-1\).)</li>
+<li>Multiply: \(\sigma'(z) = -(1+e^{-z})^{-2}\cdot(-e^{-z}) = \dfrac{e^{-z}}{(1+e^{-z})^2}\).</li>
+<li>Split the fraction: \(\dfrac{1}{1+e^{-z}}\cdot\dfrac{e^{-z}}{1+e^{-z}}\). The first factor is \(\sigma\). The second is \(\dfrac{(1+e^{-z}) - 1}{1+e^{-z}} = 1 - \sigma\).</li>
+<li>So \(\sigma'(z) = \sigma(z)\,\big(1 - \sigma(z)\big)\). At \(z = 0\): \(0.5 \times 0.5 = 0.25\).</li>
+</ol>
+<p><b>The product rule.</b> SiLU is a product of two functions of \(z\), so we need the rule for products. If \(P(z) = F(z)\,G(z)\) (here \(F\) and \(G\) are any two functions), then</p>
+$$ P'(z) = F'(z)\,G(z) + F(z)\,G'(z). $$
+<p>Picture a rectangle with sides \(F\) and \(G\). Grow both sides a little. The area grows by a strip along one side (\(\Delta F \times G\)) plus a strip along the other (\(F \times \Delta G\)), plus a tiny corner \(\Delta F\,\Delta G\) that vanishes faster than the strips as the change shrinks. Divide by \(\Delta z\) and shrink: that is the product rule.</p>
+<p><b>The SiLU's slope.</b> Use the product rule with \(F(z) = z\) and \(G(z) = \sigma(z)\), one step at a time. The worked numbers use \(z = 1.5\), where \(\sigma(1.5) = 0.8176\).</p>
+<p><b>Step 1: the four pieces.</b> \(F(z) = z\), so \(F'(z) = 1\). \(G(z) = \sigma(z)\), so \(G'(z) = \sigma(z)\big(1 - \sigma(z)\big)\) (from the sigmoid's slope above). Example: \(F = 1.5\), \(F' = 1\), \(G = 0.8176\), \(G' = 0.8176\times0.1824 = 0.1491\).</p>
+<p><b>Step 2: put them into \(F'G + FG'\).</b></p>
+$$ \operatorname{silu}'(z) = 1\cdot\sigma(z) + z\,\sigma(z)\big(1-\sigma(z)\big). $$
+<p>Example: \(0.8176 + 1.5\times0.1491 = 0.8176 + 0.2237 = 1.0413\).</p>
+<p><b>Step 3: take out the common factor \(\sigma(z)\).</b> Both terms contain \(\sigma(z)\). What is left of the first is 1; what is left of the second is \(z\,(1 - \sigma(z))\):</p>
+$$ \operatorname{silu}'(z) = \sigma(z)\Big(1 + z\big(1 - \sigma(z)\big)\Big). $$
+<p>Example: \(0.8176\times(1 + 1.5\times0.1824) = 0.8176\times1.2736 = 1.0413\), the same as Step 2.</p>
+<p>At \(z = 0\): \(\sigma = 0.5\), so \(\operatorname{silu}'(0) = 0.5\,(1 + 0) = 0.5\).</p>
+
+<figure class="sim" id="sim-act">
+<figcaption><b>Figure 10.2.</b> The three activation functions. Pick one. The blue curve is the function, the dashed red curve its slope (derivative), and the grey line the tangent line at the chosen \(z\). Move \(z\) and watch the readout. Notice that ReLU's slope jumps from 0 to 1, while sigmoid and SiLU change slope smoothly. That smoothness is why SiLU has a non-zero second derivative, which matters at <a href="12.html">Level 12</a>.</figcaption>
+</figure>
+
+<h2>10.6 The tiny network</h2>
+<p>Here is the toy used on this level and on Levels 11 and 12. It has two inputs, one hidden layer of two SiLU neurons, and one output. Every quantity in it is a pure number.</p>
+<div class="box key">
+<span class="boxtitle">The tiny network (fixed numbers)</span>
+$$ W = \begin{pmatrix} W_{11} &amp; W_{12} \\ W_{21} &amp; W_{22} \end{pmatrix} = \begin{pmatrix} 1.0 &amp; -1.0 \\ 0.5 &amp; 1.0 \end{pmatrix}, \qquad \mathbf{b} = \begin{pmatrix} 0.5 \\ -1.0 \end{pmatrix}, \qquad \mathbf{c} = \begin{pmatrix} 1.5 \\ -1.0 \end{pmatrix}. $$
+$$ z_1 = W_{11}x_1 + W_{12}x_2 + b_1, \quad z_2 = W_{21}x_1 + W_{22}x_2 + b_2, \quad a_i = \operatorname{silu}(z_i), \quad y = c_1 a_1 + c_2 a_2 . $$
+The base input used in every worked example is \(\mathbf{x} = (x_1, x_2) = (1, 2)\).
+</div>
+<p>In matrix form: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(\mathbf{a} = \operatorname{silu}(\mathbf{z})\) applied entry by entry, \(y = \mathbf{c}^\top \mathbf{a}\). Three machines in a row.</p>
+
+<h3>The forward pass by hand</h3>
+<p>The forward pass computes the output from the inputs, left to right. Keep four decimals.</p>
+<ol>
+<li>Pre-activations:
+$$ z_1 = 1.0(1) + (-1.0)(2) + 0.5 = -0.5, \qquad z_2 = 0.5(1) + 1.0(2) + (-1.0) = 1.5 . $$</li>
+<li>Sigmoids. Put each \(z\) into \(\sigma(z) = 1/(1 + e^{-z})\). For \(z_1 = -0.5\), \(-z_1 = 0.5\) and \(e^{0.5} = 1.6487\), so \(\sigma(-0.5) = 1/(1 + 1.6487) = 1/2.6487 = 0.3775\). For \(z_2 = 1.5\), \(-z_2 = -1.5\) and \(e^{-1.5} = 0.2231\), so \(\sigma(1.5) = 1/(1 + 0.2231) = 1/1.2231 = 0.8176\).</li>
+<li>Activations:
+$$ a_1 = -0.5 \times 0.3775 = -0.1888, \qquad a_2 = 1.5 \times 0.8176 = 1.2264 . $$</li>
+<li>Output:
+$$ y = 1.5 \times (-0.1888) + (-1.0)\times 1.2264 = -0.2832 - 1.2264 = -1.5095 . $$</li>
+</ol>
+<p>The question for the rest of the level: how does \(y\) change when \(x_1\) or \(x_2\) changes? That is the gradient \(\nabla y = (\partial y/\partial x_1,\ \partial y/\partial x_2)\).</p>
+
+<h2>10.7 The computational graph, adjoints and the backward pass</h2>
+<p>A computational graph draws each intermediate quantity as a node and each “is used to compute” as an arrow. For the tiny network: \(x_1, x_2\) feed both \(z_1\) and \(z_2\); \(z_i\) feeds \(a_i\); both \(a_i\) feed \(y\). Each arrow carries a local rate: the partial derivative of the arrow's head with respect to its tail, holding the other tails fixed.</p>
+<ul>
+<li>arrow \(x_j \to z_i\): rate \(\partial z_i/\partial x_j = W_{ij}\);</li>
+<li>arrow \(z_i \to a_i\): rate \(\operatorname{silu}'(z_i)\);</li>
+<li>arrow \(a_i \to y\): rate \(c_i\).</li>
+</ul>
+<p>By 10.4, \(\partial y/\partial x_1\) is a sum over all paths from \(x_1\) to \(y\) of the product of rates along each path. There are two paths (through neuron 1 and through neuron 2). In a deep network there are astronomically many paths, so we need a way to add them up without listing them. That way is the backward pass.</p>
+
+<div class="box key">
+<span class="boxtitle">Adjoints</span>
+The adjoint of a node \(q\), written \(\bar{q}\), is \(\partial y/\partial q\): how much the final output moves per unit nudge of \(q\), letting everything downstream of \(q\) recompute. It obeys one rule:
+$$ \bar{q} = \sum_{\text{arrows } q \to r} \bar{r}\cdot\frac{\partial r}{\partial q}. $$
+The adjoint of a node is the sum, over the nodes it feeds, of (their adjoint) × (the local rate on the arrow). Start with \(\bar{y} = 1\) and work from the output back to the inputs.
+</div>
+<p>Why the rule is right: every path from \(q\) to \(y\) leaves \(q\) along exactly one arrow \(q \to r\) and then continues along some path from \(r\) to \(y\). The sum of path-products from \(r\) is \(\bar{r}\). So grouping paths by their first arrow gives the formula. Each node is visited once, and the sum over paths is never written out.</p>
+
+<h3>The backward pass by hand</h3>
+<p>We need the forward values from 10.6, and the slopes \(\operatorname{silu}'(z_i) = \sigma(z_i)\big(1 + z_i(1 - \sigma(z_i))\big)\):</p>
+$$ \operatorname{silu}'(-0.5) = 0.3775\,\big(1 + (-0.5)(0.6225)\big) = 0.3775 \times 0.6888 = 0.2600, $$
+$$ \operatorname{silu}'(1.5) = 0.8176\,\big(1 + 1.5 \times 0.1824\big) = 0.8176 \times 1.2736 = 1.0413 . $$
+<ol>
+<li>Start: \(\bar{y} = \partial y/\partial y = 1\).</li>
+<li>Activations: \(a_i\) feeds only \(y\), along an arrow with rate \(c_i\). So \(\bar{a}_1 = \bar{y}\,c_1 = 1.5\) and \(\bar{a}_2 = \bar{y}\,c_2 = -1.0\).</li>
+<li>Pre-activations: \(z_i\) feeds only \(a_i\), rate \(\operatorname{silu}'(z_i)\):
+$$ \bar{z}_1 = 1.5 \times 0.2600 = 0.3901, \qquad \bar{z}_2 = -1.0 \times 1.0413 = -1.0413 . $$</li>
+<li>Inputs: \(x_1\) feeds both \(z_1\) (rate \(W_{11} = 1.0\)) and \(z_2\) (rate \(W_{21} = 0.5\)):
+$$ \bar{x}_1 = \bar{z}_1 W_{11} + \bar{z}_2 W_{21} = 0.3901 + 0.5\times(-1.0413) = 0.3901 - 0.5206 = -0.1306 . $$
+\(x_2\) feeds \(z_1\) (rate \(W_{12} = -1.0\)) and \(z_2\) (rate \(W_{22} = 1.0\)):
+$$ \bar{x}_2 = \bar{z}_1 W_{12} + \bar{z}_2 W_{22} = -0.3901 - 1.0413 = -1.4314 . $$</li>
+</ol>
+<p>So \(\nabla y = (-0.1306,\ -1.4314)\) at \(\mathbf{x} = (1, 2)\). <b>Check by finite differences:</b> \(\big(y(1.00001, 2) - y(0.99999, 2)\big)/0.00002 = -0.1306\), and the same for \(x_2\) gives \(-1.4314\). They agree to every printed digit.</p>
+<p><b>Mechanics.</b> Raise \(x_2\) from 2 to 2.01 and keep \(x_1 = 1\). Then \(z_1\) drops by 0.01 and \(z_2\) rises by 0.01. Neuron 1 is in a flat part of SiLU (slope 0.26) and its output is weighted by +1.5; neuron 2 is in a steep part (slope 1.04) and weighted by −1.0. So \(y\) moves by about \(1.5\times0.26\times(-0.01) + (-1.0)\times1.04\times0.01 = -0.0039 - 0.0104 = -0.0143\). That is \(-1.43\) per unit of \(x_2\): the second entry of the gradient.</p>
+
+<figure class="sim" id="sim-graph">
+<figcaption><b>Figure 10.3.</b> The tiny network as a computational graph. Press “Next step” repeatedly. The first four steps are the forward pass: values (blue, below each node) fill in from left to right. The next four are the backward pass: adjoints (red, above each node) fill in from right to left, each one built from the adjoints to its right and the local rates on the arrows. The readout shows the arithmetic of the current step. Change \(x_1\) and \(x_2\) and run it again; the last step compares the backward-pass gradient with a finite-difference check.</figcaption>
+</figure>
+
+<div class="box plain">
+<span class="boxtitle">Why the forward values must be kept</span>
+Step 3 of the backward pass used \(\operatorname{silu}'(z_i)\), which needs \(z_i\) from the forward pass. So the backward pass needs every intermediate value of the forward pass stored. For a large model that storage is a large part of the memory bill. It returns at <a href="11.html">Level 11</a>, where the HVP code avoids storing a second copy of every weight.
+</div>
+
+<h2>10.8 Forward mode and reverse mode</h2>
+<p>There are two orders in which the chain rule can be run. They give the same numbers. They cost very different amounts.</p>
+
+<h3>Forward mode: push an input nudge forwards (Jacobian-vector product)</h3>
+<p>Pick an input direction \(\mathbf{v}\): a list saying how much each input is nudged. Forward mode carries, next to each value \(q\), its tangent value \(\dot{q}\): how fast \(q\) changes per unit of movement along \(\mathbf{v}\). Every machine passes on its tangent by multiplying by its local rate. At the end, \(\dot{y}\) is the directional derivative of \(y\) along \(\mathbf{v}\). In matrix language this computes \(J\mathbf{v}\), a Jacobian-vector product (JVP), without ever building \(J\).</p>
+<p><b>Worked JVP</b> with \(\mathbf{v} = (1, 0.5)\): move \(x_1\) by 1 unit and \(x_2\) by half a unit for each unit of movement.</p>
+<ol>
+<li>\(\dot{z}_1 = W_{11}v_1 + W_{12}v_2 = 1 - 0.5 = 0.5\); \(\dot{z}_2 = W_{21}v_1 + W_{22}v_2 = 0.5 + 0.5 = 1.0\).</li>
+<li>\(\dot{a}_1 = \operatorname{silu}'(z_1)\,\dot{z}_1 = 0.2600 \times 0.5 = 0.1300\); \(\dot{a}_2 = 1.0413 \times 1.0 = 1.0413\).</li>
+<li>\(\dot{y} = c_1\dot{a}_1 + c_2\dot{a}_2 = 1.5\times0.1300 - 1.0413 = 0.1950 - 1.0413 = -0.8463\).</li>
+</ol>
+<p>Check with the gradient: \(\nabla y\cdot\mathbf{v} = -0.1306\times1 + (-1.4314)\times0.5 = -0.1306 - 0.7157 = -0.8463\). Same number. But notice: one forward-mode pass gave one number, the slope along one direction. To get both entries of the gradient this way you must run it twice, with \(\mathbf{v} = (1, 0)\) and \(\mathbf{v} = (0, 1)\). With \(n\) inputs, \(n\) passes.</p>
+
+<h3>Reverse mode: pull an output weighting backwards (vector-Jacobian product)</h3>
+<p>Pick a weighting \(\mathbf{u}\) of the outputs. Reverse mode starts with \(\bar{y} = \mathbf{u}\) at the outputs and runs the adjoint rule backwards. At the inputs it produces \(\mathbf{u}^\top J\): a vector-Jacobian product (VJP). For one output, \(\mathbf{u} = (1)\) and the VJP is the whole gradient, every entry, in one pass. That is exactly what 10.7 did. With \(m\) outputs, the full Jacobian costs \(m\) reverse passes (one per row).</p>
+
+<div class="box key">
+<span class="boxtitle">Which mode wins</span>
+<ul>
+<li>Forward mode: one pass per input direction. Full Jacobian in \(n\) passes.</li>
+<li>Reverse mode: one pass per output weighting. Full Jacobian in \(m\) passes.</li>
+<li>Each pass costs a small constant number of forward passes; the constant does not grow with \(n\) or \(m\).</li>
+</ul>
+Training and interpretability usually need the gradient of <i>one</i> number (a loss, or one readout) with respect to <i>many</i> inputs or weights. Then \(m = 1\) and reverse mode wins by a factor of about \(n\). That is backpropagation.
+</div>
+
+<figure class="sim" id="sim-cost">
+<figcaption><b>Figure 10.4.</b> Cost in passes. Set the number of inputs \(n\) and outputs \(m\) (the sliders move in powers of ten), or press a preset. The bars use a logarithmic scale: each grid line is ten times the previous one. Forward mode needs \(n\) passes for the full Jacobian, reverse mode \(m\). Look at the H-space presets: one output and thousands of inputs per position, so reverse mode is thousands of times cheaper.</figcaption>
+</figure>
+
+<h2>10.9 Backpropagation as transposed Jacobians, multiplied from the output end</h2>
+<p>Write the tiny network as three machines and their Jacobians:</p>
+<ul>
+<li>\(\mathbf{z} = W\mathbf{x} + \mathbf{b}\): Jacobian \(W\) (2×2). The bias has no effect on rates.</li>
+<li>\(\mathbf{a} = \operatorname{silu}(\mathbf{z})\), entry by entry: Jacobian \(D = \operatorname{diag}\big(\operatorname{silu}'(z_1), \operatorname{silu}'(z_2)\big)\) (2×2, zero off the diagonal because \(a_1\) does not depend on \(z_2\)).</li>
+<li>\(y = \mathbf{c}^\top\mathbf{a}\): Jacobian \(\mathbf{c}^\top\) (1×2, one row).</li>
+</ul>
+<p>At \(\mathbf{x} = (1, 2)\) these are \(W = \begin{pmatrix} 1.0 &amp; -1.0 \\ 0.5 &amp; 1.0 \end{pmatrix}\), \(D = \begin{pmatrix} 0.2600 &amp; 0 \\ 0 &amp; 1.0413 \end{pmatrix}\) (the slopes from 10.7) and \(\mathbf{c}^\top = (1.5,\ -1.0)\). Now combine them one operation at a time.</p>
+<p><b>Step 1: multiply the Jacobians.</b> By the chain rule of 10.4, the Jacobian of the whole network is the product, outermost on the left:</p>
+$$ J_y = \mathbf{c}^\top D\, W \qquad (1\times2)(2\times2)(2\times2) = (1\times2). $$
+<p>Example, left to right: \(\mathbf{c}^\top D = (1.5\times0.2600,\ -1.0\times1.0413) = (0.3901, -1.0413)\). Then multiply by \(W\), the row dotted with each column of \(W\): \((0.3901\times1.0 + (-1.0413)\times0.5,\ \ 0.3901\times(-1.0) + (-1.0413)\times1.0) = (-0.1306, -1.4314)\).</p>
+<p><b>Step 2: transpose.</b> The gradient is this row written as a column. Transposing a product reverses the order (Level 7, 7.6): \((\mathbf{c}^\top D W)^\top = W^\top D^\top (\mathbf{c}^\top)^\top = W^\top D^\top \mathbf{c}\). (Shapes check: a 1×2 row becomes a 2×1 column.)</p>
+<p><b>Step 3: \(D^\top = D\).</b> \(D\) is diagonal, and swapping rows and columns leaves a diagonal matrix unchanged. So</p>
+$$ \nabla y = W^\top D\,\mathbf{c}. $$
+<p><b>Step 4: a diagonal matrix times a vector multiplies entry by entry.</b> Row 1 of \(D\) is \((\operatorname{silu}'(z_1), 0)\), so row 1 of \(D\mathbf{c}\) is \(\operatorname{silu}'(z_1)\,c_1\); row 2 likewise. So \(D\mathbf{c} = \mathbf{c}\odot\operatorname{silu}'(\mathbf{z})\):</p>
+$$ \nabla y = W^\top\big(\mathbf{c} \odot \operatorname{silu}'(\mathbf{z})\big). $$
+<p>Example: \(D\mathbf{c} = (0.2600\times1.5,\ 1.0413\times(-1.0)) = (0.3901, -1.0413)\).</p>
+<p><b>Step 5: read it right to left.</b> This is the backward pass of 10.7: \(\bar{\mathbf{a}} = \mathbf{c}\), then \(\bar{\mathbf{z}} = D\bar{\mathbf{a}} = (0.3901, -1.0413)\), then \(\bar{\mathbf{x}} = W^\top\bar{\mathbf{z}}\).</p>
+<p><b>Step 6: transpose \(W\) and multiply, row by row.</b> Row 1 of \(W\), \((1.0, -1.0)\), becomes column 1 of \(W^\top\); row 2, \((0.5, 1.0)\), becomes column 2:</p>
+$$ W^\top\bar{\mathbf{z}} = \begin{pmatrix} 1.0 &amp; 0.5 \\ -1.0 &amp; 1.0 \end{pmatrix}\begin{pmatrix} 0.3901 \\ -1.0413 \end{pmatrix} = \begin{pmatrix} 1.0\times0.3901 + 0.5\times(-1.0413) \\ -1.0\times0.3901 + 1.0\times(-1.0413) \end{pmatrix} = \begin{pmatrix} 0.3901 - 0.5206 \\ -0.3901 - 1.0413 \end{pmatrix} = \begin{pmatrix} -0.1306 \\ -1.4314 \end{pmatrix}. $$
+<p>The same numbers as Step 1, now as a column.</p>
+<div class="box key">
+<span class="boxtitle">Backpropagation in one line</span>
+Backpropagation multiplies the transposed Jacobians of the layers onto a vector, starting from the output end: \(\bar{\mathbf{x}} = J_1^\top J_2^\top \cdots J_K^\top \bar{\mathbf{y}}\), evaluated right to left. At every step it multiplies a matrix by a vector, never a matrix by a matrix.
+</div>
+
+<h3>Why the order of multiplication is the whole story</h3>
+<p>For a chain of \(K\) layers, each \(d\) numbers wide, every layer Jacobian is \(d\times d\). Multiplying a \(d\times d\) matrix by a vector takes \(d^2\) multiply-adds. Multiplying two \(d \times d\) matrices takes \(d^3\).</p>
+<ul>
+<li>Reverse mode, vector first: \(K\) matrix-vector products, about \(K d^2\) multiply-adds. Result: the whole gradient.</li>
+<li>Building the full Jacobian first, then reading off one row: \(K\) matrix-matrix products, about \(K d^3\). That is \(d\) times more work. At \(d = 5{,}120\) that is 5,120 times more.</li>
+</ul>
+<p>Matrix multiplication is associative, so both orders give the same answer. Only the bill differs. In practice nobody writes out the \(d\times d\) Jacobian at all: each layer's code knows how to apply its transposed Jacobian to a vector directly (that is exactly what step 4 of 10.7 did with \(W^\top\)).</p>
+
+<h2>10.10 Loss functions and gradient descent (briefly)</h2>
+<p>Training changes the weights so the output gets closer to a target. A loss function measures how wrong the output is. A common one is the squared error</p>
+$$ \mathcal{L} = \tfrac12\,(y - y^\ast)^2, $$
+<p>where \(y^\ast\) is the target. With \(y = -1.5095\) and \(y^\ast = 0\): \(\mathcal{L} = \tfrac12(1.5095)^2 = 1.1393\).</p>
+<p>The same backward pass gives the gradient with respect to the weights, with one more application of the chain rule. Do it one step at a time.</p>
+<p><b>Step 1: the loss's slope in \(y\).</b> \(\mathcal{L}\) is a chain: the inner machine computes \(y - y^\ast\) (rate 1 per unit of \(y\)); the outer machine takes half the square of its input (rate: \(\tfrac12\times2\times\text{input} = \text{input}\), by the power rule). Multiply the two rates:</p>
+$$ \frac{\partial\mathcal{L}}{\partial y} = (y - y^\ast)\times1 = y - y^\ast . $$
+<p>Example: \(-1.5095 - 0 = -1.5095\).</p>
+<p><b>Step 2: the output's slope in each weight.</b></p>
+<ul>
+<li>\(\partial y/\partial c_i = a_i\), because the output is \(c_1a_1 + c_2a_2\) and \(c_i\) multiplies \(a_i\). Example: \(\partial y/\partial c_1 = a_1 = -0.1888\).</li>
+<li>\(\partial y/\partial b_i = \bar{z}_i\), because \(b_i\) enters \(z_i\) with rate 1, and \(z_i\) moves \(y\) at rate \(\bar{z}_i\). Example: \(\partial y/\partial b_1 = 0.3901\).</li>
+<li>\(\partial y/\partial W_{ij} = \bar{z}_i\,x_j\), because \(W_{ij}\) enters \(z_i\) with rate \(x_j\) (it multiplies \(x_j\)). Example: \(\partial y/\partial W_{12} = 0.3901\times2 = 0.7802\).</li>
+</ul>
+<p><b>Step 3: chain the two.</b> Each weight's effect on the loss is (loss per unit of \(y\)) × (\(y\) per unit of that weight). Example: \(\partial\mathcal{L}/\partial c_1 = -1.5095 \times (-0.1888) = 0.2850\).</p>
+<p>Gradient descent then takes a small step downhill: each weight moves by minus the learning rate \(\eta\) times its partial derivative. With \(\eta = 0.1\): \(c_1 \leftarrow 1.5 - 0.1 \times 0.2850 = 1.4715\). Repeat over many examples and the loss falls. That is all of training, at this level of detail. (Gradient descent is the downhill version of the steepest ascent of <a href="05.html">Level 5</a>.)</p>
+<p>H-space does not train anything. It reuses the same machinery for a different purpose: differentiate a fixed model's output with respect to its internal state.</p>
+
+<h2>10.11 Why this matters for H-space</h2>
+<ol>
+<li><b>One output, many inputs.</b> The H-space objective is a single number, \(F_c\): a fixed readout direction (theory-v2 calls it the covector \(c\)) dotted with the last block's output, summed over positions (theory-v2 §0; <a href="14.html">Level 14</a>). It is the big-model version of \(y = \mathbf{c}^\top\mathbf{a}\) here. Its input is the layer-\(\ell\) residual stream: \(d = 5{,}120\) numbers per position in Qwen3.6-27B. So its gradient is one reverse-mode pass, not 5,120 forward-mode passes.</li>
+<li><b>Adjoints are the backbone of Lemma 1.</b> theory-v2 writes the model after layer \(\ell\) as a chain of residual sublayers, and defines adjoints \(g_s = A_s^\top g_{s+1}\), where \(A_s\) is a sublayer's Jacobian. That is exactly the rule “multiply by the transposed Jacobian, from the output end” of 10.9. <a href="12.html">Level 12</a> adds the second-order version.</li>
+<li><b>The J-lens is an averaged Jacobian.</b> The per-input Jacobian from layer \(\ell\) to the end is a product of sublayer Jacobians, by the chain rule of 10.4. The J-lens averages it over contexts and positions (<a href="14.html">Level 14</a>). The cost counter applies there too: theory-v2 §6 counts a J-lens fit as \(n\cdot d\) backward-equivalents for \(n\) prompts: \(d\) reverse passes per prompt, one per output coordinate, as the cost counter predicts for \(m = d\) outputs.</li>
+<li><b>An HVP is the derivative of the backward pass.</b> <a href="11.html">Level 11</a> takes the backward pass you just ran and differentiates it once more along a direction. That gives a Hessian-vector product at the cost of a few gradients, which is how every H-space number was computed.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="2.5133" data-tol="0.005" data-unit="m²/s">
+<p><b>Exercise 10.1.</b> A circular puddle has radius \(R(t) = 1 + 0.2\,t\) metres at time \(t\) seconds. Its area is \(A = \pi R^2\) square metres. How fast is the area growing at \(t = 5\) s? Give every unit.</p>
+<details><summary>Show answer</summary>
+<p>Inner value: \(R(5) = 1 + 0.2\times5 = 2\) m. Inner rate: \(dR/dt = 0.2\) m/s. Outer rate: \(dA/dR = 2\pi R\) m²/m, which at \(R = 2\) m is \(4\pi = 12.566\) m²/m. Chain rule: \(dA/dt = 12.566\ \text{m}^2/\text{m} \times 0.2\ \text{m/s} = 2.5133\ \text{m}^2/\text{s}\) (that is \(0.8\pi\)). The metres on the bottom of the first factor cancel the metres on top of the second.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="6" data-tol="0.001" data-unit="rev of C per rev of A">
+<p><b>Exercise 10.2.</b> Gear A drives gear B, and B turns −1.5 rev per rev of A. Gear B drives gear C, and C turns −4 rev per rev of B. How many revolutions does C make per revolution of A, and in which direction compared with A?</p>
+<details><summary>Show answer</summary>
+<p>Ratios in series multiply: \((-4)\times(-1.5) = +6\) rev of C per rev of A. Positive: C turns the same way as A, because two reversals cancel.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2.5068" data-tol="0.002" data-unit="per unit of x">
+<p><b>Exercise 10.3.</b> Use Figure 10.1's chain, \(y = e^{\sin(x^2)}\). Compute \(dy/dx\) at \(x = 1\) by hand, then check it in the figure.</p>
+<details><summary>Show answer</summary>
+<p>Stages at \(x = 1\): \(p = 1\), \(q = \sin 1 = 0.8415\), \(y = e^{0.8415} = 2.3198\). Rates: \(dp/dx = 2x = 2\); \(dq/dp = \cos p = \cos 1 = 0.5403\); \(dy/dq = e^{q} = 2.3198\). Product: \(2 \times 0.5403 \times 2.3198 = 2.5068\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.25" data-tol="0.001" data-unit="">
+<p><b>Exercise 10.4.</b> Using \(\sigma'(z) = \sigma(z)(1-\sigma(z))\), find \(\sigma'(0)\). Then explain in one sentence why \(\operatorname{silu}'(0) = 0.5\) is twice as big.</p>
+<details><summary>Show answer</summary>
+<p>\(\sigma(0) = 1/(1+1) = 0.5\), so \(\sigma'(0) = 0.5\times0.5 = 0.25\). By the product rule, \(\operatorname{silu}'(0) = \sigma(0) + 0\cdot\sigma'(0) = 0.5\): at \(z = 0\) the second term vanishes, and what is left is the sigmoid's value, not its slope.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.7358" data-tol="0.002" data-unit="">
+<p><b>Exercise 10.5.</b> <span class="small">(The tiny network: \(\mathbf{z} = W\mathbf{x} + \mathbf{b}\), \(a_i = \operatorname{silu}(z_i) = z_i\,\sigma(z_i)\), \(y = c_1a_1 + c_2a_2\), with \(W = \begin{pmatrix} 1 & -1 \\ 0.5 & 1 \end{pmatrix}\), \(\mathbf{b} = (0.5, -1)\), \(\mathbf{c} = (1.5, -1)\).)</span> Run the tiny network's forward pass at \(\mathbf{x} = (0, 0)\). What is \(y\)? (Use \(\sigma(0.5) = 0.6225\) and \(\sigma(-1) = 0.2689\).)</p>
+<details><summary>Show answer</summary>
+<p>\(z_1 = 1(0) - 1(0) + 0.5 = 0.5\); \(z_2 = 0.5(0) + 1(0) - 1 = -1\). \(a_1 = 0.5\times0.6225 = 0.3112\); \(a_2 = -1\times0.2689 = -0.2689\). \(y = 1.5\times0.3112 + (-1)(-0.2689) = 0.4668 + 0.2689 = 0.7358\). You can confirm it in Figure 10.3 by setting both sliders to 0.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1.0738" data-tol="0.003" data-unit="">
+<p><b>Exercise 10.6.</b> Continue at \(\mathbf{x} = (0,0)\): run the backward pass and find \(\partial y/\partial x_1\). You need \(\operatorname{silu}'(0.5) = 0.7400\) and \(\operatorname{silu}'(-1) = 0.0723\).</p>
+<details><summary>Show answer</summary>
+<p>\(\bar{y} = 1\); \(\bar{a}_1 = 1.5\), \(\bar{a}_2 = -1\). \(\bar{z}_1 = 1.5\times0.7400 = 1.1099\); \(\bar{z}_2 = -1\times0.0723 = -0.0723\). \(\bar{x}_1 = W_{11}\bar{z}_1 + W_{21}\bar{z}_2 = 1.1099 + 0.5\times(-0.0723) = 1.1099 - 0.0362 = 1.0738\). (And \(\bar{x}_2 = -1.1099 - 0.0723 = -1.1823\).) Figure 10.3 at \(\mathbf{x} = (0,0)\) shows the same numbers.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="3" data-tol="0.001" data-unit="passes">
+<p><b>Exercise 10.7.</b> A function has \(n = 1{,}000\) inputs and \(m = 3\) outputs. You want its full 3×1,000 Jacobian. How many passes does forward mode need? How many does reverse mode need? Enter the reverse-mode count.</p>
+<details><summary>Show answer</summary>
+<p>Forward mode gives one column per pass (one input direction): 1,000 passes. Reverse mode gives one row per pass (one output weighting): 3 passes. Reverse mode is about 333 times cheaper here.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 10.8.</b> Machine \(f\) takes 4 numbers to 6 numbers; machine \(g\) takes those 6 numbers to 2 numbers. What are the shapes of \(J_f\), \(J_g\) and \(J_{g\circ f}\)? Which product is legal: \(J_g J_f\) or \(J_f J_g\)?</p>
+<details><summary>Show answer</summary>
+<p>\(J_f\) is 6×4 (rows = outputs of \(f\), columns = inputs). \(J_g\) is 2×6. \(J_{g\circ f} = J_g J_f\) is (2×6)(6×4) = 2×4: two final outputs, four original inputs. \(J_f J_g\) would be (6×4)(2×6): the inner sizes 4 and 2 do not match, so it is not defined. The order is “outer machine on the left”.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-0.8149" data-tol="0.002" data-unit="">
+<p><b>Exercise 10.9.</b> With the loss \(\mathcal{L} = \tfrac12(y - y^\ast)^2\), target \(y^\ast = 0\), at \(\mathbf{x} = (1,2)\), take one gradient-descent step on \(c_2\) with \(\eta = 0.1\). What is the new \(c_2\)?</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1:</b> \(\partial\mathcal{L}/\partial y = y - y^\ast = -1.5095 - 0 = -1.5095\) (10.10, Step 1). <b>Step 2:</b> \(\partial y/\partial c_2 = a_2 = 1.2264\). <b>Step 3:</b> chain rule, multiply the two: \(\partial\mathcal{L}/\partial c_2 = -1.5095\times1.2264 = -1.8512\). <b>Step 4:</b> the update. Step: \(c_2 \leftarrow -1.0 - 0.1\times(-1.8512) = -1.0 + 0.1851 = -0.8149\). The weight moves towards zero, which shrinks the negative contribution of neuron 2 and pushes \(y\) up towards the target.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+/* ---- the tiny network (identical definition on Levels 10, 11 and 12) ---- */
+var NET = { W: [[1.0, -1.0], [0.5, 1.0]], b: [0.5, -1.0], c: [1.5, -1.0] };
+function sig(z) { return 1 / (1 + Math.exp(-z)); }
+function silu(z) { return z * sig(z); }
+function silu1(z) { var s = sig(z); return s * (1 + z * (1 - s)); }                 /* silu'  */
+function silu2(z) { var s = sig(z); return s * (1 - s) * (2 + z * (1 - 2 * s)); }   /* silu'' */
+function netForward(x) {
+  var W = NET.W, z = [W[0][0] * x[0] + W[0][1] * x[1] + NET.b[0], W[1][0] * x[0] + W[1][1] * x[1] + NET.b[1]];
+  var a = [silu(z[0]), silu(z[1])];
+  return { z: z, a: a, y: NET.c[0] * a[0] + NET.c[1] * a[1] };
+}
+function netBackward(x) {   /* gradient by backpropagation */
+  var f = netForward(x), W = NET.W;
+  var abar = [NET.c[0], NET.c[1]];
+  var zbar = [abar[0] * silu1(f.z[0]), abar[1] * silu1(f.z[1])];
+  var xbar = [W[0][0] * zbar[0] + W[1][0] * zbar[1], W[0][1] * zbar[0] + W[1][1] * zbar[1]];
+  return { f: f, abar: abar, zbar: zbar, xbar: xbar };
+}
+
+S.ready(function () {
+  /* Figure 10.1: chain of stretches */
+  (function () {
+    var host = document.getElementById("sim-chain");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.6, maxH: 420 });
+    var v = S.view(c, { xmin: -1.2, xmax: 5.2, ymin: -0.7, ymax: 3.5, padLeft: 92, padRight: 14, padTop: 8, padBottom: 6 });
+    var xs = S.slider(wrap, { label: "x", min: 0.1, max: 1.9, step: 0.01, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    var ds = S.slider(wrap, { label: "Δx", min: 0.01, max: 0.3, step: 0.01, value: 0.2, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    var names = ["x", "p = x²", "q = sin p", "y = e^q"];
+    function stages(x) { var p = x * x, q = Math.sin(p); return [x, p, q, Math.exp(q)]; }
+    c.draw = function () {
+      var X = xs.get(), D = ds.get(), s0 = stages(X), s1 = stages(X + D), k, yk;
+      for (k = 0; k < 4; k++) {
+        yk = 3 - k;
+        v.line(-1, yk, 5, yk, { color: S.col.gray, width: 1 });
+        for (var t = -1; t <= 5; t++) {
+          v.line(t, yk - 0.06, t, yk + 0.06, { color: S.col.ink, width: 1 });
+          v.text(String(t).replace("-", "−"), t, yk - 0.1, { align: "center", baseline: "top", font: S.fontSmall, color: S.col.gray });
+        }
+        v.text(names[k], -1.2, yk, { align: "right", baseline: "middle", dx: -8 });
+        if (k < 3) {
+          v.line(s0[k], yk, s0[k + 1], yk - 1, { color: S.col.light, dash: [3, 3] });
+          v.line(s1[k], yk, s1[k + 1], yk - 1, { color: S.col.light, dash: [3, 3] });
+        }
+        var col = k === 0 ? S.col.blue : (s1[k] >= s0[k] ? S.col.blue : S.col.red);
+        v.line(s0[k], yk + 0.16, s1[k], yk + 0.16, { color: col, width: 5 });
+        v.arrow(s0[k] + 0.6 * (s1[k] - s0[k]), yk + 0.16, s1[k], yk + 0.16, { color: col, width: 1, head: 7 });
+        v.line(s0[k], yk + 0.08, s0[k], yk + 0.24, { color: S.col.ink, width: 1.5 });
+        v.dot(s0[k], yk, { color: S.col.ink, r: 3.5 });
+      }
+      var r1 = (s1[1] - s0[1]) / D, r2 = (s1[2] - s0[2]) / (s1[1] - s0[1]), r3 = (s1[3] - s0[3]) / (s1[2] - s0[2]);
+      var d1 = 2 * X, d2 = Math.cos(s0[1]), d3 = Math.exp(s0[2]);
+      function f(z) { return isFinite(z) ? S.fmt(z, 4) : "undefined (Δq = 0)"; }
+      out.textContent =
+        "stage            measured ratio        derivative at the point\n" +
+        "Δp/Δx            " + (f(r1) + "                ").slice(0, 22) + "dp/dx = 2x     = " + S.fmt(d1, 4) + "\n" +
+        "Δq/Δp            " + (f(r2) + "                ").slice(0, 22) + "dq/dp = cos p  = " + S.fmt(d2, 4) + "\n" +
+        "Δy/Δq            " + (f(r3) + "                ").slice(0, 22) + "dy/dq = e^q    = " + S.fmt(d3, 4) + "\n" +
+        "product          " + (f(r1 * r2 * r3) + "                ").slice(0, 22) + "dy/dx (product)= " + S.fmt(d1 * d2 * d3, 4) + "\n" +
+        "Δy/Δx directly = " + S.fmt((s1[3] - s0[3]) / D, 4) + "  (equals the product of measured ratios exactly)";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 10.2: activation functions */
+  (function () {
+    var host = document.getElementById("sim-act");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.55 });
+    var v = S.view(c, { xmin: -4, xmax: 4, ymin: -1, ymax: 3, padLeft: 36, padBottom: 26 });
+    var fns = {
+      relu: { name: "ReLU", f: function (z) { return z > 0 ? z : 0; }, d: function (z) { return z > 0 ? 1 : 0; } },
+      sigmoid: { name: "sigmoid", f: sig, d: function (z) { var s = sig(z); return s * (1 - s); } },
+      silu: { name: "SiLU", f: silu, d: silu1 }
+    };
+    var ctl = document.createElement("div"); ctl.className = "controls";
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = "Function: ";
+    var sel = document.createElement("select");
+    ["silu", "sigmoid", "relu"].forEach(function (k) { var o = document.createElement("option"); o.value = k; o.textContent = fns[k].name; sel.appendChild(o); });
+    lab.appendChild(sel); ctl.appendChild(lab); wrap.appendChild(ctl);
+    sel.addEventListener("change", function () { c.redraw(); });
+    var zs = S.slider(wrap, { label: "z", min: -4, max: 4, step: 0.05, value: -0.5, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var F = fns[sel.value], z = zs.get(), y = F.f(z), s = F.d(z);
+      v.axes({ xlabel: "z", ylabel: "value", xticks: 1, yticks: 1 });
+      v.fn(F.d, { color: S.col.red, dash: [5, 4], width: 1.5 });
+      v.fn(F.f, { color: S.col.blue, width: 2.5 });
+      v.fn(function (t) { return y + s * (t - z); }, { color: S.col.gray, width: 1, from: z - 1.5, to: z + 1.5 });
+      v.dot(z, y, { color: S.col.blue });
+      v.dot(z, s, { color: S.col.red, r: 3.5 });
+      var note = "";
+      if (sel.value === "relu" && Math.abs(z) < 1e-9) note = "   (slope not defined at the corner; software uses 0)";
+      out.textContent = F.name + "(" + S.fmt(z, 2) + ") = " + S.fmt(y, 4) + "     slope = " + S.fmt(s, 4) + note +
+        (sel.value === "silu" ? "\nsilu'(z) = σ(z)(1 + z(1 − σ(z))),  σ(z) = " + S.fmt(sig(z), 4) : "") +
+        (sel.value === "sigmoid" ? "\nσ'(z) = σ(z)(1 − σ(z))" : "");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 10.3: computational graph, forward then backward */
+  (function () {
+    var host = document.getElementById("sim-graph");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var narrow = (host.clientWidth || 600) < 520;
+    var c = S.canvas(wrap, { aspect: narrow ? 0.95 : 0.58, maxH: 440 });
+    var v = S.view(c, { xmin: 0, xmax: 4, ymin: 0, ymax: 3, pad: 10 });
+    var step = 0;
+    var x1 = S.slider(wrap, { label: "x₁", min: -2, max: 3, step: 0.1, value: 1, digits: 1, oninput: function () { step = 0; c.redraw(); } });
+    var x2 = S.slider(wrap, { label: "x₂", min: -2, max: 3, step: 0.1, value: 2, digits: 1, oninput: function () { step = 0; c.redraw(); } });
+    S.button(wrap, "Next step", function () { step = Math.min(8, step + 1); c.redraw(); });
+    S.button(wrap, "Reset", function () { step = 0; c.redraw(); });
+    var out = S.readout(wrap);
+    var P = { x1: [0.35, 2.2], x2: [0.35, 0.8], z1: [1.45, 2.2], z2: [1.45, 0.8], a1: [2.55, 2.2], a2: [2.55, 0.8], y: [3.6, 1.5] };
+    var E = [["x1", "z1", "W₁₁"], ["x2", "z1", "W₁₂"], ["x1", "z2", "W₂₁"], ["x2", "z2", "W₂₂"], ["z1", "a1", "silu"], ["z2", "a2", "silu"], ["a1", "y", "c₁"], ["a2", "y", "c₂"]];
+    var label = { x1: "x₁", x2: "x₂", z1: "z₁", z2: "z₂", a1: "a₁", a2: "a₂", y: "y" };
+    var bar = { x1: "x̄₁", x2: "x̄₂", z1: "z̄₁", z2: "z̄₂", a1: "ā₁", a2: "ā₂", y: "ȳ" };
+    function col(name) { return name[0] === "x" ? 1 : name[0] === "z" ? 2 : name[0] === "a" ? 3 : 4; }
+    c.draw = function () {
+      var x = [x1.get(), x2.get()], B = netBackward(x), F = B.f, W = NET.W;
+      var val = { x1: x[0], x2: x[1], z1: F.z[0], z2: F.z[1], a1: F.a[0], a2: F.a[1], y: F.y };
+      var adj = { y: 1, a1: B.abar[0], a2: B.abar[1], z1: B.zbar[0], z2: B.zbar[1], x1: B.xbar[0], x2: B.xbar[1] };
+      var ctx = c.ctx, R = Math.max(18, Math.min(28, c.W / 26));
+      E.forEach(function (e) {
+        var p = P[e[0]], q = P[e[1]], back = step >= 9 - col(e[0]);
+        v.line(p[0], p[1], q[0], q[1], { color: back ? S.col.red : S.col.gray, width: back ? 2 : 1.2 });
+        var mx = p[0] + 0.5 * (q[0] - p[0]), my = p[1] + 0.5 * (q[1] - p[1]);
+        if (e[0][0] === "x") { mx = p[0] + 0.3 * (q[0] - p[0]); my = p[1] + 0.3 * (q[1] - p[1]); }
+        v.text(e[2], mx, my, { align: "center", baseline: "bottom", dy: -3, font: S.fontSmall, color: S.col.gray });
+      });
+      Object.keys(P).forEach(function (k) {
+        var p = P[k], X = v.X(p[0]), Y = v.Y(p[1]);
+        ctx.beginPath(); ctx.arc(X, Y, R, 0, 2 * Math.PI); ctx.fillStyle = "#fff"; ctx.fill();
+        ctx.strokeStyle = S.col.ink; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.font = S.font; ctx.fillStyle = S.col.ink; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(label[k], X, Y);
+        if (step >= col(k)) { ctx.font = S.fontSmall; ctx.fillStyle = S.col.blue; ctx.textBaseline = "top"; ctx.fillText(S.fmt(val[k], 4), X, Y + R + 3); }
+        if (step >= 9 - col(k)) { ctx.font = S.fontSmall; ctx.fillStyle = S.col.red; ctx.textBaseline = "bottom"; ctx.fillText(bar[k] + " = " + S.fmt(adj[k], 4), X, Y - R - 3); }
+      });
+      var f4 = function (z) { return S.fmt(z, 4); };
+      var txt = ["Press “Next step” to start the forward pass.",
+        "Step 1 (forward): inputs x₁ = " + f4(x[0]) + ", x₂ = " + f4(x[1]),
+        "Step 2 (forward): z₁ = W₁₁x₁ + W₁₂x₂ + b₁ = (1)(" + f4(x[0]) + ") + (−1)(" + f4(x[1]) + ") + 0.5 = " + f4(F.z[0]) +
+          "\n                  z₂ = W₂₁x₁ + W₂₂x₂ + b₂ = (0.5)(" + f4(x[0]) + ") + (1)(" + f4(x[1]) + ") − 1 = " + f4(F.z[1]),
+        "Step 3 (forward): a₁ = z₁σ(z₁) = " + f4(F.z[0]) + " × " + f4(sig(F.z[0])) + " = " + f4(F.a[0]) +
+          "\n                  a₂ = z₂σ(z₂) = " + f4(F.z[1]) + " × " + f4(sig(F.z[1])) + " = " + f4(F.a[1]),
+        "Step 4 (forward): y = c₁a₁ + c₂a₂ = 1.5 × " + f4(F.a[0]) + " + (−1) × " + f4(F.a[1]) + " = " + f4(F.y),
+        "Step 5 (backward): ȳ = ∂y/∂y = 1",
+        "Step 6 (backward): ā₁ = ȳ c₁ = 1.5,   ā₂ = ȳ c₂ = −1",
+        "Step 7 (backward): z̄₁ = ā₁ silu'(z₁) = 1.5 × " + f4(silu1(F.z[0])) + " = " + f4(B.zbar[0]) +
+          "\n                   z̄₂ = ā₂ silu'(z₂) = (−1) × " + f4(silu1(F.z[1])) + " = " + f4(B.zbar[1]),
+        "Step 8 (backward): x̄₁ = W₁₁z̄₁ + W₂₁z̄₂ = (1)(" + f4(B.zbar[0]) + ") + (0.5)(" + f4(B.zbar[1]) + ") = " + f4(B.xbar[0]) +
+          "\n                   x̄₂ = W₁₂z̄₁ + W₂₂z̄₂ = (−1)(" + f4(B.zbar[0]) + ") + (1)(" + f4(B.zbar[1]) + ") = " + f4(B.xbar[1])];
+      var s = txt[step];
+      if (step === 8) {
+        var e = 1e-5;
+        var g1 = (netForward([x[0] + e, x[1]]).y - netForward([x[0] - e, x[1]]).y) / (2 * e);
+        var g2 = (netForward([x[0], x[1] + e]).y - netForward([x[0], x[1] - e]).y) / (2 * e);
+        s += "\nfinite-difference check (step 0.00001): ∂y/∂x₁ ≈ " + f4(g1) + ",  ∂y/∂x₂ ≈ " + f4(g2);
+      }
+      out.textContent = s;
+    };
+    c.redraw();
+  })();
+
+  /* Figure 10.4: cost in passes */
+  (function () {
+    var host = document.getElementById("sim-cost");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: (host.clientWidth || 600) < 520 ? 0.65 : 0.4, maxH: 300 });
+    var v = S.view(c, { xmin: 0, xmax: 6.5, ymin: 0, ymax: 3, padLeft: 16, padRight: 70, padBottom: 28, padTop: 8 });
+    var N = 2, M = 1;
+    var nS = S.slider(wrap, { label: "log₁₀ n (inputs)", min: 0, max: 6, step: 0.01, value: Math.log10(2), digits: 2, oninput: function (t) { N = Math.max(1, Math.round(Math.pow(10, t))); c.redraw(); } });
+    var mS = S.slider(wrap, { label: "log₁₀ m (outputs)", min: 0, max: 6, step: 0.01, value: 0, digits: 2, oninput: function (t) { M = Math.max(1, Math.round(Math.pow(10, t))); c.redraw(); } });
+    function preset(n, m) { N = n; M = m; nS.set(Math.log10(n)); mS.set(Math.log10(m)); c.redraw(); }
+    S.button(wrap, "tiny network (2 in, 1 out)", function () { preset(2, 1); });
+    S.button(wrap, "one 27B position (5,120 in, 1 out)", function () { preset(5120, 1); });
+    S.button(wrap, "111 positions (568,320 in, 1 out)", function () { preset(568320, 1); });
+    S.button(wrap, "a full 5,120 × 5,120 Jacobian", function () { preset(5120, 5120); });
+    var out = S.readout(wrap);
+    function comma(k) { return Math.round(k).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+    c.draw = function () {
+      var n = N, m = M;
+      var b = v.box(), ctx = c.ctx;
+      for (var k = 0; k <= 6; k++) {
+        v.line(k, 0.2, k, 2.9, { color: S.col.faint, width: 1 });
+        v.text("10" + "⁰¹²³⁴⁵⁶"[k], k, 0.15, { align: "center", baseline: "top", font: S.fontSmall });
+      }
+      var rows = [["forward mode: n passes", n, S.col.blue, 2.2], ["reverse mode: m passes", m, S.col.red, 1.0]];
+      rows.forEach(function (r) {
+        var L = Math.log10(r[1]);
+        v.rect(0, r[3] - 0.3, Math.max(L, 0.02), 0.6, { color: r[2], fill: r[2], fillAlpha: 0.35 });
+        ctx.font = S.font; ctx.fillStyle = S.col.ink; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+        ctx.fillText(r[0], v.X(0), v.Y(r[3] + 0.3) - 3);
+        v.text(comma(r[1]), Math.max(L, 0.02), r[3], { dx: 6, baseline: "middle", font: S.fontSmall });
+      });
+      v.text("passes (log scale)", 6.5, 0.15, { align: "right", baseline: "bottom", dy: -2, font: S.fontSmall, color: S.col.gray });
+      var ratio = n / m;
+      out.textContent = "n = " + comma(n) + " inputs, m = " + comma(m) + " outputs; full Jacobian has n × m = " + comma(n * m) + " entries\n" +
+        "forward mode: " + comma(n) + (n === 1 ? " pass" : " passes") + " (one per input direction)\n" +
+        "reverse mode: " + comma(m) + (m === 1 ? " pass" : " passes") + " (one per output weighting)\n" +
+        (n === m ? "both modes need the same number of passes" :
+          ratio > 1 ? "reverse mode is " + (ratio < 10 ? S.fmt(ratio, 2) : comma(ratio)) + " times cheaper" :
+          "forward mode is " + (1 / ratio < 10 ? S.fmt(1 / ratio, 2) : comma(1 / ratio)) + " times cheaper");
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>
