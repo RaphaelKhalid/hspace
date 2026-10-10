@@ -1,4 +1,4 @@
-"""Goal-3 reader: Qwen reads BashArena attack/honest trajectories as if they were its own, and we dump
+"""Goal-3 reader: Qwen reads BashBench (ControlArena `bash` setting; not BashArena) attack/honest trajectories as if they were its own, and we dump
 (a) residual states at every action start (the token right before the agent's action is generated),
 (b) the mean state over each action's tokens, at several layers, and (c) a same-model black-box verdict
 logit (Yes - No) from a monitor question appended AFTER the trajectory (causal: (a), (b) are unaffected).

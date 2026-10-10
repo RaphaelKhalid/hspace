@@ -306,7 +306,7 @@ Note also that 15–23% of the "punctuation" positions are wikitext markup. So t
 ## 5. White-box control read (goal 3): mechanical prereg verdict UNCALIBRATED (descriptive only); NEGATIVE on the statistics
 
 **Setup.**
-- Qwen3.6-27B reads 1,500 BashArena trajectories (750 attack, 750 honest; attackers Claude Sonnet 4, Gemini 2.5 Pro, GPT-5). It reads a sanitized render: the first user message, the agent's tool calls and the tool outputs. Attacker prose and formatting tells are removed (`ctrl_read.py`).
+- Qwen3.6-27B reads 1,500 BashBench trajectories (750 attack, 750 honest; attackers Claude Sonnet 4, Gemini 2.5 Pro, GPT-5) from `adityaasinha28/control_arena_bash`, which covers 256 of BashBench's 257 tasks (Ctrl-Z; ControlArena's `bash` setting; one side task, pastebin malware). Earlier drafts called this data BashArena, a different setting (`results/CORRECTIONS.md`). It reads a sanitized render: the first user message, the agent's tool calls and the tool outputs. Attacker prose and formatting tells are removed (`ctrl_read.py`).
 - 624 attacks are eligible (558 have the malicious call k\* inside the 8k-token window; 66 are censored). k\* is the first tool call carrying the IOC in any decoded form (amendment A1).
 - Scoring is `ctrl_score_v2.py` against `ctrl-score-v2-spec.md` (amendments A1–A9). The freeze hashes were logged before scoring: words 173f589ac56de6af, spec 79d1b26eaa90c4ef.
 

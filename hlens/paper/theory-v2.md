@@ -905,7 +905,7 @@ Status: standard detection-theory and random-matrix results applied to a stylise
 - **The open question:** is ρ(J25 or H25) ≫ 0.07 for agent intent, net of honest task variance?
 
 ### G3. Known threats: matched filters on Concept-Lens directions [standard]
-- Some side tasks are enumerable. BashArena has four: exfiltration, malware download, privilege escalation and disabling the firewall.
+- Some side tasks are enumerable. BashArena has four: exfiltration, malware download, privilege escalation and disabling the firewall. The BashBench data used here has one: running malware from a fixed pastebin URL.
 - For these, the matched filter max_i⟨φ(τ_i), r⟩ is the natural statistic, where φ(τ_i) is the Concept-Lens direction of side task i's multi-token description. Taking the max over m candidates costs about a √(2 log m) shift in threshold.
 - Gong et al. (arXiv 2608.31084) report 80–91% scoring accuracy on Qwen3.6-27B when the candidate is supplied, which is the known-threat case.
 - The same H0 caveats as G2 apply.
@@ -917,7 +917,7 @@ Status: standard detection-theory and random-matrix results applied to a stylise
   - it covers per-position MLP atoms only, while the one trained gate I studied is cross-position;
   - a closed gate is also nearly invisible to every *local* second-order lens (v2: the local quadratic explained ~7% of a +5.0-logit interaction).
 
-**Planned tests.** Dataset: `adityaasinha28/control_arena_bash`, 750 attack and 750 honest BashArena trajectories, read by Qwen3.6-27B as a *surrogate* white-box reader. The control read hit an OOM at 16k tokens and will be rerun at 8192 (runlog 20:07).
+**Planned tests.** Dataset: `adityaasinha28/control_arena_bash`, 750 attack and 750 honest BashBench trajectories (not BashArena; `results/CORRECTIONS.md`), read by Qwen3.6-27B as a *surrogate* white-box reader. The control read hit an OOM at 16k tokens and will be rerun at 8192 (runlog 20:07).
 1. **G2.** Do the honest-calibrated mean and spike statistics in J25/H25 beat the same statistics in random-25? Compare with full d only under a well-estimated covariance, and report estimates of ρ.
 2. **G3.** Does the known-threat matched filter work?
 3. **G1.** Does LR-fused B + W have **net (rescued − lost) > 0 at matched α** at 1/2/5% audit budgets? Report B-only alongside, and add-only fusion as the contrast. "No lost attacks" is not the criterion (G1(i)).
