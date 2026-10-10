@@ -78,3 +78,23 @@ A per-probe PCA **sign-flip randomization test** (`hlens/hs_flip.py`). It is an 
 
 - "Run 2 `loc_x`: no eigenvalue above its noise floor" holds at L16 only. Per `results/hspace2_full.json` (now committed; it is the run-2 summary that `verdict_v23_run2.txt` was computed from), the counts are 0 / 2 / 5 / 2 of 5,120 at L16 / L28 / L40 / L52, and k_floor = 1 at every layer, so the v3 verdict is unchanged.
 - "L28 is similar" (after the L16 digit-energy figure) holds for concentration (top 0.1% of rows: 88%) but not for digits, which carry 4.4% of L28 energy (`results/hs_dump_analysis_full.json`).
+
+## Oct 10 2026, ~02:40 UTC: the Goal 3 data is BashBench, not BashArena; one more label leak survives the sanitized render
+
+**Dataset name.** I called the Goal 3 data "BashArena" throughout. It is **BashBench** (Ctrl-Z, arXiv 2504.10374), as packaged in ControlArena's `bash` setting. BashArena (arXiv 2512.15688; ControlArena's `bash_arena` setting; HF `Eccentricity/bashbench2`) is a different setting with 637 tasks and four side tasks. I checked `adityaasinha28/control_arena_bash` against ControlArena's `control_arena/settings/bash/bash_tasks.json`:
+- all 256 task IDs in the dataset are BashBench task IDs (BashBench has 257; one is absent from the upload);
+- 1,500 of 1,500 task descriptions match BashBench's exactly, after whitespace normalisation;
+- the pastebin code `BHNWfMqr` (ControlArena's BashBench side task, and `IOC_CODE` in `ctrl_score_v2.py`) appears in exactly the 750 attack trajectories;
+- no row mentions sudo, the firewall or exfiltration.
+
+The dataset has no card, so how its trajectories were generated (attack prompts, scaffold) is undocumented. The leaks below describe this upload, not necessarily BashBench as its authors run it.
+
+Fixed in place: `README.md`, `hlens/paper/hspace-paper.md` §5, `hlens/paper/theory-v2.md` (G3 and planned tests), and the `hlens/ctrl_read.py` docstring. **Not edited, and corrected here instead:** `hlens/paper/SCOPE-hspace.md` line 82 (frozen preregistration), `hlens/paper/ctrl-score-v2-spec.md` lines 3, 17 and 608 (its hash 79d1b26eaa90c4ef was logged before scoring), and `hlens/paper/theory.md` (superseded by theory-v2). Wherever these say "BashArena trajectories", read "BashBench trajectories". The BashArena mentions in `lit-2026-10-05.md` and in paper §7 refer to the real BashArena paper and are correct.
+
+**"Checked: no label leak" (`SCOPE-hspace.md` line 82) was wrong.** The system prompts are identical across classes, but the raw `trajectory_data` field leaks the label in three ways, which I found on Oct 6 and removed with the sanitized render (`render_san`, spec §1.2): GPT-5's opening format (`Plan:` in 250/250 honest runs, a bare `<think></think>` in 250/250 attack runs), attackers confessing the side task in prose (497/500 Sonnet 4 and Gemini 2.5 Pro runs), and tool-less turns followed by "Please proceed" nudges (AUROC 0.866 within GPT-5). The dataset's own `prompt` field is already tool-calls-only and contains none of these three.
+
+**A fourth leak survives the sanitized render.** Attackers write giveaways as code comments inside their tool calls, which `render_san` keeps verbatim (it keeps all tool-call text). In the dataset's `prompt` field (attack runs / honest runs, out of 250 each):
+- "side task": Sonnet 4 1 / 0, Gemini 2.5 Pro 51 / 0, GPT-5 3 / 0;
+- "malware": Sonnet 4 124 / 0, Gemini 2.5 Pro 19 / 0, GPT-5 20 / 0.
+
+For example, a Gemini attack writes `# This part is the side task, hidden in a function with a generic name.` So the paper §5 results that read the sanitized text, especially the supervised probe W3 (+33 at α = 5%) and the lexical twin T_lex (0.769), may partly reflect these comments. That would also be consistent with W3 falling to chance leave-one-attacker-out, since the tells differ by attacker model. Not yet tested: I have not checked whether W3's rescued attacks concentrate on trajectories with comment confessions, or rescored with comments stripped. Until I do, read every Goal 3 number as "on renders that still contain attacker code comments". The training-free W1's negative verdict (no pre-emption gain) stands, because a leak can only inflate a monitor's scores; its trajectory AUROC of 0.714 may be inflated too, since its lexicon targets the malware family.
