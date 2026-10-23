@@ -2,7 +2,7 @@
 # Copy the working H-space files from the research workspace into this repo (code, docs, small results; never data,
 # tensors, tokens). Usage: bash tools/sync.sh   (then review `git status` and commit)
 set -euo pipefail
-SRC="${HS_SRC:-/c/Users/rapha/OneDrive/Desktop/Claude/matsempirical2027}"
+SRC="${HS_SRC:-/c/Users/rapha/Desktop/Claude/matsempirical2027}"
 R="$(cd "$(dirname "$0")/.." && pwd)"
 H="$SRC/interpcontrol/hlens"
 cp "$H"/{bf16w,common,hl2,hvp,ladder,hspace,hs_s7,hspace2,hs_c6prime,hs_anatomy,hs_integrated,hs_rectangle,hs_local,hs_diag_top,hs_dump_analysis,hs_confound,hs_c6defl,hs_relcurv,hs_relcurv_gain,hs_flip,hs_flip5,hs_flip5_misspec,hs_flip5_misspec2,hs_flip7,hs_importance,hs_proxy08,hs_c6twin6,hs_flip5_attrib,hs_c6twin,hs_v9_robust,hs_pca_overlap,ctrl_read,ctrl_score,ctrl_score_v2}.py "$R/hlens/" 2>/dev/null || true
