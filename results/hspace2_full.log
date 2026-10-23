@@ -1,0 +1,98 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files: 100%|██████████| 15/15 [00:00<00:00, 2549.21it/s]
+The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:   0%|          | 1/851 [00:00<01:56,  7.28it/s]Loading weights:   0%|          | 2/851 [00:00<02:21,  6.02it/s]Loading weights:   3%|▎         | 27/851 [00:00<00:09, 87.40it/s]Loading weights:   5%|▌         | 46/851 [00:00<00:06, 118.77it/s]Loading weights:   8%|▊         | 68/851 [00:00<00:05, 148.57it/s]Loading weights:  11%|█         | 95/851 [00:00<00:04, 184.22it/s]Loading weights:  14%|█▎        | 117/851 [00:00<00:03, 193.13it/s]Loading weights:  17%|█▋        | 143/851 [00:00<00:03, 208.01it/s]Loading weights:  20%|█▉        | 167/851 [00:01<00:03, 217.40it/s]Loading weights:  22%|██▏       | 190/851 [00:01<00:03, 205.67it/s]Loading weights:  25%|██▍       | 212/851 [00:01<00:03, 197.38it/s]Loading weights:  28%|██▊       | 237/851 [00:01<00:02, 210.25it/s]Loading weights:  30%|███       | 259/851 [00:01<00:03, 195.99it/s]Loading weights:  34%|███▍      | 291/851 [00:01<00:02, 219.26it/s]Loading weights:  37%|███▋      | 314/851 [00:01<00:02, 207.74it/s]Loading weights:  41%|████      | 345/851 [00:01<00:02, 228.92it/s]Loading weights:  43%|████▎     | 369/851 [00:02<00:02, 216.58it/s]Loading weights:  47%|████▋     | 398/851 [00:02<00:01, 230.67it/s]Loading weights:  50%|████▉     | 422/851 [00:02<00:01, 218.12it/s]Loading weights:  53%|█████▎    | 450/851 [00:02<00:01, 230.93it/s]Loading weights:  56%|█████▌    | 474/851 [00:02<00:01, 220.33it/s]Loading weights:  59%|█████▉    | 504/851 [00:02<00:01, 240.07it/s]Loading weights:  62%|██████▏   | 529/851 [00:02<00:01, 226.53it/s]Loading weights:  66%|██████▌   | 558/851 [00:02<00:01, 236.65it/s]Loading weights:  68%|██████▊   | 582/851 [00:02<00:01, 226.20it/s]Loading weights:  72%|███████▏  | 610/851 [00:03<00:01, 224.38it/s]Loading weights:  75%|███████▍  | 635/851 [00:03<00:00, 228.62it/s]Loading weights:  78%|███████▊  | 664/851 [00:03<00:00, 229.84it/s]Loading weights:  81%|████████  | 688/851 [00:03<00:00, 231.30it/s]Loading weights:  84%|████████▍ | 717/851 [00:03<00:00, 240.24it/s]Loading weights:  87%|████████▋ | 742/851 [00:03<00:00, 228.16it/s]Loading weights:  90%|█████████ | 769/851 [00:03<00:00, 238.69it/s]Loading weights:  93%|█████████▎| 794/851 [00:03<00:00, 232.86it/s]Loading weights:  97%|█████████▋| 823/851 [00:03<00:00, 233.11it/s]Loading weights: 100%|█████████▉| 847/851 [00:04<00:00, 234.00it/s]Loading weights: 100%|██████████| 851/851 [00:04<00:00, 209.00it/s]
+[06:06:46] [hspace] [v2] full: loaded, mem 50.1 GB (14s)
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 1299.15it/s]
+Fetching 1 files:   0%|          | 0/1 [00:00<?, ?it/s]Fetching 1 files: 100%|██████████| 1/1 [00:00<00:00, 1260.69it/s]
+[06:06:59] [hspace] [v2] data ready: 1280 est windows, 455 eval windows (27s)
+[06:07:23] [hspace] [v2] L16 probe 1/256 (52s, peak 90.7 GB)
+[06:12:27] [hspace] [v2] L16 probe 33/256 (355s, peak 90.9 GB)
+[06:17:31] [hspace] [v2] L16 probe 65/256 (659s, peak 90.9 GB)
+[06:22:35] [hspace] [v2] L16 probe 97/256 (963s, peak 90.9 GB)
+[06:27:42] [hspace] [v2] L16 probe 129/256 (1270s, peak 90.9 GB)
+[06:32:57] [hspace] [v2] L16 probe 161/256 (1585s, peak 90.9 GB)
+[06:38:10] [hspace] [v2] L16 probe 193/256 (1898s, peak 90.9 GB)
+[06:43:10] [hspace] [v2] L16 probe 225/256 (2198s, peak 90.9 GB)
+[06:48:04] [hspace] [v2] L16 probe 256/256 (2493s, peak 90.9 GB)
+[06:48:26] [hspace] [v2] L16 split-half: loc_raw=0.29 loc_norm=0.99 loc_x=0.13 loc_xnorm=0.95 int_raw=0.29 int_norm=0.95 int_x=0.12 int_xnorm=0.72 | locP: raw=0.24 norm=0.95 x=0.15 xnorm=0.81 | k5: loc_raw=0.26 loc_norm=1.00 loc_x=0.10 loc_xnorm=0.99 int_raw=0.09 int_norm=0.99 int_x=0.05 int_xnorm=0.78 | PR: loc_raw=4.2 loc_norm=58.4 loc_x=9.6 loc_xnorm=59.8 int_raw=1.7 int_norm=38.3 int_x=1.6 int_xnorm=60.1 | vsJ25: loc_raw=0.15 loc_norm=0.30 loc_x=0.11 loc_xnorm=0.36 int_raw=0.15 int_norm=0.34 int_x=0.11 int_xnorm=0.37 (2514s)
+[06:48:58] [hspace] [v2] L28 probe 1/256 (2547s, peak 90.9 GB)
+[06:52:58] [hspace] [v2] L28 probe 33/256 (2786s, peak 90.9 GB)
+[06:57:03] [hspace] [v2] L28 probe 65/256 (3031s, peak 90.9 GB)
+[07:01:00] [hspace] [v2] L28 probe 97/256 (3268s, peak 90.9 GB)
+[07:04:54] [hspace] [v2] L28 probe 129/256 (3502s, peak 90.9 GB)
+[07:08:45] [hspace] [v2] L28 probe 161/256 (3733s, peak 90.9 GB)
+[07:12:35] [hspace] [v2] L28 probe 193/256 (3963s, peak 90.9 GB)
+[07:16:19] [hspace] [v2] L28 probe 225/256 (4187s, peak 90.9 GB)
+[07:19:42] [hspace] [v2] L28 probe 256/256 (4390s, peak 90.9 GB)
+[07:20:03] [hspace] [v2] L28 split-half: loc_raw=0.30 loc_norm=0.99 loc_x=0.15 loc_xnorm=0.98 int_raw=0.48 int_norm=0.92 int_x=0.19 int_xnorm=0.81 | locP: raw=0.23 norm=0.96 x=0.13 xnorm=0.88 | k5: loc_raw=0.21 loc_norm=1.00 loc_x=0.18 loc_xnorm=1.00 int_raw=0.49 int_norm=0.99 int_x=0.13 int_xnorm=0.94 | PR: loc_raw=4.6 loc_norm=65.0 loc_x=2.7 loc_xnorm=64.5 int_raw=2.2 int_norm=44.0 int_x=7.0 int_xnorm=56.5 | vsJ25: loc_raw=0.21 loc_norm=0.39 loc_x=0.16 loc_xnorm=0.42 int_raw=0.20 int_norm=0.38 int_x=0.15 int_xnorm=0.40 (4411s)
+[07:20:38] [hspace] [v2] L40 probe 1/256 (4447s, peak 90.9 GB)
+[07:23:25] [hspace] [v2] L40 probe 33/256 (4613s, peak 90.9 GB)
+[07:26:03] [hspace] [v2] L40 probe 65/256 (4772s, peak 90.9 GB)
+[07:28:38] [hspace] [v2] L40 probe 97/256 (4926s, peak 90.9 GB)
+[07:31:22] [hspace] [v2] L40 probe 129/256 (5090s, peak 90.9 GB)
+[07:34:09] [hspace] [v2] L40 probe 161/256 (5258s, peak 90.9 GB)
+[07:36:48] [hspace] [v2] L40 probe 193/256 (5416s, peak 90.9 GB)
+[07:39:32] [hspace] [v2] L40 probe 225/256 (5580s, peak 90.9 GB)
+[07:42:13] [hspace] [v2] L40 probe 256/256 (5742s, peak 90.9 GB)
+[07:42:35] [hspace] [v2] L40 split-half: loc_raw=0.27 loc_norm=0.99 loc_x=0.17 loc_xnorm=0.98 int_raw=0.60 int_norm=0.95 int_x=0.26 int_xnorm=0.86 | locP: raw=0.27 norm=0.93 x=0.20 xnorm=0.89 | k5: loc_raw=0.13 loc_norm=1.00 loc_x=0.06 loc_xnorm=0.99 int_raw=0.54 int_norm=0.99 int_x=0.14 int_xnorm=0.96 | PR: loc_raw=4.5 loc_norm=91.4 loc_x=6.4 loc_xnorm=92.0 int_raw=1.5 int_norm=53.3 int_x=5.9 int_xnorm=68.5 | vsJ25: loc_raw=0.19 loc_norm=0.45 loc_x=0.16 loc_xnorm=0.46 int_raw=0.13 int_norm=0.38 int_x=0.12 int_xnorm=0.41 (5763s)
+[07:43:34] [hspace] [v2] L52 probe 1/256 (5822s, peak 90.9 GB)
+[07:45:12] [hspace] [v2] L52 probe 33/256 (5920s, peak 90.9 GB)
+[07:46:51] [hspace] [v2] L52 probe 65/256 (6019s, peak 90.9 GB)
+[07:48:30] [hspace] [v2] L52 probe 97/256 (6118s, peak 90.9 GB)
+[07:50:09] [hspace] [v2] L52 probe 129/256 (6218s, peak 90.9 GB)
+[07:51:50] [hspace] [v2] L52 probe 161/256 (6318s, peak 90.9 GB)
+[07:53:28] [hspace] [v2] L52 probe 193/256 (6416s, peak 90.9 GB)
+[07:55:06] [hspace] [v2] L52 probe 225/256 (6514s, peak 90.9 GB)
+[07:56:41] [hspace] [v2] L52 probe 256/256 (6609s, peak 90.9 GB)
+[07:57:02] [hspace] [v2] L52 split-half: loc_raw=0.37 loc_norm=0.97 loc_x=0.29 loc_xnorm=0.93 int_raw=0.72 int_norm=0.90 int_x=0.65 int_xnorm=0.84 | locP: raw=0.47 norm=0.94 x=0.44 xnorm=0.92 | k5: loc_raw=0.35 loc_norm=0.80 loc_x=0.35 loc_xnorm=0.97 int_raw=0.74 int_norm=0.92 int_x=0.69 int_xnorm=0.92 | PR: loc_raw=1.1 loc_norm=58.1 loc_x=1.1 loc_xnorm=56.6 int_raw=2.0 int_norm=37.3 int_x=21.8 int_xnorm=41.4 | vsJ25: loc_raw=0.26 loc_norm=0.58 loc_x=0.25 loc_xnorm=0.60 int_raw=0.44 int_norm=0.55 int_x=0.50 int_xnorm=0.57 (6630s)
+[07:57:05] [hspace] [v2] labels 1/455 (6633s)
+[07:59:39] [hspace] [v2] labels 57/455 (6787s)
+[08:02:15] [hspace] [v2] labels 113/455 (6943s)
+[08:04:52] [hspace] [v2] labels 169/455 (7100s)
+[08:07:20] [hspace] [v2] labels 225/455 (7248s)
+[08:09:58] [hspace] [v2] labels 281/455 (7406s)
+[08:12:29] [hspace] [v2] labels 337/455 (7557s)
+[08:15:06] [hspace] [v2] labels 393/455 (7714s)
+[08:17:47] [hspace] [v2] labels 449/455 (7875s)
+[08:18:04] [hspace] [v2] labels: 910 targets, 91/91 (7892s)
+[08:18:07] [hspace] [v2] L16 ablation window 1/455 (7895s)
+[08:23:26] [hspace] [v2] L16 ablation window 114/455 (8214s)
+[08:27:38] [hspace] [v2] L16 ablation window 227/455 (8466s)
+[08:31:46] [hspace] [v2] L16 ablation window 340/455 (8714s)
+[08:35:52] [hspace] [v2] L16 ablation window 453/455 (8960s)
+[08:35:58] [hspace] [v2] L16 KLxrand: loc_raw=110.6 loc_norm=246.9 loc_x=41.2 int_x=21.1 J25=246.4 rand_0=0.9 rand_1=1.0 rand_2=1.0 | dissoc: loc_raw=-3.07 loc_norm=0.40 loc_x=-1.08 int_x=-3.47 J25=0.32 rand_0=-0.71 rand_1=-15.78 rand_2=-19.27 (8966s)
+[08:36:01] [hspace] [v2] L28 ablation window 1/455 (8969s)
+[08:39:47] [hspace] [v2] L28 ablation window 114/455 (9195s)
+[08:43:40] [hspace] [v2] L28 ablation window 227/455 (9428s)
+[08:47:40] [hspace] [v2] L28 ablation window 340/455 (9668s)
+[08:51:39] [hspace] [v2] L28 ablation window 453/455 (9908s)
+[08:51:44] [hspace] [v2] L28 KLxrand: loc_raw=83.9 loc_norm=145.4 loc_x=45.1 int_x=32.7 J25=120.8 rand_0=0.9 rand_1=1.1 rand_2=1.0 | dissoc: loc_raw=-1.56 loc_norm=0.19 loc_x=-4.29 int_x=-0.14 J25=0.61 rand_0=-1.58 rand_1=-3.22 rand_2=0.41 (9912s)
+[08:51:46] [hspace] [v2] L40 ablation window 1/455 (9915s)
+[08:54:43] [hspace] [v2] L40 ablation window 114/455 (10091s)
+[08:57:34] [hspace] [v2] L40 ablation window 227/455 (10262s)
+[09:00:29] [hspace] [v2] L40 ablation window 340/455 (10438s)
+[09:03:27] [hspace] [v2] L40 ablation window 453/455 (10615s)
+[09:03:30] [hspace] [v2] L40 KLxrand: loc_raw=135.0 loc_norm=296.3 loc_x=41.2 int_x=45.9 J25=128.7 rand_0=1.0 rand_1=0.9 rand_2=1.0 | dissoc: loc_raw=0.62 loc_norm=0.50 loc_x=1.27 int_x=9.21 J25=0.84 rand_0=-1.15 rand_1=1.12 rand_2=-3.24 (10618s)
+[09:03:32] [hspace] [v2] L52 ablation window 1/455 (10620s)
+[09:05:16] [hspace] [v2] L52 ablation window 114/455 (10724s)
+[09:06:57] [hspace] [v2] L52 ablation window 227/455 (10825s)
+[09:08:28] [hspace] [v2] L52 ablation window 340/455 (10917s)
+[09:10:10] [hspace] [v2] L52 ablation window 453/455 (11018s)
+[09:10:11] [hspace] [v2] L52 KLxrand: loc_raw=188.9 loc_norm=307.8 loc_x=117.7 int_x=253.6 J25=182.0 rand_0=1.0 rand_1=1.0 rand_2=1.0 | dissoc: loc_raw=2.39 loc_norm=1.62 loc_x=2.10 int_x=1.41 J25=1.21 rand_0=-5.67 rand_1=-2.26 rand_2=1.73 (11019s)
+[09:10:46] [hspace] [v2] sweep L4 (k=1 local): x split 0.29 k5 0.63 vsJ 0.20 | xnorm energy 0.44 split 0.28 vsJ 0.20  (11054s)
+[09:11:32] [hspace] [v2] sweep L8 (k=1 local): x split 0.28 k5 0.53 vsJ 0.18 | xnorm energy 0.40 split 0.26 vsJ 0.18  (11100s)
+[09:12:29] [hspace] [v2] sweep L12 (k=1 local): x split 0.38 k5 0.56 vsJ 0.21 | xnorm energy 0.45 split 0.36 vsJ 0.22  (11157s)
+[09:13:37] [hspace] [v2] sweep L16 (k=1 local): x split 0.50 k5 0.80 vsJ 0.24 | xnorm energy 0.50 split 0.43 vsJ 0.25 vs_A_loc_xnorm=0.51 vs_A_loc_x=0.18 vs_A_loc_norm=0.54 (11226s)
+[09:14:58] [hspace] [v2] sweep L20 (k=1 local): x split 0.33 k5 0.67 vsJ 0.23 | xnorm energy 0.40 split 0.32 vsJ 0.24  (11306s)
+[09:16:29] [hspace] [v2] sweep L24 (k=1 local): x split 0.40 k5 0.66 vsJ 0.29 | xnorm energy 0.39 split 0.38 vsJ 0.29  (11397s)
+[09:18:11] [hspace] [v2] sweep L28 (k=1 local): x split 0.47 k5 0.64 vsJ 0.27 | xnorm energy 0.44 split 0.44 vsJ 0.29 vs_A_loc_xnorm=0.55 vs_A_loc_x=0.25 vs_A_loc_norm=0.58 (11499s)
+[09:20:06] [hspace] [v2] sweep L32 (k=1 local): x split 0.62 k5 0.86 vsJ 0.30 | xnorm energy 0.54 split 0.52 vsJ 0.33  (11614s)
+[09:22:03] [hspace] [v2] sweep L36 (k=1 local): x split 0.47 k5 0.82 vsJ 0.42 | xnorm energy 0.42 split 0.45 vsJ 0.44  (11731s)
+[09:24:02] [hspace] [v2] sweep L40 (k=1 local): x split 0.38 k5 0.68 vsJ 0.42 | xnorm energy 0.34 split 0.37 vsJ 0.42 vs_A_loc_xnorm=0.56 vs_A_loc_x=0.21 vs_A_loc_norm=0.55 (11850s)
+[09:26:10] [hspace] [v2] sweep L44 (k=1 local): x split 0.48 k5 0.69 vsJ 0.30 | xnorm energy 0.39 split 0.40 vsJ 0.30  (11978s)
+[09:28:28] [hspace] [v2] sweep L48 (k=1 local): x split 0.61 k5 0.82 vsJ 0.36 | xnorm energy 0.50 split 0.55 vsJ 0.38  (12116s)
+[09:30:55] [hspace] [v2] sweep L52 (k=1 local): x split 0.61 k5 0.80 vsJ 0.55 | xnorm energy 0.40 split 0.59 vsJ 0.57 vs_A_loc_xnorm=0.71 vs_A_loc_x=0.31 vs_A_loc_norm=0.70 (12263s)
+[09:33:31] [hspace] [v2] sweep L56 (k=1 local): x split 0.70 k5 0.87 vsJ 0.59 | xnorm energy 0.39 split 0.77 vsJ 0.61  (12420s)
+[09:36:17] [hspace] [v2] sweep L60 (k=1 local): x split 0.64 k5 0.83 vsJ 0.49 | xnorm energy 0.48 split 0.69 vsJ 0.54  (12586s)
+[09:36:18] [hspace] [v2] ALL DONE 12586s
