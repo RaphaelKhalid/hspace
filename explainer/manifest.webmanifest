@@ -1,0 +1,14 @@
+{
+  "name": "Jacobians and Hessians, from scratch",
+  "short_name": "H-space",
+  "description": "Sixteen levels from rates and units to the H-lens of a 27-billion-parameter language model. Works offline.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

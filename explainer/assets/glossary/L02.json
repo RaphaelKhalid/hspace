@@ -1,0 +1,6 @@
+{
+  "interval": {"t": "interval", "a": ["intervals"], "l": 2, "d": "A stretch of inputs between two ends, such as the times from 1 s to 3 s. An average rate is always taken over an interval."},
+  "power rule": {"t": "power rule", "a": [], "l": 2, "d": "The derivative of tⁿ is n·tⁿ⁻¹. For example t² has derivative 2t and t³ has derivative 3t². It comes from expanding (t + Δt)ⁿ and keeping only the term with one Δt."},
+  "forward difference": {"t": "forward difference", "a": ["forward differences"], "l": 2, "d": "A numerical derivative that looks one step ahead: (f(x + Δx) − f(x)) / Δx. Its error shrinks in proportion to the step Δx, until rounding error takes over for very small steps."},
+  "double precision": {"t": "double precision", "a": ["double-precision"], "l": 2, "d": "The usual way a computer stores a real number: 64 bits, about 16 significant decimal digits. Subtracting two numbers that agree in most of those digits leaves mostly rounding noise."}
+}

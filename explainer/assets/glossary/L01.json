@@ -1,0 +1,6 @@
+{
+  "domain": {"t": "domain", "a": ["allowed inputs"], "l": 1, "d": "The set of inputs a function accepts. The car's rule s(t) = t² is only meant for 0 ≤ t ≤ 10 seconds, so that stretch of time is its domain."},
+  "vertex": {"t": "vertex", "a": [], "l": 1, "d": "The turning point of a parabola: its lowest point if it opens upward, its highest if it opens downward. For y = c·x² it is the origin (0, 0)."},
+  "vertical line test": {"t": "vertical line test", "a": [], "l": 1, "d": "A graph shows a function of x only if every vertical line crosses it at most once, because each input may have only one output. A circle fails: one vertical line can cross it twice."},
+  "Euler's number": {"t": "Euler's number", "a": ["Euler’s number"], "l": 1, "d": "The constant e ≈ 2.71828. It is the base for which the exponential eˣ has a slope equal to its own height everywhere, which makes it the natural base for growth and for logarithms."}
+}

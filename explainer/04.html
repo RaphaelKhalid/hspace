@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 4: Taylor approximation</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="4">
+<div class="page">
+
+<h1>Level 4: Taylor approximation</h1>
+<p class="subtitle">If you know a function's value, slope and curvature at one point, you can rebuild it nearby. This page shows how, how good the rebuild is, and where it breaks.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>build the order 0, 1, 2 and 3 Taylor approximations of a function at a point, and say the unit of every term;</li>
+<li>explain where the ½ and the ⅙ in front of the terms come from;</li>
+<li>predict how fast the error shrinks when the step shrinks, and read that off a log-log plot;</li>
+<li>say why a quadratic model that is perfect for small steps can be badly wrong at the step sizes that actually happen.</li>
+</ul>
+<p class="small">Prerequisites: <a href="02.html">Level 2</a> (the derivative, the tangent line, derivatives of powers and of \(e^x\)) and <a href="03.html">Level 3</a> (the second derivative as curvature). The car \(s(t) = t^2\) from those levels is used again here.</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Every letter used below is listed here first. Nothing appears out of nowhere.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(f\)</td><td>“f”</td><td>a function: a rule that turns one input into one output</td><td>the unit of its output</td><td>\(f(x) = x^2\)</td></tr>
+<tr><td>\(x\)</td><td>“x”</td><td>the input of \(f\)</td><td>depends on the example</td><td>\(x = 3.5\) m</td></tr>
+<tr><td>\(x_0\)</td><td>“x nought”</td><td>the expansion point: the one input where we know the value and the derivatives</td><td>same as \(x\)</td><td>\(x_0 = 3\) m</td></tr>
+<tr><td>\(\Delta x\)</td><td>“delta x”</td><td>the step from \(x_0\) to the input we want: \(x = x_0 + \Delta x\)</td><td>same as \(x\)</td><td>\(\Delta x = 0.5\) m</td></tr>
+<tr><td>\(\Delta x^2,\ \Delta x^3\)</td><td>“delta x squared, cubed”</td><td>the step multiplied by itself: \((\Delta x)^2\), \((\Delta x)^3\). Not “the change in \(x^2\)”.</td><td>unit of \(x\), squared or cubed</td><td>\(0.5^2 = 0.25\) m²</td></tr>
+<tr><td>\(f(x_0)\)</td><td>“f of x nought”</td><td>the value of the function at the expansion point</td><td>output unit</td><td>\(f(3) = 9\) m²</td></tr>
+<tr><td>\(f'(x_0)\)</td><td>“f prime of x nought”</td><td>first derivative (slope) at \(x_0\)</td><td>output unit per input unit</td><td>\(s'(3) = 6\) m/s</td></tr>
+<tr><td>\(f''(x_0)\)</td><td>“f double prime”</td><td>second derivative (curvature) at \(x_0\)</td><td>output unit per input unit²</td><td>\(s''(3) = 2\) m/s²</td></tr>
+<tr><td>\(f'''(x_0)\)</td><td>“f triple prime”</td><td>third derivative: how fast the curvature itself is changing</td><td>output unit per input unit³</td><td>\(s'''(3) = 0\) m/s³</td></tr>
+<tr><td>\(f^{(n)}(x_0)\)</td><td>“the n-th derivative”</td><td>differentiate \(n\) times, then put in \(x_0\). \(f^{(3)}\) is \(f'''\).</td><td>output unit per input unitⁿ</td><td>\(f^{(4)}\) of \(e^x\) is \(e^x\)</td></tr>
+<tr><td>\(p(\Delta x)\)</td><td>“p of delta x”</td><td>a trial polynomial in the step, used only to derive the recipe</td><td>same as \(f\)</td><td>\(p = c_0 + c_1\Delta x\)</td></tr>
+<tr><td>\(c_0, c_1, c_2, c_3\)</td><td>“c nought, c one, …”</td><td>the unknown numbers in front of each power of \(\Delta x\) in \(p\)</td><td>output unit per input unitᵏ, for the term with \(\Delta x^k\)</td><td>\(c_2 = 1\) m/s²</td></tr>
+<tr><td>\(n\)</td><td>“n”</td><td>the order: how many derivatives an approximation uses</td><td>none (pure number)</td><td>\(n = 2\)</td></tr>
+<tr><td>\(n!\)</td><td>“n factorial”</td><td>\(1 \times 2 \times \dots \times n\); by convention \(0! = 1\)</td><td>none (pure number)</td><td>\(3! = 6\)</td></tr>
+<tr><td>\(T_n\)</td><td>“T n”</td><td>the Taylor approximation of order \(n\), built at \(x_0\)</td><td>same as \(f\)</td><td>\(T_1 = 9 + 6\,\Delta t\)</td></tr>
+<tr><td>\(E_n\)</td><td>“E n”</td><td>the error of \(T_n\): true value minus approximation, \(E_n = f - T_n\)</td><td>same as \(f\)</td><td>\(E_1 = 0.25\) m</td></tr>
+<tr><td>\(\approx\)</td><td>“is approximately”</td><td>close to, but not exactly equal</td><td>none</td><td>\(e^{0.1} \approx 1.105\)</td></tr>
+<tr><td>\(O(\Delta x^k)\)</td><td>“big O of delta x to the k”</td><td>“some amount no bigger than a fixed number times \(|\Delta x|^k\), once \(\Delta x\) is small”</td><td>same as the quantity it stands for</td><td>\(E_1 = O(\Delta x^2)\)</td></tr>
+<tr><td>\(k\)</td><td>“k”</td><td>the power in a big-O statement; also the slope of a line on a log-log plot</td><td>none (pure number)</td><td>\(k = 2\)</td></tr>
+<tr><td>\(C\)</td><td>“C”</td><td>the fixed number in the definition of big-O</td><td>whatever makes \(C\,|\Delta x|^k\) have the unit of the error</td><td>\(C = 1\) m/s²</td></tr>
+<tr><td>\(s(t)\)</td><td>“s of t”</td><td>distance the car has travelled at time \(t\): \(s(t) = t^2\)</td><td>metres (m)</td><td>\(s(3) = 9\) m</td></tr>
+<tr><td>\(t,\ t_0,\ \Delta t\)</td><td>“t, t nought, delta t”</td><td>time, the expansion time, and a step in time</td><td>seconds (s)</td><td>\(t_0 = 3\) s</td></tr>
+<tr><td>\(e\)</td><td>“e”</td><td>Euler's number, 2.71828…</td><td>none (pure number)</td><td>\(e^{1} \approx 2.718\)</td></tr>
+<tr><td>\(e^x\)</td><td>“e to the x”</td><td>the exponential function; it is its own derivative</td><td>none (pure number)</td><td>\(e^{0} = 1\)</td></tr>
+<tr><td>\(\sin x,\ \cos x\)</td><td>“sine x, cosine x”</td><td>the sine and cosine of an angle \(x\) measured in radians</td><td>none (pure number)</td><td>\(\sin 0.5 \approx 0.4794\)</td></tr>
+<tr><td>\(\ln\)</td><td>“natural log”</td><td>the logarithm to base \(e\): \(\ln(e^x) = x\)</td><td>none (pure number)</td><td>\(\ln 3 \approx 1.0986\)</td></tr>
+<tr><td>\(g(x)\)</td><td>“g of x”</td><td>a toy dimmer (a gate): brightness when the knob is at \(x\); \(g(x) = 1/(1 + e^{-x/w})\)</td><td>none (fraction of full brightness)</td><td>\(g(0) = 0.5\)</td></tr>
+<tr><td>\(w\)</td><td>“w”</td><td>the width of the gate: how far you turn the knob to go from mostly off to mostly on</td><td>centimetres (cm)</td><td>\(w = 0.25\) cm</td></tr>
+<tr><td>\(\log_{10}\)</td><td>“log base ten”</td><td>how many times you multiply 10 to get the number</td><td>none (pure number)</td><td>\(\log_{10} 0.01 = -2\)</td></tr>
+<tr><td>\(\sigma\)</td><td>“sigma”</td><td>a standard deviation: the typical size of a natural change (only in section 4.9; Level 13 defines it)</td><td>same as the quantity</td><td>a “1σ move”</td></tr>
+<tr><td>\(r\)</td><td>“r”</td><td>a correlation between predicted and true values (only in section 4.9; Level 13 defines it fully)</td><td>none (pure number)</td><td>\(r = 0.98\)</td></tr>
+</table>
+</div>
+
+<h2>4.1 The forecasting problem</h2>
+<p>You are driving in thick fog. You cannot see the road. You can see the dashboard. It tells you three things about this moment: how far you have travelled, how fast you are going, and (if you had a meter for it) how fast your speed is changing.</p>
+<p>Question: where will you be in half a second? In one second? In ten seconds?</p>
+<p>That is the whole problem of this page. We know a function at one point, and we know how it is changing there. We want to predict its value nearby. The tool is called the Taylor approximation.</p>
+<p>The answer will come in layers. Each layer uses one more derivative. Each layer is better for small steps. None of them is good for big steps. Knowing exactly how “small” and “big” are measured is the part that matters for H-space.</p>
+
+<div class="box plain">
+<span class="boxtitle">Setting up the names</span>
+Let \(f\) be the function. Let \(x_0\) be the point where we know everything: \(f(x_0)\), \(f'(x_0)\), \(f''(x_0)\) and so on. We call \(x_0\) the expansion point. Let \(\Delta x\) be the step we want to take, so the target input is \(x = x_0 + \Delta x\). The approximation of order \(n\) is called \(T_n\). Its error is \(E_n = f(x_0 + \Delta x) - T_n(x_0 + \Delta x)\).
+</div>
+
+<p>Our running example is the car from <a href="02.html">Level 2</a>. It has travelled \(s(t) = t^2\) metres after \(t\) seconds. Take the expansion time \(t_0 = 3\) s. At that moment the dashboard reads:</p>
+$$ s(3) = 3^2 = 9\ \text{m}, \qquad s'(3) = 2 \times 3 = 6\ \text{m/s}, \qquad s''(3) = 2\ \text{m/s}^2. $$
+<p>We will predict \(s(3 + \Delta t)\) for a step \(\Delta t\) seconds. The true answer is \((3 + \Delta t)^2\), so we can check every prediction exactly.</p>
+
+<h2>4.2 Order 0: assume nothing changes</h2>
+<p>The laziest forecast: wherever you are now, you will still be there. In symbols,</p>
+$$ T_0(x_0 + \Delta x) = f(x_0). $$
+<p>For the car: \(T_0(3 + \Delta t) = 9\) m, whatever \(\Delta t\) is. The error is the truth minus the guess. Here are the steps, with \(\Delta t = 0.1\) s worked alongside.</p>
+<p><b>Step 1: write the truth.</b> The rule is \(s(t) = t^2\), so the true position is \(s(3 + \Delta t) = (3 + \Delta t)^2\). Example: \(3.1^2 = 9.61\) m.</p>
+<p><b>Step 2: subtract the guess.</b> \(E_0 = (3 + \Delta t)^2 - 9\). Example: \(9.61 - 9 = 0.61\) m.</p>
+<p><b>Step 3: expand the square.</b> As at Level 2, \((3 + \Delta t)^2 = (3 + \Delta t)(3 + \Delta t) = 9 + 6\,\Delta t + \Delta t^2\). Example: \(9 + 0.6 + 0.01 = 9.61\).</p>
+<p><b>Step 4: cancel the 9s.</b></p>
+$$ E_0 = 9 + 6\,\Delta t + \Delta t^2 - 9 = 6\,\Delta t + \Delta t^2\ \text{m}. $$
+<p>Example: \(0.6 + 0.01 = 0.61\) m. It matches Step 2.</p>
+<p>Check the units. \(6\) has unit m/s and \(\Delta t\) has unit s, so \(6\,\Delta t\) is in metres. \(\Delta t^2\) is in s², and the hidden coefficient in front of it is 1 m/s², so that term is in metres too. Good.</p>
+<p>Numbers: if \(\Delta t = 1\) s, \(E_0 = 6 + 1 = 7\) m. If \(\Delta t = 0.1\) s, \(E_0 = 0.6 + 0.01 = 0.61\) m. If \(\Delta t = 0.01\) s, \(E_0 = 0.06 + 0.0001 = 0.0601\) m. Make the step ten times smaller and the error gets about ten times smaller. The error is roughly proportional to \(\Delta t\).</p>
+<p>Order 0 is not useless. A photograph is an order-0 forecast. It is right for an instant.</p>
+
+<h2>4.3 Order 1: follow the slope</h2>
+<p>Better: assume the speed stays what it is now. Then in \(\Delta x\) more units of input, the output changes by (slope) × (step):</p>
+$$ T_1(x_0 + \Delta x) = f(x_0) + f'(x_0)\,\Delta x. $$
+<p>This is the tangent line from <a href="02.html">Level 2</a>, written as a forecast. It is also called the linear approximation, or the first-order approximation.</p>
+
+<h3>Worked example: the car, order 1</h3>
+<p>Put in the dashboard values:</p>
+$$ T_1(3 + \Delta t) = 9\ \text{m} + 6\ \tfrac{\text{m}}{\text{s}} \times \Delta t. $$
+<p>Units: \(\tfrac{\text{m}}{\text{s}} \times \text{s} = \text{m}\). Both terms are distances. Now the error, step by step, with \(\Delta t = 0.1\) s worked alongside.</p>
+<p><b>Step 1: truth minus forecast.</b> \(E_1 = (3 + \Delta t)^2 - (9 + 6\,\Delta t)\). Example: \(9.61 - 9.6 = 0.01\) m.</p>
+<p><b>Step 2: expand the square.</b> \((3 + \Delta t)^2 = 9 + 6\,\Delta t + \Delta t^2\) (Section 4.2, Step 3).</p>
+<p><b>Step 3: remove the brackets.</b> The minus sign flips both signs of \(9 + 6\,\Delta t\): \(E_1 = 9 + 6\,\Delta t + \Delta t^2 - 9 - 6\,\Delta t\).</p>
+<p><b>Step 4: cancel.</b> The 9s cancel and the \(6\,\Delta t\)s cancel:</p>
+$$ E_1 = 9 + 6\,\Delta t + \Delta t^2 - 9 - 6\,\Delta t = \Delta t^2. $$
+<p>Example: \(0.1^2 = 0.01\) m. It matches Step 1.</p>
+<p>Everything cancels except \(\Delta t^2\). For this car, the order-1 error is exactly \(\Delta t^2\) metres (with a hidden 1 m/s² in front). Now the numbers:</p>
+<div class="tablewrap">
+<table>
+<tr><th>\(\Delta t\) (s)</th><th>true \(s(3+\Delta t)\) (m)</th><th>\(T_0\) (m)</th><th>\(E_0\) (m)</th><th>\(T_1\) (m)</th><th>\(E_1\) (m)</th></tr>
+<tr><td>1</td><td>16</td><td>9</td><td>7</td><td>15</td><td>1</td></tr>
+<tr><td>0.1</td><td>9.61</td><td>9</td><td>0.61</td><td>9.6</td><td>0.01</td></tr>
+<tr><td>0.01</td><td>9.0601</td><td>9</td><td>0.0601</td><td>9.06</td><td>0.0001</td></tr>
+</table>
+</div>
+<p>Read down the \(E_1\) column. Each time \(\Delta t\) shrinks by 10, \(E_1\) shrinks by 100. That is what “error proportional to \(\Delta t^2\)” means in practice. The order-1 forecast does not just win. It wins faster and faster as the step shrinks.</p>
+
+<h3>A picture of the order-1 error</h3>
+<p>The car's function \(t^2\) is the area of a square. So here is a way to see the error with your eyes. Take a square with sides of \(x_0\) metres. Its area is \(f(x_0) = x_0^2\) square metres. Grow each side by \(\Delta x\) metres. The new area is \(f(x_0 + \Delta x) = (x_0 + \Delta x)^2\). Multiply out the brackets:</p>
+$$ (x_0 + \Delta x)^2 = (x_0 + \Delta x)(x_0 + \Delta x) = x_0^2 + x_0\,\Delta x + \Delta x\, x_0 + \Delta x^2 = x_0^2 + 2x_0\,\Delta x + \Delta x^2. $$
+<p>The slope of \(x^2\) at \(x_0\) is \(2x_0\) (metres, here: square metres of area per metre of side). So the order-1 forecast is \(x_0^2 + 2x_0\,\Delta x\): the old square plus two thin strips. The forecast misses one thing: the small corner square, \(\Delta x^2\).</p>
+
+<figure class="sim" id="sim-square">
+<figcaption><b>Figure 4.1.</b> Growing a square. Grey: the old square, \(x_0^2\). Blue: the two strips that the slope accounts for, \(2x_0\,\Delta x\). Red: the corner the slope misses, \(\Delta x^2\). Move \(\Delta x\) towards zero and watch the red corner vanish much faster than the blue strips: halve \(\Delta x\) and the strips halve, but the corner shrinks to a quarter.</figcaption>
+</figure>
+
+<div class="box key">
+<span class="boxtitle">Why the slope is “locally right”</span>
+The strips are thin rectangles: their area is proportional to \(\Delta x\). The corner is a tiny square: its area is proportional to \(\Delta x^2\). For a small step, a tiny square is much smaller than a thin strip. So for small steps the slope captures almost all of the change. That is the whole reason derivatives are useful.
+</div>
+
+<h2>4.4 Order 2: add the bend</h2>
+<p>The car is speeding up. The order-1 forecast ignores that. So add a term that uses the curvature \(f''(x_0)\). The order-2 Taylor approximation (also called the quadratic approximation, or second-order approximation) is</p>
+$$ T_2(x_0 + \Delta x) = f(x_0) + f'(x_0)\,\Delta x + \tfrac{1}{2} f''(x_0)\,\Delta x^2. $$
+<p>Two questions: why \(\Delta x^2\), and why the \(\tfrac12\)?</p>
+
+<h3>Where the ½ comes from (mechanics)</h3>
+<p>Look for a polynomial in the step, \(p(\Delta x) = c_0 + c_1\,\Delta x + c_2\,\Delta x^2\), that agrees with \(f\) at \(x_0\) in value, slope and curvature. Here \(c_0, c_1, c_2\) are unknown numbers we must choose. Differentiate \(p\) with respect to \(\Delta x\), using the power rule from Level 2:</p>
+$$ p(\Delta x) = c_0 + c_1\,\Delta x + c_2\,\Delta x^2 $$
+$$ p'(\Delta x) = c_1 + 2c_2\,\Delta x $$
+$$ p''(\Delta x) = 2c_2 $$
+<p>Now put in \(\Delta x = 0\), which is the point \(x_0\) itself:</p>
+$$ p(0) = c_0, \qquad p'(0) = c_1, \qquad p''(0) = 2c_2. $$
+<p>We want these to equal \(f(x_0)\), \(f'(x_0)\) and \(f''(x_0)\). So</p>
+$$ c_0 = f(x_0), \qquad c_1 = f'(x_0), \qquad c_2 = \frac{f''(x_0)}{2}. $$
+<p>The ½ is there because differentiating \(\Delta x^2\) twice produces a 2 (first \(2\Delta x\), then 2). To end up with curvature \(f''(x_0)\) we must put in half of it.</p>
+
+<h3>Where the ½ comes from (intuition pump)</h3>
+<p>Think about the car over the next \(\Delta t\) seconds. Its speed starts at 6 m/s and rises by 2 m/s every second. At the end of the step it is \(6 + 2\,\Delta t\) m/s. Because the speed rises steadily, the average speed over the step is halfway between start and end:</p>
+$$ \text{average speed} = \frac{6 + (6 + 2\,\Delta t)}{2} = 6 + \Delta t\ \text{m/s}. $$
+<p>Distance = average speed × time:</p>
+$$ (6 + \Delta t) \times \Delta t = 6\,\Delta t + \Delta t^2 = 6\,\Delta t + \tfrac12 \times 2 \times \Delta t^2. $$
+<p>The extra speed builds up from zero. On average you only have half of it. That “half” is the ½.</p>
+
+<h3>Worked example: the car, order 2</h3>
+<p><b>Step 1: put in the dashboard values.</b> \(f(x_0) = s(3) = 9\) m, \(f'(x_0) = s'(3) = 6\) m/s and \(f''(x_0) = s''(3) = 2\) m/s² go into the recipe \(T_2 = f(x_0) + f'(x_0)\,\Delta x + \tfrac12 f''(x_0)\,\Delta x^2\), with \(\Delta t\) as the step.</p>
+<p><b>Step 2: simplify the last coefficient.</b> \(\tfrac12 \times 2 = 1\):</p>
+$$ T_2(3 + \Delta t) = 9 + 6\,\Delta t + \tfrac12 \times 2 \times \Delta t^2 = 9 + 6\,\Delta t + \Delta t^2. $$
+<p>Example: with \(\Delta t = 0.1\) s, \(T_2 = 9 + 0.6 + 0.01 = 9.61\) m, and the truth is \(3.1^2 = 9.61\) m.</p>
+<p>Units of the new term: \(\tfrac12\) is a pure number, \(2\) m/s² times \(\Delta t^2\) s² gives metres. Now compare with the truth: \((3 + \Delta t)^2 = 9 + 6\,\Delta t + \Delta t^2\). They are the same. The error \(E_2\) is exactly zero for every \(\Delta t\), even \(\Delta t = 100\) s.</p>
+<p>That is not luck. The car's function is a quadratic. A quadratic is fixed completely by its value, slope and curvature at any one point. So the order-2 approximation of any quadratic is the quadratic itself. Keep this in mind: the farm on <a href="05.html">Level 5</a> is a quadratic in two inputs, and that is why its numbers come out exact.</p>
+
+<h2>4.5 The third derivative, and the general recipe</h2>
+<p>For a function that is not a quadratic, the curvature can change from place to place. How fast it changes is the third derivative, \(f'''(x_0)\): the derivative of the second derivative. Its unit is output per input³.</p>
+
+<h3>Worked example: a growing cube</h3>
+<p>Take a cube with sides of \(x\) metres. Its volume is \(f(x) = x^3\) cubic metres. Use the power rule three times:</p>
+$$ f(x) = x^3, \quad f'(x) = 3x^2, \quad f''(x) = 6x, \quad f'''(x) = 6. $$
+<p>Units: \(f'\) is m³ per m = m² (an area: the cube's faces). \(f''\) is m³ per m² = m (a distance: the cube's edges). \(f'''\) is m³ per m³ = a pure number. At \(x_0 = 2\) m:</p>
+$$ f(2) = 8\ \text{m}^3, \quad f'(2) = 12\ \text{m}^2, \quad f''(2) = 12\ \text{m}, \quad f'''(2) = 6. $$
+<p>Find the order-3 recipe the same way as before.</p>
+<p><b>Step 1: the trial polynomial.</b> Let \(p(\Delta x) = c_0 + c_1\Delta x + c_2\Delta x^2 + c_3\Delta x^3\).</p>
+<p><b>Step 2: differentiate three times</b> (power rule, term by term):</p>
+$$ p' = c_1 + 2c_2\Delta x + 3c_3\Delta x^2, \qquad p'' = 2c_2 + 6c_3\Delta x, \qquad p''' = 6c_3 . $$
+<p><b>Step 3: put in \(\Delta x = 0\).</b> Every term that still holds a \(\Delta x\) becomes 0: \(p(0) = c_0\), \(p'(0) = c_1\), \(p''(0) = 2c_2\), \(p'''(0) = 6c_3\).</p>
+<p><b>Step 4: match the derivatives of \(f\).</b> \(c_0 = f(x_0)\), \(c_1 = f'(x_0)\), \(c_2 = f''(x_0)/2\), and \(6c_3 = f'''(x_0)\), so \(c_3 = f'''(x_0)/6\).</p>
+<p><b>Step 5: put in the cube's numbers.</b> \(c_0 = 8\), \(c_1 = 12\), \(c_2 = 12/2 = 6\), \(c_3 = 6/6 = 1\). The cube's order-3 approximation is</p>
+$$ T_3(2 + \Delta x) = 8 + 12\,\Delta x + \tfrac{12}{2}\,\Delta x^2 + \tfrac{6}{6}\,\Delta x^3 = 8 + 12\,\Delta x + 6\,\Delta x^2 + \Delta x^3. $$
+<p>Check by multiplying out the truth.</p>
+<p><b>Check, Step 1: the square.</b> \((2 + \Delta x)^2 = 4 + 2 \cdot 2\,\Delta x + \Delta x^2 = 4 + 4\Delta x + \Delta x^2\) (the expansion of Section 4.3 with \(x_0 = 2\)).</p>
+<p><b>Check, Step 2: one more factor.</b> \((2 + \Delta x)^3 = (2 + \Delta x)(4 + 4\Delta x + \Delta x^2)\). Multiply each term by 2, then each term by \(\Delta x\):</p>
+$$ 2\,(4 + 4\Delta x + \Delta x^2) = 8 + 8\Delta x + 2\Delta x^2, \qquad \Delta x\,(4 + 4\Delta x + \Delta x^2) = 4\Delta x + 4\Delta x^2 + \Delta x^3 . $$
+<p><b>Check, Step 3: add and collect.</b> \(8\Delta x + 4\Delta x = 12\Delta x\) and \(2\Delta x^2 + 4\Delta x^2 = 6\Delta x^2\), so \((2 + \Delta x)^3 = 8 + 12\,\Delta x + 6\,\Delta x^2 + \Delta x^3\). Example: \(\Delta x = 0.1\) gives \(8 + 1.2 + 0.06 + 0.001 = 9.261 = 2.1^3\). Exact again, because \(x^3\) is a cubic.</p>
+<p>Each term is a real piece of the bigger cube. \(12\,\Delta x\) is three slabs on three faces, each \(2 \times 2 \times \Delta x\). \(6\,\Delta x^2\) is three rods along three edges, each \(2 \times \Delta x \times \Delta x\). \(\Delta x^3\) is the tiny corner cube. With \(\Delta x = 0.1\) m: slabs 1.2 m³, rods 0.06 m³, corner 0.001 m³. Each order adds a piece that is about ten times smaller than the last.</p>
+
+<h3>The general recipe</h3>
+<p>Differentiating \(\Delta x^n\) \(n\) times gives \(n \times (n-1) \times \dots \times 1 = n!\) (“n factorial”). So the coefficient of \(\Delta x^n\) must be \(f^{(n)}(x_0)/n!\). Small factorials: \(0! = 1\), \(1! = 1\), \(2! = 2\), \(3! = 6\), \(4! = 24\), \(5! = 120\).</p>
+<div class="box key">
+<span class="boxtitle">The Taylor approximation of order n</span>
+$$ T_n(x_0 + \Delta x) = f(x_0) + f'(x_0)\,\Delta x + \frac{f''(x_0)}{2!}\,\Delta x^2 + \frac{f'''(x_0)}{3!}\,\Delta x^3 + \dots + \frac{f^{(n)}(x_0)}{n!}\,\Delta x^n. $$
+Every term has the unit of \(f\): (output per inputᵏ) × inputᵏ = output. It matches \(f\) in value and in the first \(n\) derivatives at \(x_0\), and in nothing else.
+</div>
+
+<h3>Worked example: \(e^x\) at \(x_0 = 0\)</h3>
+<p>The exponential function is its own derivative, so every derivative of \(e^x\) at 0 equals \(e^0 = 1\). The recipe gives</p>
+$$ T_3(0 + \Delta x) = 1 + \Delta x + \frac{\Delta x^2}{2} + \frac{\Delta x^3}{6}. $$
+<p>At \(\Delta x = 0.1\): \(\Delta x^2/2 = 0.01/2 = 0.005\) and \(\Delta x^3/6 = 0.001/6 \approx 0.000167\). So \(T_3 = 1 + 0.1 + 0.005 + 0.000167 = 1.105167\). The true value is \(e^{0.1} = 1.105171\). Four terms got six digits right.</p>
+
+<figure class="sim" id="sim-builder">
+<figcaption><b>Figure 4.2.</b> The Taylor builder. Black: the true function. Tick the boxes to add \(T_0\) (grey), \(T_1\) (blue), \(T_2\) (red) and \(T_3\) (green), all built at the black dot \(x_0\). Drag the dot along the curve to move \(x_0\). The dashed line marks the test point \(x_0 + \Delta x\); the <span class="nogl">readout</span> gives the true value and each \(T_n\) there. Notice two things: near the dot every curve hugs the truth, and each extra order hugs it for a longer stretch, but far away all of them leave.</figcaption>
+</figure>
+
+<h2>4.6 How fast the error shrinks: big-O</h2>
+<p>We saw the pattern for the car: \(E_0\) shrinks like \(\Delta t\) and \(E_1\) like \(\Delta t^2\). It holds in general. For a smooth function and a small step, the error of \(T_n\) is close to the first term that was left out:</p>
+$$ E_n \approx \frac{f^{(n+1)}(x_0)}{(n+1)!}\,\Delta x^{n+1}. $$
+<p>Check it on \(e^x\) at \(x_0 = 0\), where every derivative is 1, so the predicted error is \(\Delta x^{n+1}/(n+1)!\):</p>
+<div class="tablewrap">
+<table>
+<tr><th>order \(n\)</th><th>\(E_n\) at \(\Delta x = 0.1\)</th><th>predicted \(\tfrac{0.1^{n+1}}{(n+1)!}\)</th><th>\(E_n\) at \(\Delta x = 0.01\)</th><th>shrink factor</th></tr>
+<tr><td>0</td><td>0.10517</td><td>0.1</td><td>0.010050</td><td>10.5</td></tr>
+<tr><td>1</td><td>0.0051709</td><td>0.005</td><td>0.000050167</td><td>103</td></tr>
+<tr><td>2</td><td>0.00017092</td><td>0.00016667</td><td>0.00000016708</td><td>1023</td></tr>
+<tr><td>3</td><td>0.0000042514</td><td>0.0000041667</td><td>0.00000000041750</td><td>10183</td></tr>
+</table>
+</div>
+<p>The shrink factors are close to 10, 100, 1000 and 10000. A ten-times smaller step makes \(E_n\) about \(10^{n+1}\) times smaller. The predictions get better as \(\Delta x\) gets smaller, because the terms we ignored in the prediction itself are even smaller.</p>
+
+<h3>Big-O notation</h3>
+<p>Writing out the leading error each time is tiring. Mathematicians write \(E_1 = O(\Delta x^2)\), read “big O of delta x squared”. It means: there is a fixed number \(C\) such that \(|E_1| \le C\,|\Delta x|^2\) whenever \(|\Delta x|\) is small enough. It hides the constant and keeps only the speed of shrinking. So</p>
+$$ f(x_0 + \Delta x) = f(x_0) + f'(x_0)\,\Delta x + \tfrac12 f''(x_0)\,\Delta x^2 + O(\Delta x^3). $$
+<p>Read this as: “the quadratic approximation, plus a mistake that shrinks at least as fast as the cube of the step”.</p>
+<div class="box warn">
+<span class="boxtitle">Big-O says nothing about big steps</span>
+\(O(\Delta x^3)\) is a statement about small \(\Delta x\). It does not say the error is small at \(\Delta x = 1\) or \(\Delta x = 10\). The hidden constant \(C\) can be huge. Sections 4.7 and 4.8 show what that looks like.
+</div>
+
+<h3>Reading the error off a log-log plot</h3>
+<p>Suppose \(|E| = C\,\Delta x^k\). Here are the steps.</p>
+<p><b>Step 1: take \(\log_{10}\) of both sides.</b> \(\log_{10}|E| = \log_{10}\big(C\,\Delta x^k\big)\).</p>
+<p><b>Step 2: split the product.</b> The log of a product is the sum of the logs (Level 1): \(\log_{10}\big(C\,\Delta x^k\big) = \log_{10} C + \log_{10}\big(\Delta x^k\big)\).</p>
+<p><b>Step 3: bring the power down.</b> \(\Delta x^k\) is \(k\) copies of \(\Delta x\) multiplied together, so by Step 2's rule its log is \(k\) copies of \(\log_{10}\Delta x\) added together: \(\log_{10}\big(\Delta x^k\big) = k \log_{10} \Delta x\). So</p>
+$$ \log_{10}|E| = \log_{10} C + k \log_{10} \Delta x. $$
+<p>Example: \(C = 1\), \(k = 2\), \(\Delta x = 0.01\): \(|E| = 0.0001\), and \(\log_{10} 0.0001 = -4 = 0 + 2 \times (-2)\).</p>
+<p>So if you plot \(\log_{10}|E|\) against \(\log_{10}\Delta x\), you get a straight line with slope \(k\). The order of the error is the steepness of the line. This is how numerical people check a derivative code: they plot the error on log-log axes and read off the slope.</p>
+
+<figure class="sim" id="sim-loglog">
+<figcaption><b>Figure 4.3.</b> Errors of \(T_0\) to \(T_3\) for \(e^x\) at \(x_0 = 0\), on log-log axes. Each line has slope \(n+1\): 1 (grey), 2 (blue), 3 (red), 4 (green). Move the slider, or press “halve Δx”. The <span class="nogl">readout</span> shows by what factor each error shrank when the step was halved. Look for 2, 4, 8 and 16: that is \(2^{n+1}\).</figcaption>
+</figure>
+
+<h2>4.7 Where Taylor fails: far from the point</h2>
+<p>A Taylor polynomial knows only what happens at \(x_0\). Far away, it can be wildly wrong.</p>
+
+<h3>Example: the sine wave</h3>
+<p>The sine function \(\sin x\) wiggles between −1 and 1 forever. Its derivatives at 0 go round a cycle of four (we take these from a table; you do not need to derive them): \(\sin 0 = 0\), \(\sin'(0) = \cos 0 = 1\), \(\sin''(0) = -\sin 0 = 0\), \(\sin'''(0) = -\cos 0 = -1\). Take \(x_0 = 0\), so the step \(\Delta x\) is just \(x\).</p>
+<p><b>Step 1: divide each derivative by its factorial.</b> \(0/0! = 0\), \(1/1! = 1\), \(0/2! = 0\), \(-1/3! = -1/6\).</p>
+<p><b>Step 2: put them into the recipe.</b> \(T_3(x) = 0 + 1 \cdot x + 0 \cdot x^2 - \tfrac16 x^3\). Drop the zero terms:</p>
+$$ T_1(x) = x, \qquad T_3(x) = x - \frac{x^3}{3!} = x - \frac{x^3}{6}. $$
+<div class="tablewrap">
+<table>
+<tr><th>\(x\) (radians)</th><th>\(\sin x\)</th><th>\(T_1 = x\)</th><th>\(T_3 = x - x^3/6\)</th><th>error of \(T_3\)</th></tr>
+<tr><td>0.2</td><td>0.198669</td><td>0.2</td><td>0.198667</td><td>0.000003</td></tr>
+<tr><td>0.5</td><td>0.479426</td><td>0.5</td><td>0.479167</td><td>0.000259</td></tr>
+<tr><td>1</td><td>0.841471</td><td>1</td><td>0.833333</td><td>0.008138</td></tr>
+<tr><td>3</td><td>0.141120</td><td>3</td><td>−1.5</td><td>1.64</td></tr>
+<tr><td>6</td><td>−0.279415</td><td>6</td><td>−30</td><td>29.7</td></tr>
+</table>
+</div>
+<p>Near 0 the cubic is superb. At \(x = 6\) it predicts −30 for a function that never goes below −1. Every polynomial eventually runs off to plus or minus infinity. A wave never does. So a fixed number of terms must fail far enough out. For sine and for \(e^x\), adding more terms pushes the failure further out. That is not true for every function.</p>
+
+<h3>Example: more terms can make it worse</h3>
+<p>Take \(\ln(1 + x)\) at \(x_0 = 0\). Its value at 0 is \(\ln 1 = 0\). Its first five derivatives at 0 are \(1, -1, 2, -6, 24\) (taken as given here).</p>
+<p><b>Step 1: divide each derivative by its factorial.</b> \(1/1! = 1\), \(-1/2! = -\tfrac12\), \(2/3! = 2/6 = \tfrac13\), \(-6/4! = -6/24 = -\tfrac14\), \(24/5! = 24/120 = \tfrac15\).</p>
+<p><b>Step 2: put them into the recipe.</b> With \(\Delta x = x\):</p>
+$$ T_4(x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4}, \qquad T_5(x) = T_4(x) + \frac{x^5}{5}. $$
+<p><b>Step 3: add the terms one at a time at \(x = 0.5\).</b> The terms are \(0.5\), \(-0.125\), \(+0.041667\), \(-0.015625\). They shrink, and the sums home in on \(\ln 1.5 = 0.405465\): \(T_1 = 0.5\), \(T_2 = 0.375\), \(T_3 = 0.416667\), \(T_4 = 0.401042\).</p>
+<p><b>Step 4: the same at \(x = 2\).</b> The terms are \(2\), \(-2\), \(+2.667\), \(-4\), \(+6.4\). They grow, and the sums swing wildly around \(\ln 3 = 1.098612\): \(T_1 = 2\), \(T_2 = 0\), \(T_3 = 2.667\), \(T_4 = -1.333\), \(T_5 = 5.067\). Adding terms makes the forecast worse, not better. For this function the expansion at 0 is only trustworthy for \(|x| \lt 1\). That distance is called the radius of convergence.</p>
+<p>Try both functions in Figure 4.2 (choose them from the menu). Move the test point far from the dot and watch the green curve leave the black one.</p>
+
+<h2>4.8 When curvature changes fast: the natural move size</h2>
+<p>Section 4.7 was about distance. Here is the more important failure for H-space. It happens when the curvature changes over a short distance, so that a step of ordinary size crosses a region the derivatives at \(x_0\) know nothing about.</p>
+
+<h3>The dimmer switch</h3>
+<p>Picture a light with a dimmer knob. Let \(x\) be how far the knob is turned, in centimetres from the middle. Let the brightness be</p>
+$$ g(x) = \frac{1}{1 + e^{-x/w}}, $$
+<p>as a fraction of full brightness. This is a toy. The S-shaped curve is called a sigmoid, and a function like this is called a gate: it switches something from off (0) to on (1). The width \(w\), in centimetres, sets how sharp the switch is. With \(w = 0.25\) cm the light goes from 2% to 98% in about 2 cm of knob travel.</p>
+<p>Its derivatives (from the chain rule, which Level 10 covers; take them as given here), writing \(g\) for \(g(x)\):</p>
+$$ g'(x) = \frac{g\,(1 - g)}{w}, \qquad g''(x) = \frac{g\,(1 - g)\,(1 - 2g)}{w^2}. $$
+<p>Units: \(g'\) is per cm, \(g''\) is per cm².</p>
+
+<h3>Worked example: the quadratic model at the middle</h3>
+<p>Take \(w = 0.25\) cm and \(x_0 = 0\). Then \(g(0) = 1/(1 + e^0) = 1/2 = 0.5\). So</p>
+$$ g'(0) = \frac{0.5 \times 0.5}{0.25} = 1\ \text{per cm}, \qquad g''(0) = \frac{0.5 \times 0.5 \times (1 - 1)}{0.0625} = 0\ \text{per cm}^2. $$
+<p>The curvature at the middle is exactly zero. The quadratic model is \(T_2(0 + \Delta x) = 0.5 + 1 \times \Delta x + 0\). It says: the dimmer is a straight line here. Now test it at several move sizes:</p>
+<div class="tablewrap">
+<table>
+<tr><th>move \(\Delta x\) (cm)</th><th>\(\Delta x / w\)</th><th>prediction \(T_2\)</th><th>truth \(g(\Delta x)\)</th><th>error</th><th>error as % of the true change</th></tr>
+<tr><td>0.05</td><td>0.2</td><td>0.55</td><td>0.549834</td><td>−0.000166</td><td>0.3%</td></tr>
+<tr><td>0.25</td><td>1</td><td>0.75</td><td>0.731059</td><td>−0.018941</td><td>8.2%</td></tr>
+<tr><td>0.5</td><td>2</td><td>1.0</td><td>0.880797</td><td>−0.119203</td><td>31%</td></tr>
+<tr><td>1</td><td>4</td><td>1.5</td><td>0.982014</td><td>−0.517986</td><td>107%</td></tr>
+</table>
+</div>
+<p>The “true change” is \(g(\Delta x) - g(0)\). At a 1 cm turn the model predicts 150% brightness, which is impossible, and its error is bigger than the whole real change. The model is exact in its derivatives. It is still useless at that move size.</p>
+
+<h3>The other direction: the model can also miss a switch entirely</h3>
+<p>Start below the switch, at \(x_0 = -1\) cm, still with \(w = 0.25\) cm.</p>
+<p><b>Step 1: the value.</b> \(-x/w = 1/0.25 = 4\), so \(g(-1) = 1/(1 + e^{4}) = 1/(1 + 54.59815) = 0.017986\).</p>
+<p><b>Step 2: the slope.</b> \(g\,(1 - g) = 0.017986 \times 0.982014 = 0.017663\). Divide by \(w\): \(g'(-1) = 0.017663 / 0.25 = 0.070651\) per cm.</p>
+<p><b>Step 3: the curvature.</b> \(1 - 2g = 1 - 0.035972 = 0.964028\). So \(g''(-1) = 0.017663 \times 0.964028 / 0.0625 = 0.272437\) per cm².</p>
+<p><b>Step 4: the quadratic model for a 1 cm turn.</b> With \(\Delta x = 1\) cm, \(\Delta x^2 = 1\) cm²: \(0.017986 + 0.070651 \times 1 + \tfrac12 \times 0.272437 \times 1 = 0.017986 + 0.070651 + 0.136219 = 0.224856\).</p>
+<p><b>Step 5: the truth.</b> \(g(0) = 0.5\). The derivatives at \(x_0\) see a faint upward bend. They cannot see that the full switch is about to happen.</p>
+
+<div class="box key">
+<span class="boxtitle">What “small” means</span>
+A step is small or big only <i>compared with the distance over which the curvature changes</i>. Here that distance is \(w\). A 1 cm turn is tiny if \(w = 10\) cm and enormous if \(w = 0.25\) cm. Call the size of the moves that actually happen in your problem the natural move size. If it is comparable with \(w\) or bigger, the derivatives at one point will mislead you, however exact they are.
+</div>
+
+<figure class="sim" id="sim-gate">
+<figcaption><b>Figure 4.4.</b> The dimmer \(g(x)\) (black) and its quadratic model built at the black dot (red dashed). The blue dot is the true brightness after a move of \(\Delta x\); the red ring is what the quadratic model predicts. Start with a small move and see them agree. Then increase \(\Delta x\) to 1 cm. Then widen \(w\) to 2 cm with the same move: the same move is now “small”, and the model is good again. The ratio \(\Delta x / w\) decides.</figcaption>
+</figure>
+
+<p>Mechanics: hold \(x_0 = 0\) and \(\Delta x = 1\) cm, and change only \(w\). With \(w = 0.25\) cm the error is −0.518 (the table). Now take \(w = 2\) cm.</p>
+<p><b>Step 1: the ratio.</b> \(\Delta x / w = 1/2 = 0.5\).</p>
+<p><b>Step 2: the truth.</b> \(g(1) = 1/(1 + e^{-0.5}) = 1/(1 + 0.606531) = 0.622459\).</p>
+<p><b>Step 3: the slope at the middle.</b> \(g(0) = 0.5\) for any \(w\), so \(g'(0) = 0.5 \times 0.5 / w = 0.25/2 = 0.125\) per cm. The curvature is still 0, because \(1 - 2 \times 0.5 = 0\).</p>
+<p><b>Step 4: the model.</b> \(0.5 + 0.125 \times 1 + 0 = 0.625\).</p>
+<p><b>Step 5: the error.</b> \(0.622459 - 0.625 = -0.0025\). Small.</p>
+
+<h2>4.9 Why this matters for H-space</h2>
+<p>A Hessian (Level 9) is the curvature term of a Taylor approximation in many inputs at once. The many-input version of the key box reads, in words: new value ≈ old value + (each slope × its step, added up) + ½ (each curvature × the two steps it couples, added up). So everything on this page carries over. In particular:</p>
+<ol>
+<li><b>The Hessian is a local object.</b> It is the order-2 term at one point. It is guaranteed to be good only for steps that are small compared with how fast the curvature changes.</li>
+<li><b>Neural networks are full of gates.</b> The SiLU and SwiGLU parts of a transformer (Level 14) contain sigmoid-like switches, just like the dimmer. A typical change in a residual state is about one standard deviation (1σ) of its spread across texts. That is the natural move size the later tests use.</li>
+<li><b>The first attempt (v1) hit exactly this.</b> <code>../hlens/paper/theory-v2.md</code> §3 records that v1's failure was a failure of the quadratic model at the starting point, at the move sizes that mattered. In this page's words: the Hessian at one point did not predict what happened for natural move sizes. The same section reports a check on Qwen3.5-0.8B: the Hessian at the starting corner predicted finite interactions with correlation \(r = -0.09\), while the Hessian averaged over the whole region of the moves gave \(r = 0.98\). <a href="12.html">Level 12</a> explains that average.</li>
+<li><b>So the later tests measure finite moves.</b> The v9 test (Levels <a href="06.html">6</a> and <a href="15.html">15</a>) moves the state by a full 1σ and measures what actually happens, instead of trusting derivatives at one point.</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="20" data-tol="0.001" data-unit="m">
+<p><b>Exercise 4.1.</b> The car has \(s(t) = t^2\) m. Build \(T_1\) at \(t_0 = 4\) s and use it to predict \(s(4.5)\).</p>
+<details><summary>Show answer</summary>
+<p>\(s(4) = 4^2 = 16\) m and \(s'(4) = 2 \times 4 = 8\) m/s. With \(\Delta t = 4.5 - 4 = 0.5\) s: \(T_1 = 16\ \text{m} + 8\ \tfrac{\text{m}}{\text{s}} \times 0.5\ \text{s} = 16 + 4 = 20\) m.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.25" data-tol="0.001" data-unit="m">
+<p><b>Exercise 4.2.</b> What is the error \(E_1\) of the forecast in Exercise 4.1?</p>
+<details><summary>Show answer</summary>
+<p>The truth is \(4.5^2 = 20.25\) m. \(E_1 = 20.25 - 20 = 0.25\) m. This equals \(\Delta t^2 = 0.5^2 = 0.25\), as section 4.3 says it must for this car.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="20.25" data-tol="0.0005" data-unit="m">
+<p><b>Exercise 4.3.</b> Now build \(T_2\) at \(t_0 = 4\) s and predict \(s(4.5)\). Why is the answer exact?</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: the three numbers.</b> \(s(4) = 16\) m, \(s'(4) = 8\) m/s, \(s''(4) = 2\) m/s².</p>
+<p><b>Step 2: the three terms.</b> \(16\); \(8 \times 0.5 = 4\); \(\tfrac12 \times 2 \times 0.5^2 = 1 \times 0.25 = 0.25\).</p>
+<p><b>Step 3: add.</b> \(T_2 = 16 + 4 + 0.25 = 20.25\) m.</p>
+<p> It is exact because \(s\) is a quadratic, and a quadratic is fully fixed by its value, slope and curvature at one point.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2.0998734" data-tol="0.00003">
+<p><b>Exercise 4.4.</b> Use \(T_2\) at \(x_0 = 4\) to approximate \(\sqrt{4.41}\). You are given: \(f(x) = \sqrt{x}\), \(f'(x) = \tfrac{1}{2\sqrt{x}}\), \(f''(x) = -\tfrac{1}{4x^{3/2}}\). Give at least five decimal places.</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: the value.</b> \(f(4) = \sqrt4 = 2\).</p>
+<p><b>Step 2: the slope.</b> \(f'(4) = 1/(2\sqrt4) = 1/(2 \times 2) = 0.25\).</p>
+<p><b>Step 3: the curvature.</b> \(4^{3/2} = (\sqrt4)^3 = 2^3 = 8\), using the power-of-a-power rule of Level 1 (\(4^{3/2} = (4^{1/2})^3\)). So \(f''(4) = -1/(4 \times 8) = -1/32 = -0.03125\).</p>
+<p><b>Step 4: the step.</b> \(\Delta x = 4.41 - 4 = 0.41\), so \(\Delta x^2 = 0.41 \times 0.41 = 0.1681\).</p>
+<p><b>Step 5: the three terms.</b> \(2\); \(0.25 \times 0.41 = 0.1025\); \(\tfrac12 \times (-0.03125) \times 0.1681 = -0.0026266\).</p>
+<p><b>Step 6: add.</b> \(T_2 = 2 + 0.1025 - 0.0026266 = 2.0998734\). The truth is \(\sqrt{4.41} = 2.1\). The error is about 0.000127, close to the next term \(\tfrac{f'''(4)}{6}\Delta x^3\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2" data-tol="0.001">
+<p><b>Exercise 4.5.</b> At some point \(x_0\), a function has \(f'''(x_0) = 12\). What number multiplies \(\Delta x^3\) in its Taylor approximation?</p>
+<details><summary>Show answer</summary>
+<p>The coefficient is \(f'''(x_0)/3! = 12/6 = 2\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.0005" data-tol="0.0001">
+<p><b>Exercise 4.6.</b> An approximation has error \(E = O(\Delta x^3)\), and in practice \(E \approx C\,\Delta x^3\). At \(\Delta x = 0.2\) the error is 0.004. Predict the error at \(\Delta x = 0.1\).</p>
+<details><summary>Show answer</summary>
+<p>Halving \(\Delta x\) multiplies \(\Delta x^3\) by \((1/2)^3 = 1/8\). So the error becomes \(0.004 / 8 = 0.0005\). (Equivalently \(C = 0.004 / 0.008 = 0.5\), and \(0.5 \times 0.001 = 0.0005\).)</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.1986667" data-tol="0.000005">
+<p><b>Exercise 4.7.</b> Use \(T_3(x) = x - x^3/6\) to approximate \(\sin 0.2\). Give six decimal places.</p>
+<details><summary>Show answer</summary>
+<p>\(0.2^3 = 0.008\), and \(0.008/6 = 0.0013333\). So \(T_3 = 0.2 - 0.0013333 = 0.1986667\). The true value is 0.1986693.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="1.5" data-tol="0.001">
+<p><b>Exercise 4.8.</b> <span class="small">(The dimmer: brightness \(g(x) = 1/(1 + e^{-x/w})\) as a fraction of full brightness, with the knob at \(x\) cm and gate width \(w\) cm.)</span> For the dimmer with \(w = 0.25\) cm, built at \(x_0 = 0\), what does the quadratic model predict for the brightness after a 1 cm turn? Why can this not be right?</p>
+<details><summary>Show answer</summary>
+<p>\(g(0) = 0.5\), \(g'(0) = 1\) per cm, \(g''(0) = 0\). So \(T_2 = 0.5 + 1 \times 1 + 0 = 1.5\). Brightness is a fraction of full brightness and can never exceed 1. The move is four widths long (\(\Delta x / w = 4\)), so the derivatives at the middle know nothing about the flat top of the switch.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="9.26" data-tol="0.0005" data-unit="m³">
+<p><b>Exercise 4.9.</b> A cube has sides of 2 m. Its sides grow to 2.1 m. Use \(T_2\) for \(f(x) = x^3\) at \(x_0 = 2\) to approximate the new volume. Then say which piece of the cube \(T_2\) leaves out, and how big it is.</p>
+<details><summary>Show answer</summary>
+<p><b>Step 1: the recipe.</b> Section 4.5 gave \(f(2) = 8\), \(f'(2) = 12\), \(f''(2) = 12\), so \(T_2 = 8 + 12\,\Delta x + \tfrac{12}{2}\,\Delta x^2 = 8 + 12\,\Delta x + 6\,\Delta x^2\).</p>
+<p><b>Step 2: the step.</b> \(\Delta x = 2.1 - 2 = 0.1\) m, so \(\Delta x^2 = 0.01\) m².</p>
+<p><b>Step 3: put it in.</b> \(T_2 = 8 + 12 \times 0.1 + 6 \times 0.01 = 8 + 1.2 + 0.06 = 9.26\) m³.</p>
+<p> The truth is \(2.1^3 = 9.261\) m³. \(T_2\) leaves out the corner cube \(\Delta x^3 = 0.001\) m³.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 4.10.</b> <span class="small">(The dimmer: brightness \(g(x) = 1/(1 + e^{-x/w})\) as a fraction of full brightness, with the knob at \(x\) cm and gate width \(w\) cm.)</span> Someone says: “I computed the exact second derivative at my starting point, so my quadratic model is reliable.” Using the dimmer, give one situation where they are right and one where they are wrong. What single number would you ask them for?</p>
+<details><summary>Show answer</summary>
+<p>Right: \(w = 2\) cm, a 1 cm move from \(x_0 = 0\). The error is 0.0025, about 2% of the true change of 0.122. Wrong: \(w = 0.25\) cm, the same 1 cm move. The error is larger than the whole change. Ask for the ratio of the move size they care about to the distance over which the curvature changes (here \(\Delta x / w\)). Exact derivatives do not help if that ratio is large.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  function setup(host) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    return wrap;
+  }
+
+  /* Figure 4.1: growing a square */
+  (function () {
+    var wrap = setup(document.getElementById("sim-square"));
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 380 });
+    var v = S.view(c, { xmin: 0, xmax: 1, ymin: 0, ymax: 1, padLeft: 20, padRight: 20, padTop: 20, padBottom: 20 });
+    var x0 = S.slider(wrap, { label: "side x₀", min: 1, max: 4, step: 0.1, value: 3, unit: "m", digits: 1, oninput: function () { c.redraw(); } });
+    var dx = S.slider(wrap, { label: "growth Δx", min: 0, max: 2, step: 0.05, value: 0.5, unit: "m", digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var b = v.box(), span = 6.4, asp = (b.r - b.l) / (b.b - b.t);
+      var x0w = -(span * asp - 6.2) / 2;
+      v.set({ xmin: x0w, ymin: -0.2, ymax: span - 0.2, xmax: x0w + span * asp });
+      var X = x0.get(), D = dx.get();
+      v.rect(0, 0, X, X, { color: S.col.ink, fill: S.col.gray, fillAlpha: 0.25, width: 1 });
+      if (D > 0) {
+        v.rect(X, 0, D, X, { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.25, width: 1 });
+        v.rect(0, X, X, D, { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.25, width: 1 });
+        v.rect(X, X, D, D, { color: S.col.red, fill: S.col.red, fillAlpha: 0.55, width: 1 });
+      }
+      v.text("x₀² = " + S.fmt(X * X, 2) + " m²", X / 2, X / 2, { align: "center", baseline: "middle" });
+      if (D >= 0.3) {
+        v.text("x₀Δx", X + D / 2, X / 2, { align: "center", baseline: "middle", color: S.col.blue, font: S.fontSmall });
+        v.text("x₀Δx", X / 2, X + D / 2, { align: "center", baseline: "middle", color: S.col.blue, font: S.fontSmall });
+      }
+      if (D > 0) v.text("Δx²", X + D, X + D, { dx: 6, dy: -4, color: S.col.red });
+      var tru = (X + D) * (X + D), lin = X * X + 2 * X * D;
+      out.textContent =
+        "true area (x₀ + Δx)² = (" + S.fmt(X, 1) + " + " + S.fmt(D, 2) + ")² = " + S.fmt(tru, 4) + " m²\n" +
+        "order-1 forecast x₀² + 2x₀Δx = " + S.fmt(X * X, 2) + " + " + S.fmt(2 * X * D, 4) + " = " + S.fmt(lin, 4) + " m²  (grey + blue)\n" +
+        "error E₁ = " + S.fmt(tru - lin, 4) + " m² = Δx² = " + S.fmt(D, 2) + "²  (the red corner)\n" +
+        "blue strips are " + (D > 0 ? S.fmt(2 * X * D / (D * D), 1) + " times the red corner" : "zero, and so is the corner");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 4.2: Taylor builder */
+  (function () {
+    var wrap = setup(document.getElementById("sim-builder"));
+    var F = {
+      exp: { name: "eˣ", xr: [-3, 3], yr: [-2, 8], d: function (x) { var e = Math.exp(x); return [e, e, e, e]; }, ok: function () { return true; } },
+      sin: { name: "sin x", xr: [-6.5, 6.5], yr: [-3, 3], d: function (x) { var s = Math.sin(x), co = Math.cos(x); return [s, co, -s, -co]; }, ok: function () { return true; } },
+      ln: { name: "ln(1 + x)", xr: [-0.95, 4], yr: [-3, 2.5], d: function (x) { var u = 1 + x; return [Math.log(u), 1 / u, -1 / (u * u), 2 / (u * u * u)]; }, ok: function (x) { return x > -1; } }
+    };
+    var ctl = document.createElement("div"); ctl.className = "controls";
+    var lab = document.createElement("label"); lab.className = "nogl"; lab.textContent = "Function: ";
+    var sel = document.createElement("select");
+    [["exp", "eˣ"], ["sin", "sin x"], ["ln", "ln(1 + x)"]].forEach(function (p) { var o = document.createElement("option"); o.value = p[0]; o.textContent = p[1]; sel.appendChild(o); });
+    lab.appendChild(sel); ctl.appendChild(lab); wrap.appendChild(ctl);
+    var c = S.canvas(wrap, { aspect: 0.6 });
+    wrap.insertBefore(c.cv, ctl);
+    var v = S.view(c, { xmin: -3, xmax: 3, ymin: -2, ymax: 8, padLeft: 40, padBottom: 30 });
+    var cur = F.exp, pt = { x: 0, y: 1 };
+    var colors = [S.col.gray, S.col.blue, S.col.red, S.col.green];
+    var boxes = [];
+    for (var n = 0; n <= 3; n++) boxes.push(S.checkbox(wrap, "T" + "₀₁₂₃"[n], n === 1 || n === 2, function () { c.redraw(); }));
+    var dx = S.slider(wrap, { label: "test step Δx", min: -3, max: 3, step: 0.05, value: 0.5, digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    var fact = [1, 1, 2, 6];
+    function T(n, d, D) { var s = 0, p = 1; for (var k = 0; k <= n; k++) { s += d[k] / fact[k] * p; p *= D; } return s; }
+    function setFn() {
+      cur = F[sel.value]; pt.x = 0; pt.y = cur.d(0)[0];
+      v.set({ xmin: cur.xr[0], xmax: cur.xr[1], ymin: cur.yr[0], ymax: cur.yr[1] });
+      c.redraw();
+    }
+    sel.addEventListener("change", setFn);
+    S.drag(c, v, [pt], function (p) {
+      p.x = Math.max(cur.xr[0] + 0.05, Math.min(cur.xr[1] - 0.05, p.x));
+      p.y = cur.d(p.x)[0]; c.redraw();
+    });
+    c.draw = function () {
+      var x0 = pt.x, d = cur.d(x0), D = dx.get(), xp = x0 + D;
+      v.axes({ xlabel: "x", ylabel: "f(x) = " + cur.name });
+      v.fn(function (x) { return cur.ok(x) ? cur.d(x)[0] : NaN; }, { color: S.col.ink, width: 2.5 });
+      for (var n = 0; n <= 3; n++) if (boxes[n].get()) {
+        (function (n) { v.fn(function (x) { return T(n, d, x - x0); }, { color: colors[n], width: 1.8 }); })(n);
+      }
+      v.line(xp, v.r.ymin, xp, v.r.ymax, { color: S.col.gray, dash: [4, 4], width: 1 });
+      var lines = [];
+      var truth = cur.ok(xp) ? cur.d(xp)[0] : NaN;
+      if (isFinite(truth)) v.dot(xp, truth, { color: S.col.ink, r: 4 });
+      for (n = 0; n <= 3; n++) if (boxes[n].get()) {
+        var tv = T(n, d, D);
+        v.dot(xp, tv, { color: colors[n], r: 4, hollow: true });
+        lines.push("T" + "₀₁₂₃"[n] + " = " + S.fmt(tv, 4) + (isFinite(truth) ? "   error E" + "₀₁₂₃"[n] + " = " + S.fmt(truth - tv, 4) : ""));
+      }
+      v.dot(x0, d[0], { color: S.col.ink, r: 6 });
+      v.text("x₀ (drag me)", x0, d[0], { dx: 8, dy: -8, font: S.fontSmall });
+      out.textContent =
+        "x₀ = " + S.fmt(x0, 2) + ":  f(x₀) = " + S.fmt(d[0], 4) + ",  f′(x₀) = " + S.fmt(d[1], 4) + ",  f″(x₀) = " + S.fmt(d[2], 4) + ",  f‴(x₀) = " + S.fmt(d[3], 4) + "\n" +
+        "T₃(x₀ + Δx) = " + S.fmt(d[0], 3) + " + " + S.fmt(d[1], 3) + "·Δx + (" + S.fmt(d[2], 3) + "/2)·Δx² + (" + S.fmt(d[3], 3) + "/6)·Δx³\n" +
+        "test point x = x₀ + Δx = " + S.fmt(xp, 2) + ":  true f = " + (isFinite(truth) ? S.fmt(truth, 4) : "undefined here") + "\n" + lines.join("\n");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 4.3: error versus step on log-log axes, for e^x at 0 */
+  (function () {
+    var wrap = setup(document.getElementById("sim-loglog"));
+    var c = S.canvas(wrap, { aspect: 0.62 });
+    var v = S.view(c, { xmin: -3, xmax: 0.4, ymin: -15, ymax: 1, padLeft: 44, padBottom: 34 });
+    var colors = [S.col.gray, S.col.blue, S.col.red, S.col.green];
+    function err(n, D) { /* exact tail of the series, no cancellation */
+      var s = 0, term = 1;
+      for (var k = 1; k <= 40; k++) { term *= D / k; if (k > n) s += term; }
+      return s;
+    }
+    var p = S.slider(wrap, { label: "log₁₀ Δx", min: -2.5, max: 0.3, step: 0.01, value: -1, digits: 2, oninput: function () { c.redraw(); } });
+    S.button(wrap, "halve Δx", function () { p.set(Math.max(-2.5, p.get() - Math.log10(2))); c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      v.axes({ xlabel: "log₁₀ Δx", ylabel: "log₁₀ |error|", xticks: 0.5, yticks: 2, frame: true });
+      var n;
+      for (n = 0; n <= 3; n++) (function (n) {
+        v.fn(function (L) { return Math.log10(err(n, Math.pow(10, L))); }, { color: colors[n], width: 2 });
+        var Lr = -2.9, yr = Math.log10(err(n, Math.pow(10, Lr)));
+        v.text("E" + "₀₁₂₃"[n] + " (slope " + (n + 1) + ")", Lr, yr, { dy: -6, color: colors[n], font: S.fontSmall });
+      })(n);
+      var D = Math.pow(10, p.get());
+      v.line(p.get(), v.r.ymin, p.get(), v.r.ymax, { color: S.col.gray, dash: [4, 4], width: 1 });
+      var lines = ["Δx = " + S.fmt(D, 4) + "    (e^Δx = " + Math.exp(D).toPrecision(10) + ")"];
+      for (n = 0; n <= 3; n++) {
+        var e = err(n, D), e2 = err(n, 2 * D);
+        v.dot(p.get(), Math.log10(e), { color: colors[n], r: 4.5 });
+        lines.push("E" + "₀₁₂₃"[n] + " = " + e.toExponential(3) + "   leading term Δx^" + (n + 1) + "/" + (n + 1) + "! = " + (Math.pow(D, n + 1) / [1, 2, 6, 24][n]).toExponential(3) +
+          "   E(2Δx) ÷ E(Δx) = " + S.fmt(e2 / e, 2));
+      }
+      out.textContent = lines.join("\n");
+    };
+    c.redraw();
+  })();
+
+  /* Figure 4.4: the dimmer and the natural move size */
+  (function () {
+    var wrap = setup(document.getElementById("sim-gate"));
+    var c = S.canvas(wrap, { aspect: 0.58 });
+    var v = S.view(c, { xmin: -3, xmax: 3, ymin: -0.6, ymax: 1.7, padLeft: 40, padBottom: 30 });
+    var pt = { x: 0, y: 0.5 };
+    var w = S.slider(wrap, { label: "width w", min: 0.1, max: 2, step: 0.05, value: 0.25, unit: "cm", digits: 2, oninput: function () { pt.y = g(pt.x); c.redraw(); } });
+    var dx = S.slider(wrap, { label: "move Δx", min: -3, max: 3, step: 0.05, value: 1, unit: "cm", digits: 2, oninput: function () { c.redraw(); } });
+    var out = S.readout(wrap);
+    function g(x) { return 1 / (1 + Math.exp(-x / w.get())); }
+    S.drag(c, v, [pt], function (p) { p.y = g(p.x); c.redraw(); });
+    c.draw = function () {
+      var W = w.get(), x0 = pt.x, G = g(x0), g1 = G * (1 - G) / W, g2 = G * (1 - G) * (1 - 2 * G) / (W * W), D = dx.get();
+      v.axes({ xlabel: "knob x (cm)", ylabel: "brightness g (fraction)", xticks: 1, yticks: 0.5 });
+      v.line(v.r.xmin, 1, v.r.xmax, 1, { color: S.col.light, width: 1 });
+      v.fn(g, { color: S.col.ink, width: 2.5 });
+      v.fn(function (x) { var d = x - x0; return G + g1 * d + 0.5 * g2 * d * d; }, { color: S.col.red, dash: [6, 4], width: 1.8 });
+      var tru = g(x0 + D), pred = G + g1 * D + 0.5 * g2 * D * D;
+      v.line(x0 + D, tru, x0 + D, Math.max(v.r.ymin, Math.min(v.r.ymax, pred)), { color: S.col.red, width: 1 });
+      v.dot(x0, G, { color: S.col.ink, r: 6 });
+      v.text("x₀ (drag me)", x0, G, { dx: -8, dy: -10, align: "right", font: S.fontSmall });
+      v.dot(x0 + D, tru, { color: S.col.blue, r: 5 });
+      if (pred <= v.r.ymax && pred >= v.r.ymin) v.dot(x0 + D, pred, { color: S.col.red, r: 5, hollow: true });
+      var chg = tru - G;
+      out.textContent =
+        "x₀ = " + S.fmt(x0, 2) + " cm:  g = " + S.fmt(G, 4) + ",  g′ = " + S.fmt(g1, 4) + " per cm,  g″ = " + S.fmt(g2, 4) + " per cm²\n" +
+        "quadratic model: " + S.fmt(G, 4) + " + " + S.fmt(g1, 4) + " × " + S.fmt(D, 2) + " + ½ × " + S.fmt(g2, 4) + " × " + S.fmt(D, 2) + "² = " + S.fmt(pred, 4) + "\n" +
+        "true g(x₀ + Δx) = " + S.fmt(tru, 4) + "    error (true − model) = " + S.fmt(tru - pred, 4) + "\n" +
+        "move size in widths Δx / w = " + S.fmt(D / W, 2) +
+        (Math.abs(chg) > 1e-4 ? "    error as % of the true change = " + S.fmt(100 * Math.abs(tru - pred) / Math.abs(chg), 1) + "%" : "");
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

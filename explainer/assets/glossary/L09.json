@@ -1,0 +1,8 @@
+{
+  "characteristic equation": {"t": "characteristic equation", "a": ["characteristic polynomial"], "l": 9, "d": "det(H − λI) = 0. Its solutions λ are the eigenvalues. For a 2×2 symmetric matrix it is λ² − (trace)λ + (determinant) = 0."},
+  "definiteness": {"t": "definiteness", "a": [], "l": 9, "d": "Whether a symmetric matrix is positive definite, negative definite, semidefinite or indefinite: the sign pattern of its eigenvalues, or of vᵀHv over all directions v."},
+  "Sylvester's law of inertia": {"t": "Sylvester's law of inertia", "a": ["Sylvester's law"], "l": 9, "d": "H and BᵀHB have the same numbers of positive, negative and zero eigenvalues for any invertible B. Changing units or basis can move eigenvalues and eigenvectors but never flips their signs."},
+  "rotation matrix": {"t": "rotation matrix", "a": ["rotation matrices"], "l": 9, "d": "A matrix that turns the plane by a fixed angle without stretching: columns (cos φ, sin φ) and (−sin φ, cos φ). It keeps lengths, angles and area."},
+  "product rule": {"t": "product rule", "a": [], "l": 9, "d": "The derivative of a product: (uv)′ = u′v + uv′. Each factor is differentiated in turn while the other is held fixed."},
+  "quadratic formula": {"t": "quadratic formula", "a": [], "l": 9, "d": "The solutions of aλ² + bλ + c = 0 are λ = (−b ± √(b² − 4ac)) / (2a)."}
+}

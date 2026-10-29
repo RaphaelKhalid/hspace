@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 14: Transformers, the residual stream and the J-lens</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="14">
+<div class="page">
+
+<h1>Level 14: Transformers, the residual stream and the J-lens</h1>
+<p class="subtitle">A language model is a long composition of simple steps that all write into one shared vector per token. The J-lens asks, on average over many texts, how a small change to that vector early on moves the model's output. H-space asks the same question one derivative up.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>follow one token from text to embedding, through the residual stream, to logits and probabilities;</li>
+<li>say what each part of a block does (RMSNorm, attention or Gated DeltaNet, SwiGLU MLP) and which parts create curvature;</li>
+<li>compute a softmax, a log-likelihood in nats and a KL divergence by hand;</li>
+<li>state the sizes of the two Qwen models used in this project;</li>
+<li>unpack the J-lens formula symbol by symbol, decode a state with it, and say what J-space is;</li>
+<li>say precisely what the J-lens cannot see, and so what question H-space asks.</li>
+</ul>
+<p class="small">Prerequisites: <a href="08.html">Level 8</a> (the Jacobian, and the averaged-Jacobian preview), <a href="10.html">Level 10</a> (neurons, SiLU, the chain rule, backpropagation), <a href="12.html">Level 12</a> (residual sublayers and product sites), <a href="13.html">Level 13</a> (mean, covariance, PCA, whitening, top-\(k\) subspaces) and <a href="06.html">Level 6</a> (the 2×2 interaction \(I\)).</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p><b>Notation change.</b> From this level on, vectors are written in plain letters (\(h\), \(u_t\)), not bold, to match theory-v2. Whether a letter is a vector or a number is stated below. “a.u.” means activation units: the arbitrary unit in which the model's internal numbers are stored. It has no physical meaning, but it is the same unit for every coordinate of the residual stream, so ratios and comparisons are meaningful.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>a token, identified by its number in the vocabulary</td><td>none (a label)</td><td>the token “ Paris”</td></tr>
+<tr><td>\(\text{vocab}\)</td><td>“vocab”</td><td>the vocabulary: the fixed list of all tokens; \(\lvert\text{vocab}\rvert\) is its size</td><td>none</td><td>toy: {the, cat, sat, .}</td></tr>
+<tr><td>\(T\)</td><td>“capital t”</td><td>number of token positions in a window of text</td><td>none (a count)</td><td>\(T = 128\) in the runs</td></tr>
+<tr><td>\(p\), \(p'\)</td><td>“p”, “p prime”</td><td>positions: \(p\) where we perturb (source), \(p'\) where we read (target)</td><td>none (an index)</td><td>\(p = 40\)</td></tr>
+<tr><td>\(i\), \(j\)</td><td>“i”, “j”</td><td>in attention: the reading position \(i\) and an earlier position \(j \le i\)</td><td>none (an index)</td><td>\(i = 3\), \(j = 1\)</td></tr>
+<tr><td>\(d\)</td><td>“d”</td><td>width of the residual stream (numbers per position)</td><td>none (a count)</td><td>\(d = 5{,}120\) (27B)</td></tr>
+<tr><td>\(\ell\)</td><td>“ell”</td><td>layer index: \(h_\ell\) is the output of decoder block \(\ell\) (blocks counted from 0)</td><td>none (an index)</td><td>\(\ell = 16\)</td></tr>
+<tr><td>\(L^*\)</td><td>“L star”</td><td>the last block; its output is the target of both lenses</td><td>none (an index)</td><td>63 (27B), 23 (0.8B)</td></tr>
+<tr><td>\(\mathbb{R}^d\)</td><td>“R d”</td><td>the set of all lists of \(d\) real numbers</td><td>none</td><td>\(h_\ell[p] \in \mathbb{R}^{5120}\)</td></tr>
+<tr><td>\(h_\ell[p]\)</td><td>“h ell at p”</td><td>residual state after block \(\ell\) at position \(p\): a vector of \(d\) numbers. \(h_\ell\) is all \(T\) of them, a \(T\times d\) array</td><td>a.u.</td><td>\(h_{16}[40] \in \mathbb{R}^{5120}\)</td></tr>
+<tr><td>\(h\)</td><td>“h”</td><td>a residual state at one position, when layer and position do not matter</td><td>a.u.</td><td>\(h = (1, 1)\)</td></tr>
+<tr><td>\(E[t]\), \(t_p\)</td><td>“E of t”, “t p”</td><td>embedding: the learned starting vector of token \(t\); the token at position \(p\)</td><td>a.u.; none</td><td>toy \((1, 0, 0.5)\)</td></tr>
+<tr><td>\(k\), \(k'\)</td><td>“k”, “k prime”</td><td>coordinate indices, 1 to \(d\) (and \(k = 25\) when counting subspace directions)</td><td>none (an index)</td><td>\(y_k\)</td></tr>
+<tr><td>\(y\), \(\varphi(y)\)</td><td>“y”, “phi of y”</td><td>a sublayer's input vector (components \(y_k\)) and the vector its branch adds (\(\varphi_{\text{MLP}}\) for the MLP)</td><td>a.u.</td><td>\(y \mapsto y + \varphi(y)\)</td></tr>
+<tr><td>\(D\varphi\), \(I\)</td><td>“D phi”, “identity”</td><td>the Jacobian of the branch (<a href="08.html">Level 8</a>); the identity matrix</td><td>none</td><td>\(I + D\varphi\)</td></tr>
+<tr><td>\(u\)</td><td>“u”</td><td>in Figure 14.1 only: one toy token covector used to score the state</td><td>none</td><td>score \(u\cdot h\)</td></tr>
+<tr><td>\(\operatorname{rms}(y)\)</td><td>“r m s of y”</td><td>root mean square \(\sqrt{\tfrac1d\sum_k y_k^2 + \epsilon}\): the typical size of one coordinate</td><td>a.u.</td><td>\(\operatorname{rms}(3,4) \approx 3.54\)</td></tr>
+<tr><td>\(\epsilon\)</td><td>“epsilon”</td><td>a tiny positive constant that prevents division by zero</td><td>a.u.²</td><td>ignored in examples</td></tr>
+<tr><td>\(w\), \(\gamma\)</td><td>“w”, “gamma”</td><td>stored norm weight \(w\) and the gain \(\gamma = 1 + w\), one number per coordinate</td><td>none</td><td>\(\gamma = (1, 1.5)\)</td></tr>
+<tr><td>\(\odot\)</td><td>“times, entry by entry”</td><td>elementwise product: \((a \odot b)_k = a_k b_k\)</td><td>product of units</td><td>\((1,2)\odot(3,4) = (3, 8)\)</td></tr>
+<tr><td>\(N(y)\)</td><td>“N of y”</td><td>RMSNorm: \(\gamma \odot y / \operatorname{rms}(y)\)</td><td>none (normalised)</td><td>\(N(3,4) \approx (0.85, 1.13)\) with \(\gamma = 1\)</td></tr>
+<tr><td>\(x_i\)</td><td>“x i”</td><td>the normalised input that attention reads at position \(i\)</td><td>none</td><td>\(x_i = N(h[i])\)</td></tr>
+<tr><td>\(G\)</td><td>“G”</td><td>the attention output gate's weight matrix</td><td>none</td><td>learned</td></tr>
+<tr><td>\(W_Q, W_K, W_V, W_O\)</td><td>“W Q” …</td><td>attention weight matrices for queries, keys, values and output</td><td>none</td><td>learned</td></tr>
+<tr><td>\(q_i\), \(k_j\), \(v_j\)</td><td>“q i”, “k j”, “v j”</td><td>query vector at \(i\); key and value vectors at \(j\)</td><td>none</td><td>\(q_i = W_Q x_i\)</td></tr>
+<tr><td>\(d_h\)</td><td>“d h”</td><td>length of one head's query and key vectors</td><td>none (a count)</td><td>toy 2</td></tr>
+<tr><td>\(s_{ij}\), \(a_{ij}\)</td><td>“s i j”, “a i j”</td><td>attention score of \(j\) as seen from \(i\), and the attention weight after softmax</td><td>\(s\): none; \(a\): none, between 0 and 1</td><td>\(a_{31} = 0.665\)</td></tr>
+<tr><td>\(o_i\)</td><td>“o i”</td><td>attention output written at position \(i\)</td><td>a.u.</td><td>14.25 in the toy</td></tr>
+<tr><td>\(\operatorname{sigmoid}(z)\)</td><td>“sigmoid”</td><td>\(1/(1 + e^{-z})\), a smooth switch from 0 to 1 (<a href="10.html">Level 10</a>)</td><td>none</td><td>\(\operatorname{sigmoid}(0) = 0.5\)</td></tr>
+<tr><td>\(\sigma\), \(\sigma'\)</td><td>“sigma”, “sigma prime”</td><td>short names for \(\operatorname{sigmoid}\) and its derivative \(\sigma(1-\sigma)\) (<a href="10.html">Level 10</a>)</td><td>none</td><td>\(\sigma(2) = 0.8808\)</td></tr>
+<tr><td>\(\operatorname{silu}(z)\)</td><td>“silu”</td><td>\(z \cdot \operatorname{sigmoid}(z)\) (<a href="10.html">Level 10</a>)</td><td>same as \(z\)</td><td>\(\operatorname{silu}(2) = 1.76\)</td></tr>
+<tr><td>\(\tilde x\)</td><td>“x tilde”</td><td>the normalised input that the MLP reads</td><td>none</td><td>\(\tilde x = N(y)\)</td></tr>
+<tr><td>\(w_{g,i}, w_{u,i}, w_{\text{down},i}\)</td><td>“w gate”, “w up”, “w down”</td><td>neuron \(i\)'s gate read direction, up read direction and write direction</td><td>none</td><td>learned</td></tr>
+<tr><td>\(z_i\), \(m_i\)</td><td>“z i”, “m i”</td><td>neuron \(i\)'s gate read \(w_{g,i}\cdot\tilde x\) and up read \(w_{u,i}\cdot\tilde x\) (theory-v2 calls the up read \(u_i\); renamed here to avoid a clash with \(u_t\))</td><td>none</td><td>\(z_i = 2\), \(m_i = 1\)</td></tr>
+<tr><td>\(a\), \(b\)</td><td>“a”, “b”</td><td>in the SwiGLU toy: the gate and up read directions of one neuron; entries \(a_k, b_k\)</td><td>none</td><td>\(a = (1, 0)\)</td></tr>
+<tr><td>\(x\) (in 14.7)</td><td>“x”</td><td>the 2-D input of the toy neuron (in 14.10 \(x\) means a context instead)</td><td>none</td><td>\(x = (2, 1)\)</td></tr>
+<tr><td>\(f\), \(\nabla f\), \(\nabla^2 f\)</td><td>“f”, “grad f”, “Hessian of f”</td><td>a toy function, its gradient and its Hessian (Levels 5 and 9)</td><td>as stated per example</td><td>\(f = \operatorname{silu}(x_1)x_2\)</td></tr>
+<tr><td>\(\operatorname{silu}'\), \(\operatorname{silu}''\)</td><td>“silu prime”, “silu double prime”</td><td>first and second derivatives of silu</td><td>none</td><td>\(\operatorname{silu}'(0) = 0.5\)</td></tr>
+<tr><td>\(\operatorname{sym}(M)\)</td><td>“sym of M”</td><td>\(M + M^\top\) (theory-v2's convention: a sum, not an average)</td><td>same as \(M\)</td><td>\(\operatorname{sym}(ab^\top) = ab^\top + ba^\top\)</td></tr>
+<tr><td>\(W_U\), \(W_U[t]\)</td><td>“W U”, “row t of W U”</td><td>unembedding matrix (one row per token) and the row for token \(t\)</td><td>none</td><td>toy \((1, 2, 0, 1)\)</td></tr>
+<tr><td>\(w_{\text{final}}\)</td><td>“w final”</td><td>the stored weight of the final RMSNorm, so its gain is \(1 + w_{\text{final}}\)</td><td>none</td><td>toy \((0, 0.5, 0, -0.5)\)</td></tr>
+<tr><td>\(\operatorname{logit}_t\)</td><td>“logit of t”</td><td>the model's raw score for token \(t\) being next</td><td>nats (only differences matter)</td><td>0.267</td></tr>
+<tr><td>\(N_{\text{final}}\)</td><td>“N final”</td><td>the final RMSNorm, with gain \(1 + w_{\text{final}}\)</td><td>none (normalised)</td><td>14.8</td></tr>
+<tr><td>\(u_t\)</td><td>“u t”</td><td>token \(t\)'s read vector before the final norm: \((1 + w_{\text{final}}) \odot W_U[t]\)</td><td>none</td><td>toy \((1, 3, 0, 0.5)\)</td></tr>
+<tr><td>\(Z\)</td><td>“Z”</td><td>in 14.6: the softmax total \(\sum_{t'} e^{\operatorname{logit}_{t'}}\)</td><td>none</td><td>9.389 for logits (2, 0, 0)</td></tr>
+<tr><td>\(e\), \(\ln\)</td><td>“e”, “natural log”</td><td>Euler's number 2.71828…, and the logarithm to base \(e\) (<a href="01.html">Level 1</a>)</td><td>none</td><td>\(\ln 0.25 = -1.386\)</td></tr>
+<tr><td>\(P(t)\)</td><td>“P of t”</td><td>probability the model gives to token \(t\) being next</td><td>none, between 0 and 1</td><td>0.665</td></tr>
+<tr><td>\(\tau\)</td><td>“tau”</td><td>softmax temperature (used only in Figure 14.3)</td><td>none</td><td>\(\tau = 1\)</td></tr>
+<tr><td>\(P\), \(P'\)</td><td>“P”, “P prime”</td><td>two probability distributions over the same tokens</td><td>none</td><td>(0.7, 0.2, 0.1)</td></tr>
+<tr><td>\(\operatorname{KL}(P \,\Vert\, P')\)</td><td>“KL of P from P prime”</td><td>Kullback–Leibler divergence \(\sum_t P(t)\ln\frac{P(t)}{P'(t)}\)</td><td>nats</td><td>0.085 nats</td></tr>
+<tr><td>\(x\)</td><td>“x”</td><td>in the J-lens formula: a context (one window of text), drawn at random from a corpus</td><td>none (a text)</td><td>a wikitext window</td></tr>
+<tr><td>\(V\)</td><td>“capital V”</td><td>valid positions \(\{16, \dots, T-2\}\) (theory-v2 §0)</td><td>none (a set)</td><td>111 positions when \(T = 128\)</td></tr>
+<tr><td>\(\mathbb{E}_x\), \(\operatorname{mean}_{p\in V}\)</td><td>“average over contexts”, “mean over valid p”</td><td>average over many texts; average over the valid source positions (<a href="13.html">Level 13</a>)</td><td>same as what is averaged</td><td>Monte Carlo over windows</td></tr>
+<tr><td>\(S\)</td><td>“S”</td><td>in 14.10: the final states summed over target positions, \(\sum_{p'\in V} h_{L^*}[p']\)</td><td>a.u.</td><td>one vector of \(d\) numbers</td></tr>
+<tr><td>\(J_\ell\)</td><td>“J ell”</td><td>the J-lens at layer \(\ell\): a \(d\times d\) averaged Jacobian (14.10)</td><td>a.u. per a.u. (none)</td><td>\(5120 \times 5120\)</td></tr>
+<tr><td>\(\lceil\cdot\rceil\), \(\text{dim\_batch}\)</td><td>“ceiling”, “dim batch”</td><td>round up to a whole number; how many Jacobian rows the fitting code computes per backward pass</td><td>none</td><td>\(\lceil 5120/8\rceil = 640\)</td></tr>
+<tr><td>\(\text{score}_t(h)\)</td><td>“score of t”</td><td>the J-lens score of token \(t\) for state \(h\): \(u_t^\top J_\ell h\)</td><td>a.u. (pre-norm proxy)</td><td>1.5</td></tr>
+<tr><td>\(F\), \(W_1, W_2, b_1\), \(\bar J\), \(J(h)\)</td><td>“F”, “W one” …, “J bar”, “J of h”</td><td>Figure 14.5's toy map and its fixed weights; the averaged Jacobian of the toy; its Jacobian at one point \(h\)</td><td>none (toy)</td><td>Figure 14.5</td></tr>
+<tr><td>\(c\)</td><td>“c”</td><td>an output covector: a fixed direction used to read one number from the final state (Level 15)</td><td>none</td><td>\(c = u_t\)</td></tr>
+<tr><td>\(r_t\)</td><td>“r t”</td><td>token \(t\)'s read direction at layer \(\ell\): \(J_\ell^\top u_t\)</td><td>none</td><td>score \(= r_t\cdot h\)</td></tr>
+<tr><td>\(\Delta_1, \Delta_2\), \(I(\Delta_1, \Delta_2)\)</td><td>“delta one”, “I”</td><td>two moves of the residual state, and their 2×2 interaction (Level 6 wrote \(I(a, b)\))</td><td>moves: a.u.; \(I\): unit of the output</td><td>\(I = \Delta_1\Delta_2\) for \(f = y_1y_2\)</td></tr>
+</table>
+</div>
+
+<h2>14.1 Tokens, the vocabulary and embeddings</h2>
+<p><b>Real-world example.</b> A language model does not read letters or whole words. A tokenizer first chops text into tokens: common words, pieces of rarer words, punctuation marks, and spaces glued to the word after them. “The cat sat.” might become the four tokens “The”, “ cat”, “ sat”, “.”. The vocabulary is the fixed list of every token the model knows. Each token is just a number: its place in that list.</p>
+<p><b>Intuition pump: a box of LEGO pieces.</b> The vocabulary is the catalogue of piece types. A text is a row of pieces. The model only ever sees which piece type sits at each place in the row.</p>
+<p>The positions are numbered \(p = 0, 1, \dots, T-1\), where \(T\) is the length of the window. In this project's 27B runs each window is \(T = 128\) tokens of wikitext-103 (<code>hlens/paper/SCOPE-hspace.md</code>).</p>
+<h3>Embeddings: a lookup table</h3>
+<p>The model's first step is a table lookup. Each token \(t\) has a learned vector \(E[t]\) of \(d\) numbers, its embedding. Position \(p\) starts with the embedding of whatever token sits there. A toy with \(d = 3\):</p>
+<div class="tablewrap">
+<table>
+<tr><th>token</th><th>The</th><th> cat</th><th> sat</th><th>.</th></tr>
+<tr><td>\(E[t]\) (toy numbers)</td><td>\((0.2, 0, 1)\)</td><td>\((1, 0, 0.5)\)</td><td>\((0, 1, -0.5)\)</td><td>\((-0.3, 0.2, 0)\)</td></tr>
+</table>
+</div>
+<p>“The cat sat.” enters the model as four vectors, one per position. Nothing else about the text is ever available to the model: everything it computes is built from these vectors.</p>
+
+<h2>14.2 The residual stream: a shared notepad</h2>
+<p>Each position carries one vector of \(d\) numbers from the bottom of the model to the top. That vector is the residual stream at that position. After block \(\ell\) it is written \(h_\ell[p]\). The whole window after block \(\ell\) is \(h_\ell\): \(T\) vectors, a \(T \times d\) array.</p>
+<p><b>Intuition pump: a notepad per word.</b> Picture one notepad lying under each word of the sentence. A long line of specialists walks past. Each specialist reads the notepads, thinks, and <i>adds</i> a few notes to them. Nobody erases or rewrites. At the end, the notepad under the last word is read to decide what word comes next. The notepads are the residual stream; the specialists are the sublayers.</p>
+<p>Two consequences of “only add” matter for everything that follows:</p>
+<ol>
+<li>The final state is the starting state plus every addition: \(h_{L^*}[p] = E[t_p] + (\text{all the writes at } p)\). Any linear readout of it splits into a sum of readouts of the parts.</li>
+<li>Each specialist sees the sum of everything written before it, not the individual contributions.</li>
+</ol>
+<p>Here \(t_p\) is the token at position \(p\).</p>
+
+<h2>14.3 Residual sublayers: \(y \mapsto y + \varphi(y)\)</h2>
+<p>Every specialist is a residual sublayer. It takes the current state \(y\) at a position, computes a branch \(\varphi(y)\), and outputs</p>
+$$ y \;\mapsto\; y + \varphi(y). $$
+<p>In this model family each decoder block is two residual sublayers in a row (theory-v2 §0):</p>
+<ol>
+<li>a <b>token mixer</b>, which moves information between positions (14.5);</li>
+<li>a <b>SwiGLU MLP</b>, which works on each position separately (14.7).</li>
+</ol>
+<p>Each branch starts with an RMSNorm (14.4). So one block is: read normalised notepads, mix across positions, add; read normalised notepad, think per position, add.</p>
+
+<h3>The mechanics: derivatives of a residual sublayer</h3>
+<p>The Jacobian of \(y \mapsto y + \varphi(y)\) is \(I + D\varphi\), where \(D\varphi\) is the Jacobian of the branch (<a href="08.html">Level 8</a>). The identity part means a small change to \(y\) always passes straight through, whatever the branch does. That is why early changes can reach the output at all after 128 sublayers.</p>
+<p>The second derivative of the identity part is zero (\(y\) is linear in \(y\)). So the Hessian of a residual sublayer is the Hessian of its branch alone: all curvature is created inside branches, and the identity path only carries it (<a href="12.html">Level 12</a>).</p>
+
+<figure class="sim" id="sim-stream">
+<figcaption><b>Figure 14.1.</b> A toy residual stream at one position: \(d = 8\) coordinates, 3 blocks, 6 sublayers. Each sublayer reads the normalised state and adds a small write (toy random weights). Press “next sublayer”. The gray bars are the state before the write; the outlined bars are the state after; the green arrows are the write itself. The readout tracks the score \(u\cdot h\) of one toy token covector \(u\), split into one term per write. Look for: the score is exactly the sum of its parts. Then tick “ablate sublayer 3” and rerun: the later writes change too, because they read a different notepad.</figcaption>
+</figure>
+
+<h2>14.4 RMSNorm: a volume knob before every reader</h2>
+<p><b>Intuition pump: auto-gain on a microphone.</b> Whether someone whispers or shouts, an auto-gain circuit outputs the same loudness. What survives is the shape of the sound, not its volume. RMSNorm does this for vectors: before a branch reads the notepad, the notepad is rescaled to a standard size.</p>
+<p>The root mean square of a vector \(y\) with \(d\) coordinates is</p>
+$$ \operatorname{rms}(y) = \sqrt{\frac{1}{d}\sum_{k=1}^{d} y_k^2 + \epsilon}, $$
+<p>where \(\epsilon\) is a tiny positive constant that stops division by zero (we ignore it in examples). The norm divides by it and multiplies each coordinate by a learned gain \(\gamma = 1 + w\):</p>
+$$ N(y) = \gamma \odot \frac{y}{\operatorname{rms}(y)}. $$
+<p><b>Worked example</b> with \(d = 4\), \(y = (1, 2, 2, 4)\) a.u., \(\gamma = (1, 1, 1, 1)\):</p>
+$$ \operatorname{rms}(y) = \sqrt{\tfrac14(1 + 4 + 4 + 16)} = \sqrt{6.25} = 2.5\ \text{a.u.}, \qquad N(y) = \tfrac{1}{2.5}(1, 2, 2, 4) = (0.4, 0.8, 0.8, 1.6). $$
+<p>The a.u. cancelled: \(N(y)\) has no unit. Its own rms is exactly 1.</p>
+
+<h3>The mechanics: scale does not get through</h3>
+<p>Double \(y\) to \((2, 4, 4, 8)\). The rms doubles to 5 and \(N(y)\) is unchanged. Every vector on the same ray from the origin gives the same output. So the derivative of \(N\) along \(y\) itself (the radial direction) is zero: moving along the ray changes nothing. Moving sideways changes the direction, and that gets through.</p>
+<p>Dividing by a length is not linear, so RMSNorm is curved. theory-v2 §2.1 writes out its Hessian terms in full; they are part of why the curvature at a residual state is not just the curvature of the MLP.</p>
+
+<figure class="sim" id="sim-rms">
+<figcaption><b>Figure 14.2.</b> RMSNorm in two dimensions. Drag the black point \(y\). The blue arrow is \(N(y) = \gamma\odot y/\operatorname{rms}(y)\). With both gains at 1 it always lands on the dashed circle of radius \(\sqrt2\) (the points whose rms is 1); the gains stretch that circle into the solid ellipse. Press “double y”. Look for: \(y\) moves along its dashed ray, and \(N(y)\) does not move at all.</figcaption>
+</figure>
+
+<h2>14.5 Attention: weights over earlier positions</h2>
+<p>The MLP and the norms act on each position separately. Something must move information between positions, or the notepad under “sat” could never learn that the subject was a cat. That is the token mixer's job. In these models it is gated softmax attention in 1 block of 4 and Gated DeltaNet in the others (theory-v2 §0).</p>
+<p><b>Intuition pump: a library.</b> You walk in with a question (the query). Each book on the shelf has an index card describing it (its key) and its contents (its value). You compare your question with every index card, decide how relevant each book is, and come away with a blend of contents weighted by relevance. In a language model the shelf holds only the positions at or before yours: text is read left to right, so nothing can look at the future. That rule is the causal mask.</p>
+
+<h3>One attention head, step by step</h3>
+<p>Let \(x_i\) be the normalised state at the reading position \(i\), and \(x_j\) the normalised state at an earlier position \(j \le i\).</p>
+<ol>
+<li>Make a query vector at \(i\), and a key vector and a value vector at every \(j\): \(q_i = W_Q x_i\), \(k_j = W_K x_j\), \(v_j = W_V x_j\).</li>
+<li>Score every earlier position: \(s_{ij} = q_i\cdot k_j / \sqrt{d_h}\). Dividing by \(\sqrt{d_h}\) keeps the scores from growing with the head size.</li>
+<li>Turn scores into weights that are positive and add to 1, with a softmax over \(j \le i\) (14.6): \(a_{ij} = e^{s_{ij}} / \sum_{j' \le i} e^{s_{ij'}}\).</li>
+<li>Blend the values and map back to the residual stream: \(o_i = W_O \sum_{j \le i} a_{ij} v_j\). This \(o_i\) is the branch output \(\varphi\) added at position \(i\).</li>
+</ol>
+<p>Qwen's version adds three refinements (theory-v2 §2.2): small RMSNorms on each head's queries and keys, a rotation of queries and keys that encodes position (RoPE), and an output gate that multiplies the blended values entry by entry by \(\operatorname{sigmoid}(G x_i)\) for a learned matrix \(G\). They do not change the picture above.</p>
+
+<h3>Worked example</h3>
+<p>Position \(i = 3\) looks at positions 1, 2, 3 with scores \(s = (2, 1, 0)\). The values are one number each, for clarity: \(v = (10, 20, 30)\) a.u.</p>
+$$ e^{2} = 7.389,\quad e^{1} = 2.718,\quad e^{0} = 1,\quad \text{total } 11.107. $$
+$$ (a_{31}, a_{32}, a_{33}) = \Big(\tfrac{7.389}{11.107},\ \tfrac{2.718}{11.107},\ \tfrac{1}{11.107}\Big) = (0.665,\ 0.245,\ 0.090). $$
+$$ \textstyle\sum_j a_{3j} v_j = 0.665 \times 10 + 0.245 \times 20 + 0.090 \times 30 = 6.65 + 4.89 + 2.70 = 14.25\ \text{a.u.} $$
+<p>The best-matching position supplies two thirds of the result, but every earlier position contributes something.</p>
+
+<h3>Where attention creates curvature</h3>
+<p>Look at what multiplies what. The score \(q_i\cdot k_j\) is a product of something read at \(i\) and something read at \(j\). The weight built from it then multiplies the value \(v_j\). The output is “does this key match my query” times “what does this value carry”: a product of reads, which is exactly what has a nonzero mixed second derivative (<a href="12.html">Level 12</a>). Because the two factors can sit at different positions, attention creates curvature <i>between</i> positions: a change at \(i\) and a change at \(j\) interact. Only token mixers do this, because only they let changes at two positions meet.</p>
+
+<h3>Gated DeltaNet in plain words</h3>
+<p>Three blocks in four use Gated DeltaNet instead (theory-v2 §2.3). It keeps a fixed-size memory matrix that is updated once per position. At each position it first fades the old memory by a learned decay, then writes the new value under the new key, correcting what was already stored under that key. A later position reads the memory with its query. It also moves information forward from earlier positions, and it also multiplies reads (key × value, query × key, decay × memory), so it also creates curvature, including across positions. theory-v2 inventories its terms but gives no closed form; the project computes them by exact automatic differentiation.</p>
+
+<h2>14.6 Softmax and temperature</h2>
+<p>Softmax turns any list of scores into probabilities. With scores \(\operatorname{logit}_1, \dots, \operatorname{logit}_n\):</p>
+$$ P(t) = \frac{e^{\operatorname{logit}_t}}{\sum_{t'} e^{\operatorname{logit}_{t'}}}. $$
+<p>Every \(P(t)\) is positive (an exponential is never negative or zero) and they add to 1 (each is a share of the same total). Bigger scores take bigger shares, and the exponential makes the biggest score dominate.</p>
+<p><b>Intuition pump: shares of a prize.</b> Each candidate's share of a prize is proportional to \(e^{\text{score}}\). One extra point of score multiplies a candidate's claim by \(e \approx 2.72\). A candidate 5 points ahead has \(e^5 \approx 148\) times the claim.</p>
+
+<h3>The mechanics</h3>
+<ul>
+<li><b>Add the same number to every score.</b> Each \(e^{\operatorname{logit}}\) is multiplied by the same factor, which cancels between top and bottom. Nothing changes. Only differences between scores matter.</li>
+<li><b>Raise one score.</b> Its probability rises and all others fall, in proportion. For small changes, \(\partial P(t)/\partial \operatorname{logit}_t = P(t)(1 - P(t))\) and \(\partial P(t)/\partial\operatorname{logit}_{t'} = -P(t)P(t')\) for \(t' \ne t\). Softmax is curved too: these derivatives themselves change as the probabilities change. The derivation is just below.</li>
+<li><b>Temperature.</b> Dividing every score by a temperature \(\tau\) before the softmax makes the result sharper (\(\tau \lt 1\)) or flatter (\(\tau \gt 1\)). Temperature is a sampling setting; it plays no part in the J-lens and is here only so you can feel what the exponential does.</li>
+</ul>
+
+<h3>The two softmax derivatives, step by step</h3>
+<p>Let \(Z = \sum_{t'} e^{\operatorname{logit}_{t'}}\) be the total on the bottom, so \(P(t) = e^{\operatorname{logit}_t}/Z\).</p>
+<p><b>Step 1: how the total moves.</b> Only one term of \(Z\) contains \(\operatorname{logit}_{t'}\), and the derivative of \(e^{x}\) is \(e^{x}\). So \(\partial Z/\partial\operatorname{logit}_{t'} = e^{\operatorname{logit}_{t'}}\).</p>
+<p><b>Step 2: raise a different score \(t' \ne t\).</b> The top \(e^{\operatorname{logit}_t}\) does not move. The bottom moves by Step 1. The derivative of \(1/Z\) is \(-1/Z^2\) times the rate of \(Z\) (chain rule). So</p>
+$$ \frac{\partial P(t)}{\partial\operatorname{logit}_{t'}} = e^{\operatorname{logit}_t}\cdot\Big(-\frac{e^{\operatorname{logit}_{t'}}}{Z^2}\Big) = -\frac{e^{\operatorname{logit}_t}}{Z}\cdot\frac{e^{\operatorname{logit}_{t'}}}{Z} = -P(t)\,P(t'). $$
+<p><b>Step 3: raise its own score.</b> Now both top and bottom move. The product rule on \(e^{\operatorname{logit}_t}\cdot(1/Z)\) gives (rate of the top) × \(1/Z\) + top × (rate of \(1/Z\)):</p>
+$$ \frac{\partial P(t)}{\partial\operatorname{logit}_t} = \frac{e^{\operatorname{logit}_t}}{Z} - \frac{e^{\operatorname{logit}_t}\,e^{\operatorname{logit}_t}}{Z^2} = P(t) - P(t)^2 = P(t)\big(1 - P(t)\big). $$
+<p><b>Step 4: a number.</b> Exercise 14.3's logits (2, 0, 0) give \(P = (0.787, 0.107, 0.107)\). Raising the first logit by 0.01 raises \(P(1)\) by about \(0.787\times0.213\times0.01 = 0.0017\), and lowers each other probability by about \(0.787\times0.107\times0.01 = 0.0008\). The two falls add to the rise, so the total stays 1.</p>
+
+<figure class="sim" id="sim-softmax">
+<figcaption><b>Figure 14.3.</b> Softmax over four toy tokens. Move the logit sliders and the temperature. The bars show \(P(t)\); the readout shows every step: \(e^{\operatorname{logit}/\tau}\), the total, the shares, and \(\ln P(t)\) in nats. Press “add 1 to every logit”. Look for: the probabilities do not change. Then set two logits 2 apart and note that the ratio of their probabilities is \(e^2 \approx 7.4\) at \(\tau = 1\).</figcaption>
+</figure>
+
+<h2>14.7 The MLP and SwiGLU: a product of two reads</h2>
+<p>The MLP sublayer works on one position at a time, with the same weights at every position. It is a wide layer of neurons. In Qwen's SwiGLU design, neuron \(i\) does three things (theory-v2 §2.1):</p>
+<ol>
+<li>Reads the normalised input \(\tilde x = N(y)\) twice, along two directions: the gate read \(z_i = w_{g,i}\cdot\tilde x\) and the up read \(m_i = w_{u,i}\cdot\tilde x\).</li>
+<li>Multiplies: its activity is \(\operatorname{silu}(z_i)\cdot m_i\).</li>
+<li>Writes that number times its write direction \(w_{\text{down},i}\) into the residual stream.</li>
+</ol>
+$$ \varphi_{\text{MLP}}(y) = \sum_i \operatorname{silu}(w_{g,i}\cdot\tilde x)\,(w_{u,i}\cdot\tilde x)\; w_{\text{down},i}. $$
+<p><b>Intuition pump: a dimmer and a song.</b> The up read is the song; the gate is the dimmer on the speaker. Sound comes out only if there is a song <i>and</i> the dimmer is up. Either alone produces silence. A product is the arithmetic of AND.</p>
+
+<h3>The mechanics: why a product of reads means curvature</h3>
+<p>Strip one neuron down to two inputs. Let \(a\) and \(b\) be its gate and up directions and \(x\) a 2-D input:</p>
+$$ f(x) = \operatorname{silu}(a\cdot x)\,(b\cdot x). $$
+<p>Write \(z = a\cdot x\) and \(m = b\cdot x\). These are straight reads, so \(\partial z/\partial x_k = a_k\) and \(\partial m/\partial x_k = b_k\) (entry \(k\) of \(a\) and of \(b\)).</p>
+<p><b>Step 1: first derivative, by the product rule.</b> \(f = \operatorname{silu}(z)\cdot m\), so \(\partial f/\partial x_k = \big[\partial\operatorname{silu}(z)/\partial x_k\big]\,m + \operatorname{silu}(z)\,b_k\).</p>
+<p><b>Step 2: the chain rule on the bracket.</b> \(\partial\operatorname{silu}(z)/\partial x_k = \operatorname{silu}'(z)\,a_k\). So</p>
+$$ \frac{\partial f}{\partial x_k} = \operatorname{silu}'(z)\,m\,a_k + \operatorname{silu}(z)\,b_k, \qquad\text{that is}\qquad \nabla f = \operatorname{silu}'(z)\, m\, a + \operatorname{silu}(z)\, b. $$
+<p><b>Step 3: differentiate the first term with respect to \(x_{k'}\).</b> \(a_k\) is fixed. \(\operatorname{silu}'(z)\,m\) is a product, so the product rule gives \(\operatorname{silu}''(z)\,a_{k'}\,m + \operatorname{silu}'(z)\,b_{k'}\). Times \(a_k\): \(\operatorname{silu}''(z)\,m\,a_ka_{k'} + \operatorname{silu}'(z)\,a_kb_{k'}\).</p>
+<p><b>Step 4: differentiate the second term with respect to \(x_{k'}\).</b> \(b_k\) is fixed and \(\operatorname{silu}(z)\) changes at rate \(\operatorname{silu}'(z)\,a_{k'}\). So it gives \(\operatorname{silu}'(z)\,b_ka_{k'}\).</p>
+<p><b>Step 5: write the entries as matrices.</b> The numbers \(a_ka_{k'}\), over all \(k, k'\), form \(aa^\top\); \(a_kb_{k'}\) form \(ab^\top\); \(b_ka_{k'}\) form \(ba^\top\). Add Steps 3 and 4:</p>
+$$ \nabla^2 f = \operatorname{silu}''(z)\, m\; aa^\top + \operatorname{silu}'(z)\,\big(ab^\top + ba^\top\big) = \operatorname{silu}''(z)\, m\; aa^\top + \operatorname{silu}'(z)\, \operatorname{sym}(ab^\top). $$
+<p>This is theory-v2 §2.1's formula for one neuron. It has two parts. The <b>gate×up</b> part \(\operatorname{silu}'(z)\operatorname{sym}(ab^\top)\) is present even if silu were a straight line: it comes purely from multiplying two reads. The <b>gate×gate</b> part is rank 1, along \(a\), and its size depends on the up read \(m\). Both coefficients depend on the input; only the directions \(a\) and \(b\) are fixed by the weights.</p>
+
+<h3>Worked example</h3>
+<p>Take \(a = (1, 0)\) and \(b = (0, 1)\), so \(z = x_1\), \(m = x_2\) and \(f = \operatorname{silu}(x_1)\,x_2\).</p>
+<p><b>Step 1: the reads at the origin.</b> \(z = 0\) and \(m = 0\).</p>
+<p><b>Step 2: the coefficients.</b> \(\operatorname{silu}''(0)\,m = 0.5\times0 = 0\), and \(\operatorname{silu}'(0) = \sigma(0) + 0 = 0.5\).</p>
+<p><b>Step 3: the outer products.</b> \(ab^\top = \begin{pmatrix}0 & 1\\ 0 & 0\end{pmatrix}\) (row 1 is \(a_1 b = (0, 1)\), row 2 is \(a_2 b = (0, 0)\)), and \(ba^\top\) is its transpose, \(\begin{pmatrix}0 & 0\\ 1 & 0\end{pmatrix}\).</p>
+<p><b>Step 4: put them in the formula.</b></p>
+$$ \nabla^2 f(0, 0) = 0 \cdot aa^\top + 0.5\,\big(ab^\top + ba^\top\big) = 0.5\begin{pmatrix}0 & 1\\ 1 & 0\end{pmatrix} = \begin{pmatrix}0 & 0.5\\ 0.5 & 0\end{pmatrix}. $$
+<p>A saddle with eigenvalues \(\pm 0.5\) along \((1, 1)/\sqrt2\) and \((1, -1)/\sqrt2\) (<a href="09.html">Level 9</a>).</p>
+<p><b>Step 5: check with a 2×2 mixed difference</b> (<a href="06.html">Level 6</a>), moves of 0.1 on each axis. \(f(0.1, 0.1) = \operatorname{silu}(0.1)\times0.1\), with \(\operatorname{silu}(0.1) = 0.1\times\sigma(0.1) = 0.1\times0.5250 = 0.05250\), so \(f(0.1, 0.1) = 0.005250\). \(f(0.1, 0) = \operatorname{silu}(0.1)\times0 = 0\). \(f(0, 0.1) = \operatorname{silu}(0)\times0.1 = 0\). \(f(0, 0) = 0\). So the interaction is \(0.005250 - 0 - 0 + 0 = 0.005250\). Divide by the two move sizes: \(0.005250/(0.1\times0.1) = 0.525\), close to the mixed partial 0.5.</p>
+<p><b>Step 6: the first derivative there.</b> \(\nabla f = \operatorname{silu}'(0)\cdot m\cdot a + \operatorname{silu}(0)\cdot b = 0.5\times0\times a + 0\times b = (0, 0)\). To first order this neuron does nothing at the origin, yet the two directions interact.</p>
+<p>Now at \(x = (2, 1)\).</p>
+<p><b>Step 1: the reads.</b> \(z = a\cdot x = 2\) and \(m = b\cdot x = 1\).</p>
+<p><b>Step 2: the derivatives of silu at 2</b> (formulas from <a href="11.html">Level 11</a>). \(\sigma(2) = 0.8808\) and \(\sigma'(2) = 0.8808\times0.1192 = 0.1050\). \(\operatorname{silu}'(2) = \sigma + z\sigma' = 0.8808 + 2\times0.1050 = 1.091\). \(\operatorname{silu}''(2) = \sigma'\big(2 + z(1 - 2\sigma)\big) = 0.1050\times\big(2 + 2\times(-0.7616)\big) = 0.1050\times0.4768 = 0.050\).</p>
+<p><b>Step 3: the coefficients.</b> \(\operatorname{silu}''(2)\,m = 0.050\times1 = 0.050\) in front of \(aa^\top = \begin{pmatrix}1 & 0\\ 0 & 0\end{pmatrix}\), and \(\operatorname{silu}'(2) = 1.091\) in front of \(ab^\top + ba^\top = \begin{pmatrix}0 & 1\\ 1 & 0\end{pmatrix}\). Add:</p>
+$$ \nabla^2 f(2, 1) \approx \begin{pmatrix}0.050 & 1.091\\ 1.091 & 0\end{pmatrix}. $$
+<p><b>Step 4: eigenvalues.</b> Trace 0.050, determinant \(0.050\times0 - 1.091^2 = -1.190\). So the eigenvalues are \(\big(0.050 \pm \sqrt{0.050^2 + 4\times1.190}\big)/2 = (0.050 \pm 2.182)/2\): about \(+1.12\) and \(-1.07\). Same directions \(a\), \(b\); different numbers, because the coefficients depend on where you stand.</p>
+
+<figure class="sim" id="sim-swiglu">
+<figcaption><b>Figure 14.4.</b> One toy SwiGLU neuron, \(f(x) = \operatorname{silu}(a\cdot x)\,(b\cdot x)\), over a 2-D input (no unit). Red is positive output, blue negative; gray lines are contours. The black arrow is the gate direction \(a\), the gray arrow the up direction \(b\); set their angles with the sliders (0° and 90° give the worked example above). Drag the black dot: at that point the Hessian is computed from the formula above, and its eigenvectors are drawn (red: positive curvature, blue: negative). Look for: the saddle shape wherever both reads matter. Tick “bilinear” to replace silu by the identity: then the Hessian is the constant \(\operatorname{sym}(ab^\top)\), the same at every point. Compare \(a \perp b\) (a pure saddle, eigenvalues +1 and −1) with \(a \parallel b\) (eigenvalues 2 and 0: the product becomes a square).</figcaption>
+</figure>
+
+<h2>14.8 Unembedding, logits, log-likelihood and KL</h2>
+<p>At the top of the model, the last state \(h_{L^*}[p]\) goes through one final RMSNorm (with weight \(w_{\text{final}}\)) and then gets one score per token from the unembedding matrix:</p>
+$$ \operatorname{logit}_t = W_U[t]\cdot N_{\text{final}}\big(h_{L^*}[p]\big), \qquad N_{\text{final}}(h) = (1 + w_{\text{final}}) \odot \frac{h}{\operatorname{rms}(h)}. $$
+<p>A softmax over all tokens turns the logits into \(P(t)\), the predicted probability that token \(t\) comes next. <b>Intuition pump: a scoreboard of templates.</b> Each token has a template vector \(W_U[t]\). Its logit is how well the normalised notepad matches that template.</p>
+
+<h3>The pre-norm proxy: why the J-lens reads \(u_t\cdot h\)</h3>
+<p>Define \(u_t = (1 + w_{\text{final}}) \odot W_U[t]\): the template with the final gain folded in. Then, in steps:</p>
+<p><b>Step 1: write the dot product coordinate by coordinate.</b> Entry \(k\) of \(u_t\) is \((1 + w_{\text{final},k})\,W_U[t]_k\), so \(u_t\cdot h = \sum_k (1 + w_{\text{final},k})\,W_U[t]_k\, h_k\).</p>
+<p><b>Step 2: multiply and divide by \(\operatorname{rms}(h)\).</b> This changes nothing (it is multiplying by 1), and \(\operatorname{rms}(h)\) is the same number for every \(k\), so it can sit outside the sum:</p>
+$$ u_t\cdot h = \operatorname{rms}(h)\sum_k W_U[t]_k\,\frac{(1 + w_{\text{final},k})\,h_k}{\operatorname{rms}(h)} . $$
+<p><b>Step 3: recognise the norm.</b> The fraction is entry \(k\) of \(N_{\text{final}}(h)\). So the sum is \(W_U[t]\cdot N_{\text{final}}(h) = \operatorname{logit}_t\), and</p>
+$$ u_t\cdot h = \operatorname{rms}(h)\cdot\operatorname{logit}_t. $$
+<p>So \(u_t\cdot h_{L^*}\) is the logit times the rms of the final state. theory-v2 §0 stresses that the J-lens targets this pre-norm proxy, \(u_t\cdot h_{L^*} = \operatorname{rms}(h_{L^*})\cdot\operatorname{logit}_t\), not \(\operatorname{logit}_t\) itself. The proxy is linear in \(h_{L^*}\); the true logit has the curved division by rms in it. At one position the rms is the same for every token and positive, so the proxy ranks tokens in exactly the same order as the logits. What it changes is the scale, and the curvature: the final norm's own curvature is left out by construction.</p>
+<p><b>Worked example</b> with \(d = 4\): \(h = (2, -1, 0, 3)\) a.u., \(w_{\text{final}} = (0, 0.5, 0, -0.5)\), \(W_U[t] = (1, 2, 0, 1)\).</p>
+$$ \operatorname{rms}(h) = \sqrt{\tfrac14(4 + 1 + 0 + 9)} = \sqrt{3.5} \approx 1.871\ \text{a.u.}, \qquad N_{\text{final}}(h) = \frac{(1\cdot 2,\ 1.5\cdot(-1),\ 0,\ 0.5\cdot 3)}{1.871} = (1.069, -0.802, 0, 0.802). $$
+$$ \operatorname{logit}_t = 1(1.069) + 2(-0.802) + 0 + 1(0.802) = 0.267. $$
+$$ u_t = (1, 3, 0, 0.5), \qquad u_t\cdot h = 2 - 3 + 0 + 1.5 = 0.5\ \text{a.u.} = 1.871 \times 0.267\ \checkmark $$
+
+<h3>Log-likelihood, in nats</h3>
+<p>When the true next token is \(t\), the model's log-likelihood for it is \(\ln P(t)\), a negative number (or 0 for a certain prediction). Using the natural logarithm, its unit is the nat. \(P = 0.25\) gives \(\ln 0.25 = -1.386\) nats; \(P = 1\) gives 0 nats. Over a text, log-likelihoods of successive tokens add up (probabilities of independent steps multiply, and logs turn products into sums). Training makes the average log-likelihood as high as possible; its negative is the cross-entropy loss. The v9 test (<a href="06.html">Level 6</a>, <a href="15.html">Level 15</a>) measures interactions in nats of log-likelihood over the next 16 tokens.</p>
+
+<h3>KL divergence: how different are two predictions?</h3>
+$$ \operatorname{KL}(P \,\Vert\, P') = \sum_t P(t)\,\ln\frac{P(t)}{P'(t)}. $$
+<p><b>Intuition pump: a weather forecaster.</b> If the truth is \(P\) and you plan with forecast \(P'\), KL is the average extra surprise you suffer, in nats per day. It is 0 only when \(P' = P\), and it is never negative.</p>
+<p>Worked: \(P = (0.7, 0.2, 0.1)\), \(P' = (0.5, 0.3, 0.2)\):</p>
+$$ 0.7\ln\tfrac{0.7}{0.5} + 0.2\ln\tfrac{0.2}{0.3} + 0.1\ln\tfrac{0.1}{0.2} = 0.7(0.3365) + 0.2(-0.4055) + 0.1(-0.6931) = 0.2355 - 0.0811 - 0.0693 = 0.085\ \text{nats}. $$
+<p>Swap the roles: \(0.5\ln\tfrac{0.5}{0.7} + 0.3\ln\tfrac{0.3}{0.2} + 0.2\ln\tfrac{0.2}{0.1} = 0.5(-0.3365) + 0.3(0.4055) + 0.2(0.6931) = -0.1682 + 0.1216 + 0.1386 = 0.092\) nats. KL is not symmetric. In this project KL measures damage: delete a subspace from the residual stream and compare the model's next-token distribution before (\(P\)) and after (\(P'\)). Run 1's criterion C5 asked whether deleting the candidate H-space raised KL at least 3 times more than deleting random subspaces (README).</p>
+
+<h2>14.9 The two models, in numbers</h2>
+<p>All facts in this table are from theory-v2 §0.</p>
+<div class="tablewrap">
+<table>
+<tr><th></th><th>Qwen3.6-27B (the test model)</th><th>Qwen3.5-0.8B (development, laptop)</th></tr>
+<tr><td>decoder blocks</td><td>64</td><td>24</td></tr>
+<tr><td>residual width \(d\)</td><td>5,120</td><td>1,024</td></tr>
+<tr><td>target block \(L^*\)</td><td>63 (the last block, before the final norm)</td><td>23</td></tr>
+<tr><td>residual sublayers (2 per block)</td><td>128</td><td>48</td></tr>
+<tr><td>token mixer</td><td>gated softmax attention in 1 block of 4, Gated DeltaNet otherwise</td><td>same; attention at blocks 3, 7, …, 23</td></tr>
+<tr><td>entries in one \(d\times d\) matrix</td><td>26,214,400</td><td>1,048,576</td></tr>
+</table>
+</div>
+<p>The last row is why nothing \(d \times d\) is ever formed per token (<a href="11.html">Level 11</a>): one Jacobian or Hessian block per position is 26 million numbers at 27B, and a window has 128 positions.</p>
+
+<h3>Massive activations</h3>
+<p>A few residual coordinates take very large values on almost every token. In the 27B model one such coordinate is dimension 3994, with mean about 50 a.u.; at layer 16, the top run-1 curvature direction put 42% of its mass on these massive-activation coordinates (<code>hlens/paper/hspace-paper.md</code> §4). For the statistics of <a href="13.html">Level 13</a> this is a hazard. Huge constant coordinates dominate raw covariances, PCA and any energy built from squares, so they can masquerade as “structure”. The later H-space estimators mask or remove these axes before estimating (hspace-paper §4b to §4d, theory-v2 §6B). One consequence is stated plainly in the paper: the found subspace is “not the massive-activation geometry (largely by construction: those axes are masked)”.</p>
+
+<h2>14.10 The J-lens: an averaged Jacobian</h2>
+<p>Now the main object. The J-lens is Anthropic's (arXiv 2607.15495, cited in this repository's README). In the convention of the <code>jlens</code> fitting code that this project uses (theory-v2 §0):</p>
+$$ J_\ell = \mathbb{E}_x\ \operatorname{mean}_{p\in V}\ \frac{\partial}{\partial h_\ell[p]} \sum_{p'\in V} h_{L^*}[p'] \qquad (d \times d). $$
+<p><b>Intuition pump: dye in a river.</b> Pour a drop of dye into a river at one point upstream and watch where the colour appears downstream. Do it on many days, in many places along one stretch, and average. The result is a map: “a drop of this colour here tends to show up as that colour there”. The J-lens is this map for the residual stream: a drop is a small change at layer \(\ell\), downstream is the final layer, and the days are different texts.</p>
+
+<h3>Unpacking it, one operation at a time</h3>
+<p>Read the formula from the inside out.</p>
+<ol>
+<li><b>Fix a context \(x\)</b> (one window of text) and run the model on it.</li>
+<li><b>Sum the final states over target positions:</b> \(S = \sum_{p'\in V} h_{L^*}[p']\). This is one vector of \(d\) numbers.</li>
+<li><b>Fix a source position \(p\)</b> and take the Jacobian of \(S\) with respect to the layer-\(\ell\) state there, \(h_\ell[p]\). This is a \(d \times d\) matrix: entry \((k, k')\) is \(\partial S_k/\partial h_\ell[p]_{k'}\), “how much coordinate \(k\) of the summed final state moves per unit move of coordinate \(k'\) at layer \(\ell\), position \(p\)”. Its unit is a.u. per a.u.</li>
+<li><b>Average over source positions</b> \(p \in V\).</li>
+<li><b>Average over contexts</b>: \(\mathbb{E}_x\) is a Monte Carlo average over many windows (<a href="13.html">Level 13</a>).</li>
+</ol>
+<p>The result is one fixed \(d \times d\) matrix per layer. It no longer depends on any particular text.</p>
+
+<h3>The mechanics: causality inside the sum</h3>
+<p>Text is processed left to right, so a change at position \(p\) cannot affect any earlier position. In step 3, every term with \(p' \lt p\) is zero:</p>
+$$ \frac{\partial S}{\partial h_\ell[p]} = \sum_{p'\in V,\ p'\ge p} \frac{\partial h_{L^*}[p']}{\partial h_\ell[p]}. $$
+<p>The vendored code (<code>flagship/third_party/jlens/fitting.py</code>) says the same: the gradient at source \(p\) “is then sum_{p' &gt;= p} dh_final[p'] / dh_l[p]”. A toy with one coordinate (\(d = 1\)) and three valid positions, where the final states are \(h_{L^*}[1] = 2h[1]\), \(h_{L^*}[2] = h[2] + 0.5\,h[1]\), \(h_{L^*}[3] = h[3] + 0.5\,h[2]\) (writing \(h\) for \(h_\ell\)):</p>
+$$ S = 2h[1] + h[2] + 0.5\,h[1] + h[3] + 0.5\,h[2] = 2.5\,h[1] + 1.5\,h[2] + 1\,h[3]. $$
+<p>So \(\partial S/\partial h[1] = 2.5\), \(\partial S/\partial h[2] = 1.5\), \(\partial S/\partial h[3] = 1\), and the mean over the three sources is \(5/3 \approx 1.67\). Early sources have more later targets to influence. theory-v2 §6 notes this systematic position effect: “sources near T−2 have fewer later targets”.</p>
+
+<h3>Why the valid positions are 16 to T − 2</h3>
+<p>\(V = \{16, \dots, T-2\}\) (theory-v2 §0). The fitting code gives the reasons: “early positions act as attention sinks and have atypical residual statistics”, and “the final position has no next-token target”. With \(T = 128\) that leaves positions 16 to 126: 111 positions.</p>
+
+<h3>Cost</h3>
+<p>A Jacobian of a \(d\)-vector output has \(d\) rows, and reverse mode (<a href="10.html">Level 10</a>) gives one row per backward pass. The fitting code runs one forward pass and \(\lceil d/\text{dim\_batch}\rceil\) backward passes per prompt, computing a batch of rows each time (its default batch is 8, so 640 backward passes at \(d = 5{,}120\)). Expensive, but done once per layer, then reused for every decode.</p>
+
+<h2>14.11 Decoding with the J-lens, and J-space</h2>
+<p>The J-lens decodes a layer-\(\ell\) state \(h\) by carrying it to the output linearly and reading it with the token vectors:</p>
+$$ \text{score}_t(h) = u_t^\top J_\ell\, h. $$
+<p>Read it in two steps. \(J_\ell h\) is “where this state would push the summed final residual, on average”. Then \(u_t\cdot(\cdot)\) is the pre-norm proxy for token \(t\) from 14.8. The code writes the same thing as <code>lens_l(h) = unembed( J_l @ h )</code>. The tokens with the highest scores are the lens's reading of \(h\).</p>
+<p>Group the product the other way and each token gets a fixed direction at layer \(\ell\).</p>
+<p><b>Step 1: regroup.</b> Matrix products can be grouped either way: \(u_t^\top(J_\ell h) = (u_t^\top J_\ell)\,h\).</p>
+<p><b>Step 2: turn the row into a column.</b> \(u_t^\top J_\ell\) is a row. The transpose of a product is the product of the transposes in reverse order, so \((u_t^\top J_\ell)^\top = J_\ell^\top u_t\). A row times a column is the dot product of the matching column with that column, so \((u_t^\top J_\ell)\,h = (J_\ell^\top u_t)\cdot h\).</p>
+<p><b>Step 3: name it.</b></p>
+$$ \text{score}_t(h) = (J_\ell^\top u_t)\cdot h = r_t\cdot h, \qquad r_t = J_\ell^\top u_t. $$
+<p>\(r_t\) is token \(t\)'s read direction at layer \(\ell\): the direction in the layer-\(\ell\) residual stream that, on average, pushes the output towards \(t\). This is a vector-Jacobian product (<a href="10.html">Level 10</a>).</p>
+<p><b>Worked example.</b> Take \(d = 2\), \(J_\ell = \begin{pmatrix}1 & 0.5\\ 0 & 2\end{pmatrix}\), state \(h = (1, 1)\), and two tokens with \(u_A = (1, 0)\), \(u_B = (0, 1)\). </p>
+<p><b>Step 1: carry the state.</b> Row by row, \(J_\ell h = (1\times1 + 0.5\times1,\ 0\times1 + 2\times1) = (1.5, 2)\).</p>
+<p><b>Step 2: read it.</b> \(\text{score}_A = u_A\cdot(1.5, 2) = 1.5\) and \(\text{score}_B = u_B\cdot(1.5, 2) = 2\). The lens reads B.</p>
+<p><b>Step 3: the read directions.</b> \(J_\ell^\top = \begin{pmatrix}1 & 0\\ 0.5 & 2\end{pmatrix}\) (rows and columns swapped). \(r_A = J_\ell^\top u_A = (1\times1 + 0\times0,\ 0.5\times1 + 2\times0) = (1, 0.5)\) and \(r_B = J_\ell^\top u_B = (0, 2)\).</p>
+<p><b>Step 4: check.</b> \(r_A\cdot h = 1 + 0.5 = 1.5\) and \(r_B\cdot h = 0 + 2 = 2\). The same scores.</p>
+
+<figure class="sim" id="sim-jlens">
+<figcaption><b>Figure 14.5.</b> A toy averaged-Jacobian lens. The “model” is a made-up 2-D residual map \(F(h) = h + W_2\,\operatorname{silu}(W_1 h + b_1)\) with fixed toy weights. Left: input space, with the inputs used for averaging (gray) and a state \(h\) you can drag (black). Right: output space, with three toy token vectors \(u_A, u_B, u_C\) (coloured lines). The lens matrix \(\bar J\) is the average of the exact Jacobian of \(F\) over the gray inputs; the blue arrow is \(\bar J h\), and the gray arrow is the true output \(F(h)\). The coloured arrows on the left are the read directions \(r_t = \bar J^\top u_t\). Look for: with 1 input the lens is just one point's Jacobian; as the slider adds inputs, \(\bar J\) settles down (Monte Carlo, Level 13). Move \(h\) and compare the lens's top token with the true top token: they mostly agree, and disagree where the toy is most curved. Tick “local Jacobian” to use the Jacobian at \(h\) itself instead of the average.</figcaption>
+</figure>
+
+<h3>J-space</h3>
+<p>The J-lens is a full \(d \times d\) matrix, but the README describes what Anthropic found as “a low-dimensional J-space that carries verbalisable content”. theory-v2 §0 picks \(k = 25\) for H-space to match “J-space's ‘≤ 25 active directions’”. In words: at any layer, the content the lens can read out lives in a small subspace, a top-\(k\) subspace in the sense of <a href="13.html">Level 13</a>.</p>
+<p>In this project, the comparison subspace J25 is built by <code>hlens/hspace.py</code> like this. At each position of many windows, decode the state with the lens and keep its 25 top-scoring tokens. Collect those tokens' read directions (in whitened coordinates, normalised to length 1). Stack them as a weighted sum of outer products, like a covariance matrix built from directions, and keep the top 25 eigenvectors. That is PCA of the “active” read directions. Two cautions from the README: this J25 is whitened, while “Anthropic's released J-lens does not whiten”, and a whitened J-space may itself feel the Σ prior of <a href="15.html">Level 15</a>.</p>
+
+<h3>What “verbalisable first-order content” means</h3>
+<ul>
+<li><b>Verbalisable:</b> decode a direction with the lens and you get a ranked list of tokens. If that list reads like something a person could name (a made-up illustration: “ Paris”, “ France”, “ French”), the direction carries content you can put into words.</li>
+<li><b>First-order:</b> the decode is linear in \(h\). Twice the move gives twice the scores; two moves together give the sum of their scores. It describes what a direction does <i>on its own</i>, to first order in the Taylor series (<a href="04.html">Level 4</a>).</li>
+</ul>
+
+<h2>14.12 One derivative up: the question H-space asks</h2>
+<p>A first-order lens has a blind spot: anything that happens only <i>in combination</i>. The cleanest example is the product from 14.7 with silu removed: \(f(y) = y_1 y_2\), read at \(y = (0, 0)\).</p>
+<ul>
+<li>The Jacobian at the origin is \((y_2, y_1) = (0, 0)\). Moving along \(y_1\) alone changes nothing. Moving along \(y_2\) alone changes nothing. A first-order lens sees no content at all here.</li>
+<li>Now move both, by \(\Delta_1\) along \(y_1\) and \(\Delta_2\) along \(y_2\). The 2×2 interaction of <a href="06.html">Level 6</a> is \(I = f(\Delta_1, \Delta_2) - f(\Delta_1, 0) - f(0, \Delta_2) + f(0, 0) = \Delta_1\Delta_2 - 0 - 0 + 0 = \Delta_1\Delta_2\). Not zero.</li>
+</ul>
+<p>An AND gate looks exactly like this: neither input alone does anything; both together do. SwiGLU neurons multiply reads, attention multiplies a match by a value, and the paper's introduction (<code>hlens/paper/hspace-paper.md</code> §1) adds that conditional behaviour such as a backdoor “is literally an AND”. All of that is invisible to any Jacobian, averaged or not, and visible to the Hessian.</p>
+<p>So the project asks the J-lens question one derivative higher. The J-lens averages the first derivative of a readout of the summed final residual. The H-lens averages the second derivative of a readout of the same kind, with the same averaging over contexts and positions, in whitened units. H-space is then the top-\(k\) subspace of an energy operator built from those Hessians. <a href="15.html">Level 15</a> gives the definitions (theory-v2 §0) and what the runs found.</p>
+
+<h2>14.13 Why this matters for H-space</h2>
+<ol>
+<li><b>Notation.</b> \(h_\ell[p]\), \(L^*\), \(V\), \(u_t\) and the pre-norm proxy are used unchanged in the H-lens definition. Its objective is a linear readout \(c\cdot\sum_{p'\in V} h_{L^*}[p']\) for an output covector \(c\), exactly the J-lens's readout with \(u_t\) replaced by \(c\).</li>
+<li><b>Residual sublayers.</b> The identity path carries curvature without adding any. All curvature is born inside branches: SwiGLU products (gate×up, gate×gate), attention and DeltaNet products, and the norms. This is the anatomy of <a href="12.html">Level 12</a>, now with names.</li>
+<li><b>Cross-position curvature.</b> Only token mixers let changes at two positions meet. The H-lens keeps the same-position blocks; the run-1 energy estimator also picked up cross-position blocks. That distinction drives Level 15's three energy operators.</li>
+<li><b>The sizes.</b> \(d = 5{,}120\) is why everything is done with Hessian-vector products and random probes (<a href="11.html">Level 11</a>, <a href="13.html">Level 13</a>), never with whole matrices.</li>
+<li><b>Massive activations.</b> They dominate raw statistics, so they are masked before estimation.</li>
+<li><b>KL and nats.</b> Causal tests (deleting a subspace) are scored in KL; interaction tests (v9) in nats of log-likelihood.</li>
+<li><b>J-space as the comparison.</b> Any candidate H-space must be shown not to be J-space under another name; criterion C3 measures its overlap with J25 (<a href="13.html">Level 13</a> overlap).</li>
+</ol>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="128" data-tol="0.001" data-unit="sublayers">
+<p><b>Exercise 14.1.</b> How many residual sublayers does Qwen3.6-27B have between its embedding and the final norm? How many entries does one \(d\times d\) Jacobian block have?</p>
+<details><summary>Show answer</summary>
+<p>64 blocks × 2 sublayers (mixer, MLP) = 128 sublayers. One \(d\times d\) block has \(5120^2 = 26{,}214{,}400\) entries.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.4" data-tol="0.001">
+<p><b>Exercise 14.2.</b> RMSNorm with \(\gamma = (1, 1, 1, 1)\) is applied to \(y = (1, 2, 2, 4)\) a.u. What is the first coordinate of \(N(y)\)? What is it for \(y = (10, 20, 20, 40)\)?</p>
+<details><summary>Show answer</summary>
+<p>\(\operatorname{rms}(y) = \sqrt{(1 + 4 + 4 + 16)/4} = 2.5\) a.u., so the first coordinate is \(1/2.5 = 0.4\). For the scaled vector the rms is 25 a.u. and the first coordinate is \(10/25 = 0.4\) again: RMSNorm ignores overall scale.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.787" data-tol="0.002">
+<p><b>Exercise 14.3.</b> Three tokens have logits 2, 0, 0. What probability does softmax give the first? What if every logit is raised by 5?</p>
+<details><summary>Show answer</summary>
+<p>\(e^2/(e^2 + e^0 + e^0) = 7.389/(7.389 + 2) = 7.389/9.389 \approx 0.787\). Raising every logit by 5 multiplies top and bottom by \(e^5\), so the answer is still 0.787.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.731" data-tol="0.002">
+<p><b>Exercise 14.4.</b> Two tokens have logits 2 and 0. At temperature \(\tau = 2\), what probability does the first get? Compare with \(\tau = 1\).</p>
+<details><summary>Show answer</summary>
+<p>Divide by \(\tau\): scores 1 and 0. \(e^1/(e^1 + e^0) = 2.718/3.718 \approx 0.731\). At \(\tau = 1\): \(e^2/(e^2 + 1) = 7.389/8.389 \approx 0.881\). Higher temperature, flatter distribution.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="6" data-tol="0.001">
+<p><b>Exercise 14.5.</b> A bilinear neuron (silu replaced by the identity) computes \(f(x) = (a\cdot x)(b\cdot x)\) with \(a = (1, 2)\) and \(b = (3, 0)\). Compute its Hessian \(\operatorname{sym}(ab^\top) = ab^\top + ba^\top\). What is \(\partial^2 f/\partial x_1\partial x_2\)? Check by expanding \(f\).</p>
+<details><summary>Show answer</summary>
+<p>\(ab^\top = \begin{pmatrix}3 & 0\\ 6 & 0\end{pmatrix}\), \(ba^\top = \begin{pmatrix}3 & 6\\ 0 & 0\end{pmatrix}\), sum \(\begin{pmatrix}6 & 6\\ 6 & 0\end{pmatrix}\). The mixed partial is 6. Check: \(f = (x_1 + 2x_2)(3x_1) = 3x_1^2 + 6x_1x_2\), so \(\partial^2 f/\partial x_1^2 = 6\), \(\partial^2 f/\partial x_1\partial x_2 = 6\), \(\partial^2 f/\partial x_2^2 = 0\). It matches.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-1.4142" data-tol="0.002">
+<p><b>Exercise 14.6.</b> With \(d = 2\): \(h = (3, -4)\) a.u., \(w_{\text{final}} = (0, 1)\), \(W_U[t] = (1, 1)\). Compute \(\operatorname{logit}_t\), then \(u_t\cdot h\), and check that \(u_t\cdot h = \operatorname{rms}(h)\cdot\operatorname{logit}_t\).</p>
+<details><summary>Show answer</summary>
+<p>\(\operatorname{rms}(h) = \sqrt{(9 + 16)/2} = \sqrt{12.5} \approx 3.536\) a.u. Gain \(1 + w_{\text{final}} = (1, 2)\), so \(N_{\text{final}}(h) = (3, -8)/3.536 = (0.849, -2.263)\) and \(\operatorname{logit}_t = 0.849 - 2.263 = -1.414\). Then \(u_t = (1, 2)\odot(1, 1) = (1, 2)\) and \(u_t\cdot h = 3 - 8 = -5\) a.u. Check: \(3.536 \times (-1.414) = -5.0\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="0.5108" data-tol="0.002" data-unit="nats">
+<p><b>Exercise 14.7.</b> The model before an ablation predicts \(P = (0.5, 0.5)\) for two tokens; after, \(P' = (0.9, 0.1)\). Compute \(\operatorname{KL}(P\,\Vert\,P')\) in nats.</p>
+<details><summary>Show answer</summary>
+<p>\(0.5\ln(0.5/0.9) + 0.5\ln(0.5/0.1) = 0.5(-0.5878) + 0.5(1.6094) = -0.2939 + 0.8047 = 0.5108\) nats.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="2.5" data-tol="0.001">
+<p><b>Exercise 14.8.</b> A J-lens at some layer is \(J_\ell = \begin{pmatrix}2 & 1\\ -1 & 1\end{pmatrix}\) (\(d = 2\)) and two tokens have \(u_A = (1, 0)\), \(u_B = (0.5, 1)\). For the state \(h = (0.5, 1.5)\), compute both scores. Which token does the lens read? What are the read directions \(r_A, r_B\)?</p>
+<details><summary>Show answer</summary>
+<p>\(J_\ell h = (2(0.5) + 1(1.5),\ -0.5 + 1.5) = (2.5, 1)\). \(\text{score}_A = 2.5\), \(\text{score}_B = 0.5(2.5) + 1(1) = 2.25\). The lens reads A. \(r_A = J_\ell^\top u_A = (2, 1)\) and \(r_B = J_\ell^\top u_B = (2(0.5) + (-1)(1),\ 1(0.5) + 1(1)) = (0, 1.5)\). Check: \(r_A\cdot h = 1 + 1.5 = 2.5\), \(r_B\cdot h = 0 + 2.25 = 2.25\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="111" data-tol="0.001" data-unit="positions">
+<p><b>Exercise 14.9.</b> With \(T = 128\) and \(V = \{16, \dots, T-2\}\), how many valid positions are there? For the source \(p = 16\), how many valid targets \(p' \ge p\) does the J-lens sum include? For \(p = 126\)?</p>
+<details><summary>Show answer</summary>
+<p>\(V = \{16, \dots, 126\}\) has \(126 - 16 + 1 = 111\) positions. Source 16 has all 111 valid targets at or after it; source 126 has only itself, 1 target. This is why the averaged Jacobian has a systematic position component.</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 14.10.</b> A residual sublayer is \(y \mapsto y + \varphi(y)\). Explain in two sentences why its Hessian equals the Hessian of \(\varphi\), and why its Jacobian is never zero even when \(D\varphi = 0\). Then explain why a J-lens decode of the state \(y = 0\) in the toy \(f(y) = y_1y_2\) shows nothing, although moving \(y_1\) and \(y_2\) together does change \(f\).</p>
+<details><summary>Show answer</summary>
+<p>The identity map \(y\) has Jacobian \(I\) and zero second derivative, so the sublayer's Jacobian is \(I + D\varphi\) (at least \(I\)) and its Hessian is the Hessian of \(\varphi\) alone. For \(f = y_1y_2\) the gradient at 0 is \((0, 0)\), so any linear (first-order) readout gives 0 for every small move; but the 2×2 interaction is \(I(\Delta_1, \Delta_2) = \Delta_1\Delta_2 \ne 0\). That effect lives entirely in the off-diagonal Hessian entry \(\partial^2 f/\partial y_1\partial y_2 = 1\), which is what an H-lens looks for.</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  /* seeded random numbers; the seed is scrambled and the first draws discarded so small seeds mix well */
+  function mkRng(seed) { var r = S.rng(((seed + 1) * 2654435761) >>> 0); for (var i = 0; i < 20; i++) r.u(); return r; }
+  function equalAspect(v, cx, cy, halfX) {
+    var b = v.box(), scale = (b.r - b.l) / (2 * halfX), halfY = (b.b - b.t) / scale / 2;
+    v.set({ xmin: cx - halfX, xmax: cx + halfX, ymin: cy - halfY, ymax: cy + halfY });
+  }
+  function sig(z) { return 1 / (1 + Math.exp(-z)); }
+  function silu(z) { return z * sig(z); }
+  function silu1(z) { var s = sig(z); return s * (1 + z * (1 - s)); }
+  function silu2(z) { var s = sig(z); return s * (1 - s) * (2 + z * (1 - 2 * s)); }
+
+  /* Figure 14.1: toy residual stream */
+  (function () {
+    var host = document.getElementById("sim-stream");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.42, maxH: 320 });
+    var v = S.view(c, { xmin: 0.3, xmax: 8.7, ymin: -3, ymax: 3, padLeft: 34, padBottom: 26 });
+    var D = 8, NS = 6, r = mkRng(41), i, j, s;
+    var h0 = [0.8, -0.4, 0.2, 1.0, -0.6, 0.3, 0.0, -0.2];
+    var u = [0.5, 0.3, -0.4, 0.6, 0.2, -0.5, 0.4, 0.1];
+    var Rm = [], Wm = [];
+    for (s = 0; s < NS; s++) {
+      var R = [], W = [];
+      for (i = 0; i < 3; i++) { R.push([]); for (j = 0; j < D; j++) R[i].push(r.n() * 0.7); }
+      for (j = 0; j < D; j++) { W.push([]); for (i = 0; i < 3; i++) W[j].push(r.n() * 0.45); }
+      Rm.push(R); Wm.push(W);
+    }
+    var names = ["block 0 mixer", "block 0 MLP", "block 1 mixer", "block 1 MLP", "block 2 mixer", "block 2 MLP"];
+    var step = 0, ablate = false;
+    function norm(y) { var q = 0; y.forEach(function (a) { q += a * a; }); var rr = Math.sqrt(q / y.length + 1e-6); return y.map(function (a) { return a / rr; }); }
+    function write(sIdx, y) {
+      var xn = norm(y), hid = S.linalg.matVec(Rm[sIdx], xn).map(Math.tanh);
+      return S.linalg.matVec(Wm[sIdx], hid);
+    }
+    function run(nSteps) {
+      var states = [h0.slice()], writes = [], y = h0.slice();
+      for (var k = 0; k < nSteps; k++) {
+        var w = (ablate && k === 2) ? [0, 0, 0, 0, 0, 0, 0, 0] : write(k, y);
+        y = y.map(function (a, q) { return a + w[q]; });
+        writes.push(w); states.push(y.slice());
+      }
+      return { states: states, writes: writes };
+    }
+    S.button(wrap, "next sublayer", function () { if (step < NS) step++; c.redraw(); });
+    S.button(wrap, "previous", function () { if (step > 0) step--; c.redraw(); });
+    S.button(wrap, "reset", function () { step = 0; c.redraw(); });
+    S.checkbox(wrap, "ablate sublayer 3 (block 1 mixer)", false, function (on) { ablate = on; c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var res = run(step), now = res.states[step], before = step ? res.states[step - 1] : now;
+      var big = 1; run(NS).states.forEach(function (st) { st.forEach(function (q) { big = Math.max(big, Math.abs(q)); }); });
+      v.set({ ymin: -Math.ceil(big + 0.2), ymax: Math.ceil(big + 0.2) });
+      v.axes({ xlabel: "coordinate k", ylabel: "h[k] (a.u.)", xticks: 1, yticks: 1, frame: true });
+      v.line(0.3, 0, 8.7, 0, { color: S.col.gray, width: 1 });
+      for (var k = 0; k < D; k++) {
+        v.rect(k + 1 - 0.3, 0, 0.6, before[k], { color: S.col.gray, fill: S.col.gray, fillAlpha: 0.3, width: 1 });
+        v.rect(k + 1 - 0.3, 0, 0.6, now[k], { color: S.col.ink, width: 1.5 });
+        if (step && Math.abs(now[k] - before[k]) > 0.02) v.arrow(k + 1, before[k], k + 1, now[k], { color: S.col.green, width: 2.5, head: 7 });
+      }
+      var terms = ["u·h₀ = " + S.fmt(S.linalg.dot(u, h0), 3)], total = S.linalg.dot(u, h0);
+      res.writes.forEach(function (w, q) { var tq = S.linalg.dot(u, w); total += tq; terms.push("u·φ" + (q + 1) + " = " + S.fmt(tq, 3)); });
+      out.textContent =
+        (step ? "after sublayer " + step + " (" + names[step - 1] + (ablate && step - 1 === 2 ? ", ablated: writes 0" : "") + ")" : "start: embedding h₀ (no sublayers yet)") +
+        "   ‖h‖ = " + S.fmt(S.linalg.norm(now), 3) + " a.u.\n" +
+        "score u·h = " + S.fmt(S.linalg.dot(u, now), 3) + "  =  " + terms.join("  +  ") + "\n" +
+        "check: sum of the terms = " + S.fmt(total, 3);
+    };
+    c.redraw();
+  })();
+
+  /* Figure 14.2: RMSNorm in 2-D */
+  (function () {
+    var host = document.getElementById("sim-rms");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.55, maxH: 380 });
+    var v = S.view(c, { xmin: -4, xmax: 4, ymin: -3, ymax: 3, padLeft: 26, padBottom: 24 });
+    var g1 = S.slider(wrap, { label: "gain γ₁", min: 0.2, max: 2, step: 0.05, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    var g2 = S.slider(wrap, { label: "gain γ₂", min: 0.2, max: 2, step: 0.05, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    var pt = { x: 0.6, y: 0.2 };
+    S.button(wrap, "double y", function () {
+      var nx = pt.x * 2, ny = pt.y * 2;
+      if (Math.abs(nx) > v.r.xmax * 0.95 || Math.abs(ny) > v.r.ymax * 0.95) { nx = pt.x / 4; ny = pt.y / 4; }
+      pt.x = nx; pt.y = ny; c.redraw();
+    });
+    var out = S.readout(wrap);
+    S.drag(c, v, [pt], function () { c.redraw(); });
+    c.draw = function () {
+      equalAspect(v, 0, 0, 4);
+      v.axes({ xlabel: "coordinate 1", ylabel: "coordinate 2", xticks: 1, yticks: 1 });
+      var G = [g1.get(), g2.get()], R2 = Math.SQRT2, circ = [], ell = [];
+      for (var t = 0; t <= 72; t++) { var a = 2 * Math.PI * t / 72; circ.push([R2 * Math.cos(a), R2 * Math.sin(a)]); ell.push([G[0] * R2 * Math.cos(a), G[1] * R2 * Math.sin(a)]); }
+      v.poly(circ, { color: S.col.gray, dash: [4, 3], width: 1 });
+      v.poly(ell, { color: S.col.blue, width: 1.2 });
+      var len = Math.hypot(pt.x, pt.y);
+      if (len > 1e-6) v.line(0, 0, pt.x / len * 12, pt.y / len * 12, { color: S.col.gray, dash: [2, 4], width: 1 });
+      var rms = Math.sqrt((pt.x * pt.x + pt.y * pt.y) / 2 + 1e-12), n1 = G[0] * pt.x / rms, n2 = G[1] * pt.y / rms;
+      v.arrow(0, 0, n1, n2, { color: S.col.blue, width: 2.5 });
+      v.text("N(y)", n1, n2, { dx: 6, dy: -8, color: S.col.blue, font: S.fontSmall });
+      v.arrow(0, 0, pt.x, pt.y, { color: S.col.ink, width: 2 });
+      v.dot(pt.x, pt.y, { color: S.col.ink, r: 6 });
+      v.text("y (drag)", pt.x, pt.y, { dx: 8, dy: 16, font: S.fontSmall });
+      out.textContent =
+        "y = (" + S.fmt(pt.x, 2) + ", " + S.fmt(pt.y, 2) + ") a.u.    rms(y) = √((y₁² + y₂²)/2) = " + S.fmt(rms, 3) + " a.u.\n" +
+        "y / rms(y) = (" + S.fmt(pt.x / rms, 3) + ", " + S.fmt(pt.y / rms, 3) + ")   (its rms is 1)\n" +
+        "N(y) = γ ⊙ y / rms(y) = (" + S.fmt(n1, 3) + ", " + S.fmt(n2, 3) + ")   no unit";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 14.3: softmax with temperature */
+  (function () {
+    var host = document.getElementById("sim-softmax");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.38, maxH: 280 });
+    var v = S.view(c, { xmin: 0.4, xmax: 4.6, ymin: 0, ymax: 1.08, padLeft: 36, padBottom: 26 });
+    var toks = ["Paris", "London", "the", "banana"], init = [3, 1.5, 1, -2], sl = [];
+    toks.forEach(function (t, k) { sl.push(S.slider(wrap, { label: "logit(" + t + ")", min: -5, max: 8, step: 0.1, value: init[k], digits: 1, oninput: function () { c.redraw(); } })); });
+    var tau = S.slider(wrap, { label: "temperature τ", min: 0.2, max: 5, step: 0.05, value: 1, digits: 2, oninput: function () { c.redraw(); } });
+    S.button(wrap, "add 1 to every logit", function () { sl.forEach(function (s) { s.set(Math.min(8, s.get() + 1)); }); c.redraw(); });
+    var out = S.readout(wrap);
+    c.draw = function () {
+      var T = tau.get(), z = sl.map(function (s) { return s.get() / T; }), mx = Math.max.apply(null, z);
+      var e = z.map(function (q) { return Math.exp(q); }), tot = e.reduce(function (a, b) { return a + b; }, 0);
+      var P = e.map(function (q) { return q / tot; });
+      v.axes({ xlabel: "", ylabel: "P(t)", xticks: 1, yticks: 0.2, xnums: false, frame: true });
+      P.forEach(function (p, k) {
+        v.rect(k + 1 - 0.3, 0, 0.6, p, { color: S.col.blue, fill: S.col.blue, fillAlpha: 0.3, width: 1.5 });
+        v.text(toks[k], k + 1, 0, { align: "center", dy: 16, font: S.fontSmall });
+        v.text(S.fmt(p, 3), k + 1, p, { align: "center", dy: -5, font: S.fontSmall });
+      });
+      out.textContent =
+        "e^(logit/τ):  " + toks.map(function (t, k) { return t + " " + S.fmt(e[k], 3); }).join("   ") + "    total " + S.fmt(tot, 3) + "\n" +
+        "P(t) = e^(logit/τ) / total:  " + toks.map(function (t, k) { return t + " " + S.fmt(P[k], 3); }).join("   ") + "    (sum = " + S.fmt(P.reduce(function (a, b) { return a + b; }, 0), 3) + ")\n" +
+        "ln P(t) in nats:  " + toks.map(function (t, k) { return t + " " + S.fmt(Math.log(P[k]), 3); }).join("   ") + "\n" +
+        "P(Paris) / P(London) = " + S.fmt(P[0] / P[1], 3) + " = e^((" + S.fmt(sl[0].get(), 1) + " − " + S.fmt(sl[1].get(), 1) + ")/" + S.fmt(T, 2) + ")";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 14.4: one SwiGLU neuron and its Hessian */
+  (function () {
+    var host = document.getElementById("sim-swiglu");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.62, maxH: 460 });
+    var v = S.view(c, { xmin: -3, xmax: 3, ymin: -2, ymax: 2, padLeft: 26, padBottom: 24 });
+    var aAng = S.slider(wrap, { label: "angle of a (gate)", min: 0, max: 180, step: 1, value: 20, unit: "°", digits: 0, oninput: function () { c.redraw(); } });
+    var bAng = S.slider(wrap, { label: "angle of b (up)", min: 0, max: 180, step: 1, value: 110, unit: "°", digits: 0, oninput: function () { c.redraw(); } });
+    var bil = S.checkbox(wrap, "bilinear (replace silu by the identity)", false, function () { c.redraw(); });
+    var out = S.readout(wrap);
+    var pt = { x: 1.0, y: 0.8 };
+    S.drag(c, v, [pt], function () { c.redraw(); });
+    c.draw = function () {
+      equalAspect(v, 0, 0, 3.2);
+      var A = aAng.get() * Math.PI / 180, B = bAng.get() * Math.PI / 180, lin = bil.get();
+      var a = [Math.cos(A), Math.sin(A)], b = [Math.cos(B), Math.sin(B)];
+      function f(x, y) { var z = a[0] * x + a[1] * y, m = b[0] * x + b[1] * y; return (lin ? z : silu(z)) * m; }
+      v.heat(f, { min: -4, max: 4, step: 5 });
+      v.contour(f, [-3, -2, -1, -0.5, 0.5, 1, 2, 3], { color: S.col.gray, width: 0.8 });
+      v.contour(f, [0], { color: S.col.ink, width: 0.8, dash: [3, 3] });
+      v.axes({ xlabel: "x₁", ylabel: "x₂", xticks: 1, yticks: 1, grid: false });
+      v.arrow(0, 0, a[0], a[1], { color: S.col.ink, width: 2.5 });
+      v.text("a", a[0], a[1], { dx: 6, dy: -4 });
+      v.arrow(0, 0, b[0], b[1], { color: S.col.gray, width: 2.5 });
+      v.text("b", b[0], b[1], { dx: 6, dy: -4, color: S.col.gray });
+      var z = a[0] * pt.x + a[1] * pt.y, m = b[0] * pt.x + b[1] * pt.y;
+      var s1 = lin ? 1 : silu1(z), s2 = lin ? 0 : silu2(z);
+      var H = [[s2 * m * a[0] * a[0] + s1 * 2 * a[0] * b[0], s2 * m * a[0] * a[1] + s1 * (a[0] * b[1] + b[0] * a[1])],
+               [0, s2 * m * a[1] * a[1] + s1 * 2 * a[1] * b[1]]];
+      H[1][0] = H[0][1];
+      var e = S.linalg.eigSym2(H), L = 0.8;
+      e.vecs.forEach(function (w, k) {
+        var col = e.vals[k] >= 0 ? S.col.red : S.col.blue;
+        v.line(pt.x - L * w[0], pt.y - L * w[1], pt.x + L * w[0], pt.y + L * w[1], { color: col, width: 2.5 });
+      });
+      v.dot(pt.x, pt.y, { color: S.col.ink, r: 6 });
+      out.textContent =
+        "at x = (" + S.fmt(pt.x, 2) + ", " + S.fmt(pt.y, 2) + "):  gate read z = a·x = " + S.fmt(z, 3) + "   up read m = b·x = " + S.fmt(m, 3) + "   f = " + S.fmt(f(pt.x, pt.y), 3) + "\n" +
+        (lin ? "bilinear: silu' → 1, silu'' → 0\n" : "silu'(z) = " + S.fmt(s1, 3) + "   silu''(z) = " + S.fmt(s2, 3) + "\n") +
+        "Hessian = silu''(z)·m·aaᵀ + silu'(z)·(abᵀ + baᵀ) = [[" + S.fmt(H[0][0], 3) + ", " + S.fmt(H[0][1], 3) + "], [" + S.fmt(H[1][0], 3) + ", " + S.fmt(H[1][1], 3) + "]]\n" +
+        "eigenvalues " + S.fmt(e.vals[0], 3) + " (red if > 0) and " + S.fmt(e.vals[1], 3) + " (blue if < 0)";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 14.5: toy averaged-Jacobian lens */
+  (function () {
+    var host = document.getElementById("sim-jlens");
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: 0.5, maxH: 420 });
+    var L = S.view(c, { xmin: -3, xmax: 3, ymin: -3, ymax: 3, left: 0, width: 0, padLeft: 24, padBottom: 22, padRight: 8 });
+    var Rv = S.view(c, { xmin: -4, xmax: 4, ymin: -4, ymax: 4, left: 0, width: 0, padLeft: 24, padBottom: 22, padRight: 8 });
+    var W1 = [[1.5, 0], [0, 1.5], [1, 1], [1, -1]], b1 = [0, -0.5, 0.3, 0];
+    var W2 = [[0.8, -0.3, 0.5, 0.4], [0.2, 0.9, -0.4, 0.6]];
+    var names = ["A", "B", "C"], cols = [S.col.blue, S.col.red, S.col.green];
+    var U = [90, 210, 330].map(function (d) { var r = d * Math.PI / 180; return [Math.cos(r), Math.sin(r)]; });
+    var r = mkRng(8), pool = [];
+    for (var i = 0; i < 1000; i++) pool.push([r.n(), r.n()]);
+    var sizes = [1, 3, 10, 30, 100, 300, 1000];
+    var ns = S.slider(wrap, { label: "inputs averaged (step)", min: 0, max: 6, step: 1, value: 4, digits: 0, oninput: function () { c.redraw(); } });
+    var loc = S.checkbox(wrap, "local Jacobian at h instead of the average", false, function () { c.redraw(); });
+    var out = S.readout(wrap);
+    var pt = { x: 1.2, y: 0.6 };
+    S.drag(c, L, [pt], function () { c.redraw(); });
+    function F(h) {
+      var pre = S.linalg.matVec(W1, h).map(function (q, k) { return q + b1[k]; });
+      var act = pre.map(silu), w = S.linalg.matVec(W2, act);
+      return [h[0] + w[0], h[1] + w[1]];
+    }
+    function Jac(h) {
+      var pre = S.linalg.matVec(W1, h).map(function (q, k) { return q + b1[k]; });
+      var J = [[1, 0], [0, 1]];
+      for (var a = 0; a < 2; a++) for (var b = 0; b < 2; b++) for (var k = 0; k < 4; k++) J[a][b] += W2[a][k] * silu1(pre[k]) * W1[k][b];
+      return J;
+    }
+    c.draw = function () {
+      var half = c.W / 2;
+      L.set({ left: 0, width: half }); Rv.set({ left: half, width: half });
+      equalAspect(L, 0, 0, 3); equalAspect(Rv, 0, 0, 4);
+      var n = sizes[ns.get()], Jb = [[0, 0], [0, 0]], k, h = [pt.x, pt.y];
+      ns.label("average over n = " + n + " inputs;  slider step");
+      for (k = 0; k < n; k++) { var Jk = Jac(pool[k]); Jb[0][0] += Jk[0][0] / n; Jb[0][1] += Jk[0][1] / n; Jb[1][0] += Jk[1][0] / n; Jb[1][1] += Jk[1][1] / n; }
+      var Juse = loc.get() ? Jac(h) : Jb;
+      L.axes({ xlabel: "h₁", ylabel: "h₂", xticks: 1, yticks: 1 });
+      for (k = 0; k < Math.min(n, 300); k++) L.dot(pool[k][0], pool[k][1], { r: 1.8, color: S.col.light });
+      var lens = S.linalg.matVec(Juse, h), act = F(h), sl = [], sa = [];
+      U.forEach(function (u, t) {
+        var rt = [Juse[0][0] * u[0] + Juse[1][0] * u[1], Juse[0][1] * u[0] + Juse[1][1] * u[1]];
+        L.arrow(0, 0, rt[0], rt[1], { color: cols[t], width: 1.8 });
+        L.text("r" + names[t], rt[0], rt[1], { dx: 4, dy: -3, color: cols[t], font: S.fontSmall });
+        Rv.line(0, 0, 5 * u[0], 5 * u[1], { color: cols[t], width: 1, dash: [5, 4] });
+        Rv.text("u" + names[t], 3.4 * u[0], 3.4 * u[1], { dx: 4, dy: -4, color: cols[t] });
+        sl.push(S.linalg.dot(u, lens)); sa.push(S.linalg.dot(u, act));
+      });
+      L.arrow(0, 0, pt.x, pt.y, { color: S.col.ink, width: 2.5 });
+      L.dot(pt.x, pt.y, { r: 6, color: S.col.ink });
+      L.text("h (drag)", pt.x, pt.y, { dx: 8, dy: 12, font: S.fontSmall });
+      Rv.axes({ xlabel: "out₁", ylabel: "out₂", xticks: 1, yticks: 1 });
+      Rv.arrow(0, 0, act[0], act[1], { color: S.col.gray, width: 2.5 });
+      Rv.text("F(h)", act[0], act[1], { dx: 6, dy: 12, color: S.col.gray, font: S.fontSmall });
+      Rv.arrow(0, 0, lens[0], lens[1], { color: S.col.blue, width: 2.5 });
+      Rv.text(loc.get() ? "J(h)h" : "J̄h", lens[0], lens[1], { dx: 6, dy: -6, color: S.col.blue, font: S.fontSmall });
+      function best(s) { var b = 0; for (var q = 1; q < 3; q++) if (s[q] > s[b]) b = q; return names[b]; }
+      out.textContent =
+        (loc.get() ? "local Jacobian J(h) = " : "J̄ = average of " + n + " Jacobian" + (n > 1 ? "s" : "") + " = ") +
+        "[[" + S.fmt(Juse[0][0], 3) + ", " + S.fmt(Juse[0][1], 3) + "], [" + S.fmt(Juse[1][0], 3) + ", " + S.fmt(Juse[1][1], 3) + "]]\n" +
+        "lens scores uᵀJh = r·h:  A " + S.fmt(sl[0], 3) + "   B " + S.fmt(sl[1], 3) + "   C " + S.fmt(sl[2], 3) + "   → lens reads " + best(sl) + "\n" +
+        "true output u·F(h):     A " + S.fmt(sa[0], 3) + "   B " + S.fmt(sa[1], 3) + "   C " + S.fmt(sa[2], 3) + "   → true top token " + best(sa);
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>

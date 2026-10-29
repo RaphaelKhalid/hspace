@@ -1,0 +1,1976 @@
+{
+ "unit": {
+  "t": "unit",
+  "a": [
+   "units"
+  ],
+  "l": 0,
+  "d": "The kind of thing a number measures, such as metres, seconds or dollars. “5” is a number; “5 metres” is a quantity with a unit."
+ },
+ "quantity": {
+  "t": "quantity",
+  "a": [
+   "quantities"
+  ],
+  "l": 0,
+  "d": "A number together with its unit, like 12 apples or 3.5 seconds. Physics and maths both track quantities, not bare numbers."
+ },
+ "rate": {
+  "t": "rate",
+  "a": [
+   "rates",
+   "rate of change"
+  ],
+  "l": 0,
+  "d": "How much one quantity changes for each one unit of another. Its unit is “top unit per bottom unit”, like metres per second or dollars per apple."
+ },
+ "ratio": {
+  "t": "ratio",
+  "a": [
+   "ratios"
+  ],
+  "l": 0,
+  "d": "One quantity divided by another. If both have the same unit the units cancel and the ratio is a pure number, like “3 times bigger”."
+ },
+ "fraction": {
+  "t": "fraction",
+  "a": [
+   "fractions"
+  ],
+  "l": 0,
+  "d": "A number written as top ÷ bottom, like 3/4. The bottom says how many equal pieces make one whole; the top says how many pieces you have."
+ },
+ "negative number": {
+  "t": "negative number",
+  "a": [
+   "negative numbers",
+   "negative"
+  ],
+  "l": 0,
+  "d": "A number below zero, like −3. In a rate, a negative sign means “goes down”: −2 metres per second means the distance shrinks by 2 metres each second."
+ },
+ "proportional": {
+  "t": "proportional",
+  "a": [
+   "proportionality",
+   "directly proportional"
+  ],
+  "l": 0,
+  "d": "Two quantities are proportional if doubling one always doubles the other. Then their ratio is a fixed number, the constant of proportionality."
+ },
+ "average rate": {
+  "t": "average rate",
+  "a": [
+   "average rates",
+   "average speed"
+  ],
+  "l": 0,
+  "d": "Total change divided by total time (or total of the other quantity). A 120 km trip in 2 hours has an average rate of 60 km/h even if you sped up and slowed down."
+ },
+ "dimensional analysis": {
+  "t": "dimensional analysis",
+  "a": [
+   "unit check",
+   "unit checks"
+  ],
+  "l": 0,
+  "d": "Checking a formula by tracking units: both sides must end in the same unit. If one side is metres and the other is seconds, the formula is wrong."
+ },
+ "variable": {
+  "t": "variable",
+  "a": [
+   "variables"
+  ],
+  "l": 1,
+  "d": "A letter that stands for a quantity that can take different values, like t for time. Every variable on these pages is defined, with its unit, before it is used."
+ },
+ "constant": {
+  "t": "constant",
+  "a": [
+   "constants"
+  ],
+  "l": 1,
+  "d": "A quantity that stays fixed while the variables change, like the price of one apple in a shop."
+ },
+ "function": {
+  "t": "function",
+  "a": [
+   "functions"
+  ],
+  "l": 1,
+  "d": "A rule that turns each allowed input into exactly one output, like a vending machine: same coins and button, same snack. Written f(x): “f applied to x”."
+ },
+ "graph": {
+  "t": "graph",
+  "a": [
+   "graphs",
+   "plot",
+   "plots"
+  ],
+  "l": 1,
+  "d": "A picture of a function: every input x is placed left-to-right, and a dot is drawn at height f(x). The dots join into a curve."
+ },
+ "axis": {
+  "t": "axis",
+  "a": [
+   "axes",
+   "x-axis",
+   "y-axis"
+  ],
+  "l": 1,
+  "d": "One of the two number lines of a graph: the horizontal x-axis for inputs, the vertical y-axis for outputs."
+ },
+ "coordinate": {
+  "t": "coordinate",
+  "a": [
+   "coordinates"
+  ],
+  "l": 1,
+  "d": "One of the numbers that pins down a point's position. The point (3, 5) has x-coordinate 3 and y-coordinate 5."
+ },
+ "origin": {
+  "t": "origin",
+  "l": 1,
+  "d": "The point where every coordinate is zero, written (0, 0) on a flat graph."
+ },
+ "linear function": {
+  "t": "linear function",
+  "a": [
+   "linear functions",
+   "straight line",
+   "straight lines"
+  ],
+  "l": 1,
+  "d": "A function whose graph is a straight line, written f(x) = m·x + b. Each extra unit of x always adds the same amount, m, to the output."
+ },
+ "intercept": {
+  "t": "intercept",
+  "a": [
+   "intercepts",
+   "y-intercept"
+  ],
+  "l": 1,
+  "d": "Where a graph crosses the y-axis: the output when the input is zero. In f(x) = m·x + b it is b."
+ },
+ "parameter": {
+  "t": "parameter",
+  "a": [
+   "parameters"
+  ],
+  "l": 1,
+  "d": "A constant that sets the shape of a function but is not its input. In f(x) = m·x + b, m and b are parameters. In a neural network the weights are parameters."
+ },
+ "exponent": {
+  "t": "exponent",
+  "a": [
+   "exponents",
+   "power",
+   "powers",
+   "squared",
+   "cubed"
+  ],
+  "l": 1,
+  "d": "The small raised number that says how many times to multiply a number by itself: x² = x·x (“x squared”), x³ = x·x·x (“x cubed”)."
+ },
+ "square root": {
+  "t": "square root",
+  "a": [
+   "square roots"
+  ],
+  "l": 1,
+  "d": "The number that, multiplied by itself, gives back the original: √9 = 3 because 3·3 = 9."
+ },
+ "polynomial": {
+  "t": "polynomial",
+  "a": [
+   "polynomials"
+  ],
+  "l": 1,
+  "d": "A function built only from adding, subtracting and multiplying the input by itself and by constants, like 3x² − 2x + 7. No division by x, no square roots of x."
+ },
+ "absolute value": {
+  "t": "absolute value",
+  "l": 1,
+  "d": "The size of a number ignoring its sign, written |x|. |−4| = 4 and |4| = 4."
+ },
+ "exponential function": {
+  "t": "exponential function",
+  "a": [
+   "exponential",
+   "exp"
+  ],
+  "l": 1,
+  "d": "The function eˣ, where e ≈ 2.718. It grows by the same factor for each step in x, like compound interest. Written exp(x)."
+ },
+ "logarithm": {
+  "t": "logarithm",
+  "a": [
+   "logarithms",
+   "log",
+   "natural log"
+  ],
+  "l": 1,
+  "d": "The undo-button for the exponential: log(eˣ) = x. It turns multiplying into adding, so log(a·b) = log a + log b. “log” on these pages means the natural log, base e."
+ },
+ "difference quotient": {
+  "t": "difference quotient",
+  "a": [
+   "difference quotients"
+  ],
+  "l": 2,
+  "d": "Change in output divided by change in input, (f(x+Δx) − f(x)) / Δx. It is the average rate of change over a step of size Δx."
+ },
+ "secant line": {
+  "t": "secant line",
+  "a": [
+   "secant",
+   "secants"
+  ],
+  "l": 2,
+  "d": "A straight line through two points on a curve. Its slope is the difference quotient between those two points."
+ },
+ "slope": {
+  "t": "slope",
+  "a": [
+   "slopes",
+   "gradient of a line"
+  ],
+  "l": 2,
+  "d": "Rise over run: how many output units a line goes up for each one input unit you move right. Its unit is (output unit) per (input unit)."
+ },
+ "tangent line": {
+  "t": "tangent line",
+  "a": [
+   "tangent",
+   "tangents",
+   "tangent lines"
+  ],
+  "l": 2,
+  "d": "The straight line that touches a curve at one point and has the same slope as the curve there. Zoom in far enough and the curve looks like this line."
+ },
+ "limit": {
+  "t": "limit",
+  "a": [
+   "limits"
+  ],
+  "l": 2,
+  "d": "The value something settles towards as a step size shrinks towards zero, without needing to set the step to exactly zero."
+ },
+ "derivative": {
+  "t": "derivative",
+  "a": [
+   "derivatives",
+   "first derivative",
+   "first derivatives",
+   "differentiate",
+   "differentiating",
+   "differentiation"
+  ],
+  "l": 2,
+  "d": "The instantaneous rate of change of a function: the slope of its tangent line at a point. Written f′(x) or df/dx. Unit: output unit per input unit."
+ },
+ "instantaneous rate": {
+  "t": "instantaneous rate",
+  "a": [
+   "instantaneous speed",
+   "instantaneous rate of change"
+  ],
+  "l": 2,
+  "d": "The rate at one exact moment, what a speedometer shows, as opposed to an average over a trip. It is the limit of average rates over shorter and shorter steps."
+ },
+ "differentiable": {
+  "t": "differentiable",
+  "l": 2,
+  "d": "A function is differentiable at a point if zooming in there makes it look like a straight line, so a derivative exists. A sharp corner, like |x| at 0, is not differentiable."
+ },
+ "smooth": {
+  "t": "smooth",
+  "a": [
+   "smooth function",
+   "smoothness"
+  ],
+  "l": 2,
+  "d": "Having as many derivatives as we need, all of them continuous. No corners, jumps or kinks. Written C² when two derivatives exist and are continuous."
+ },
+ "second derivative": {
+  "t": "second derivative",
+  "a": [
+   "second derivatives"
+  ],
+  "l": 3,
+  "d": "The derivative of the derivative: how fast the slope itself is changing. Written f″(x). Unit: output unit per input unit per input unit, like m/s²."
+ },
+ "curvature": {
+  "t": "curvature",
+  "l": 3,
+  "d": "How much a curve bends. For a graph we measure it with the second derivative: positive means bending upward like a cup, negative means bending down like a cap, zero means straight."
+ },
+ "acceleration": {
+  "t": "acceleration",
+  "l": 3,
+  "d": "The rate of change of speed. Unit: metres per second per second (m/s²). It is the second derivative of position with respect to time."
+ },
+ "velocity": {
+  "t": "velocity",
+  "a": [
+   "speed"
+  ],
+  "l": 2,
+  "d": "Rate of change of position, with a sign for direction. Unit: metres per second. It is the first derivative of position with respect to time."
+ },
+ "concave up": {
+  "t": "concave up",
+  "a": [
+   "convex"
+  ],
+  "l": 3,
+  "d": "Bending upward like a cup, so the slope keeps increasing. Second derivative is positive."
+ },
+ "concave down": {
+  "t": "concave down",
+  "a": [
+   "concave"
+  ],
+  "l": 3,
+  "d": "Bending downward like a cap, so the slope keeps decreasing. Second derivative is negative."
+ },
+ "inflection point": {
+  "t": "inflection point",
+  "a": [
+   "inflection points"
+  ],
+  "l": 3,
+  "d": "A point where a curve switches from bending up to bending down (or back). The second derivative changes sign there."
+ },
+ "minimum": {
+  "t": "minimum",
+  "a": [
+   "minima",
+   "local minimum",
+   "local minima"
+  ],
+  "l": 3,
+  "d": "A lowest point, at least compared with nearby points. At a smooth minimum the slope is zero and the curve bends up."
+ },
+ "maximum": {
+  "t": "maximum",
+  "a": [
+   "maxima",
+   "local maximum",
+   "local maxima"
+  ],
+  "l": 3,
+  "d": "A highest point, at least compared with nearby points. At a smooth maximum the slope is zero and the curve bends down."
+ },
+ "critical point": {
+  "t": "critical point",
+  "a": [
+   "critical points",
+   "stationary point",
+   "stationary points"
+  ],
+  "l": 3,
+  "d": "A point where the derivative (or every partial derivative) is zero: flat ground. It can be a minimum, a maximum, or a saddle."
+ },
+ "approximation": {
+  "t": "approximation",
+  "a": [
+   "approximations",
+   "approximate",
+   "approximately"
+  ],
+  "l": 4,
+  "d": "A simpler stand-in that is close to the real thing, usually only near some point. Always ask: close for which inputs, and how close?"
+ },
+ "Taylor approximation": {
+  "t": "Taylor approximation",
+  "a": [
+   "Taylor series",
+   "Taylor expansion",
+   "Taylor polynomial",
+   "Taylor"
+  ],
+  "l": 4,
+  "d": "Rebuilding a function near a point from its value, slope, curvature and so on there: f(a+Δ) ≈ f(a) + f′(a)Δ + ½f″(a)Δ² + … . More terms, better fit, but only nearby."
+ },
+ "linear approximation": {
+  "t": "linear approximation",
+  "a": [
+   "linearization",
+   "linearisation",
+   "first-order approximation"
+  ],
+  "l": 4,
+  "d": "Replacing a function near a point by its tangent line: f(a+Δ) ≈ f(a) + f′(a)Δ. It keeps value and slope, and ignores bending."
+ },
+ "quadratic approximation": {
+  "t": "quadratic approximation",
+  "a": [
+   "second-order approximation",
+   "quadratic model"
+  ],
+  "l": 4,
+  "d": "Replacing a function near a point by a parabola that matches its value, slope and second derivative there."
+ },
+ "approximation error": {
+  "t": "approximation error",
+  "a": [
+   "error term",
+   "remainder"
+  ],
+  "l": 4,
+  "d": "The gap between the true value and the approximation. For a Taylor approximation it is set by the derivatives you left out."
+ },
+ "third derivative": {
+  "t": "third derivative",
+  "a": [
+   "third derivatives",
+   "third-order"
+  ],
+  "l": 4,
+  "d": "The derivative of the second derivative: how fast the curvature is changing. Written f‴(x)."
+ },
+ "big-O notation": {
+  "t": "big-O notation",
+  "a": [
+   "big O",
+   "big-O"
+  ],
+  "l": 4,
+  "d": "O(Δ³) means “some term no bigger than a fixed number times Δ³ for small Δ”. It hides constants and keeps only how fast the term shrinks."
+ },
+ "parabola": {
+  "t": "parabola",
+  "a": [
+   "parabolas"
+  ],
+  "l": 1,
+  "d": "The U-shaped graph of a quadratic function like y = x². It bends the same amount everywhere."
+ },
+ "quadratic function": {
+  "t": "quadratic function",
+  "a": [
+   "quadratic",
+   "quadratics"
+  ],
+  "l": 1,
+  "d": "A polynomial whose highest power is 2, like 3x² − x + 4. Its graph is a parabola."
+ },
+ "multivariable function": {
+  "t": "multivariable function",
+  "a": [
+   "function of two variables",
+   "function of several variables",
+   "multivariable"
+  ],
+  "l": 5,
+  "d": "A function with more than one input, like crop yield Y(W, F) that depends on both water W and fertiliser F."
+ },
+ "partial derivative": {
+  "t": "partial derivative",
+  "a": [
+   "partial derivatives"
+  ],
+  "l": 5,
+  "d": "The rate of change of a multi-input function when you nudge one input and hold every other input fixed. Written ∂f/∂x (read “partial f, partial x”)."
+ },
+ "gradient": {
+  "t": "gradient",
+  "a": [
+   "gradients",
+   "gradient vector"
+  ],
+  "l": 5,
+  "d": "The list of all first partial derivatives, written ∇f. Drawn as an arrow, it points uphill, in the direction of steepest increase, and its length is how steep that is."
+ },
+ "contour line": {
+  "t": "contour line",
+  "a": [
+   "contour lines",
+   "contour",
+   "contours",
+   "level curve",
+   "level curves",
+   "level set"
+  ],
+  "l": 5,
+  "d": "A line joining all inputs with the same output, like height lines on a hiking map. The gradient always crosses contour lines at right angles."
+ },
+ "surface": {
+  "t": "surface",
+  "a": [
+   "surfaces"
+  ],
+  "l": 5,
+  "d": "The 3-D graph of a two-input function: input (x, y) is a spot on the floor and the output is the height above it."
+ },
+ "directional derivative": {
+  "t": "directional derivative",
+  "a": [
+   "directional derivatives"
+  ],
+  "l": 5,
+  "d": "The rate of change of a multi-input function as you walk in one chosen direction. It equals the dot product of the gradient with the unit direction."
+ },
+ "steepest ascent": {
+  "t": "steepest ascent",
+  "a": [
+   "steepest descent",
+   "gradient descent"
+  ],
+  "l": 5,
+  "d": "Walking along the gradient goes uphill fastest (ascent); walking against it goes downhill fastest (descent). Training a neural network is mostly gradient descent on its loss."
+ },
+ "interaction": {
+  "t": "interaction",
+  "a": [
+   "interactions",
+   "pairwise interaction",
+   "pairwise interactions",
+   "interact",
+   "interacting"
+  ],
+  "l": 6,
+  "d": "Two inputs interact when the effect of one depends on the level of the other. Water helps a crop more when there is fertiliser: that extra is the interaction."
+ },
+ "mixed partial derivative": {
+  "t": "mixed partial derivative",
+  "a": [
+   "mixed partial",
+   "mixed partials",
+   "mixed partial derivatives",
+   "cross derivative",
+   "cross-partial"
+  ],
+  "l": 6,
+  "d": "∂²f/∂x∂y: how much the slope in x changes when you nudge y. It is the exact, infinitely-small measure of interaction between x and y."
+ },
+ "main effect": {
+  "t": "main effect",
+  "a": [
+   "main effects",
+   "single-move effect"
+  ],
+  "l": 6,
+  "d": "The change from moving one input alone, with the others at their starting values. An interaction is whatever the joint move does beyond the sum of the main effects."
+ },
+ "additive function": {
+  "t": "additive function",
+  "a": [
+   "additive",
+   "separable",
+   "additivity"
+  ],
+  "l": 6,
+  "d": "A function that splits into a part that depends only on x plus a part that depends only on y, like g(x) + h(y). It has zero interaction everywhere."
+ },
+ "mixed difference": {
+  "t": "mixed difference",
+  "a": [
+   "2×2 interaction",
+   "2x2 interaction",
+   "four-point difference",
+   "double difference",
+   "difference-in-differences"
+  ],
+  "l": 6,
+  "d": "f(both moves) − f(move a only) − f(move b only) + f(no move). It measures a finite interaction from four function values and is zero for any additive function."
+ },
+ "finite difference": {
+  "t": "finite difference",
+  "a": [
+   "finite differences",
+   "central difference",
+   "central differences"
+  ],
+  "l": 6,
+  "d": "Estimating a derivative by evaluating the function at nearby points and dividing differences by the step size, instead of using a formula."
+ },
+ "symmetry of mixed partials": {
+  "t": "symmetry of mixed partials",
+  "a": [
+   "Schwarz's theorem",
+   "Clairaut's theorem"
+  ],
+  "l": 6,
+  "d": "For smooth functions, ∂²f/∂x∂y = ∂²f/∂y∂x: the effect of y on x's slope equals the effect of x on y's slope. That is why Hessians are symmetric."
+ },
+ "vector": {
+  "t": "vector",
+  "a": [
+   "vectors"
+  ],
+  "l": 7,
+  "d": "An ordered list of numbers, like (3, −1). You can picture it as an arrow from the origin to that point. Each number is a component."
+ },
+ "component": {
+  "t": "component",
+  "a": [
+   "components",
+   "entry",
+   "entries",
+   "element",
+   "elements"
+  ],
+  "l": 7,
+  "d": "One number inside a vector or matrix. The vector (3, −1) has first component 3 and second component −1."
+ },
+ "dimension": {
+  "t": "dimension",
+  "a": [
+   "dimensions",
+   "dimensional"
+  ],
+  "l": 7,
+  "d": "How many numbers a vector has, or how many independent directions a space has. A page is 2-dimensional; a residual state of the 27B model is 5,120-dimensional."
+ },
+ "norm": {
+  "t": "norm",
+  "a": [
+   "magnitude",
+   "Euclidean norm"
+  ],
+  "l": 7,
+  "d": "The length of a vector, written ‖v‖ = √(v₁² + v₂² + …). Pythagoras in any number of dimensions."
+ },
+ "dot product": {
+  "t": "dot product",
+  "a": [
+   "dot products",
+   "inner product",
+   "inner products"
+  ],
+  "l": 7,
+  "d": "Multiply matching components and add: (a₁,a₂)·(b₁,b₂) = a₁b₁ + a₂b₂. It equals ‖a‖‖b‖cos(angle), so it measures how much two arrows point the same way."
+ },
+ "unit vector": {
+  "t": "unit vector",
+  "a": [
+   "unit vectors",
+   "unit direction"
+  ],
+  "l": 7,
+  "d": "A vector of length 1. It carries a direction and nothing else."
+ },
+ "orthogonal": {
+  "t": "orthogonal",
+  "a": [
+   "perpendicular",
+   "orthogonality"
+  ],
+  "l": 7,
+  "d": "At right angles. Two vectors are orthogonal when their dot product is zero."
+ },
+ "matrix": {
+  "t": "matrix",
+  "a": [
+   "matrices"
+  ],
+  "l": 7,
+  "d": "A rectangular table of numbers. A matrix is a machine that takes a vector in and gives a vector out, by taking the dot product of each row with the input."
+ },
+ "matrix-vector product": {
+  "t": "matrix-vector product",
+  "a": [
+   "matrix-vector products",
+   "matrix times vector"
+  ],
+  "l": 7,
+  "d": "A·v: output component i is the dot product of row i of A with v. It is what “apply the matrix to the vector” means."
+ },
+ "matrix multiplication": {
+  "t": "matrix multiplication",
+  "a": [
+   "matrix product",
+   "matrix products"
+  ],
+  "l": 7,
+  "d": "A·B means “do B, then do A”. It is the matrix of the combined machine. Order matters: A·B is usually not B·A."
+ },
+ "linear map": {
+  "t": "linear map",
+  "a": [
+   "linear maps",
+   "linear transformation",
+   "linear transformations",
+   "linear"
+  ],
+  "l": 7,
+  "d": "A machine on vectors that keeps straight lines straight, keeps the origin fixed, and spaces equally spaced points equally. Every linear map is a matrix."
+ },
+ "identity matrix": {
+  "t": "identity matrix",
+  "a": [],
+  "l": 7,
+  "d": "The do-nothing matrix I: ones on the diagonal, zeros elsewhere. I·v = v for every v."
+ },
+ "transpose": {
+  "t": "transpose",
+  "a": [
+   "transposes",
+   "transposed"
+  ],
+  "l": 7,
+  "d": "Flip a matrix over its diagonal so rows become columns, written Aᵀ. It turns a column vector into a row vector."
+ },
+ "determinant": {
+  "t": "determinant",
+  "a": [
+   "determinants",
+   "det"
+  ],
+  "l": 7,
+  "d": "One number that says how much a matrix scales area (in 2-D) or volume (in 3-D). A negative sign means it also flips orientation; zero means it squashes space flat."
+ },
+ "inverse matrix": {
+  "t": "inverse matrix",
+  "a": [
+   "inverse",
+   "inverses",
+   "invert",
+   "inverting"
+  ],
+  "l": 7,
+  "d": "The matrix A⁻¹ that undoes A, so A⁻¹·A = I. It exists exactly when the determinant is not zero."
+ },
+ "basis": {
+  "t": "basis",
+  "a": [
+   "bases",
+   "basis vectors",
+   "change of basis"
+  ],
+  "l": 7,
+  "d": "A set of independent directions that can build every vector in a space. Coordinates are the recipe: how much of each basis direction to use."
+ },
+ "span": {
+  "t": "span",
+  "a": [
+   "spanned",
+   "spans"
+  ],
+  "l": 7,
+  "d": "Everything you can build by stretching and adding a set of vectors. Two non-parallel arrows span a whole plane."
+ },
+ "subspace": {
+  "t": "subspace",
+  "a": [
+   "subspaces"
+  ],
+  "l": 7,
+  "d": "A flat slice of a space through the origin, like a line or a plane inside 3-D. J-space and H-space are low-dimensional subspaces of the model's 5,120-dimensional state."
+ },
+ "rank": {
+  "t": "rank",
+  "a": [
+   "low-rank",
+   "full rank",
+   "rank-1",
+   "rank-2",
+   "rank-one"
+  ],
+  "l": 7,
+  "d": "How many independent directions a matrix's outputs can point in. A rank-1 matrix squashes everything onto one line."
+ },
+ "outer product": {
+  "t": "outer product",
+  "a": [
+   "outer products"
+  ],
+  "l": 7,
+  "d": "a·bᵀ: the rank-1 matrix whose entry (i, j) is aᵢbⱼ. Applied to a vector v it gives a·(b·v): read along b, write along a."
+ },
+ "projection": {
+  "t": "projection",
+  "a": [
+   "projections",
+   "projector"
+  ],
+  "l": 7,
+  "d": "Dropping a vector straight onto a line or subspace, keeping only the part that lies in it, like a shadow at noon."
+ },
+ "vector-valued function": {
+  "t": "vector-valued function",
+  "a": [
+   "vector-valued functions",
+   "vector function"
+  ],
+  "l": 8,
+  "d": "A function whose output is a vector, not one number. Example: a map projection takes (longitude, latitude) and returns (x, y) on paper."
+ },
+ "Jacobian": {
+  "t": "Jacobian",
+  "a": [
+   "Jacobian matrix",
+   "Jacobians",
+   "Jacobian matrices"
+  ],
+  "l": 8,
+  "d": "For a function from n inputs to m outputs, the m×n matrix of all first partial derivatives: entry (i, j) = ∂(output i)/∂(input j). It is the best linear map that copies the function near a point."
+ },
+ "Jacobian determinant": {
+  "t": "Jacobian determinant",
+  "a": [
+   "Jacobian determinants"
+  ],
+  "l": 8,
+  "d": "The determinant of a square Jacobian. It says how much the function locally scales area or volume around a point, and whether it flips orientation."
+ },
+ "local linearity": {
+  "t": "local linearity",
+  "a": [
+   "locally linear"
+  ],
+  "l": 8,
+  "d": "The fact that a smooth function looks like a linear map once you zoom in far enough on any point. The Jacobian is that linear map."
+ },
+ "inverse function theorem": {
+  "t": "inverse function theorem",
+  "l": 8,
+  "d": "If the Jacobian at a point has non-zero determinant, the function can be undone near that point. It is a local promise only, not a global one."
+ },
+ "invertible": {
+  "t": "invertible",
+  "a": [
+   "invertibility"
+  ],
+  "l": 8,
+  "d": "A function or matrix is invertible if it can be undone exactly: every output came from one input, and you can recover it."
+ },
+ "injective": {
+  "t": "injective",
+  "a": [
+   "one-to-one",
+   "injectivity"
+  ],
+  "l": 8,
+  "d": "No two different inputs give the same output."
+ },
+ "Jacobian conjecture": {
+  "t": "Jacobian conjecture",
+  "l": 8,
+  "d": "The 1939 claim that a polynomial map with constant non-zero Jacobian determinant must be globally invertible. A counterexample in 3 dimensions was reported in July 2026."
+ },
+ "Hessian": {
+  "t": "Hessian",
+  "a": [
+   "Hessian matrix",
+   "Hessians",
+   "Hessian matrices"
+  ],
+  "l": 9,
+  "d": "For a one-output function of n inputs, the n×n matrix of all second partial derivatives: entry (i, j) = ∂²f/∂xᵢ∂xⱼ. Diagonal entries are curvatures; off-diagonal entries are interactions."
+ },
+ "quadratic form": {
+  "t": "quadratic form",
+  "a": [
+   "quadratic forms"
+  ],
+  "l": 9,
+  "d": "vᵀHv: one number made from a vector v and a symmetric matrix H. For a Hessian it is the curvature (times ‖v‖²) when you move along v."
+ },
+ "symmetric matrix": {
+  "t": "symmetric matrix",
+  "a": [
+   "symmetric",
+   "symmetric matrices"
+  ],
+  "l": 9,
+  "d": "A matrix equal to its own transpose: entry (i, j) equals entry (j, i). Hessians of smooth functions are symmetric."
+ },
+ "eigenvector": {
+  "t": "eigenvector",
+  "a": [
+   "eigenvectors",
+   "eigen-direction",
+   "eigen-directions",
+   "eigendirection",
+   "eigendirections"
+  ],
+  "l": 9,
+  "d": "A direction a matrix only stretches, never turns: A·v = λ·v. For a Hessian, eigenvectors are the directions of pure curvature with no interaction between them."
+ },
+ "eigenvalue": {
+  "t": "eigenvalue",
+  "a": [
+   "eigenvalues"
+  ],
+  "l": 9,
+  "d": "The stretch factor λ of an eigenvector: A·v = λ·v. For a Hessian it is the curvature along that eigenvector."
+ },
+ "eigendecomposition": {
+  "t": "eigendecomposition",
+  "a": [
+   "spectral theorem",
+   "diagonalise",
+   "diagonalize"
+  ],
+  "l": 9,
+  "d": "Writing a symmetric matrix as a rotation, a stretch along perpendicular axes, and the rotation back. The axes are the eigenvectors and the stretches are the eigenvalues."
+ },
+ "positive definite": {
+  "t": "positive definite",
+  "a": [
+   "positive-definite"
+  ],
+  "l": 9,
+  "d": "All eigenvalues positive: the function curves up in every direction, like a bowl. A critical point with a positive definite Hessian is a minimum."
+ },
+ "negative definite": {
+  "t": "negative definite",
+  "l": 9,
+  "d": "All eigenvalues negative: the function curves down in every direction, like a dome."
+ },
+ "indefinite": {
+  "t": "indefinite",
+  "l": 9,
+  "d": "Some eigenvalues positive and some negative: up in some directions, down in others. The shape is a saddle."
+ },
+ "positive semidefinite": {
+  "t": "positive semidefinite",
+  "a": [
+   "PSD",
+   "semidefinite"
+  ],
+  "l": 9,
+  "d": "No eigenvalue is negative (zeros allowed). Every “energy” matrix of the form E[y·yᵀ] is positive semidefinite."
+ },
+ "saddle point": {
+  "t": "saddle point",
+  "a": [
+   "saddle",
+   "saddles",
+   "saddle points"
+  ],
+  "l": 9,
+  "d": "A critical point that is a minimum along some directions and a maximum along others, like the middle of a horse saddle or a mountain pass."
+ },
+ "principal curvature": {
+  "t": "principal curvature",
+  "a": [
+   "principal curvatures"
+  ],
+  "l": 9,
+  "d": "The curvature along one eigenvector of the Hessian. Together the principal curvatures describe all bending at a point."
+ },
+ "trace": {
+  "t": "trace",
+  "a": [
+   "traces"
+  ],
+  "l": 9,
+  "d": "The sum of the diagonal entries of a square matrix, written tr(A). It always equals the sum of the eigenvalues."
+ },
+ "inertia": {
+  "t": "inertia",
+  "l": 9,
+  "d": "The count of positive, negative and zero eigenvalues of a symmetric matrix. Sylvester's law: changing basis invertibly never changes it."
+ },
+ "Frobenius norm": {
+  "t": "Frobenius norm",
+  "a": [
+   "Frobenius"
+  ],
+  "l": 9,
+  "d": "The size of a matrix: square every entry, add them up, take the square root. Written ‖A‖_F."
+ },
+ "chain rule": {
+  "t": "chain rule",
+  "l": 10,
+  "d": "The derivative of a function-of-a-function is the product of the derivatives: if y = g(f(x)) then dy/dx = g′(f(x))·f′(x). For many inputs, Jacobians multiply."
+ },
+ "composition": {
+  "t": "composition",
+  "a": [
+   "compose",
+   "composed",
+   "composite"
+  ],
+  "l": 10,
+  "d": "Feeding the output of one function into another, written g∘f (“g after f”). A neural network is a long composition of simple layers."
+ },
+ "neural network": {
+  "t": "neural network",
+  "a": [
+   "neural networks",
+   "network",
+   "networks"
+  ],
+  "l": 10,
+  "d": "A function built by composing many simple layers, each a linear map followed by a simple nonlinearity. Its weights are tuned by gradient descent to make good predictions."
+ },
+ "neuron": {
+  "t": "neuron",
+  "a": [
+   "neurons",
+   "unit (neuron)"
+  ],
+  "l": 10,
+  "d": "One output number of a layer: a weighted sum of the layer's inputs, plus a bias, passed through an activation function."
+ },
+ "layer": {
+  "t": "layer",
+  "a": [
+   "layers",
+   "decoder block"
+  ],
+  "l": 10,
+  "d": "One stage of a neural network: it takes a vector in and produces a vector out. “Layer 16” of a transformer means the state after its 16th block."
+ },
+ "weight": {
+  "t": "weight",
+  "a": [
+   "weights",
+   "weight matrix"
+  ],
+  "l": 10,
+  "d": "A learned number inside a network that scales how much one input feeds into one neuron. A layer's weights form a matrix."
+ },
+ "bias": {
+  "t": "bias",
+  "a": [
+   "biases"
+  ],
+  "l": 10,
+  "d": "In a neuron: a learned constant added after the weighted sum. (In statistics, “bias” means something else: see estimator bias.)"
+ },
+ "activation function": {
+  "t": "activation function",
+  "a": [
+   "activation functions",
+   "nonlinearity",
+   "nonlinearities",
+   "nonlinear"
+  ],
+  "l": 10,
+  "d": "The simple bent function applied after each weighted sum, such as ReLU or SiLU. Without it, stacking layers would just give one big linear map."
+ },
+ "ReLU": {
+  "t": "ReLU",
+  "l": 10,
+  "d": "Rectified linear unit: max(0, z). Zero for negative inputs, the input itself for positive ones. Its second derivative is zero everywhere except at the corner."
+ },
+ "sigmoid": {
+  "t": "sigmoid",
+  "a": [
+   "logistic function"
+  ],
+  "l": 10,
+  "d": "σ(z) = 1/(1 + e^(−z)): a smooth S-curve from 0 to 1. Often used as a soft on/off gate."
+ },
+ "SiLU": {
+  "t": "SiLU",
+  "a": [
+   "swish"
+  ],
+  "l": 10,
+  "d": "silu(z) = z·σ(z): a smooth ReLU. Its second derivative is not zero, which is one source of curvature in transformers."
+ },
+ "loss function": {
+  "t": "loss function",
+  "a": [
+   "loss",
+   "losses"
+  ],
+  "l": 10,
+  "d": "One number that scores how wrong a network's predictions are. Training pushes it down with gradient descent."
+ },
+ "backpropagation": {
+  "t": "backpropagation",
+  "a": [
+   "backprop",
+   "backward pass",
+   "reverse mode",
+   "reverse-mode"
+  ],
+  "l": 10,
+  "d": "Computing the gradient of one output with respect to all inputs by running the chain rule from the output backwards, multiplying by each layer's transposed Jacobian. Costs about one extra forward pass."
+ },
+ "forward pass": {
+  "t": "forward pass",
+  "a": [
+   "forward passes",
+   "forward mode",
+   "forward-mode"
+  ],
+  "l": 10,
+  "d": "Running the network from inputs to outputs. In forward-mode differentiation, a small input nudge is pushed forward through each layer's Jacobian alongside it."
+ },
+ "automatic differentiation": {
+  "t": "automatic differentiation",
+  "a": [
+   "autograd",
+   "autodiff"
+  ],
+  "l": 10,
+  "d": "Software (like PyTorch's autograd) that records the steps of a computation and applies the chain rule exactly, step by step. Exact up to rounding, unlike finite differences."
+ },
+ "Jacobian-vector product": {
+  "t": "Jacobian-vector product",
+  "a": [
+   "JVP",
+   "JVPs",
+   "Jacobian-vector products"
+  ],
+  "l": 8,
+  "d": "J·v: how the outputs move when the inputs move along v. Forward mode computes it in about one pass without building J."
+ },
+ "vector-Jacobian product": {
+  "t": "vector-Jacobian product",
+  "a": [
+   "VJP",
+   "VJPs",
+   "vector-Jacobian products"
+  ],
+  "l": 10,
+  "d": "uᵀ·J: how one weighted combination of outputs depends on every input. Backpropagation computes it in about one pass without building J."
+ },
+ "computational graph": {
+  "t": "computational graph",
+  "a": [
+   "computation graph",
+   "computational graphs"
+  ],
+  "l": 10,
+  "d": "A diagram of a calculation as boxes (operations) joined by arrows (intermediate values). Automatic differentiation walks it backwards."
+ },
+ "adjoint": {
+  "t": "adjoint",
+  "a": [
+   "adjoints",
+   "adjoint vector"
+  ],
+  "l": 10,
+  "d": "In backpropagation: the gradient of the final output with respect to an intermediate value. It tells you how much a nudge there would move the output."
+ },
+ "Hessian-vector product": {
+  "t": "Hessian-vector product",
+  "a": [
+   "HVP",
+   "HVPs",
+   "Hessian-vector products"
+  ],
+  "l": 11,
+  "d": "H·v: how the gradient changes when the input moves along v. It can be computed exactly at a few times the cost of a gradient, without ever building the full Hessian."
+ },
+ "double backward": {
+  "t": "double backward",
+  "a": [
+   "forward-over-reverse",
+   "Pearlmutter trick"
+  ],
+  "l": 11,
+  "d": "Computing a Hessian-vector product by differentiating the gradient computation itself along v. Pearlmutter (1994) showed it costs only a small constant times a gradient."
+ },
+ "floating point": {
+  "t": "floating point",
+  "a": [
+   "floating-point",
+   "fp32",
+   "fp64",
+   "bf16",
+   "float64",
+   "float32",
+   "bfloat16"
+  ],
+  "l": 11,
+  "d": "How computers store real numbers: a fixed number of significant digits plus an exponent. fp32 keeps about 7 digits, bf16 about 3, fp64 about 16. Fewer digits, more rounding error."
+ },
+ "rounding error": {
+  "t": "rounding error",
+  "a": [
+   "numerical error",
+   "precision"
+  ],
+  "l": 11,
+  "d": "The small mistakes from keeping only a fixed number of digits. Subtracting two nearly equal numbers can make them large relative to the answer."
+ },
+ "relative error": {
+  "t": "relative error",
+  "a": [
+   "rel. error",
+   "relative errors"
+  ],
+  "l": 11,
+  "d": "Error divided by the size of the true value. 1e-6 relative error means agreement to about six significant digits."
+ },
+ "FLOP": {
+  "t": "FLOP",
+  "a": [
+   "FLOPs",
+   "compute cost"
+  ],
+  "l": 11,
+  "d": "Floating-point operation: one addition or multiplication. Counting them estimates how expensive a computation is."
+ },
+ "second-order chain rule": {
+  "t": "second-order chain rule",
+  "l": 12,
+  "d": "The rule for the Hessian of a composition: Hess(g∘f) = Jᵀ·Hess(g)·J + Σᵢ (∂g/∂yᵢ)·Hess(fᵢ). Curvature is carried through later stages and new curvature is created at each stage."
+ },
+ "second-order adjoint": {
+  "t": "second-order adjoint",
+  "a": [
+   "Hessian backpropagation"
+  ],
+  "l": 12,
+  "d": "The standard method that splits a network's Hessian into curvature created at each layer, pulled back to the input through the Jacobians in between. Lemma 1 in theory-v2."
+ },
+ "rectangle identity": {
+  "t": "rectangle identity",
+  "a": [
+   "mixed-difference identity",
+   "Lemma 3"
+  ],
+  "l": 12,
+  "d": "A finite 2×2 interaction equals the Hessian averaged over the rectangle (parallelogram) spanned by the two moves: I(a,b) = ∫∫ aᵀ∇²f b ds dt. Exact, no Taylor cut-off."
+ },
+ "integral": {
+  "t": "integral",
+  "a": [
+   "integrals",
+   "integrate",
+   "integrated",
+   "∫"
+  ],
+  "l": 12,
+  "d": "The continuous version of a sum: add up a quantity over every point of an interval or region. Divided by the region's size, it is an average."
+ },
+ "quadrature": {
+  "t": "quadrature",
+  "a": [
+   "Gauss–Legendre",
+   "Gauss-Legendre",
+   "quadrature rule"
+  ],
+  "l": 12,
+  "d": "Estimating an integral from a weighted sum of a few well-chosen sample points. Gauss–Legendre rules pick the points so that polynomials are integrated exactly."
+ },
+ "Pearson correlation": {
+  "t": "Pearson correlation",
+  "a": [
+   "correlation coefficient",
+   "Pearson r",
+   "correlation",
+   "correlations",
+   "correlated"
+  ],
+  "l": 12,
+  "d": "A number r from −1 to 1 measuring how well two lists of numbers line up on a straight line. r = 1: perfect rising line; r = 0: no linear relation."
+ },
+ "Integrated Gradients": {
+  "t": "Integrated Gradients",
+  "a": [
+   "Integrated Hessians"
+  ],
+  "l": 12,
+  "d": "Attribution methods that average gradients (or Hessians) along a path from a baseline input to the real input, instead of using the value at one point."
+ },
+ "random variable": {
+  "t": "random variable",
+  "a": [
+   "random variables"
+  ],
+  "l": 13,
+  "d": "A quantity whose value depends on chance, like the result of a die roll or the activation on a randomly chosen sentence."
+ },
+ "sample": {
+  "t": "sample",
+  "a": [
+   "samples",
+   "data point",
+   "data points",
+   "sampling",
+   "sampled"
+  ],
+  "l": 13,
+  "d": "One observed value of a random variable, or a set of them. More samples give more precise estimates."
+ },
+ "mean": {
+  "t": "mean",
+  "a": [
+   "expectation",
+   "expected value",
+   "E[·]"
+  ],
+  "l": 13,
+  "d": "The sum of values divided by how many there are. E[X] (“expectation of X”) is the mean over the whole distribution, not just one sample."
+ },
+ "variance": {
+  "t": "variance",
+  "a": [
+   "variances"
+  ],
+  "l": 13,
+  "d": "The mean of the squared distance from the mean: how spread out values are. Unit: the original unit squared."
+ },
+ "standard deviation": {
+  "t": "standard deviation",
+  "a": [
+   "standard deviations",
+   "1σ",
+   "SD"
+  ],
+  "l": 13,
+  "d": "The square root of the variance, so it has the original unit. A “1σ move” is a move of one standard deviation: a typical, natural-sized change."
+ },
+ "covariance": {
+  "t": "covariance",
+  "a": [
+   "covariances",
+   "Cov"
+  ],
+  "l": 13,
+  "d": "The mean of (X − mean X)·(Y − mean Y). Positive when X and Y tend to be high together, negative when one is high while the other is low."
+ },
+ "covariance matrix": {
+  "t": "covariance matrix",
+  "a": [
+   "activation covariance"
+  ],
+  "l": 13,
+  "d": "For a random vector, the matrix whose (i, j) entry is the covariance of components i and j. Written Σ. Its diagonal holds each component's variance."
+ },
+ "Gaussian": {
+  "t": "Gaussian",
+  "a": [
+   "normal distribution",
+   "Gaussian distribution",
+   "bell curve",
+   "N(0, I)",
+   "N(0,1)"
+  ],
+  "l": 13,
+  "d": "The bell-curve distribution. N(μ, σ²) has mean μ and variance σ². N(0, I) in d dimensions means d independent standard bell curves."
+ },
+ "whitening": {
+  "t": "whitening",
+  "a": [
+   "whitened",
+   "whiten",
+   "whitened coordinates"
+  ],
+  "l": 13,
+  "d": "Rescaling coordinates so that natural data has the same spread in every direction. Here: measuring moves in units of how much activations normally vary along them."
+ },
+ "PCA": {
+  "t": "PCA",
+  "a": [
+   "principal component analysis",
+   "principal component",
+   "principal components",
+   "PC",
+   "PCs",
+   "PCA axis",
+   "PCA axes"
+  ],
+  "l": 13,
+  "d": "Principal component analysis: the eigenvectors of the covariance matrix, ordered by eigenvalue. PC1 is the direction along which the data vary most."
+ },
+ "spectrum": {
+  "t": "spectrum",
+  "a": [
+   "spectra",
+   "eigenvalue spectrum"
+  ],
+  "l": 13,
+  "d": "The list of eigenvalues of a matrix, sorted from largest to smallest. A steep spectrum means a few directions dominate."
+ },
+ "participation ratio": {
+  "t": "participation ratio",
+  "a": [
+   "PR",
+   "effective rank",
+   "effective dimension"
+  ],
+  "l": 13,
+  "d": "(Σλᵢ)² / Σλᵢ²: roughly how many eigen-directions carry the weight. Equal eigenvalues in k directions give k; one dominant direction gives about 1."
+ },
+ "top-k subspace": {
+  "t": "top-k subspace",
+  "a": [
+   "top-k",
+   "top-25",
+   "top-5",
+   "top-k eigenspace",
+   "eigenspace",
+   "eigenspaces"
+  ],
+  "l": 13,
+  "d": "The subspace spanned by the eigenvectors with the k largest eigenvalues. “H-space_k” is the top-k subspace of an energy operator."
+ },
+ "subspace overlap": {
+  "t": "subspace overlap",
+  "a": [
+   "overlap",
+   "overlaps"
+  ],
+  "l": 13,
+  "d": "A number from 0 to 1 for how much two k-dimensional subspaces coincide: the mean squared cosine between them. Identical gives 1; random subspaces in d dimensions give about k/d."
+ },
+ "split-half reproducibility": {
+  "t": "split-half reproducibility",
+  "a": [
+   "split-half",
+   "split half",
+   "split@3",
+   "split@k"
+  ],
+  "l": 13,
+  "d": "Estimate the subspace twice from two disjoint halves of the data and measure their overlap. High overlap means the result is not just noise."
+ },
+ "noise floor": {
+  "t": "noise floor",
+  "a": [
+   "noise floors"
+  ],
+  "l": 13,
+  "d": "The size a statistic reaches from randomness alone. An eigenvalue below its noise floor cannot be told apart from noise."
+ },
+ "heavy tail": {
+  "t": "heavy tail",
+  "a": [
+   "heavy tails",
+   "heavy-tailed",
+   "outlier",
+   "outliers"
+  ],
+  "l": 13,
+  "d": "A distribution where rare, huge values carry much of the total. At layer 16 of the 27B model, 0.1% of rows carried 97.5% of the Hessian energy."
+ },
+ "estimator": {
+  "t": "estimator",
+  "a": [
+   "estimators",
+   "estimation"
+  ],
+  "l": 13,
+  "d": "A recipe that turns samples into a guess of some true quantity. Good estimators are unbiased (right on average) and low-variance (stable)."
+ },
+ "unbiased": {
+  "t": "unbiased",
+  "a": [
+   "estimator bias",
+   "biased"
+  ],
+  "l": 13,
+  "d": "An estimator is unbiased if its average over many repeats equals the true value. Biased ones are systematically off."
+ },
+ "Monte Carlo": {
+  "t": "Monte Carlo",
+  "l": 13,
+  "d": "Estimating a quantity by averaging many random samples instead of computing it exactly."
+ },
+ "Rademacher": {
+  "t": "Rademacher",
+  "a": [
+   "Rademacher signs",
+   "random signs",
+   "±1 signs"
+  ],
+  "l": 13,
+  "d": "A random sign: +1 or −1, each with probability ½. Multiplying by independent random signs makes cross terms cancel on average."
+ },
+ "confidence interval": {
+  "t": "confidence interval",
+  "a": [
+   "confidence intervals",
+   "CI",
+   "CIs"
+  ],
+  "l": 13,
+  "d": "A range that, by a stated procedure, captures the true value in (say) 95% of repeats. If a 95% CI for a difference includes 0, the data do not rule out “no difference”."
+ },
+ "bootstrap": {
+  "t": "bootstrap",
+  "a": [
+   "bootstrapped",
+   "bootstrapping"
+  ],
+  "l": 13,
+  "d": "Estimating uncertainty by resampling your own data with replacement many times and seeing how much the statistic moves."
+ },
+ "null hypothesis": {
+  "t": "null hypothesis",
+  "a": [
+   "H0",
+   "null",
+   "nulls",
+   "null model"
+  ],
+  "l": 13,
+  "d": "The boring explanation you try to rule out, like “this structure is just noise” or “this is just the covariance”. A test asks whether the data would be surprising if it were true."
+ },
+ "p-value": {
+  "t": "p-value",
+  "a": [
+   "p-values"
+  ],
+  "l": 13,
+  "d": "If the null hypothesis were true, the chance of a result at least this extreme. Small p means the null explains the data badly."
+ },
+ "randomization test": {
+  "t": "randomization test",
+  "a": [
+   "permutation test",
+   "randomization tests",
+   "exact test"
+  ],
+  "l": 13,
+  "d": "Build the null distribution by applying random transformations that would change nothing if the null were true, and see where the real statistic falls."
+ },
+ "preregistration": {
+  "t": "preregistration",
+  "a": [
+   "preregistered",
+   "prereg",
+   "frozen rule"
+  ],
+  "l": 13,
+  "d": "Writing down (and here, hashing) the exact test and pass/fail rule before the data exist, so the result cannot be steered after seeing it."
+ },
+ "importance sampling": {
+  "t": "importance sampling",
+  "a": [
+   "importance-sampled"
+  ],
+  "l": 13,
+  "d": "Sampling the items that matter most more often, then dividing by their sampling probability so the estimate stays unbiased. It cuts variance when a few items dominate."
+ },
+ "effective sample size": {
+  "t": "effective sample size",
+  "a": [
+   "Kish effective sample size",
+   "ESS"
+  ],
+  "l": 13,
+  "d": "How many equally-weighted samples your weighted or lopsided samples are worth. If 3 rows carry all the energy, 16,384 rows are worth about 3."
+ },
+ "Spearman correlation": {
+  "t": "Spearman correlation",
+  "a": [
+   "Spearman",
+   "rank correlation"
+  ],
+  "l": 13,
+  "d": "The Pearson correlation of the ranks instead of the values. It asks: do the two lists put items in the same order?"
+ },
+ "shrinkage": {
+  "t": "shrinkage",
+  "a": [],
+  "l": 13,
+  "d": "Pulling a noisy covariance estimate a little towards a simple one (like a multiple of the identity) to make it more stable."
+ },
+ "token": {
+  "t": "token",
+  "a": [
+   "tokens"
+  ],
+  "l": 14,
+  "d": "The unit a language model reads and writes: a word, part of a word, or a punctuation mark. “unbelievable” might be three tokens."
+ },
+ "vocabulary": {
+  "t": "vocabulary",
+  "a": [
+   "vocab"
+  ],
+  "l": 14,
+  "d": "The fixed list of all tokens a model knows, often 100,000 or more."
+ },
+ "embedding": {
+  "t": "embedding",
+  "a": [
+   "embeddings"
+  ],
+  "l": 14,
+  "d": "The learned vector a model assigns to each token at its input. Similar tokens tend to get similar vectors."
+ },
+ "transformer": {
+  "t": "transformer",
+  "a": [
+   "transformers",
+   "language model",
+   "language models",
+   "LLM",
+   "LLMs"
+  ],
+  "l": 14,
+  "d": "The neural network design behind modern language models: a stack of blocks, each mixing information across positions and then processing each position, all adding into a residual stream."
+ },
+ "residual stream": {
+  "t": "residual stream",
+  "a": [
+   "residual",
+   "residual state",
+   "residual states",
+   "hidden state",
+   "hidden states",
+   "activation",
+   "activations"
+  ],
+  "l": 14,
+  "d": "The running vector at each position that every block reads from and adds its output to. h_ℓ[p] is its value after block ℓ at position p: 5,120 numbers in Qwen3.6-27B."
+ },
+ "residual connection": {
+  "t": "residual connection",
+  "a": [
+   "residual connections",
+   "skip connection"
+  ],
+  "l": 14,
+  "d": "The design y ↦ y + φ(y): each sublayer adds its output to its input instead of replacing it. This is why the state is called a residual stream."
+ },
+ "attention": {
+  "t": "attention",
+  "a": [
+   "attention head",
+   "attention heads",
+   "self-attention",
+   "softmax attention"
+  ],
+  "l": 14,
+  "d": "The part of a transformer block that moves information between positions: each position computes weights over earlier positions and takes a weighted average of what they carry."
+ },
+ "MLP": {
+  "t": "MLP",
+  "a": [
+   "MLPs",
+   "feed-forward",
+   "multilayer perceptron"
+  ],
+  "l": 14,
+  "d": "The per-position part of a transformer block: a wide layer of neurons, then a projection back. Same weights at every position."
+ },
+ "SwiGLU": {
+  "t": "SwiGLU",
+  "a": [
+   "gated MLP",
+   "GLU"
+  ],
+  "l": 14,
+  "d": "The MLP design used by Qwen: each neuron outputs silu(gate read) × (up read), a product of two linear reads. Products of two reads are a main source of second-order interaction."
+ },
+ "RMSNorm": {
+  "t": "RMSNorm",
+  "a": [
+   "normalization",
+   "normalisation",
+   "layer norm",
+   "final norm"
+  ],
+  "l": 14,
+  "d": "Rescales a vector to a fixed typical size (root-mean-square 1) before a sublayer reads it. Rescaling by a length is itself curved, so it adds curvature."
+ },
+ "logit": {
+  "t": "logit",
+  "a": [
+   "logits"
+  ],
+  "l": 14,
+  "d": "The raw score a model gives each token before softmax. Higher logit, more likely token."
+ },
+ "softmax": {
+  "t": "softmax",
+  "l": 14,
+  "d": "Turns a list of scores into probabilities: exponentiate each score, then divide by the total. Big scores dominate; all outputs are positive and sum to 1."
+ },
+ "probability": {
+  "t": "probability",
+  "a": [
+   "probabilities",
+   "probability distribution",
+   "distribution",
+   "distributions"
+  ],
+  "l": 13,
+  "d": "A number from 0 to 1 for how likely something is. A distribution assigns probabilities to every possible outcome, adding up to 1."
+ },
+ "log-likelihood": {
+  "t": "log-likelihood",
+  "a": [
+   "log-probability",
+   "log-probabilities",
+   "log-softmax",
+   "likelihood"
+  ],
+  "l": 14,
+  "d": "The logarithm of the probability the model gives to what actually came next. Summed over tokens, it scores how well the model predicts a text. Unit: nats."
+ },
+ "KL divergence": {
+  "t": "KL divergence",
+  "a": [
+   "KL",
+   "Kullback–Leibler divergence"
+  ],
+  "l": 14,
+  "d": "A measure, in nats, of how different two probability distributions are. 0 means identical. Used here to measure how much an ablation damages next-token predictions."
+ },
+ "nat": {
+  "t": "nat",
+  "a": [
+   "nats"
+  ],
+  "l": 14,
+  "d": "The unit of information when using natural logarithms. 1 nat ≈ 1.44 bits."
+ },
+ "position": {
+  "t": "token position",
+  "a": [
+   "source position",
+   "token positions"
+  ],
+  "l": 14,
+  "d": "Where a token sits in the text: position 0 is the first token. The residual stream has one vector per position."
+ },
+ "context": {
+  "t": "context",
+  "a": [
+   "context window"
+  ],
+  "l": 14,
+  "d": "The text the model is reading. A window is one fixed-length chunk of text (here 128 tokens) used as a sample."
+ },
+ "unembedding": {
+  "t": "unembedding",
+  "a": [
+   "unembedding matrix",
+   "W_U"
+  ],
+  "l": 14,
+  "d": "The final matrix W_U that turns the last residual state into one logit per vocabulary token: logit_t = W_U[t] · (final-normalised state). The J-lens reads with u_t = (1 + w_final) ⊙ W_U[t], so u_t · h = rms(h) · logit_t."
+ },
+ "J-lens": {
+  "t": "J-lens",
+  "a": [
+   "Jacobian lens"
+  ],
+  "l": 14,
+  "d": "Anthropic's 2026 method (arXiv 2607.15495): average the Jacobian from an earlier layer's residual to the final residual over many texts, and use it to read out which tokens an earlier state is pushing towards."
+ },
+ "J-space": {
+  "t": "J-space",
+  "a": [
+   "J25",
+   "Jglob"
+  ],
+  "l": 14,
+  "d": "The low-dimensional subspace that the J-lens finds active: the few directions of an earlier layer's state that carry verbalisable, first-order content."
+ },
+ "lens": {
+  "t": "lens",
+  "a": [
+   "lenses"
+  ],
+  "l": 14,
+  "d": "In interpretability: a fixed map that reads an intermediate state of a model in terms of output tokens or directions."
+ },
+ "interpretability": {
+  "t": "interpretability",
+  "a": [
+   "mechanistic interpretability"
+  ],
+  "l": 14,
+  "d": "The study of what computations inside a neural network mean, by reading and intervening on its internal states."
+ },
+ "ablation": {
+  "t": "ablation",
+  "a": [
+   "ablations",
+   "ablate",
+   "ablating",
+   "deleting a subspace"
+  ],
+  "l": 14,
+  "d": "Removing something (a neuron, a direction, a subspace) from the model's state and measuring what breaks. A causal test of what that part does."
+ },
+ "steering": {
+  "t": "steering",
+  "a": [],
+  "l": 14,
+  "d": "Adding a direction to a model's internal state to push its behaviour, as a test of what the direction does."
+ },
+ "Qwen": {
+  "t": "Qwen",
+  "a": [
+   "Qwen3.6-27B",
+   "Qwen3.5-0.8B",
+   "27B",
+   "0.8B"
+  ],
+  "l": 14,
+  "d": "Open-weight language models from Alibaba. The runs use Qwen3.6-27B (64 blocks, 5,120-dimensional residual) and Qwen3.5-0.8B (24 blocks, 1,024) for development."
+ },
+ "covector": {
+  "t": "covector",
+  "a": [
+   "covectors",
+   "output covector",
+   "readout direction"
+  ],
+  "l": 14,
+  "d": "A fixed direction c used to read one number out of a vector by a dot product, c·h. The H-lens studies the curvature of such readouts."
+ },
+ "massive activations": {
+  "t": "massive activations",
+  "a": [
+   "massive activation",
+   "massive span",
+   "radial span"
+  ],
+  "l": 14,
+  "d": "A few residual coordinates that take huge values on almost every token. They dominate raw statistics and are masked before H-space estimation."
+ },
+ "H-lens": {
+  "t": "H-lens",
+  "a": [
+   "Hessian lens"
+  ],
+  "l": 15,
+  "d": "This project's lens one derivative higher than the J-lens: the Hessian of a readout of the final residual with respect to an earlier layer's residual, averaged over texts and positions."
+ },
+ "H-space": {
+  "t": "H-space",
+  "a": [
+   "H25",
+   "H-subspace"
+  ],
+  "l": 15,
+  "d": "The hypothesised low-dimensional subspace where a model's second-order computation lives: directions that matter in combination. Formally, a top-k subspace of an H-lens energy operator."
+ },
+ "energy operator": {
+  "t": "energy operator",
+  "a": [
+   "energy operators",
+   "M^row",
+   "M^diag",
+   "M^lens",
+   "row energy",
+   "diagonal-block energy"
+  ],
+  "l": 15,
+  "d": "A positive semidefinite matrix M = E[H̃²]-style average that says how much curvature, squared, lives along each direction. H-space is its top-k subspace."
+ },
+ "probe": {
+  "t": "probe",
+  "a": [
+   "probes"
+  ],
+  "l": 15,
+  "d": "One random query to the model: a random covector, a random whitened direction and random signs, answered with one Hessian-vector product."
+ },
+ "Hutchinson estimator": {
+  "t": "Hutchinson estimator",
+  "a": [
+   "Hutchinson",
+   "sign probes",
+   "sign-probe"
+  ],
+  "l": 15,
+  "d": "Estimating a matrix's diagonal (or its trace) from products with random-sign vectors: cross terms cancel on average, the diagonal survives. Unbiased but noisy."
+ },
+ "cross-moment estimator": {
+  "t": "cross-moment estimator",
+  "a": [
+   "loc_x",
+   "int_x",
+   "cross-moment"
+  ],
+  "l": 15,
+  "d": "Multiply two probe answers that use independent random signs. Cross-position terms cancel in expectation, so it targets the same-position (diagonal-block) energy without bias."
+ },
+ "spatial sign": {
+  "t": "spatial sign",
+  "a": [
+   "spatial-sign"
+  ],
+  "l": 15,
+  "d": "A robust estimator that divides each sample by its length before averaging, so a few huge rows cannot dominate. It estimates a slightly different object (the shape)."
+ },
+ "Σ prior": {
+  "t": "Σ prior",
+  "a": [
+   "Sigma prior"
+  ],
+  "l": 15,
+  "d": "Proposition 8: if curvature is any function of the covariance (or has no preferred directions), whitened estimators still return PCA directions, reproducibly. So reproducibility alone is not evidence."
+ },
+ "sign-flip test": {
+  "t": "sign-flip test",
+  "a": [
+   "flip test",
+   "flip null",
+   "sign flips",
+   "sign-flip"
+  ],
+  "l": 15,
+  "d": "Corollary 8.1: randomly flip the sign of each PCA axis and recompute. If structure is just a function of the covariance, flips change nothing, so the flipped results give an exact null."
+ },
+ "Σ-orbit twin": {
+  "t": "Σ-orbit twin",
+  "a": [
+   "Σ-orbit twins",
+   "twin",
+   "twins",
+   "twin control"
+  ],
+  "l": 15,
+  "d": "A control subspace with exactly the same variance profile along every PCA axis as the subspace under test, but different directions. If the real subspace beats its twins, variance alone does not explain it."
+ },
+ "positive control": {
+  "t": "positive control",
+  "a": [
+   "planted control",
+   "planted gate",
+   "planted",
+   "C0"
+  ],
+  "l": 15,
+  "d": "Plant a known effect and check the method finds it. It shows the instrument can see what it is looking for."
+ },
+ "interaction-specific": {
+  "t": "interaction-specific",
+  "a": [
+   "interaction specificity",
+   "dissociation"
+  ],
+  "l": 15,
+  "d": "Damaging interactions more than it damages single-direction effects. The test asks whether a subspace is special for second-order computation, not just important."
+ },
+ "EX": {
+  "t": "EX",
+  "a": [
+   "EX subspace",
+   "punctuation-conditional subspace"
+  ],
+  "l": 15,
+  "d": "The 5-dimensional H-subspace estimated at punctuation positions in run v8, tested in v9."
+ },
+ "perturbation test": {
+  "t": "perturbation test",
+  "a": [
+   "perturbation tests"
+  ],
+  "l": 15,
+  "d": "Move the state along chosen directions and measure the effect. It shows where effects live, but not that the model relies on those directions during normal use."
+ },
+ "first-order": {
+  "t": "first-order",
+  "a": [
+   "second-order",
+   "higher-order",
+   "third-order (term)"
+  ],
+  "l": 4,
+  "d": "How many derivatives deep a term goes. First-order means slopes (one derivative), second-order means curvature and interactions (two derivatives)."
+ },
+ "diagonal": {
+  "t": "diagonal",
+  "a": [
+   "diagonal entries",
+   "main diagonal",
+   "diagonal matrix"
+  ],
+  "l": 7,
+  "d": "The entries of a square matrix running from top-left to bottom-right, where row number equals column number. A diagonal matrix has zeros everywhere else, so it just stretches each axis."
+ }
+}

@@ -1,0 +1,10 @@
+{
+  "unit roundoff": {"t": "unit roundoff", "a": ["machine epsilon"], "l": 11, "d": "The largest relative error made when one real number is rounded to a floating-point format: about 6×10⁻⁸ in fp32, 1.1×10⁻¹⁶ in fp64 and 3.9×10⁻³ in bf16."},
+  "truncation error": {"t": "truncation error", "a": ["truncation errors"], "l": 11, "d": "The error from cutting a Taylor series short, for example in a finite difference. It shrinks as the step shrinks (like ε for a forward difference, like ε² for a central one)."},
+  "catastrophic cancellation": {"t": "catastrophic cancellation", "a": [], "l": 11, "d": "Losing almost all significant digits by subtracting two nearly equal rounded numbers. Example: weighing a lorry before and after a pigeon lands, on a scale that reads to 10 kg. It is why a finite-difference step cannot be made arbitrarily small."},
+  "mantissa": {"t": "mantissa", "a": ["significand", "fraction bits"], "l": 11, "d": "The part of a floating-point number that holds its significant digits (the other parts are the sign and the exponent). fp32 keeps 23 fraction bits, bf16 only 7."},
+  "reverse-over-reverse": {"t": "reverse-over-reverse", "a": [], "l": 11, "d": "Computing a Hessian-vector product by taking the gradient, dotting it with v, and backpropagating a second time. Gives the same exact result as forward-over-reverse; it is what the project's hvp.py does."},
+  "upcast": {"t": "upcast", "a": ["upcasting", "upcasts"], "l": 11, "d": "Convert a number to a format with more digits, e.g. bf16 to fp32. This is exact: every bf16 number is an fp32 number with its last 16 bits set to zero."},
+  "backward-equivalent": {"t": "backward-equivalent", "a": ["backward-equivalents"], "l": 11, "d": "A unit of compute cost used in theory-v2: one backward pass (one vector-Jacobian product) through the full depth of the model for one sequence."},
+  "TF32": {"t": "TF32", "a": [], "l": 11, "d": "A reduced-precision mode some GPUs use to speed up fp32 matrix products, keeping only about as many fraction bits as fp16. The project's HVPs ran in fp32 with it switched off."}
+}

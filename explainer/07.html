@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 7: Vectors, matrices and the determinant</title>
+<link rel="stylesheet" href="assets/katex/katex.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="H-space">
+</head>
+<body data-level="7">
+<div class="page">
+
+<h1>Level 7: Vectors, matrices and the determinant</h1>
+<p class="subtitle">A vector is a list of numbers you can draw as an arrow. A matrix is a machine that moves arrows. The determinant says how much that machine stretches area.</p>
+
+<div class="box goals">
+<span class="boxtitle">By the end of this level you can</span>
+<ul>
+<li>add, scale and measure vectors, and compute a dot product and the angle it hides;</li>
+<li>apply a matrix to a vector in two ways (row by row, and column by column) and say the unit of every entry;</li>
+<li>multiply matrices and explain why the order matters;</li>
+<li>compute a 2×2 determinant, explain its sign, and use it to invert a matrix;</li>
+<li>say what a basis, a span, a subspace and the rank are, with a numerical example of each;</li>
+<li>project a vector onto a line or a plane, and read an outer product as “read along \(\mathbf{b}\), write along \(\mathbf{a}\)”.</li>
+</ul>
+<p class="small">Prerequisites: <a href="00.html">Level 0</a> (units and rates), <a href="01.html">Level 1</a> (functions and coordinates), and the gradient from <a href="05.html">Level 5</a>, which was already a vector.</p>
+</div>
+
+<h2>Symbols on this page</h2>
+<p>Bold lower-case letters are vectors. Upper-case letters are matrices. Plain italic letters are single numbers.</p>
+<div class="tablewrap">
+<table class="symbols">
+<tr><th>Symbol</th><th>Read as</th><th>Meaning</th><th>Unit</th><th>Example</th></tr>
+<tr><td>\(\mathbf{v}, \mathbf{w}\)</td><td>“vector v”, “vector w”</td><td>general vectors: lists of numbers, drawn as arrows from the origin</td><td>the unit of their components</td><td>\(\mathbf{v} = (3, 4)\)</td></tr>
+<tr><td>\(v_1, v_2, v_i\)</td><td>“v one”, “v two”, “v i”</td><td>the first, second, \(i\)-th component (entry) of \(\mathbf{v}\)</td><td>as the quantity it counts</td><td>\(v_1 = 3\), \(v_2 = 4\)</td></tr>
+<tr><td>\(i, j\)</td><td>“i”, “j”</td><td>position counters: which component, which row, which column</td><td>none (pure number)</td><td>\(i = 2\)</td></tr>
+<tr><td>\(d\)</td><td>“d”</td><td>dimension: how many components a vector has</td><td>none (pure number)</td><td>\(d = 2\) on paper, \(d = 5{,}120\) in the 27B model</td></tr>
+<tr><td>\(\mathbb{R}^2, \mathbb{R}^3, \mathbb{R}^d\)</td><td>“R two”, “R three”, “R d”</td><td>the set of all lists of 2, 3 or \(d\) real numbers</td><td>none</td><td>\((3, 4)\) is in \(\mathbb{R}^2\)</td></tr>
+<tr><td>\(x, y\)</td><td>“x”, “y”</td><td>horizontal and vertical coordinates in the figures</td><td>none (pure number) in the figures</td><td>the point \((x, y) = (1, 2)\)</td></tr>
+<tr><td>\(\nabla Y\)</td><td>“grad Y”</td><td>the farm gradient from Level 5, \((\partial Y/\partial W,\ \partial Y/\partial F)\): mentioned once in 7.1 as an example of a vector</td><td>bushels per bucket, bushels per bag</td><td>\((1, 3)\) at \((4, 2)\)</td></tr>
+<tr><td>\(\mathbf{0}\)</td><td>“the zero vector”</td><td>the vector with every component 0: the origin</td><td>any</td><td>\((0, 0)\)</td></tr>
+<tr><td>\(k\)</td><td>“k”</td><td>a scalar: one ordinary number used to stretch a vector</td><td>none (pure number) here</td><td>\(k = 2\)</td></tr>
+<tr><td>\(\lVert \mathbf{v} \rVert\)</td><td>“the norm of v”, “the length of v”</td><td>length of the arrow, \(\sqrt{v_1^2 + v_2^2 + \dots}\)</td><td>the unit of the components</td><td>\(\lVert (3,4) \rVert = 5\)</td></tr>
+<tr><td>\(\hat{\mathbf{u}}\)</td><td>“u hat”</td><td>a unit vector: length exactly 1, used only as a direction</td><td>none</td><td>\((0.6, 0.8)\)</td></tr>
+<tr><td>\(\mathbf{u}\)</td><td>“u”</td><td>a direction vector for a line (any length)</td><td>none</td><td>\((1, 1)\)</td></tr>
+<tr><td>\(\mathbf{a}, \mathbf{b}\)</td><td>“a”, “b”</td><td>two vectors used for sums, dot products and outer products</td><td>none in the figures</td><td>\(\mathbf{a} = (2, 1)\)</td></tr>
+<tr><td>\(\mathbf{a}\cdot\mathbf{b}\)</td><td>“a dot b”</td><td>dot product: \(a_1 b_1 + a_2 b_2 + \dots\)</td><td>unit of \(a_i\) × unit of \(b_i\)</td><td>\((3,1)\cdot(1,2) = 5\)</td></tr>
+<tr><td>\(\theta\)</td><td>“theta”</td><td>the angle between two arrows</td><td>degrees (°)</td><td>\(\theta = 45^\circ\)</td></tr>
+<tr><td>\(\cos\theta\)</td><td>“cos theta”, “cosine of theta”</td><td>the cosine of the angle: 1 at 0°, 0 at 90°, −1 at 180°</td><td>none (pure number)</td><td>\(\cos 45^\circ \approx 0.7071\)</td></tr>
+<tr><td>\(\mathbf{q}, \mathbf{p}\)</td><td>“q”, “p”</td><td>shopping example: quantities bought and prices</td><td>items; dollars per item</td><td>\(\mathbf{q} = (4\ \text{apples}, 3\ \text{pears})\)</td></tr>
+<tr><td>\(A, B, M\)</td><td>“A”, “B”, “M”</td><td>matrices: rectangular grids of numbers that act on vectors</td><td>each entry: output unit per input unit</td><td>\(\begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix}\)</td></tr>
+<tr><td>\(A_{ij}\)</td><td>“A i j”</td><td>the entry of \(A\) in row \(i\), column \(j\)</td><td>output \(i\)'s unit per input \(j\)'s unit</td><td>\(A_{12} = 1\) above</td></tr>
+<tr><td>\(a, b, c, d\) (not bold)</td><td>“a, b, c, d”</td><td>the four numbers inside a general 2×2 matrix \(\begin{pmatrix} a & b \\ c & d \end{pmatrix}\)</td><td>as the matrix's entries</td><td>\(a = 2, b = 1, c = 0, d = 1\)</td></tr>
+<tr><td>\(R\)</td><td>“R”, “the recipe matrix”</td><td>bakery example: ingredients needed per item baked</td><td>kg of flour per loaf, eggs per cake, ...</td><td>\(R_{11} = 0.5\) kg/loaf</td></tr>
+<tr><td>\(\mathbf{x}, \mathbf{y}\)</td><td>“x”, “y” (bold)</td><td>bakery example: the order (input) and the shopping list (output)</td><td>(loaves, cakes); (kg, eggs)</td><td>\(\mathbf{x} = (10, 3)\)</td></tr>
+<tr><td>\(A\mathbf{v}\)</td><td>“A times v”</td><td>matrix-vector product: the output when machine \(A\) acts on \(\mathbf{v}\)</td><td>the output units</td><td>\((4, 7)\)</td></tr>
+<tr><td>\(AB\)</td><td>“A B”</td><td>matrix product: do \(B\) first, then \(A\)</td><td>units chain and cancel</td><td>see 7.6</td></tr>
+<tr><td>\(Q, D\)</td><td>“Q”, “D”</td><td>a quarter-turn rotation and a stretch, used to show order matters</td><td>none</td><td>\(Q = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}\)</td></tr>
+<tr><td>\(I\)</td><td>“the identity”</td><td>the do-nothing matrix: 1 on the diagonal, 0 elsewhere</td><td>none</td><td>\(I\mathbf{v} = \mathbf{v}\)</td></tr>
+<tr><td>\(\mathbf{e}_1, \mathbf{e}_2\)</td><td>“e one”, “e two”</td><td>standard basis: the unit arrows along the axes</td><td>none</td><td>\(\mathbf{e}_1 = (1, 0)\)</td></tr>
+<tr><td>\(A^\top, \mathbf{v}^\top\)</td><td>“A transpose”, “v transpose”</td><td>rows and columns swapped; \(\mathbf{v}^\top\) is \(\mathbf{v}\) written as a row</td><td>as the original</td><td>\(\mathbf{a}^\top\mathbf{b} = \mathbf{a}\cdot\mathbf{b}\)</td></tr>
+<tr><td>\(\det A\)</td><td>“det A”, “the determinant of A”</td><td>signed factor by which \(A\) scales area: \(ad - bc\)</td><td>output area per input area</td><td>\(\det \begin{pmatrix} 2 & 1 \\ 0 & 1 \end{pmatrix} = 2\)</td></tr>
+<tr><td>\(A^{-1}\)</td><td>“A inverse”</td><td>the matrix that undoes \(A\): \(A^{-1}A = I\)</td><td>input unit per output unit</td><td>see 7.8</td></tr>
+<tr><td>\(\mathbf{f}_1, \mathbf{f}_2\)</td><td>“f one”, “f two”</td><td>a second basis, tilted 45°</td><td>none</td><td>\(\mathbf{f}_1 = (1, 1)\)</td></tr>
+<tr><td>\(c_1, c_2\)</td><td>“c one”, “c two”</td><td>coordinates of a vector in the basis \(\mathbf{f}_1, \mathbf{f}_2\)</td><td>none (pure number)</td><td>\(c_1 = 2\)</td></tr>
+<tr><td>\(\operatorname{proj}_{\mathbf{u}} \mathbf{v}\)</td><td>“the projection of v onto u”</td><td>the shadow of \(\mathbf{v}\) on the line through \(\mathbf{u}\)</td><td>as \(\mathbf{v}\)</td><td>\((2, 2)\)</td></tr>
+<tr><td>\(\mathbf{r}\)</td><td>“r”, “the residual”</td><td>what is left after projecting: \(\mathbf{v} - \operatorname{proj}_{\mathbf{u}}\mathbf{v}\)</td><td>as \(\mathbf{v}\)</td><td>\((1, -1)\)</td></tr>
+<tr><td>\(P\)</td><td>“P”</td><td>projection matrix: the machine that does the projecting</td><td>none</td><td>\(\hat{\mathbf{u}}\hat{\mathbf{u}}^\top\)</td></tr>
+<tr><td>\(\mathbf{u}_1, \mathbf{u}_2\)</td><td>“u one”, “u two”</td><td>two perpendicular unit vectors spanning a plane in 3-D</td><td>none</td><td>\((1, 0, 0)\)</td></tr>
+<tr><td>\(\mathbf{a}\mathbf{b}^\top\)</td><td>“a b transpose”, “the outer product of a and b”</td><td>the matrix with entry \(a_i b_j\): reads along \(\mathbf{b}\), writes along \(\mathbf{a}\)</td><td>unit of \(a_i\) × unit of \(b_j\)</td><td>\(\begin{pmatrix} 2 & 6 \\ 1 & 3 \end{pmatrix}\)</td></tr>
+<tr><td>\(s\)</td><td>“s”</td><td>the single number an outer product reads: \(s = \mathbf{b}^\top\mathbf{v}\)</td><td>none here</td><td>\(s = 4\)</td></tr>
+<tr><td>\(t\)</td><td>“t”</td><td>a free number that slides a point along a line, as in \(\mathbf{v} + t\mathbf{w}\)</td><td>none (pure number)</td><td>\(t = 0.5\)</td></tr>
+<tr><td>\(\lvert k \rvert\)</td><td>“the absolute value of k”</td><td>\(k\) with any minus sign removed</td><td>as \(k\)</td><td>\(\lvert -2 \rvert = 2\)</td></tr>
+<tr><td>\(\sum_j\)</td><td>“sum over j”</td><td>add up the expression for every value of the counter \(j\) (or \(m\))</td><td>as the terms</td><td>\(\sum_j A_{1j}v_j = A_{11}v_1 + A_{12}v_2\)</td></tr>
+<tr><td>\(m\)</td><td>“m”</td><td>a counter over the middle index in a matrix product</td><td>none (pure number)</td><td>\(m = 1, 2\)</td></tr>
+<tr><td>\(\approx\)</td><td>“is approximately”</td><td>equal after rounding</td><td>none</td><td>\(\sqrt2 \approx 1.4142\)</td></tr>
+<tr><td>\(\Rightarrow\)</td><td>“so”, “which gives”</td><td>the next statement follows from the previous one</td><td>none</td><td>\(2c_1 = 4 \Rightarrow c_1 = 2\)</td></tr>
+<tr><td>\(\mapsto\)</td><td>“is sent to”</td><td>what a machine does to one input</td><td>none</td><td>\((1,0) \mapsto (0,1)\) for a quarter turn</td></tr>
+<tr><td>\(\perp\)</td><td>“is perpendicular to”</td><td>at right angles: dot product zero</td><td>none</td><td>\((1,1) \perp (1,-1)\)</td></tr>
+<tr><td>\(\mathbf{h}, J_\ell, \mathbf{u}_t\)</td><td>“h”, “J ell”, “u t”</td><td>used only in 7.12, defined at Level 14: a residual state, the J-lens matrix at layer \(\ell\), and the readout direction for token \(t\)</td><td>see Level 14</td><td>\(\mathbf{h}\) has 5,120 components</td></tr>
+</table>
+</div>
+
+<h2>7.1 Vectors: arrows and lists</h2>
+<p>Stand on a street corner. Walk 3 blocks east, then 4 blocks north. Where are you? You can say it two ways.</p>
+<ul>
+<li><b>As a list:</b> “(3, 4)”, meaning 3 east and 4 north. Order matters: (4, 3) is a different place.</li>
+<li><b>As an arrow:</b> a straight arrow from the corner to where you ended up.</li>
+</ul>
+<p>Both are the same object. It is called a vector. Let \(\mathbf{v}\) be this walk. Then \(\mathbf{v} = (3, 4)\), and each number in the list is a component: \(v_1 = 3\) blocks east and \(v_2 = 4\) blocks north. The number of components is the dimension, written \(d\). Here \(d = 2\). The set of all such pairs of real numbers is written \(\mathbb{R}^2\), “R two”.</p>
+<p>A vector is not only a direction on a map. Any fixed-order list of numbers is one. A farm plan from <a href="05.html">Level 5</a>, “4 buckets of water and 2 bags of fertiliser”, is the vector \((4, 2)\) in \(\mathbb{R}^2\). The farm gradient at that plan from Level 5, \(\nabla Y = (1, 3)\), was a vector too. A recipe for a cake (grams of flour, sugar, butter, eggs) is a vector in \(\mathbb{R}^4\).</p>
+<div class="box plain">
+<span class="boxtitle">Intuition pump: the arrow is portable</span>
+An arrow means “this much east, this much north”. It does not care where it starts. The walk (3, 4) from your house and the walk (3, 4) from the station are the same vector. We usually draw it starting at the origin \(\mathbf{0} = (0, 0)\) so we can name it by where its tip lands.
+</div>
+
+<h2>7.2 Adding, scaling and length</h2>
+<h3>Adding: do one walk, then the other</h3>
+<p>Let \(\mathbf{a} = (3, 1)\) and \(\mathbf{b} = (1, 2)\). Walking \(\mathbf{a}\) then \(\mathbf{b}\) puts you at</p>
+$$ \mathbf{a} + \mathbf{b} = (3 + 1,\ 1 + 2) = (4, 3). $$
+<p>Add matching components. Nothing else. As arrows, put the tail of \(\mathbf{b}\) on the tip of \(\mathbf{a}\) and draw from the start to the final tip. Walking \(\mathbf{b}\) first and then \(\mathbf{a}\) ends at the same place, so the two routes make a parallelogram (you will see it in Figure 7.1).</p>
+<p><b>Mechanics.</b> Change only \(b_2\) from 2 to 3. Then \(\mathbf{a} + \mathbf{b} = (4, 4)\). Only the second component of the sum moved, and it moved by exactly the same amount, 1. Components never leak into each other when you add.</p>
+
+<h3>Scaling: stretch by a number</h3>
+<p>Let \(k\) be an ordinary number. In this context a single number is called a scalar. Then</p>
+$$ k\mathbf{v} = (k v_1,\ k v_2). \qquad 2\,(3, 1) = (6, 2), \qquad -1\,(3, 1) = (-3, -1), \qquad 0.5\,(3,1) = (1.5, 0.5). $$
+<p>A positive \(k\) stretches or shrinks the arrow along its own line. A negative \(k\) also flips it round. Adding scaled vectors, like \(2\mathbf{a} + 3\mathbf{b}\), is called a linear combination. Almost everything below is built from linear combinations.</p>
+
+<h3>Length: Pythagoras</h3>
+<p>The walk (3, 4) has a straight-line length you can find with Pythagoras' theorem: the two legs are 3 and 4, so the diagonal is \(\sqrt{3^2 + 4^2} = \sqrt{9 + 16} = \sqrt{25} = 5\) blocks. We write this as the norm</p>
+$$ \lVert \mathbf{v} \rVert = \sqrt{v_1^2 + v_2^2}, \qquad \lVert (3, 4) \rVert = 5. $$
+<p>In 3-D, with \(\mathbf{v} = (v_1, v_2, v_3)\), you apply Pythagoras twice and get \(\sqrt{v_1^2 + v_2^2 + v_3^2}\). In \(d\) dimensions you keep going: square every component, add, take the square root.</p>
+<p><b>Mechanics.</b> Scale \(\mathbf{v}\) by \(k\) and follow the length through, one operation at a time. The worked numbers use \(k = 2\) and \(\mathbf{v} = (3, 4)\).</p>
+<p><b>Step 1: scale.</b> \(k\mathbf{v} = (k v_1,\ k v_2)\). Example: \(2\,(3, 4) = (6, 8)\).</p>
+<p><b>Step 2: square each component.</b> \((k v_1)^2 = k^2 v_1^2\) and \((k v_2)^2 = k^2 v_2^2\). Example: \(6^2 = 36 = 4\times9\) and \(8^2 = 64 = 4\times16\).</p>
+<p><b>Step 3: add, and take out the common factor \(k^2\).</b> \(k^2 v_1^2 + k^2 v_2^2 = k^2\,(v_1^2 + v_2^2)\). Example: \(36 + 64 = 100 = 4\times25\).</p>
+<p><b>Step 4: take the square root.</b> The square root of a product is the product of the square roots, so \(\sqrt{k^2\,(v_1^2 + v_2^2)} = \sqrt{k^2}\,\sqrt{v_1^2 + v_2^2}\). A square root is never negative, so \(\sqrt{k^2} = \lvert k\rvert\) (for example \(\sqrt{(-2)^2} = \sqrt4 = 2\)). So</p>
+$$ \lVert k\mathbf{v}\rVert = \lvert k\rvert\,\lVert \mathbf{v}\rVert . $$
+<p>Example: \(\sqrt{100} = 10 = 2\times5\). Doubling the walk doubles its length: \(\lVert (6, 8) \rVert = 10\).</p>
+
+<h3>Unit vectors: pure direction</h3>
+<p>Divide a vector by its own length and you get an arrow of length exactly 1 pointing the same way. That is a unit vector, written with a hat:</p>
+$$ \hat{\mathbf{v}} = \frac{\mathbf{v}}{\lVert \mathbf{v} \rVert} = \frac{(3, 4)}{5} = (0.6,\ 0.8), \qquad \lVert (0.6, 0.8) \rVert = \sqrt{0.36 + 0.64} = 1. $$
+<p>A unit vector carries only a direction. We use it whenever we want to ask “how much in <i>this</i> direction?” without the answer depending on how long the probe arrow is.</p>
+
+<div class="box warn">
+<span class="boxtitle">Units warning: length can be meaningless</span>
+The farm plan \((4\ \text{buckets}, 2\ \text{bags})\) has components with different units. Its “length” \(\sqrt{4^2 + 2^2}\) adds buckets² to bags². That number changes if you measure water in litres instead (\(\sqrt{40^2 + 2^2}\)). Length and angle only mean something once you decide how big one bucket is compared with one bag. This choice comes back at <a href="09.html">Level 9</a> and is the whole point of whitening at <a href="15.html">Level 15</a>.
+</div>
+
+<h2>7.3 The dot product and the angle</h2>
+<h3>Real-world example: the till receipt</h3>
+<p>You buy 4 apples and 3 pears. Apples cost 0.5 $ each and pears 0.8 $ each. Put the quantities in one vector and the prices in another:</p>
+$$ \mathbf{q} = (4\ \text{apples},\ 3\ \text{pears}), \qquad \mathbf{p} = (0.5\ \$/\text{apple},\ 0.8\ \$/\text{pear}). $$
+<p>The total bill multiplies matching components and adds:</p>
+$$ \mathbf{q}\cdot\mathbf{p} = 4\ \text{apples} \times 0.5\ \tfrac{\$}{\text{apple}} + 3\ \text{pears} \times 0.8\ \tfrac{\$}{\text{pear}} = 2\ \$ + 2.4\ \$ = 4.4\ \$. $$
+<p>That operation is the dot product. In general</p>
+$$ \mathbf{a}\cdot\mathbf{b} = a_1 b_1 + a_2 b_2 + \dots + a_d b_d. $$
+<p>Notice the units. Each product (apples × $/apple) came out in dollars, so they could be added. A dot product only makes sense when every product \(a_i b_i\) has the same unit.</p>
+<p><b>Mechanics.</b> Buy one more pear: \(q_2\) goes from 3 to 4 and the bill rises by exactly \(p_2 = 0.8\) $. Raise the apple price by 0.1 $: the bill rises by \(q_1 \times 0.1 = 0.4\) $. Each component's change is weighted by the matching component of the other vector.</p>
+
+<h3>The hidden angle</h3>
+<p>Now a geometric fact. For two arrows \(\mathbf{a}\) and \(\mathbf{b}\) with angle \(\theta\) between them,</p>
+$$ \mathbf{a}\cdot\mathbf{b} = \lVert \mathbf{a} \rVert\, \lVert \mathbf{b} \rVert \cos\theta. $$
+<p>Here \(\cos\theta\) is the cosine of the angle: 1 when the arrows point the same way, 0 when they are at right angles, −1 when they point opposite ways. Here is why the formula holds, step by step. The worked numbers use \(\mathbf{a} = (3, 1)\) and \(\mathbf{b} = (1, 2)\), whose angle is 45° (checked in the worked example below).</p>
+<p><b>Step 1: write the third side of the triangle.</b> The arrows \(\mathbf{a}\) and \(\mathbf{b}\) start at the origin. The side joining their tips is \(\mathbf{a} - \mathbf{b} = (a_1 - b_1,\ a_2 - b_2)\). Example: \((3 - 1,\ 1 - 2) = (2, -1)\).</p>
+<p><b>Step 2: its squared length, by Pythagoras.</b></p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = (a_1 - b_1)^2 + (a_2 - b_2)^2 . $$
+<p>Example: \(2^2 + (-1)^2 = 4 + 1 = 5\).</p>
+<p><b>Step 3: expand each square.</b> \((a_1 - b_1)^2 = (a_1 - b_1)(a_1 - b_1) = a_1^2 - a_1b_1 - b_1a_1 + b_1^2 = a_1^2 - 2a_1b_1 + b_1^2\). The second square works the same way:</p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = a_1^2 - 2a_1b_1 + b_1^2 + a_2^2 - 2a_2b_2 + b_2^2 . $$
+<p>Example: \((3 - 1)^2 = 4\) and \(9 - 6 + 1 = 4\).</p>
+<p><b>Step 4: regroup into lengths and a dot product.</b> Collect the \(a\) squares, the \(b\) squares and the cross terms:</p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = (a_1^2 + a_2^2) + (b_1^2 + b_2^2) - 2(a_1b_1 + a_2b_2) = \lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2 - 2\,\mathbf{a}\cdot\mathbf{b}. $$
+<p>Example: \(10 + 5 - 2\times5 = 5\), the same 5 as Step 2.</p>
+<p><b>Step 5: the law of cosines.</b> School geometry says the same side satisfies</p>
+$$ \lVert \mathbf{a} - \mathbf{b}\rVert^2 = \lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2 - 2\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta . $$
+<p><b>Step 6: set the two right-hand sides equal and cancel.</b> Both contain \(\lVert\mathbf{a}\rVert^2 + \lVert\mathbf{b}\rVert^2\). Subtract it from both sides: \(-2\,\mathbf{a}\cdot\mathbf{b} = -2\lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta\).</p>
+<p><b>Step 7: divide both sides by \(-2\).</b></p>
+$$ \mathbf{a}\cdot\mathbf{b} = \lVert\mathbf{a}\rVert\lVert\mathbf{b}\rVert\cos\theta . $$
+<p>Example: \(\sqrt{10}\times\sqrt5\times\cos 45^\circ = 7.0711\times0.7071 = 5.000\), and \(\mathbf{a}\cdot\mathbf{b} = 3\times1 + 1\times2 = 5\).</p>
+<h3>Worked example</h3>
+<p>Let \(\mathbf{a} = (3, 1)\) and \(\mathbf{b} = (1, 2)\).</p>
+$$ \mathbf{a}\cdot\mathbf{b} = 3\times1 + 1\times2 = 5, \quad \lVert\mathbf{a}\rVert = \sqrt{10} \approx 3.1623, \quad \lVert\mathbf{b}\rVert = \sqrt{5} \approx 2.2361. $$
+$$ \cos\theta = \frac{5}{3.1623 \times 2.2361} = \frac{5}{7.0711} = 0.7071 \quad\Rightarrow\quad \theta = 45^\circ. $$
+<p>Two arrows are orthogonal (perpendicular) exactly when their dot product is 0, because \(\cos 90^\circ = 0\). Example: \((2, 1)\cdot(-1, 2) = -2 + 2 = 0\).</p>
+
+<figure class="sim" id="sim-dot">
+<figcaption><b>Figure 7.1.</b> Drag the tips of \(\mathbf{a}\) (blue) and \(\mathbf{b}\) (red). The grey dashed parallelogram shows \(\mathbf{a}+\mathbf{b}\) (black). The readout computes the dot product component by component and turns it into the angle. Things to try: make the angle 90° and watch the dot product hit exactly 0; swing \(\mathbf{b}\) past 90° and watch the dot product go negative; double \(\mathbf{b}\) and watch the dot product double while the angle stays put.</figcaption>
+</figure>
+
+<div class="box plain">
+<span class="boxtitle">Intuition pump: the dot product is a vote of agreement</span>
+Think of \(\mathbf{a}\) as a wind and \(\mathbf{b}\) as the way you are cycling. The dot product is how much the wind helps you, times how far you go. Tailwind: large and positive. Crosswind: zero help. Headwind: negative. The size of each arrow scales the answer; the angle decides its sign.
+</div>
+
+<h2>7.4 Matrices as machines</h2>
+<h3>Real-world example: the bakery</h3>
+<p>A bakery bakes loaves and cakes. One loaf needs 0.5 kg of flour and no eggs. One cake needs 0.3 kg of flour and 4 eggs. Write this as a grid, one row per ingredient and one column per item baked:</p>
+$$ R = \begin{pmatrix} 0.5 & 0.3 \\ 0 & 4 \end{pmatrix} \qquad \begin{array}{l} \leftarrow \text{flour (kg)} \\ \leftarrow \text{eggs} \end{array} $$
+<p>with column 1 = per loaf and column 2 = per cake. A grid of numbers like this is a matrix. Write \(R_{ij}\) for the entry in row \(i\) and column \(j\). Each entry has a unit: <b>output unit per input unit</b>.</p>
+<div class="tablewrap">
+<table>
+<tr><th>Entry</th><th>Value</th><th>Unit</th><th>Meaning</th></tr>
+<tr><td>\(R_{11}\)</td><td>0.5</td><td>kg flour per loaf</td><td>flour used by one more loaf</td></tr>
+<tr><td>\(R_{12}\)</td><td>0.3</td><td>kg flour per cake</td><td>flour used by one more cake</td></tr>
+<tr><td>\(R_{21}\)</td><td>0</td><td>eggs per loaf</td><td>loaves use no eggs</td></tr>
+<tr><td>\(R_{22}\)</td><td>4</td><td>eggs per cake</td><td>eggs used by one more cake</td></tr>
+</table>
+</div>
+<p>This is exactly the shape a <a href="08.html">Jacobian</a> will have at Level 8: rows are outputs, columns are inputs, and each entry is “output per input”.</p>
+<p>Now an order comes in: \(\mathbf{x} = (10\ \text{loaves}, 3\ \text{cakes})\). The shopping list \(\mathbf{y} = R\mathbf{x}\) can be computed two ways. Both give the same answer, and both are worth owning.</p>
+
+<h3>Row view: each output is a dot product</h3>
+<p>Output \(i\) is row \(i\) of the matrix dotted with the input:</p>
+$$ y_1 = (0.5, 0.3)\cdot(10, 3) = 0.5\times10 + 0.3\times3 = 5 + 0.9 = 5.9\ \text{kg flour}, $$
+$$ y_2 = (0, 4)\cdot(10, 3) = 0\times10 + 4\times3 = 12\ \text{eggs}. $$
+<p>Units check: (kg/loaf) × loaves + (kg/cake) × cakes = kg + kg. Each row is a till receipt from 7.3.</p>
+
+<h3>Column view: add up scaled columns</h3>
+<p>Column \(j\) says what one unit of input \(j\) costs in every output. So the output is a linear combination of the columns, weighted by the input:</p>
+$$ R\mathbf{x} = 10 \begin{pmatrix} 0.5 \\ 0 \end{pmatrix} + 3 \begin{pmatrix} 0.3 \\ 4 \end{pmatrix} = \begin{pmatrix} 5 \\ 0 \end{pmatrix} + \begin{pmatrix} 0.9 \\ 12 \end{pmatrix} = \begin{pmatrix} 5.9 \\ 12 \end{pmatrix}. $$
+<p>The row view asks “how is each output made?”. The column view asks “where does each input send me?”. In general, for a matrix \(A\) with entries \(A_{ij}\),</p>
+$$ (A\mathbf{v})_i = \sum_j A_{ij}\, v_j = A_{i1}v_1 + A_{i2}v_2 + \dots $$
+<p>The symbol \(\sum_j\) means “add up over every column \(j\)”. This is the matrix-vector product.</p>
+<p><b>Mechanics.</b> Add one cake to the order: \(\mathbf{x}\) becomes \((10, 4)\). The output changes by exactly column 2, \((0.3, 4)\): the list becomes (6.2 kg, 16 eggs). Add one loaf instead: the output changes by column 1, \((0.5, 0)\). One more unit of input \(j\) always adds column \(j\).</p>
+
+<h3>A geometric example</h3>
+<p>Let \(A = \begin{pmatrix} 2 & 1 \\ 1 & 3 \end{pmatrix}\) and \(\mathbf{v} = (1, 2)\). Row view: \((2\times1 + 1\times2,\ 1\times1 + 3\times2) = (4, 7)\). Column view: \(1\times(2, 1) + 2\times(1, 3) = (2, 1) + (2, 6) = (4, 7)\). Same answer.</p>
+
+<h2>7.5 Linear maps keep grids straight</h2>
+<p>A matrix has two properties that make it special among machines. For any vectors \(\mathbf{v}, \mathbf{w}\) and any scalar \(k\):</p>
+$$ A(\mathbf{v} + \mathbf{w}) = A\mathbf{v} + A\mathbf{w}, \qquad A(k\mathbf{v}) = k\,A\mathbf{v}. $$
+<p>The bakery shows why: two orders together need the sum of their two shopping lists, and twice the order needs twice the list. A machine with these two properties is called a linear map. Every linear map on \(\mathbb{R}^2\) is some 2×2 matrix, and every matrix is a linear map.</p>
+<p>Three consequences you can see in a picture:</p>
+<ol>
+<li><b>The origin stays put</b>: \(A\mathbf{0} = \mathbf{0}\).</li>
+<li><b>Grid lines stay straight, parallel and evenly spaced.</b> The line of points \(\mathbf{v} + t\mathbf{w}\) (for every number \(t\)) goes to \(A\mathbf{v} + t\,A\mathbf{w}\), which is again a straight line, with equal steps of \(t\) giving equal steps.</li>
+<li><b>The columns tell you everything.</b> Let \(\mathbf{e}_1 = (1, 0)\) and \(\mathbf{e}_2 = (0, 1)\) be the standard basis arrows. Then \(A\mathbf{e}_1\) is column 1 and \(A\mathbf{e}_2\) is column 2. Since any \(\mathbf{v} = v_1\mathbf{e}_1 + v_2\mathbf{e}_2\), knowing where the two basis arrows go fixes where everything goes.</li>
+</ol>
+<div class="box key">
+<span class="boxtitle">Read a 2×2 matrix at a glance</span>
+Column 1 is where the arrow \((1, 0)\) lands. Column 2 is where \((0, 1)\) lands. The unit square with corners \((0,0), (1,0), (1,1), (0,1)\) lands on the parallelogram built from those two columns. Figure 7.2 below shows this live.
+</div>
+<p>Contrast with a non-linear machine, like squaring each component. It sends \((1, 0) \mapsto (1, 0)\) and \((2, 0) \mapsto (4, 0)\): equal input steps, unequal output steps. Grid lines get bent or bunched. At <a href="08.html">Level 8</a> we zoom in on such bent grids until they look straight again.</p>
+
+<h2>7.6 Composition, the identity and the transpose</h2>
+<h3>Doing two machines in a row</h3>
+<p>Let \(Q = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}\) (a quarter turn anticlockwise: it sends \((1,0)\) to \((0,1)\)) and \(D = \begin{pmatrix} 2 & 0 \\ 0 & 1 \end{pmatrix}\) (stretch horizontally by 2). Apply \(Q\) first, then \(D\), to \(\mathbf{e}_1 = (1, 0)\):</p>
+$$ Q\mathbf{e}_1 = (0\times1 + (-1)\times0,\ 1\times1 + 0\times0) = (0, 1), \qquad D(0, 1) = (2\times0 + 0\times1,\ 0\times0 + 1\times1) = (0, 1). $$
+<p>Now the other order, \(D\) first, then \(Q\):</p>
+$$ D\mathbf{e}_1 = (2\times1 + 0\times0,\ 0\times1 + 1\times0) = (2, 0), \qquad Q(2, 0) = (0\times2 + (-1)\times0,\ 1\times2 + 0\times0) = (0, 2). $$
+<p>Different answers. Order matters. Doing \(B\) first and then \(A\) is itself one linear map, the composition, and its matrix is the product \(AB\) (read right to left, like \(A(B\mathbf{v})\)). Its entries are row-of-\(A\) dot column-of-\(B\):</p>
+$$ (AB)_{ij} = \sum_m A_{im} B_{mj}. $$
+<p>Here \(m\) is just a counter that runs over the middle index. Worked example with \(A = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}\) and \(B = \begin{pmatrix} 1 & 2 \\ 0 & 3 \end{pmatrix}\):</p>
+$$ AB = \begin{pmatrix} 2\cdot1 + 1\cdot0 & 2\cdot2 + 1\cdot3 \\ 1\cdot1 + 1\cdot0 & 1\cdot2 + 1\cdot3 \end{pmatrix} = \begin{pmatrix} 2 & 7 \\ 1 & 5 \end{pmatrix}, \qquad BA = \begin{pmatrix} 1\cdot2 + 2\cdot1 & 1\cdot1 + 2\cdot1 \\ 0\cdot2 + 3\cdot1 & 0\cdot1 + 3\cdot1 \end{pmatrix} = \begin{pmatrix} 4 & 3 \\ 3 & 3 \end{pmatrix}. $$
+<p><b>Units chain and cancel.</b> In the bakery, suppose a matrix \(B\) turns customer orders into items baked (loaves per order, cakes per order). Then \(RB\) turns orders into ingredients: (kg per loaf) × (loaves per order) = kg per order. The middle unit cancels, as in <a href="00.html">Level 0</a>. This is the chain rule in disguise; at <a href="10.html">Level 10</a> it becomes literal.</p>
+
+<h3>The identity</h3>
+<p>The identity matrix \(I = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}\) does nothing: \(I\mathbf{v} = \mathbf{v}\), and \(AI = IA = A\). It is the matrix version of the number 1.</p>
+
+<h3>The transpose</h3>
+<p>The transpose \(A^\top\) swaps rows and columns: \((A^\top)_{ij} = A_{ji}\). For a vector, we treat \(\mathbf{v}\) as a column (a column vector), and \(\mathbf{v}^\top\) is the same numbers written as a row (a row vector). Then a row times a column is exactly the dot product:</p>
+$$ \mathbf{a}^\top\mathbf{b} = \begin{pmatrix} a_1 & a_2 \end{pmatrix} \begin{pmatrix} b_1 \\ b_2 \end{pmatrix} = a_1b_1 + a_2b_2 = \mathbf{a}\cdot\mathbf{b}. $$
+<p>One rule you will need at Level 10: \((AB)^\top = B^\top A^\top\). Check it with the matrices above, one operation at a time.</p>
+<p><b>Step 1: transpose \(AB\).</b> Row 1 of \(AB\), \((2, 7)\), becomes column 1; row 2, \((1, 5)\), becomes column 2:</p>
+$$ (AB)^\top = \begin{pmatrix} 2 & 7 \\ 1 & 5 \end{pmatrix}^{\!\top} = \begin{pmatrix} 2 & 1 \\ 7 & 5 \end{pmatrix}. $$
+<p><b>Step 2: transpose \(A\) and \(B\) separately.</b> \(A = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}\) is unchanged by the swap, so \(A^\top = A\). For \(B\), row \((1, 2)\) becomes column 1 and row \((0, 3)\) becomes column 2: \(B^\top = \begin{pmatrix} 1 & 0 \\ 2 & 3 \end{pmatrix}\).</p>
+<p><b>Step 3: multiply \(B^\top A^\top\), row of the left dotted with column of the right.</b> Row 1 of \(B^\top\) is \((1, 0)\); row 2 is \((2, 3)\). Column 1 of \(A^\top\) is \((2, 1)\); column 2 is \((1, 1)\):</p>
+$$ B^\top A^\top = \begin{pmatrix} 1\cdot2 + 0\cdot1 & 1\cdot1 + 0\cdot1 \\ 2\cdot2 + 3\cdot1 & 2\cdot1 + 3\cdot1 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 4 + 3 & 2 + 3 \end{pmatrix} = \begin{pmatrix} 2 & 1 \\ 7 & 5 \end{pmatrix}. $$
+<p><b>Step 4: compare.</b> Step 1 and Step 3 give the same matrix. A matrix with \(A^\top = A\) is called symmetric; every Hessian at <a href="09.html">Level 9</a> is one.</p>
+
+<h2>7.7 The determinant: signed area scaling</h2>
+<p>A linear map sends the unit square (area 1) to a parallelogram. Every other shape gets its area multiplied by the same factor, because any shape can be tiled by tiny squares and each tiny square is scaled the same way. That factor, with a sign attached, is the determinant.</p>
+<h3>Deriving \(ad - bc\)</h3>
+<p>Take \(A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\) with all four numbers positive and \(ad \gt bc\). Its columns are \((a, c)\) and \((b, d)\). The parallelogram they span sits inside a rectangle of width \(a + b\) and height \(c + d\). The worked numbers use \(a = 2\), \(b = 1\), \(c = 1\), \(d = 3\), so the columns are \((2, 1)\) and \((1, 3)\).</p>
+<p><b>Step 1: the parallelogram is the rectangle minus the pieces around it.</b></p>
+$$ \underbrace{(a+b)(c+d)}_{\text{rectangle}} - \underbrace{2\cdot\tfrac12 ac}_{\text{two triangles}} - \underbrace{2\cdot\tfrac12 bd}_{\text{two triangles}} - \underbrace{2\,bc}_{\text{two small rectangles}} $$
+<p>Example: rectangle \(3\times4 = 12\); two triangles of \(\tfrac12\times2\times1 = 1\) each; two triangles of \(\tfrac12\times1\times3 = 1.5\) each; two small rectangles of \(1\times1 = 1\) each.</p>
+<p><b>Step 2: simplify the pieces.</b> \(2\cdot\tfrac12 ac = ac\) and \(2\cdot\tfrac12 bd = bd\). The area is \((a+b)(c+d) - ac - bd - 2bc\). Example: \(12 - 2 - 3 - 2\).</p>
+<p><b>Step 3: expand the rectangle.</b> Multiply every term of the first bracket by every term of the second: \((a+b)(c+d) = ac + ad + bc + bd\). Example: \(2 + 6 + 1 + 3 = 12\).</p>
+$$ ac + ad + bc + bd - ac - bd - 2bc . $$
+<p><b>Step 4: cancel.</b> \(+ac\) and \(-ac\) cancel. \(+bd\) and \(-bd\) cancel. \(+bc - 2bc = -bc\). What is left:</p>
+$$ ad - bc . $$
+<p>Example: \(12 - 2 - 3 - 2 = 5\), and \(ad - bc = 2\times3 - 1\times1 = 5\).</p>
+<div class="box key">
+<span class="boxtitle">The determinant of a 2×2 matrix</span>
+$$ \det \begin{pmatrix} a & b \\ c & d \end{pmatrix} = ad - bc. $$
+Its size is the factor by which areas are multiplied. Its sign says whether orientation is kept (+) or mirrored (−). Zero means the plane is squashed onto a line or a point.
+</div>
+<p><b>Units.</b> The determinant multiplies an entry from each row and each column, so its unit is (product of output units) per (product of input units): output area per input area. For the bakery, \(\det R = 0.5\times4 - 0.3\times0 = 2\) (kg·eggs) per (loaf·cake).</p>
+<h3>The sign: orientation</h3>
+<p>Label the unit square's corners 1, 2, 3, 4 going anticlockwise. If \(\det A \gt 0\) the images of the corners still go anticlockwise. If \(\det A \lt 0\) they go clockwise: the map includes a mirror flip, like reading a page in a mirror. Swapping the two columns flips the sign: \(\det\begin{pmatrix} b & a \\ d & c\end{pmatrix} = bc - ad = -(ad - bc)\).</p>
+<h3>Mechanics: change one entry</h3>
+<p>Start at \(A = I\), so \(\det = 1\cdot1 - 0\cdot0 = 1\). Raise \(a\) to 2: \(\det = 2\). The square stretched sideways and doubled in area. Now raise \(b\) from 0 to 1 (a shear): \(\det = 2\cdot1 - 1\cdot0 = 2\), unchanged. A shear slides layers sideways like a deck of cards and never changes area. Now raise \(c\) to 2: \(\det = 2\cdot1 - 1\cdot2 = 0\). The columns \((2, 2)\) and \((1, 1)\) are parallel, and the square has collapsed onto a line.</p>
+<figure class="sim" id="sim-det">
+<figcaption><b>Figure 7.2.</b> A 2×2 matrix editor. Set the four entries with the sliders, or press a preset. Grey lines are the original grid; black lines are where the matrix sends them. The blue arrow is column 1 (\(A\mathbf{e}_1\)) and the red arrow is column 2 (\(A\mathbf{e}_2\)). The shaded parallelogram is the image of the unit square: blue if the determinant is positive, red if negative. Its area is \(\lvert ad - bc\rvert\). Watch the green corner numbers 1→2→3→4: anticlockwise when \(\det \gt 0\), clockwise when \(\det \lt 0\). Press “squash” to see the determinant hit 0 and the plane fall onto a line.</figcaption>
+</figure>
+<h3>Composition multiplies determinants</h3>
+<p>If \(B\) scales area by \(\det B\) and then \(A\) scales by \(\det A\), the total factor is the product: \(\det(AB) = \det A \cdot \det B\). Check with 7.6: \(\det A = 2\cdot1 - 1\cdot1 = 1\), \(\det B = 1\cdot3 - 2\cdot0 = 3\), and \(\det(AB) = 2\cdot5 - 7\cdot1 = 3 = 1\times3\).</p>
+<p>In 3-D the determinant of a 3×3 matrix is the signed volume scaling of the unit cube, and the same story holds in any dimension.</p>
+
+<h2>7.8 The inverse: running the machine backwards</h2>
+<p>The bakery manager sees 5.9 kg of flour and 12 eggs gone. What was baked? We want a matrix \(R^{-1}\) with \(R^{-1}R = I\). For a 2×2 matrix the recipe is: swap \(a\) and \(d\), negate \(b\) and \(c\), divide by the determinant:</p>
+$$ A^{-1} = \frac{1}{ad - bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}. $$
+<p>Check it by multiplying, every entry:</p>
+$$ \begin{pmatrix} a & b \\ c & d \end{pmatrix}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix} = \begin{pmatrix} ad - bc & -ab + ba \\ cd - dc & -cb + da \end{pmatrix} = (ad - bc)\begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}. $$
+<p>Dividing by \(ad - bc\) leaves \(I\). Now apply the recipe to the bakery, one operation at a time. Here \(a = 0.5\), \(b = 0.3\), \(c = 0\), \(d = 4\).</p>
+<p><b>Step 1: the determinant.</b> \(\det R = ad - bc = 0.5\times4 - 0.3\times0 = 2\).</p>
+<p><b>Step 2: swap \(a\) and \(d\).</b> The 0.5 and the 4 trade places on the diagonal: \(\begin{pmatrix} 4 & 0.3 \\ 0 & 0.5 \end{pmatrix}\).</p>
+<p><b>Step 3: negate \(b\) and \(c\).</b> 0.3 becomes −0.3, and 0 stays 0: \(\begin{pmatrix} 4 & -0.3 \\ 0 & 0.5 \end{pmatrix}\).</p>
+<p><b>Step 4: divide every entry by the determinant, 2.</b></p>
+$$ R^{-1} = \frac12\begin{pmatrix} 4 & -0.3 \\ 0 & 0.5 \end{pmatrix} = \begin{pmatrix} 2 & -0.15 \\ 0 & 0.25 \end{pmatrix}. $$
+<p><b>Step 5: apply it to the shopping list, row by row.</b></p>
+$$ R^{-1}\begin{pmatrix} 5.9 \\ 12 \end{pmatrix} = \begin{pmatrix} 2\times5.9 - 0.15\times12 \\ 0\times5.9 + 0.25\times12 \end{pmatrix} = \begin{pmatrix} 11.8 - 1.8 \\ 0 + 3 \end{pmatrix} = \begin{pmatrix} 10 \\ 3 \end{pmatrix}. $$
+<p>10 loaves and 3 cakes, as ordered. The units of \(R^{-1}\) are flipped: \(R^{-1}_{22} = 0.25\) cakes per egg (each egg “accounts for” a quarter of a cake), and \(R^{-1}_{11} = 2\) loaves per kg of flour.</p>
+<div class="box warn">
+<span class="boxtitle">When there is no inverse</span>
+If \(\det A = 0\) the formula divides by zero. Geometrically, the plane was squashed onto a line, so many inputs share one output and no machine can tell them apart. Such a matrix is singular. Example: \(\begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}\) sends both \((2, 0)\) and \((0, 1)\) to \((2, 4)\).
+</div>
+
+<h2>7.9 Basis, span, subspace and rank</h2>
+<h3>Basis and coordinates</h3>
+<p>The arrows \(\mathbf{e}_1, \mathbf{e}_2\) are not the only way to build every vector. Take \(\mathbf{f}_1 = (1, 1)\) and \(\mathbf{f}_2 = (1, -1)\). To write \(\mathbf{v} = (3, 1)\) as \(c_1\mathbf{f}_1 + c_2\mathbf{f}_2\), solve one operation at a time.</p>
+<p><b>Step 1: write the recipe component by component.</b> Scale and add: \(c_1(1, 1) + c_2(1, -1) = (c_1 + c_2,\ c_1 - c_2)\). This must equal \((3, 1)\), so</p>
+$$ c_1 + c_2 = 3, \qquad c_1 - c_2 = 1. $$
+<p><b>Step 2: add the two equations.</b> Left sides: \(c_1 + c_2 + c_1 - c_2 = 2c_1\) (the \(c_2\) terms cancel). Right sides: \(3 + 1 = 4\). So \(2c_1 = 4\).</p>
+<p><b>Step 3: divide by 2.</b> \(c_1 = 2\).</p>
+<p><b>Step 4: put \(c_1\) back into the first equation.</b> \(2 + c_2 = 3\), so \(c_2 = 1\).</p>
+<p>Check: \(2(1,1) + 1(1,-1) = (2 + 1,\ 2 - 1) = (3, 1)\). A set of directions that can build every vector, each in exactly one way, is a basis. The recipe numbers \((c_1, c_2) = (2, 1)\) are the coordinates of \(\mathbf{v}\) in that basis. Same arrow, different description, like giving a street address versus GPS numbers.</p>
+<p>Because \(\mathbf{f}_1\) and \(\mathbf{f}_2\) are perpendicular, there is a shortcut: \(c_1 = \mathbf{v}\cdot\mathbf{f}_1 / \lVert\mathbf{f}_1\rVert^2\), with \(\mathbf{v}\cdot\mathbf{f}_1 = 3\times1 + 1\times1 = 4\) and \(\lVert\mathbf{f}_1\rVert^2 = 1^2 + 1^2 = 2\), so \(c_1 = 4/2 = 2\). Likewise \(c_2 = \mathbf{v}\cdot\mathbf{f}_2/\lVert\mathbf{f}_2\rVert^2\), with \(\mathbf{v}\cdot\mathbf{f}_2 = 3\times1 + 1\times(-1) = 2\) and \(\lVert\mathbf{f}_2\rVert^2 = 1^2 + (-1)^2 = 2\), so \(c_2 = 2/2 = 1\). If the basis arrows are perpendicular <i>and</i> of length 1 (an orthonormal basis), each coordinate is one dot product. Changing to a basis that suits the problem is the key move of <a href="09.html">Level 9</a>.</p>
+<h3>Span and subspace</h3>
+<p>The span of some vectors is everything you can build from them by scaling and adding. The span of \((1, 2)\) alone is the line through the origin in that direction. The span of \((1, 0, 0)\) and \((0, 1, 0)\) is the flat floor (the \(xy\)-plane) inside 3-D. A line or plane through the origin, closed under adding and scaling, is a subspace. Lines and planes that miss the origin are not subspaces, because scaling by 0 must give \(\mathbf{0}\).</p>
+<h3>Rank: how many directions survive</h3>
+<p>The outputs \(A\mathbf{v}\) of a matrix are linear combinations of its columns (column view), so they fill the span of the columns. The dimension of that span is the rank. Example: \(M = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}\). The worked numbers use \(\mathbf{v} = (1, 1)\).</p>
+<p><b>Step 1: the column view.</b> \(M\mathbf{v}\) is \(v_1\) times column 1 plus \(v_2\) times column 2:</p>
+$$ M\mathbf{v} = v_1\begin{pmatrix} 1 \\ 2 \end{pmatrix} + v_2\begin{pmatrix} 2 \\ 4 \end{pmatrix}. $$
+<p>Example: \((1, 2) + (2, 4) = (3, 6)\).</p>
+<p><b>Step 2: notice that column 2 is twice column 1.</b> \((2, 4) = 2\,(1, 2)\). Replace it:</p>
+$$ M\mathbf{v} = v_1\begin{pmatrix} 1 \\ 2 \end{pmatrix} + 2v_2\begin{pmatrix} 1 \\ 2 \end{pmatrix}. $$
+<p><b>Step 3: take out the common arrow \((1, 2)\).</b></p>
+$$ M\mathbf{v} = (v_1 + 2v_2)\begin{pmatrix} 1 \\ 2 \end{pmatrix}. $$
+<p>Example: \((1 + 2\times1)\,(1, 2) = 3\,(1, 2) = (3, 6)\), as in Step 1.</p>
+<p>Every output is some number times \((1, 2)\), so every output lies on one line, and \(M\) has rank 1. Its determinant is \(1\cdot4 - 2\cdot2 = 0\), as it must be. In 2×2, rank 2 means \(\det \ne 0\); rank 1 or 0 means \(\det = 0\). A 3×3 matrix whose third column is the sum of the first two, like \(\begin{pmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \\ 0 & 0 & 0 \end{pmatrix}\), has rank 2: all outputs lie in the floor plane.</p>
+<p><b>Mechanics.</b> Change one entry of \(M\): set \(M_{22} = 4.1\). The columns are now \((1, 2)\) and \((2, 4.1)\), not parallel. The determinant becomes \(4.1 - 4 = 0.1\) and the rank jumps to 2. Rank does not change smoothly; it jumps.</p>
+
+<h2>7.10 Projection onto a line and onto a subspace</h2>
+<p>At noon the sun is straight overhead, and your shadow on flat ground is your projection onto the ground. Projection keeps the part of a vector that lies along a line (or plane) and throws away the rest.</p>
+<h3>Onto a line</h3>
+<p>Let the line go through the origin in direction \(\mathbf{u}\), and let \(\hat{\mathbf{u}} = \mathbf{u}/\lVert\mathbf{u}\rVert\). The amount of \(\mathbf{v}\) along the line is the dot product \(\mathbf{v}\cdot\hat{\mathbf{u}}\) (a number). The projection is that much of \(\hat{\mathbf{u}}\):</p>
+$$ \operatorname{proj}_{\mathbf{u}}\mathbf{v} = (\mathbf{v}\cdot\hat{\mathbf{u}})\,\hat{\mathbf{u}}. $$
+<p>Worked example: \(\mathbf{v} = (3, 1)\), \(\mathbf{u} = (1, 1)\).</p>
+$$ \hat{\mathbf{u}} = \tfrac{1}{\sqrt2}(1, 1) \approx (0.7071, 0.7071), \qquad \mathbf{v}\cdot\hat{\mathbf{u}} = \tfrac{3 + 1}{\sqrt2} = \tfrac{4}{\sqrt 2} \approx 2.8284, $$
+$$ \operatorname{proj}_{\mathbf{u}}\mathbf{v} = 2.8284 \times (0.7071, 0.7071) = (2, 2). $$
+<p>The residual is \(\mathbf{r} = \mathbf{v} - \operatorname{proj}_{\mathbf{u}}\mathbf{v} = (1, -1)\). It is perpendicular to the line: \((1, -1)\cdot(1, 1) = 0\). That is what makes this the closest point on the line to \(\mathbf{v}\), by Pythagoras: any other point on the line adds a second perpendicular leg and so is further away.</p>
+<p><b>As a matrix.</b> Turn the projection into a matrix, one operation at a time.</p>
+<p><b>Step 1: write the dot product as a row times a column.</b> By 7.6, \(\mathbf{v}\cdot\hat{\mathbf{u}} = \hat{\mathbf{u}}^\top\mathbf{v}\). It is one number, and a number can be written on either side of the vector it scales:</p>
+$$ (\mathbf{v}\cdot\hat{\mathbf{u}})\,\hat{\mathbf{u}} = \hat{\mathbf{u}}\,(\hat{\mathbf{u}}^\top\mathbf{v}). $$
+<p><b>Step 2: move the brackets.</b> The three factors stay in the same order; only the brackets move. For products of matrices and vectors this is always allowed (it is called associativity):</p>
+$$ \hat{\mathbf{u}}\,(\hat{\mathbf{u}}^\top\mathbf{v}) = (\hat{\mathbf{u}}\hat{\mathbf{u}}^\top)\,\mathbf{v}. $$
+<p>So the projection matrix is \(P = \hat{\mathbf{u}}\hat{\mathbf{u}}^\top\).</p>
+<p><b>Step 3: compute \(P\) for \(\mathbf{u} = (1, 1)\).</b> A column times a row puts (component \(i\) of \(\hat{\mathbf{u}}\)) × (component \(j\) of \(\hat{\mathbf{u}}\)) in row \(i\), column \(j\). Here both components are 0.7071, and \(0.7071\times0.7071 = 0.5\) (exactly \(\tfrac1{\sqrt2}\times\tfrac1{\sqrt2} = \tfrac12\)):</p>
+$$ P = \begin{pmatrix} 0.5 & 0.5 \\ 0.5 & 0.5 \end{pmatrix}. $$
+<p><b>Step 4: check on \(\mathbf{v} = (3, 1)\), row by row.</b> \(P(3, 1) = (0.5\times3 + 0.5\times1,\ 0.5\times3 + 0.5\times1) = (1.5 + 0.5, 1.5 + 0.5) = (2, 2)\), the same shadow as before.</p>
+<p>Projecting twice changes nothing more, so \(PP = P\). Its rank is 1 and its determinant is \(0.25 - 0.25 = 0\).</p>
+<figure class="sim" id="sim-proj">
+<figcaption><b>Figure 7.3.</b> Drag the tip of \(\mathbf{v}\) (blue) and the handle that sets the line's direction \(\mathbf{u}\) (grey). The red arrow is the shadow \(\operatorname{proj}_{\mathbf{u}}\mathbf{v} = (\mathbf{v}\cdot\hat{\mathbf{u}})\hat{\mathbf{u}}\). The dashed segment is the residual \(\mathbf{r}\), and the small square marks the right angle. Notice the readout's last line: \(\mathbf{r}\cdot\hat{\mathbf{u}}\) stays at 0 however you drag. Point \(\mathbf{v}\) more than 90° away from \(\mathbf{u}\) and the shadow points backwards (negative amount).</figcaption>
+</figure>
+<h3>Onto a subspace</h3>
+<p>To project onto a plane in 3-D spanned by two perpendicular unit vectors \(\mathbf{u}_1, \mathbf{u}_2\), project onto each and add:</p>
+$$ \operatorname{proj}\mathbf{v} = (\mathbf{v}\cdot\mathbf{u}_1)\mathbf{u}_1 + (\mathbf{v}\cdot\mathbf{u}_2)\mathbf{u}_2, \qquad P = \mathbf{u}_1\mathbf{u}_1^\top + \mathbf{u}_2\mathbf{u}_2^\top. $$
+<p>Worked example: \(\mathbf{u}_1 = (1, 0, 0)\), \(\mathbf{u}_2 = \tfrac{1}{\sqrt2}(0, 1, 1)\), \(\mathbf{v} = (1, 2, 3)\).</p>
+$$ \mathbf{v}\cdot\mathbf{u}_1 = 1, \qquad \mathbf{v}\cdot\mathbf{u}_2 = \tfrac{2 + 3}{\sqrt2} = \tfrac{5}{\sqrt2}, $$
+$$ \operatorname{proj}\mathbf{v} = 1\cdot(1, 0, 0) + \tfrac{5}{\sqrt2}\cdot\tfrac{1}{\sqrt2}(0, 1, 1) = (1, 0, 0) + (0, 2.5, 2.5) = (1, 2.5, 2.5). $$
+<p>Residual \((1,2,3) - (1, 2.5, 2.5) = (0, -0.5, 0.5)\). Check it is perpendicular to both: \((0,-0.5,0.5)\cdot(1,0,0) = 0\) and \((0,-0.5,0.5)\cdot(0,1,1) = -0.5 + 0.5 = 0\). The shortcut “add the single projections” works only because \(\mathbf{u}_1 \perp \mathbf{u}_2\). With a tilted pair you would double-count.</p>
+
+<h2>7.11 The outer product: read along b, write along a</h2>
+<p>The dot product \(\mathbf{b}^\top\mathbf{v}\) (row times column) gives one number. Flip the order to column times row and you get a whole matrix, the outer product:</p>
+$$ \mathbf{a}\mathbf{b}^\top = \begin{pmatrix} a_1 \\ a_2 \end{pmatrix}\begin{pmatrix} b_1 & b_2 \end{pmatrix} = \begin{pmatrix} a_1b_1 & a_1b_2 \\ a_2b_1 & a_2b_2 \end{pmatrix}. $$
+<p>What does this machine do to a vector \(\mathbf{v}\)?</p>
+<p><b>Step 1: move the brackets.</b> As in 7.10, the factors keep their order and only the brackets move (associativity):</p>
+$$ (\mathbf{a}\mathbf{b}^\top)\mathbf{v} = \mathbf{a}\,(\mathbf{b}^\top\mathbf{v}). $$
+<p><b>Step 2: the bracket is one number.</b> \(\mathbf{b}^\top\mathbf{v}\) is a row times a column, a dot product. Call it \(s\):</p>
+$$ s = \mathbf{b}^\top\mathbf{v} = b_1v_1 + b_2v_2, \qquad (\mathbf{a}\mathbf{b}^\top)\mathbf{v} = s\,\mathbf{a}. $$
+<p>The worked example below puts numbers through both sides.</p>
+<div class="box key">
+<span class="boxtitle">Read along b, write along a</span>
+The outer product \(\mathbf{a}\mathbf{b}^\top\) <i>reads</i> one number from its input, \(s = \mathbf{b}\cdot\mathbf{v}\), and <i>writes</i> that many copies of \(\mathbf{a}\). Every output lies on the line through \(\mathbf{a}\), so the rank is 1. Every input perpendicular to \(\mathbf{b}\) gives \(s = 0\): those inputs are invisible to the machine (they form its null space).
+</div>
+<p>Worked example: \(\mathbf{a} = (2, 1)\), \(\mathbf{b} = (1, 3)\), \(\mathbf{v} = (1, 1)\).</p>
+$$ \mathbf{a}\mathbf{b}^\top = \begin{pmatrix} 2\cdot1 & 2\cdot3 \\ 1\cdot1 & 1\cdot3 \end{pmatrix} = \begin{pmatrix} 2 & 6 \\ 1 & 3 \end{pmatrix}, \qquad s = 1\cdot1 + 3\cdot1 = 4, \qquad s\,\mathbf{a} = (8, 4). $$
+<p>Check by the row view: \((2\cdot1 + 6\cdot1,\ 1\cdot1 + 3\cdot1) = (8, 4)\). Same. The determinant is \(2\cdot3 - 6\cdot1 = 0\), as for every outer product in 2-D.</p>
+<p><b>Mechanics.</b> Move \(\mathbf{v}\) to \((3, -1)\), which is perpendicular to \(\mathbf{b}\): \(s = 3 - 3 = 0\) and the output is \((0, 0)\). Move it to \((1, 2)\): \(s = 7\), output \((14, 7)\). The output only ever slides along \(\mathbf{a}\); its length is set by how much of \(\mathbf{b}\) the input contains.</p>
+<p><b>Real-world example.</b> A microphone and a loudspeaker. The microphone faces one way (\(\mathbf{b}\)) and turns the air pressure into one number. The loudspeaker faces another way (\(\mathbf{a}\)) and plays that number out. Sound arriving side-on to the microphone is never played. The projection matrix \(\hat{\mathbf{u}}\hat{\mathbf{u}}^\top\) from 7.10 is the special case where the microphone and loudspeaker face the same way, and the rank-1 matrix \(M\) of 7.9 is \(\mathbf{a}\mathbf{a}^\top\) with \(\mathbf{a} = (1, 2)\).</p>
+<figure class="sim" id="sim-outer">
+<figcaption><b>Figure 7.4.</b> Drag \(\mathbf{b}\) (red, the reader), \(\mathbf{a}\) (blue, the writer) and the input \(\mathbf{v}\) (black). The purple arrow is the output \((\mathbf{a}\mathbf{b}^\top)\mathbf{v} = s\,\mathbf{a}\). The dashed grey line is every input perpendicular to \(\mathbf{b}\): drag \(\mathbf{v}\) onto it and the output vanishes. Notice the output is always on the line through \(\mathbf{a}\), whatever you do with \(\mathbf{v}\).</figcaption>
+</figure>
+
+<h2>7.12 Why this matters for H-space</h2>
+<p>Everything on this page works the same with more components. A residual state of Qwen3.6-27B is a vector with \(d = 5{,}120\) components; for Qwen3.5-0.8B, \(d = 1{,}024\) (sizes from <code>hlens/paper/theory-v2.md</code> §0). A dot product of two such states is a sum of 5,120 products. A 5,120 × 5,120 matrix has \(5{,}120^2 = 26{,}214{,}400\) entries. Nothing new is needed; only the drawings stop being possible. Here is where each idea returns.</p>
+<ol>
+<li><b>Dot products as readouts.</b> The J-lens at <a href="14.html">Level 14</a> decodes with \(\mathbf{u}_t^\top J_\ell\,\mathbf{h}\): a row vector (one per vocabulary token) dotted with a matrix-vector product. That is the row view of 7.4.</li>
+<li><b>Matrices as “output per input”.</b> The J-lens \(J_\ell\) is a 5,120 × 5,120 matrix whose entry \((i, j)\) says how much final-state component \(i\) moves per unit of layer-\(\ell\) component \(j\). That is the bakery table, enlarged.</li>
+<li><b>Outer products as reads and writes.</b> A SwiGLU neuron (Level 14) reads two numbers from the residual state along two directions, bends one of them through SiLU, and multiplies them. At Level 9 you will see that a plain product of two reads has Hessian \(\mathbf{a}\mathbf{b}^\top + \mathbf{b}\mathbf{a}^\top\): two outer products. theory-v2 §1 and §2 build the curvature of the whole model from such pieces.</li>
+<li><b>Subspaces and projection.</b> H-space is a low-dimensional subspace (25 dimensions by default) of the 5,120-dimensional state space. Ablating it means projecting it out: keeping the residual \(\mathbf{r}\) of 7.10.</li>
+<li><b>Bases and units.</b> The units warning in 7.2 is the reason Level 15 whitens: it picks a basis in which one step means one natural spread of the activations.</li>
+</ol>
+<div class="box plain">
+<span class="boxtitle">A high-dimensional surprise</span>
+In 2-D, two arrows pointing in random directions often make a small angle. In 5,120-D they almost never do: for two random directions the cosine is typically about \(1/\sqrt{d} \approx 1/71.6 \approx 0.014\), so they are nearly orthogonal. This is why, at Level 13, a random 25-dimensional subspace overlaps a fixed one by only about \(25/d\).
+</div>
+
+<h2>Exercises</h2>
+
+<div class="ex" data-answer="13" data-tol="0.001" data-unit="(length)">
+<p><b>Exercise 7.1.</b> Find \(\lVert (5, 12) \rVert\), then the unit vector in the same direction.</p>
+<details><summary>Show answer</summary>
+<p>\(\sqrt{5^2 + 12^2} = \sqrt{25 + 144} = \sqrt{169} = 13\). Unit vector: \((5/13, 12/13) \approx (0.3846, 0.9231)\). Check: \(0.3846^2 + 0.9231^2 = 0.1479 + 0.8521 = 1\).</p>
+</details>
+</div>
+
+<div class="ex" data-answer="7.3" data-tol="0.001" data-unit="$">
+<p><b>Exercise 7.2.</b> You buy 2 loaves at 1.5 $ per loaf, 5 eggs at 0.2 $ per egg and 3 kg of flour at 1.1 $ per kg. Write the purchase as a dot product and compute the bill. State the unit of each product before you add.</p>
+<details><summary>Show answer</summary>
+<p>\((2, 5, 3)\cdot(1.5, 0.2, 1.1) = 2\times1.5 + 5\times0.2 + 3\times1.1 = 3 + 1 + 3.3 = 7.3\ \$\). Each product is (items) × (dollars per item) = dollars, so the three terms can be added.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="90" data-tol="0.001" data-unit="degrees">
+<p><b>Exercise 7.3.</b> Find the angle between \((4, -2)\) and \((1, 2)\).</p>
+<details><summary>Show answer</summary>
+<p>Dot product \(4\times1 + (-2)\times2 = 4 - 4 = 0\). So \(\cos\theta = 0\) and \(\theta = 90^\circ\). The lengths (\(\sqrt{20}\) and \(\sqrt5\)) do not matter once the dot product is zero.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="-5" data-tol="0.001" data-unit="(area factor)">
+<p><b>Exercise 7.4.</b> Compute \(\det\begin{pmatrix} 1 & 3 \\ 2 & 1 \end{pmatrix}\). What happens to the area of a 2 × 2 square, and to its orientation?</p>
+<details><summary>Show answer</summary>
+<p>\(1\times1 - 3\times2 = 1 - 6 = -5\). Areas are multiplied by \(\lvert -5\rvert = 5\), so the 2 × 2 square (area 4) becomes a parallelogram of area 20. The negative sign means orientation flips: corners that went anticlockwise now go clockwise.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="4" data-tol="0.001" data-unit="cakes">
+<p><b>Exercise 7.5.</b> <span class="small">(The bakery: \(R = \begin{pmatrix} 0.5 & 0.3 \\ 0 & 4 \end{pmatrix}\) turns (loaves, cakes) into (kg of flour, eggs), and \(R^{-1} = \begin{pmatrix} 2 & -0.15 \\ 0 & 0.25 \end{pmatrix}\).)</span> Using the bakery matrix \(R\) and its inverse from 7.8, the bakery used 4.6 kg of flour and 16 eggs. How many cakes did it bake? Then find the number of loaves, and check by multiplying back.</p>
+<details><summary>Show answer</summary>
+<p>\(R^{-1}(4.6, 16) = (2\times4.6 - 0.15\times16,\ 0\times4.6 + 0.25\times16) = (9.2 - 2.4,\ 4) = (6.8, 4)\). So 4 cakes and 6.8 loaves. (A real bakery would not bake 0.8 of a loaf; the numbers are made up to be clean.) Check: \(R(6.8, 4) = (0.5\times6.8 + 0.3\times4,\ 4\times4) = (3.4 + 1.2, 16) = (4.6, 16)\).</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 7.6.</b> Let \(Q\) be the quarter turn and \(D\) the horizontal stretch from 7.6. Compute both \(DQ\) and \(QD\) entry by entry. Apply each to \(\mathbf{e}_1\) and compare with the two results in the text. What are \(\det(DQ)\) and \(\det(QD)\), and why must they be equal?</p>
+<details><summary>Show answer</summary>
+<p>\(DQ = \begin{pmatrix} 2\cdot0 + 0\cdot1 & 2\cdot(-1) + 0\cdot0 \\ 0\cdot0 + 1\cdot1 & 0\cdot(-1) + 1\cdot0 \end{pmatrix} = \begin{pmatrix} 0 & -2 \\ 1 & 0 \end{pmatrix}\); first column \((0, 1)\), matching “\(Q\) then \(D\)”. \(QD = \begin{pmatrix} 0\cdot2 + (-1)\cdot0 & 0\cdot0 + (-1)\cdot1 \\ 1\cdot2 + 0\cdot0 & 1\cdot0 + 0\cdot1 \end{pmatrix} = \begin{pmatrix} 0 & -1 \\ 2 & 0 \end{pmatrix}\); first column \((0, 2)\), matching “\(D\) then \(Q\)”. Both determinants are \(0\cdot0 - (-2)\cdot1 = 2\) and \(0\cdot0 - (-1)\cdot2 = 2\). They must agree because \(\det(DQ) = \det D\det Q = 2\times1\) in either order: area scaling factors are plain numbers and commute, even though the maps do not.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="3.2" data-tol="0.001" data-unit="(first component)">
+<p><b>Exercise 7.7.</b> First project \(\mathbf{v} = (4, 2)\) onto the line through \(\mathbf{u} = (2, 1)\). What is special about the answer? Then project \(\mathbf{v} = (4, 0)\) onto the same line. Give the first component of the second projection.</p>
+<details><summary>Show answer</summary>
+<p>First: \((4, 2) = 2(2, 1)\) is already on the line, so the projection is \((4, 2)\) itself and the residual is \(\mathbf{0}\). Second, step by step. <b>Step 1:</b> \(\lVert\mathbf{u}\rVert = \sqrt{2^2 + 1^2} = \sqrt5\), so \(\hat{\mathbf{u}} = (2, 1)/\sqrt5\). <b>Step 2:</b> \(\mathbf{v}\cdot\hat{\mathbf{u}} = (4\times2 + 0\times1)/\sqrt5 = 8/\sqrt5\). <b>Step 3:</b> projection \(= (8/\sqrt5)\times(2,1)/\sqrt5\). The two \(\sqrt5\) multiply to \(\sqrt5\times\sqrt5 = 5\), so this is \((8/5)(2, 1) = 1.6\times(2, 1) = (3.2, 1.6)\). Residual \((0.8, -1.6)\); check \((0.8, -1.6)\cdot(2,1) = 1.6 - 1.6 = 0\).</p>
+</details>
+</div>
+
+<div class="ex">
+<p><b>Exercise 7.8.</b> Let \(\mathbf{a} = (1, -1)\) and \(\mathbf{b} = (2, 1)\). Write out \(\mathbf{a}\mathbf{b}^\top\). Find a nonzero input it sends to \(\mathbf{0}\), and the output for \(\mathbf{v} = (1, 1)\). What is its rank, and why can no choice of \(\mathbf{v}\) produce the output \((1, 1)\)?</p>
+<details><summary>Show answer</summary>
+<p>\(\mathbf{a}\mathbf{b}^\top = \begin{pmatrix} 2 & 1 \\ -2 & -1 \end{pmatrix}\). Any \(\mathbf{v}\) perpendicular to \(\mathbf{b}\) is sent to zero, for example \((1, -2)\): \(2 - 2 = 0\) and \(-2 + 2 = 0\). For \(\mathbf{v} = (1,1)\): \(s = 2 + 1 = 3\), output \(3(1, -1) = (3, -3)\). Rank 1: every output is a multiple of \(\mathbf{a} = (1, -1)\). The vector \((1, 1)\) is not a multiple of \((1, -1)\), so it is never written.</p>
+</details>
+</div>
+
+<div class="ex" data-answer="13109760" data-tol="0.0001" data-unit="numbers">
+<p><b>Exercise 7.9.</b> A symmetric \(d \times d\) matrix is fixed by its diagonal and the entries above it. How many numbers is that for \(d = 5{,}120\)? (This counts the independent entries of one Hessian block at Level 15.)</p>
+<details><summary>Show answer</summary>
+<p>Diagonal: \(d\) entries. Above the diagonal: \(d(d - 1)/2\). Total \(d + d(d-1)/2 = d(d+1)/2 = 5{,}120 \times 5{,}121 / 2 = 26{,}219{,}520 / 2 = 13{,}109{,}760\).</p>
+</details>
+</div>
+
+</div>
+
+<script src="assets/katex/katex.min.js"></script>
+<script src="assets/katex/auto-render.min.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/sim.js"></script>
+<script src="assets/site.js"></script>
+<script>
+S.ready(function () {
+  var F = S.fmt;
+  /* shared helpers for this page */
+  function mount(host, aspect) {
+    var cap = host.querySelector("figcaption");
+    var wrap = document.createElement("div"); host.insertBefore(wrap, cap);
+    var c = S.canvas(wrap, { aspect: aspect || 0.7, maxH: 460 });
+    return { wrap: wrap, c: c };
+  }
+  /* equal scale on both axes, centred on (cx, cy), at least +-half in the shorter direction */
+  function fitEqual(v, cx, cy, half) {
+    var b = v.box(), w = b.r - b.l, h = b.b - b.t, s = Math.min(w, h) / (2 * half);
+    v.set({ xmin: cx - w / (2 * s), xmax: cx + w / (2 * s), ymin: cy - h / (2 * s), ymax: cy + h / (2 * s) });
+  }
+  function clip(v) { var b = v.box(), x = v.ctx; x.save(); x.beginPath(); x.rect(b.l, b.t, b.r - b.l, b.b - b.t); x.clip(); }
+  function unclip(v) { v.ctx.restore(); }
+  function snap(p, st) { p.x = Math.round(p.x / st) * st; p.y = Math.round(p.y / st) * st; }
+  function vec(a) { return "(" + F(a[0], 2) + ", " + F(a[1], 2) + ")"; }
+
+  /* Figure 7.1: sum, dot product, angle */
+  (function () {
+    var m = mount(document.getElementById("sim-dot"), 0.7), c = m.c;
+    var v = S.view(c, { xmin: -5, xmax: 5, ymin: -5, ymax: 5, pad: 24 });
+    var A = { x: 3, y: 1 }, B = { x: 1, y: 2 };
+    var out = S.readout(m.wrap);
+    S.drag(c, v, [A, B], function (p) { snap(p, 0.5); c.redraw(); });
+    c.draw = function () {
+      fitEqual(v, 0, 0, 4.6);
+      v.axes({ xlabel: "x", ylabel: "y", xticks: 1, yticks: 1 });
+      var s = [A.x + B.x, A.y + B.y];
+      v.line(A.x, A.y, s[0], s[1], { color: S.col.gray, dash: [5, 4], width: 1 });
+      v.line(B.x, B.y, s[0], s[1], { color: S.col.gray, dash: [5, 4], width: 1 });
+      v.arrow(0, 0, s[0], s[1], { color: S.col.ink, width: 1.5 });
+      v.text("a + b", s[0], s[1], { dx: 6, dy: -4 });
+      var la = Math.hypot(A.x, A.y), lb = Math.hypot(B.x, B.y);
+      if (la > 0 && lb > 0) {
+        var t1 = Math.atan2(A.y, A.x), t2 = Math.atan2(B.y, B.x), d = t2 - t1;
+        while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+        var ctx = c.ctx, R = 26; ctx.strokeStyle = S.col.green; ctx.lineWidth = 1.5; ctx.beginPath();
+        ctx.arc(v.X(0), v.Y(0), R, -t1, -(t1 + d), d > 0); ctx.stroke();
+      }
+      v.arrow(0, 0, A.x, A.y, { color: S.col.blue, width: 2.5 });
+      v.arrow(0, 0, B.x, B.y, { color: S.col.red, width: 2.5 });
+      v.text("a", A.x, A.y, { dx: 8, dy: 4, color: S.col.blue });
+      v.text("b", B.x, B.y, { dx: 8, dy: 4, color: S.col.red });
+      v.dot(A.x, A.y, { color: S.col.blue, r: 6 }); v.dot(B.x, B.y, { color: S.col.red, r: 6 });
+      var dot = A.x * B.x + A.y * B.y, txt;
+      txt = "a = " + vec([A.x, A.y]) + "   b = " + vec([B.x, B.y]) + "   a + b = " + vec(s) + "\n" +
+        "‖a‖ = √(" + F(A.x, 1) + "² + " + F(A.y, 1) + "²) = " + F(la, 4) + "   ‖b‖ = " + F(lb, 4) + "\n" +
+        "a·b = " + F(A.x, 1) + "×" + F(B.x, 1) + " + " + F(A.y, 1) + "×" + F(B.y, 1) + " = " + F(dot, 2) + "\n";
+      if (la > 0 && lb > 0) {
+        var cs = Math.max(-1, Math.min(1, dot / (la * lb)));
+        txt += "cos θ = a·b / (‖a‖‖b‖) = " + F(dot, 2) + " / " + F(la * lb, 4) + " = " + F(cs, 4) + "   so θ = " + F(Math.acos(cs) * 180 / Math.PI, 1) + "°" +
+          (Math.abs(dot) < 1e-9 ? "   (orthogonal)" : dot < 0 ? "   (more than 90°: negative)" : "");
+      } else txt += "one arrow has zero length: no angle";
+      out.textContent = txt;
+    };
+    c.redraw();
+  })();
+
+  /* Figure 7.2: matrix editor and determinant */
+  (function () {
+    var m = mount(document.getElementById("sim-det"), 0.7), c = m.c;
+    var v = S.view(c, { xmin: -4, xmax: 4, ymin: -4, ymax: 4, pad: 24 });
+    function rd() { c.redraw(); }
+    var sa = S.slider(m.wrap, { label: "a", min: -2, max: 2, step: 0.1, value: 1.5, digits: 1, oninput: rd });
+    var sb = S.slider(m.wrap, { label: "b", min: -2, max: 2, step: 0.1, value: 0.5, digits: 1, oninput: rd });
+    var sc = S.slider(m.wrap, { label: "c", min: -2, max: 2, step: 0.1, value: 0.2, digits: 1, oninput: rd });
+    var sd = S.slider(m.wrap, { label: "d", min: -2, max: 2, step: 0.1, value: 1, digits: 1, oninput: rd });
+    function preset(a, b, cc, d) { sa.set(a); sb.set(b); sc.set(cc); sd.set(d); rd(); }
+    S.button(m.wrap, "identity", function () { preset(1, 0, 0, 1); });
+    S.button(m.wrap, "stretch", function () { preset(2, 0, 0, 1); });
+    S.button(m.wrap, "shear", function () { preset(1, 1, 0, 1); });
+    S.button(m.wrap, "rotate 90°", function () { preset(0, -1, 1, 0); });
+    S.button(m.wrap, "mirror", function () { preset(-1, 0, 0, 1); });
+    S.button(m.wrap, "squash", function () { preset(1, 2, 0.5, 1); });
+    var out = S.readout(m.wrap);
+    c.draw = function () {
+      fitEqual(v, 0, 0, 3.6);
+      var a = sa.get(), b = sb.get(), cc = sc.get(), d = sd.get();
+      function T(x, y) { return [a * x + b * y, cc * x + d * y]; }
+      v.axes({ xlabel: "x", ylabel: "y", xticks: 1, yticks: 1 });
+      clip(v);
+      for (var g = -8; g <= 8; g++) {
+        v.line(g, -8, g, 8, { color: "#c8c8c8", width: 0.8 }); v.line(-8, g, 8, g, { color: "#c8c8c8", width: 0.8 });
+      }
+      for (var k = -8; k <= 8; k++) {
+        var p = T(k, -8), q = T(k, 8); v.line(p[0], p[1], q[0], q[1], { color: S.col.ink, width: k === 0 ? 1.4 : 0.6 });
+        p = T(-8, k); q = T(8, k); v.line(p[0], p[1], q[0], q[1], { color: S.col.ink, width: k === 0 ? 1.4 : 0.6 });
+      }
+      var det = a * d - b * cc, sq = [T(0, 0), T(1, 0), T(1, 1), T(0, 1)];
+      var col = Math.abs(det) < 1e-9 ? S.col.gray : det > 0 ? S.col.blue : S.col.red;
+      v.poly(sq, { color: col, fill: col, fillAlpha: 0.25, width: 2 });
+      unclip(v);
+      v.arrow(0, 0, a, cc, { color: S.col.blue, width: 2.5 }); v.text("Ae₁", a, cc, { dx: 8, dy: 16, color: S.col.blue, font: S.fontSmall });
+      v.arrow(0, 0, b, d, { color: S.col.red, width: 2.5 }); v.text("Ae₂", b, d, { dx: 8, dy: -8, color: S.col.red, font: S.fontSmall });
+      var cx = (sq[0][0] + sq[2][0]) / 2, cy = (sq[0][1] + sq[2][1]) / 2;
+      sq.forEach(function (p, i) {
+        var dx = v.X(p[0]) - v.X(cx), dy = v.Y(p[1]) - v.Y(cy), L = Math.hypot(dx, dy) || 1;
+        v.dot(p[0], p[1], { color: S.col.ink, r: 3 });
+        v.text(String(i + 1), p[0], p[1], { dx: 13 * dx / L - 4, dy: 13 * dy / L + 5, font: "bold 14px Times New Roman", color: S.col.green });
+      });
+      var orient = Math.abs(det) < 1e-9 ? "squashed flat (det = 0): no area, no inverse" : det > 0 ? "kept (corners 1→2→3→4 still anticlockwise)" : "flipped (corners 1→2→3→4 now clockwise)";
+      out.textContent = "A = [[" + F(a, 1) + ", " + F(b, 1) + "], [" + F(cc, 1) + ", " + F(d, 1) + "]]   Ae₁ = (" + F(a, 1) + ", " + F(cc, 1) + ")   Ae₂ = (" + F(b, 1) + ", " + F(d, 1) + ")\n" +
+        "det A = ad − bc = " + F(a, 1) + "×" + F(d, 1) + " − " + F(b, 1) + "×" + F(cc, 1) + " = " + F(det, 2) + "\n" +
+        "area of unit square's image = |det A| = " + F(Math.abs(det), 2) + "   orientation: " + orient;
+    };
+    c.redraw();
+  })();
+
+  /* Figure 7.3: projection onto a line */
+  (function () {
+    var m = mount(document.getElementById("sim-proj"), 0.7), c = m.c;
+    var v = S.view(c, { xmin: -5, xmax: 5, ymin: -5, ymax: 5, pad: 24 });
+    var V = { x: 3, y: 1 }, U = { x: 2, y: 2 };
+    var out = S.readout(m.wrap);
+    S.drag(c, v, [V, U], function (p) { snap(p, 0.25); c.redraw(); });
+    c.draw = function () {
+      fitEqual(v, 0, 0, 4.6);
+      v.axes({ xlabel: "x", ylabel: "y", xticks: 1, yticks: 1 });
+      var L = Math.hypot(U.x, U.y);
+      if (L < 1e-9) { out.textContent = "u has zero length: pick a direction"; return; }
+      var uh = [U.x / L, U.y / L], s = V.x * uh[0] + V.y * uh[1], P = [s * uh[0], s * uh[1]], r = [V.x - P[0], V.y - P[1]];
+      clip(v); v.line(-20 * uh[0], -20 * uh[1], 20 * uh[0], 20 * uh[1], { color: S.col.gray, width: 1.2 }); unclip(v);
+      v.line(P[0], P[1], V.x, V.y, { color: S.col.ink, dash: [5, 4], width: 1.2 });
+      var rl = Math.hypot(r[0], r[1]);
+      if (rl > 0.2 && Math.abs(s) > 0.2) {
+        var k = 0.25, rh = [r[0] / rl, r[1] / rl], sg = s > 0 ? -1 : 1;
+        var p1 = [P[0] + sg * k * uh[0], P[1] + sg * k * uh[1]], p2 = [p1[0] + k * rh[0], p1[1] + k * rh[1]], p3 = [P[0] + k * rh[0], P[1] + k * rh[1]];
+        v.poly([p1, p2, p3], { close: false, color: S.col.ink, width: 1 });
+      }
+      v.arrow(0, 0, U.x, U.y, { color: S.col.gray, width: 2 }); v.text("u", U.x, U.y, { dx: 8, dy: 12, color: S.col.gray });
+      v.arrow(0, 0, P[0], P[1], { color: S.col.red, width: 3 }); v.text("proj", P[0], P[1], { dx: 6, dy: 16, color: S.col.red });
+      v.arrow(0, 0, V.x, V.y, { color: S.col.blue, width: 2.2 }); v.text("v", V.x, V.y, { dx: 8, dy: -4, color: S.col.blue });
+      v.dot(V.x, V.y, { color: S.col.blue, r: 6 }); v.dot(U.x, U.y, { color: S.col.gray, r: 6 });
+      out.textContent = "û = u/‖u‖ = " + vec([U.x, U.y]) + " / " + F(L, 4) + " = (" + F(uh[0], 4) + ", " + F(uh[1], 4) + ")\n" +
+        "v·û = " + F(V.x, 2) + "×" + F(uh[0], 4) + " + " + F(V.y, 2) + "×" + F(uh[1], 4) + " = " + F(s, 4) + "\n" +
+        "proj = (v·û) û = (" + F(P[0], 3) + ", " + F(P[1], 3) + ")    r = v − proj = (" + F(r[0], 3) + ", " + F(r[1], 3) + ")\n" +
+        "r·û = " + F(r[0] * uh[0] + r[1] * uh[1], 6) + "   (always 0: the residual is perpendicular to the line)";
+    };
+    c.redraw();
+  })();
+
+  /* Figure 7.4: outer product */
+  (function () {
+    var m = mount(document.getElementById("sim-outer"), 0.7), c = m.c;
+    var v = S.view(c, { xmin: -5, xmax: 5, ymin: -5, ymax: 5, pad: 24 });
+    var A = { x: 1, y: 0.5 }, B = { x: 0.5, y: 1 }, V = { x: 1.5, y: 1 };
+    var out = S.readout(m.wrap);
+    S.drag(c, v, [A, B, V], function (p) { snap(p, 0.25); c.redraw(); });
+    c.draw = function () {
+      fitEqual(v, 0, 0, 4.6);
+      v.axes({ xlabel: "x", ylabel: "y", xticks: 1, yticks: 1 });
+      var lb = Math.hypot(B.x, B.y), la = Math.hypot(A.x, A.y);
+      clip(v);
+      if (lb > 1e-9) v.line(-20 * B.y / lb, 20 * B.x / lb, 20 * B.y / lb, -20 * B.x / lb, { color: S.col.gray, dash: [6, 5], width: 1 });
+      if (la > 1e-9) v.line(-20 * A.x / la, -20 * A.y / la, 20 * A.x / la, 20 * A.y / la, { color: "#b8b8e8", width: 1 });
+      unclip(v);
+      var s = B.x * V.x + B.y * V.y, O = [s * A.x, s * A.y];
+      v.arrow(0, 0, B.x, B.y, { color: S.col.red, width: 2.5 }); v.text("b (read)", B.x, B.y, { dx: 8, dy: -4, color: S.col.red });
+      v.arrow(0, 0, A.x, A.y, { color: S.col.blue, width: 2.5 }); v.text("a (write)", A.x, A.y, { dx: 8, dy: 14, color: S.col.blue });
+      v.arrow(0, 0, V.x, V.y, { color: S.col.ink, width: 2 }); v.text("v", V.x, V.y, { dx: 8, dy: -4 });
+      v.arrow(0, 0, O[0], O[1], { color: S.col.purple, width: 3.5 }); v.text("(abᵀ)v = s a", O[0], O[1], { dx: 6, dy: 16, color: S.col.purple });
+      v.dot(A.x, A.y, { color: S.col.blue, r: 6 }); v.dot(B.x, B.y, { color: S.col.red, r: 6 }); v.dot(V.x, V.y, { color: S.col.ink, r: 6 });
+      var M = [[A.x * B.x, A.x * B.y], [A.y * B.x, A.y * B.y]];
+      out.textContent = "abᵀ = [[" + F(M[0][0], 3) + ", " + F(M[0][1], 3) + "], [" + F(M[1][0], 3) + ", " + F(M[1][1], 3) + "]]   det = " + F(M[0][0] * M[1][1] - M[0][1] * M[1][0], 3) + "\n" +
+        "read:  s = bᵀv = " + F(B.x, 2) + "×" + F(V.x, 2) + " + " + F(B.y, 2) + "×" + F(V.y, 2) + " = " + F(s, 4) + "\n" +
+        "write: s a = " + F(s, 4) + " × " + vec([A.x, A.y]) + " = (" + F(O[0], 4) + ", " + F(O[1], 4) + ")\n" +
+        "check by rows: (" + F(M[0][0] * V.x + M[0][1] * V.y, 4) + ", " + F(M[1][0] * V.x + M[1][1] * V.y, 4) + ")";
+    };
+    c.redraw();
+  })();
+});
+</script>
+</body>
+</html>
