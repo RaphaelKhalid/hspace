@@ -1,0 +1,1066 @@
+{
+ "layer": 18,
+ "probes": 256,
+ "windows": 4,
+ "T": 64,
+ "phi": 0.11102833518446989,
+ "eig_top10": [
+  0.009469715864087843,
+  0.007828388926891559,
+  0.0053581327171915985,
+  0.005134164446347926,
+  0.003650269520666572,
+  0.003168293329648246,
+  0.0028231085576479404,
+  0.002401916203506325,
+  0.002211674619379512,
+  0.0019435445269851265
+ ],
+ "eig_bottom3": [
+  -5.255623251465031e-05,
+  -6.905288151506566e-05,
+  -7.085499258562006e-05
+ ],
+ "split": {
+  "1": 1.8767073080740493e-05,
+  "3": 0.5207218677541637,
+  "5": 0.6198883802821284
+ },
+ "split_null_max": {
+  "1": 0.7308042988461526,
+  "3": 0.5477131215139092,
+  "5": 0.5888836276013381
+ },
+ "split_p": {
+  "1": 1.0,
+  "3": 0.014925373134328358,
+  "5": 0.004975124378109453
+ },
+ "overlap_pca5": 0.5623821737049086,
+ "overlap_pca25": 0.8340358133748215,
+ "decode": {
+  "Hmean": {
+   "F_pairs": [
+    0.08263192063059274,
+    0.126149544425367,
+    0.05452787591322433,
+    0.11902448263518041,
+    0.14351541412039528,
+    0.05436241347601479,
+    0.11829158555242103,
+    0.09080108664704788,
+    0.20889766308002283,
+    0.09628417803436914
+   ],
+   "F_singles": [
+    0.4022049751461497,
+    0.5302779477054839,
+    0.5040917348089624,
+    0.402033381305472,
+    0.5075632738527752
+   ],
+   "F_pairs_mean": 0.10944861645146353,
+   "F_singles_mean": 0.46923426256376866,
+   "decode_pairs": {
+    "01": {
+     "top": [
+      " Judith",
+      " the",
+      " Aaron",
+      " Andrew",
+      " Derrick",
+      " Andrea",
+      " Anne",
+      " Lauren",
+      " Woody",
+      " Harold",
+      " Edmund",
+      " William"
+     ],
+     "bottom": [
+      "6",
+      "5",
+      "7",
+      "8",
+      " molecule",
+      " reuse",
+      "1",
+      "9",
+      "\u2019es",
+      " infusion",
+      "MS",
+      "-ms"
+     ]
+    },
+    "02": {
+     "top": [
+      " touched",
+      " feas",
+      "\u8877\u5fc3",
+      " advised",
+      " afforded",
+      " floated",
+      " served",
+      " embl",
+      " stemmed",
+      " influenced",
+      " voted",
+      " traced"
+     ],
+     "bottom": [
+      "formatter",
+      "icates",
+      "association",
+      "formation",
+      "member",
+      "tracts",
+      "figures",
+      "phrase",
+      "andez",
+      "iotics",
+      " creation",
+      "elize"
+     ]
+    },
+    "03": {
+     "top": [
+      "\u201cThat",
+      "\u957f\u671f\u575a\u6301",
+      "\u60a8\u7684\u4f4d\u7f6e",
+      "\"That",
+      " suivants",
+      "\u4e2d\u957f\u671f",
+      " Belmont",
+      "\u6b63\u5f0f\u4e0a\u5e02",
+      " \ub54c\ubb38\uc774\ub2e4",
+      " Rory",
+      "ARNING",
+      " Desmond"
+     ],
+     "bottom": [
+      "ude",
+      "ade",
+      "ica",
+      "upe",
+      "ube",
+      "ipa",
+      "ega",
+      "iga",
+      "ode",
+      "ucc",
+      "ane",
+      "an"
+     ]
+    },
+    "04": {
+     "top": [
+      "\u8bbe\u8ba1\u53ca",
+      "urilor",
+      "a\u00e7",
+      "ured",
+      "_shape",
+      "n\u00fd",
+      "ebr",
+      "urio",
+      "r\u00f3",
+      "\u00e9v",
+      "vus",
+      "chers"
+     ],
+     "bottom": [
+      " startup",
+      " seams",
+      " testimonials",
+      " differential",
+      " explanations",
+      " announcements",
+      " establishment",
+      " subsidiary",
+      " leaderboard",
+      " announcement",
+      " subsidiaries",
+      " commercials"
+     ]
+    },
+    "12": {
+     "top": [
+      " was",
+      " represents",
+      " dominates",
+      " grew",
+      " retains",
+      " tells",
+      " constitutes",
+      " has",
+      " considers",
+      " specializes",
+      " resembles",
+      " realizes"
+     ],
+     "bottom": [
+      "\u526f\u7ec4\u957f",
+      "gerecht",
+      "umbres",
+      "agin",
+      "\u63a5\u73ed\u4eba",
+      "ergebnisse",
+      "aben",
+      "\u5148\u8fdb\u4e8b\u8ff9",
+      "agina",
+      "\u0441\u0430\u0434\u043a\u0438",
+      "acro",
+      "\u5409\u7965\u5982\u610f"
+     ]
+    },
+    "13": {
+     "top": [
+      " Raph",
+      " Morrison",
+      " Mika",
+      " Neal",
+      " Rojas",
+      " Raff",
+      " Shelby",
+      " Niel",
+      " Alf",
+      " Nelson",
+      " Natalia",
+      " Riccardo"
+     ],
+     "bottom": [
+      " scratched",
+      "obar",
+      "YZ",
+      " setters",
+      " seemed",
+      " vests",
+      " pays",
+      " oriented",
+      " depended",
+      " tended",
+      "iders",
+      " bears"
+     ]
+    },
+    "14": {
+     "top": [
+      " withdrew",
+      " went",
+      " began",
+      " participated",
+      "\u53bb\u4e86",
+      "\u51fa\u4e86",
+      " clashed",
+      " acted",
+      " broke",
+      " turned",
+      " moved",
+      " threw"
+     ],
+     "bottom": [
+      " There",
+      " Recent",
+      " Each",
+      " null",
+      " Definitely",
+      " You",
+      " Plants",
+      " Same",
+      " This",
+      " Adults",
+      " Very",
+      " Either"
+     ]
+    },
+    "23": {
+     "top": [
+      "\u8c13",
+      "\u94ff",
+      " vario",
+      "imes",
+      "\u5e0c\u671b\u5bf9",
+      "Likes",
+      "\u50cf\u6211",
+      "\u4ef7",
+      "instance",
+      "value",
+      "oso",
+      "anko"
+     ],
+     "bottom": [
+      "etermined",
+      "istributed",
+      " persists",
+      " could",
+      "rior",
+      " during",
+      "etwork",
+      " penetrated",
+      "\u043e\u0441\u0442\u0438",
+      "orable",
+      "igenous",
+      "ult"
+     ]
+    },
+    "24": {
+     "top": [
+      " by",
+      " after",
+      " to",
+      " preached",
+      " saved",
+      " drafted",
+      " signed",
+      " entered",
+      " completed",
+      " took",
+      " redeemed",
+      " ordered"
+     ],
+     "bottom": [
+      "Extra",
+      " Repeat",
+      "Uses",
+      " Removal",
+      " Depend",
+      " Basta",
+      " Expansion",
+      "URRE",
+      "Expansion",
+      "USE",
+      "Use",
+      "our"
+     ]
+    },
+    "34": {
+     "top": [
+      "\u5982\u56e0",
+      "ablement",
+      "\u0438\u043c\u0430",
+      "\u06cc\u0645\u06cc",
+      "\u0438\u0442\u0430\u0440",
+      " fortsatt",
+      "\u5982\u7ea6",
+      "\u4e0d\u4e86\u591a\u4e45",
+      " serialized",
+      "umpang",
+      "\u4e00\u89c9",
+      " inmiddels"
+     ],
+     "bottom": [
+      "Sample",
+      "was",
+      "V",
+      "rs",
+      "M",
+      "v",
+      "W",
+      "Matrix",
+      "kw",
+      "for",
+      "Row",
+      "User"
+     ]
+    }
+   },
+   "decode_singles": [
+    {
+     "top": [
+      "-like",
+      "-type",
+      "-Type",
+      "-Based",
+      "-x",
+      "-br",
+      "-z",
+      "-derived",
+      "iform",
+      "-X",
+      "-style",
+      "berries"
+     ],
+     "bottom": [
+      " the",
+      " his",
+      " August",
+      " John",
+      " another",
+      " January",
+      " Robert",
+      " several",
+      " notable",
+      " April",
+      " various",
+      " June"
+     ]
+    },
+    {
+     "top": [
+      "\u5341\u65e5\u5185",
+      "\u0e1b\u0e35\u0e01\u0e48\u0e2d\u0e19",
+      "\u5e74\u7684",
+      "\u5e74\u5934",
+      "\u4e09\u56db",
+      "\u5230",
+      "\u4e00\u5e74",
+      "\u6708\u7684",
+      "\u5e74\u5047",
+      "\u0b9f\u0bc1\u0ba4\u0bcd\u0ba4\u0bc1",
+      "-years",
+      "\u4e5d\u6708"
+     ],
+     "bottom": [
+      " who",
+      " David",
+      " The",
+      " Robert",
+      " Michael",
+      " also",
+      " Roger",
+      " Steve",
+      " the",
+      " John",
+      " Walter",
+      " Peter"
+     ]
+    },
+    {
+     "top": [
+      " orchestra",
+      " universe",
+      " city",
+      " army",
+      " academy",
+      " theater",
+      " community",
+      " country",
+      " theatre",
+      " courtroom",
+      " bookstore",
+      " homeland"
+     ],
+     "bottom": [
+      " although",
+      " however",
+      " whereas",
+      " therefore",
+      "although",
+      " with",
+      " because",
+      "was",
+      " instead",
+      "having",
+      " without",
+      "however"
+     ]
+    },
+    {
+     "top": [
+      " structures",
+      " areas",
+      " extensively",
+      " largely",
+      " structural",
+      " facilities",
+      " infrastructure",
+      " evidence",
+      " rapidly",
+      " habitats",
+      " occurring",
+      " larger"
+     ],
+     "bottom": [
+      "-K",
+      "-Y",
+      "-J",
+      "-Mar",
+      "-G",
+      "-H",
+      "-Z",
+      "-T",
+      "-B",
+      "-La",
+      "-Jul",
+      " Malone"
+     ]
+    },
+    {
+     "top": [
+      " pigment",
+      " wrinkles",
+      " subtle",
+      " texture",
+      " color",
+      "nature",
+      " odor",
+      "species",
+      " Typical",
+      " smell",
+      " Characters",
+      " morphology"
+     ],
+     "bottom": [
+      " stationed",
+      " during",
+      " aboard",
+      " thereafter",
+      " pursuant",
+      " shortly",
+      " tasked",
+      "\u5148\u540e",
+      "\u670d\u5f79",
+      " overseeing",
+      " inaugur",
+      " appointed"
+     ]
+    }
+   ]
+  },
+  "tw0": {
+   "F_pairs": [
+    0.08239133379585946,
+    0.10230702316213902,
+    0.16373253745934752,
+    0.1110049595692752,
+    0.07153340264576535,
+    0.1515903570612284,
+    0.0892414715076159,
+    0.17235357373429788,
+    0.08647338277179888,
+    0.14372829251121166
+   ],
+   "F_singles": [
+    0.4469922014466937,
+    0.5444535656710058,
+    0.40812233378632456,
+    0.4559093735037156,
+    0.5089151304435018
+   ],
+   "F_pairs_mean": 0.11743563342185395,
+   "F_singles_mean": 0.4728785209702483,
+   "decode_pairs": {
+    "01": {
+     "top": [
+      " each",
+      " Toro",
+      " this",
+      " Aaron",
+      " Lauren",
+      " Connor",
+      " Orr",
+      " Vox",
+      " Ted",
+      " Booth",
+      " Ellen",
+      " Rick"
+     ],
+     "bottom": [
+      " prefixed",
+      " filtering",
+      " isolate",
+      " flourish",
+      " fres",
+      "isel",
+      " tweaked",
+      "\u6ca1\u94b1",
+      "FREE",
+      "anged",
+      " prayed",
+      " isol"
+     ]
+    },
+    "02": {
+     "top": [
+      ".",
+      "there",
+      " there",
+      " after",
+      "${",
+      "$",
+      " in",
+      "_",
+      "2",
+      "P",
+      "|",
+      "["
+     ],
+     "bottom": [
+      "idth",
+      "quiring",
+      "culares",
+      "\u5982\u56e0",
+      "\u0627\u0646\u0648",
+      "ivec",
+      "igungen",
+      "venge",
+      "ducted",
+      "aper",
+      "\u064a\u062f\u0627\u062a",
+      "quired"
+     ]
+    },
+    "03": {
+     "top": [
+      "\u95ee\u9898\u4e86",
+      " \u0420\u043e\u0441\u0441",
+      " Kil",
+      " Sia",
+      "\u662f\u6709",
+      " Pia",
+      " Kai",
+      "\u5c55\u5f00\u4e86",
+      " Klaus",
+      " Szen",
+      "&#",
+      " Joanna"
+     ],
+     "bottom": [
+      " next",
+      " in",
+      " after",
+      " following",
+      " under",
+      " near",
+      " on",
+      " within",
+      " sooner",
+      " nearby",
+      " indoors",
+      " for"
+     ]
+    },
+    "04": {
+     "top": [
+      " Beyond",
+      "atically",
+      "\u548c\u6267\u884c",
+      "eyond",
+      "ologically",
+      "Beyond",
+      "Exactly",
+      " Starting",
+      "\u548c\u793e\u4f1a\u53d1\u5c55",
+      " Across",
+      " Exactly",
+      "\uff1a\u201c"
+     ],
+     "bottom": [
+      " seem",
+      " seemed",
+      "emper",
+      " seems",
+      "amento",
+      " wrote",
+      " came",
+      " went",
+      "hei",
+      " picked",
+      " vais",
+      " sank"
+     ]
+    },
+    "12": {
+     "top": [
+      "(s",
+      "M",
+      "There",
+      "(es",
+      "MS",
+      "PM",
+      "(m",
+      "`s",
+      "(t",
+      "(g",
+      "(",
+      "'l"
+     ],
+     "bottom": [
+      "\u0435\u0447",
+      "uct",
+      "iget",
+      "ouser",
+      "igned",
+      "accomp",
+      "\u6b21",
+      "\u51fa\u7684",
+      "acqu",
+      "apers",
+      "apped",
+      "oor"
+     ]
+    },
+    "13": {
+     "top": [
+      " Winston",
+      " Britt",
+      " Nigel",
+      " Marvin",
+      " Lionel",
+      " Ernst",
+      " Cecil",
+      " Billy",
+      " Carla",
+      " Nicholas",
+      " Brenda",
+      " Ida"
+     ],
+     "bottom": [
+      " month",
+      "FPS",
+      " pair",
+      "ADOS",
+      "Employ",
+      "\u4f1e",
+      " footwear",
+      "udara",
+      "ICS",
+      " pants",
+      " sast",
+      "\u6deb"
+     ]
+    },
+    "14": {
+     "top": [
+      " pr\u00e1ctica",
+      " primaria",
+      " secundaria",
+      "\u8611",
+      " maduras",
+      "skej",
+      " pr\u00e1tica",
+      " modi",
+      "\u5236\u54c1\u6709\u9650\u516c\u53f8",
+      " \u0622\u062e\u0631\u064a\u0646",
+      "\u591a\u8089",
+      " futuras"
+     ],
+     "bottom": [
+      " he",
+      "\u4ed6",
+      " the",
+      "he",
+      " she",
+      " his",
+      " they",
+      " He",
+      " Joined",
+      " Join",
+      " Quote",
+      "OUR"
+     ]
+    },
+    "23": {
+     "top": [
+      " discard",
+      " struggle",
+      " chunk",
+      "\u6211\u4eec\u5c31",
+      "\u91d1\u6865",
+      "\u5f9c\u5f89",
+      " tini",
+      " likes",
+      ")[:",
+      "\u8fbe\u62c9",
+      "\u042b",
+      " tilt"
+     ],
+     "bottom": [
+      " to",
+      " in",
+      " from",
+      " for",
+      "in",
+      " during",
+      "en",
+      " by",
+      "\u5728",
+      "a",
+      " with",
+      "The"
+     ]
+    },
+    "24": {
+     "top": [
+      "chers",
+      "ity",
+      " to",
+      "uria",
+      "age",
+      "abl",
+      "als",
+      "abra",
+      "wend",
+      "er",
+      "nel",
+      "\ud83d\ude00"
+     ],
+     "bottom": [
+      " Uses",
+      " Contains",
+      " Keeps",
+      " Shows",
+      "Shows",
+      " Further",
+      " Generates",
+      " Maintain",
+      " Iterate",
+      " Gets",
+      " Allows",
+      " Same"
+     ]
+    },
+    "34": {
+     "top": [
+      "gebn",
+      "Sessions",
+      "\u0647\u0627\u06cc\u06cc",
+      " \uc54a\uc73c",
+      "nek",
+      " \u0111\u00f3",
+      "\u0e02\u0e2d\u0e07\u0e01\u0e32\u0e23",
+      "views",
+      "\u3052\u308b",
+      "\u010denja",
+      "extensions",
+      "\u4e4b\u52bf"
+     ],
+     "bottom": [
+      " realized",
+      " ran",
+      " drove",
+      " was",
+      " grew",
+      " drafted",
+      " promised",
+      " can",
+      " wandered",
+      " computed",
+      " worked",
+      " took"
+     ]
+    }
+   },
+   "decode_singles": [
+    {
+     "top": [
+      ".",
+      " ,",
+      ",",
+      " .",
+      ".(",
+      ";",
+      " ;",
+      " (.",
+      " (>",
+      ".?",
+      " unless",
+      " for"
+     ],
+     "bottom": [
+      " remix",
+      " surreal",
+      " lyrics",
+      " catchy",
+      " fictional",
+      " newfound",
+      " mysterious",
+      " comedic",
+      " talented",
+      " legendary",
+      " upbeat",
+      " tragic"
+     ]
+    },
+    {
+     "top": [
+      "/sm",
+      "-abs",
+      "\u6ee1\u8eab",
+      "/per",
+      "-positive",
+      "/use",
+      "alts",
+      "/l",
+      "/storage",
+      "-specific",
+      "/background",
+      "/inc"
+     ],
+     "bottom": [
+      " The",
+      " William",
+      " John",
+      " New",
+      " King",
+      " George",
+      " James",
+      " Robert",
+      " Britann",
+      " Charles",
+      " Duke",
+      " Sir"
+     ]
+    },
+    {
+     "top": [
+      " leadership",
+      " duties",
+      " commander",
+      " military",
+      " campaign",
+      " allegiance",
+      " headquarters",
+      " role",
+      " battlefield",
+      " service",
+      " civilian",
+      " offices"
+     ],
+     "bottom": [
+      "0",
+      "8",
+      "9",
+      "5",
+      "2",
+      "4",
+      "7",
+      "6",
+      "\ufe0f",
+      "3",
+      "1",
+      "x"
+     ]
+    },
+    {
+     "top": [
+      " existence",
+      " genus",
+      " fortress",
+      " organism",
+      " site",
+      " extent",
+      " longitudinal",
+      " sites",
+      " mechanism",
+      " nucleus",
+      " vicinity",
+      " century"
+     ],
+     "bottom": [
+      " including",
+      " who",
+      " and",
+      " with",
+      " wrote",
+      " along",
+      " played",
+      " whose",
+      " which",
+      " alongside",
+      " featuring",
+      " helped"
+     ]
+    },
+    {
+     "top": [
+      " was",
+      " became",
+      " however",
+      " thereafter",
+      " therefore",
+      " although",
+      " subsequently",
+      " being",
+      " during",
+      " remained",
+      " becoming",
+      " until"
+     ],
+     "bottom": [
+      "\u6b4c\u624b",
+      " chante",
+      "\u5409\u4ed6",
+      "\u827a\u4eba",
+      "-rock",
+      "\u4f5c\u66f2\u5bb6",
+      " artista",
+      "\u94a2\u7434",
+      "-song",
+      " dancer",
+      "\u4f5c\u66f2",
+      " guitar"
+     ]
+    }
+   ]
+  },
+  "tw1": {
+   "F_pairs": [
+    0.10016269647047364,
+    0.15220642654480576,
+    0.11568181631478199,
+    0.15981849824803424,
+    0.07836491814706227,
+    0.06217381780280537,
+    0.08374650161913924,
+    0.09923438178099031,
+    0.18931561706922723,
+    0.11755159000375599
+   ],
+   "F_singles": [
+    0.5323717055333631,
+    0.4448323855896141,
+    0.4884595210893973,
+    0.44551193917223486,
+    0.5082524955837205
+   ],
+   "F_pairs_mean": 0.1158256264001076,
+   "F_singles_mean": 0.4838856093936659
+  },
+  "tw2": {
+   "F_pairs": [
+    0.05236445861117739,
+    0.054991984393488416,
+    0.1482123772695318,
+    0.07463379390808278,
+    0.042714327631061366,
+    0.13637240255495742,
+    0.08194335362374817,
+    0.12448936320046697,
+    0.09042243972709808,
+    0.16915838574593722
+   ],
+   "F_singles": [
+    0.537196160906803,
+    0.5247284099278677,
+    0.4228745334610091,
+    0.47395096019175376,
+    0.4475123903792339
+   ],
+   "F_pairs_mean": 0.09753028866655497,
+   "F_singles_mean": 0.48125249097333345
+  },
+  "tw3": {
+   "F_pairs": [
+    0.03221785405994843,
+    0.07320885769664309,
+    0.06860928825145796,
+    0.0558342197896387,
+    0.15275553033259068,
+    0.0941090731211929,
+    0.06647509073280673,
+    0.1581182164508325,
+    0.1077504756630656,
+    0.11429657838951279
+   ],
+   "F_singles": [
+    0.4252592689785017,
+    0.5450927775019722,
+    0.5010723546225323,
+    0.4147085270825449,
+    0.47313902477947806
+   ],
+   "F_pairs_mean": 0.09233751844876895,
+   "F_singles_mean": 0.4718543905930058
+  }
+ }
+}
