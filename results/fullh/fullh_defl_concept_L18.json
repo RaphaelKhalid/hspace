@@ -1,0 +1,1968 @@
+{
+ "layer": 18,
+ "n": 64,
+ "model": "Qwen/Qwen3.5-0.8B",
+ "post_hoc": true,
+ "tokens": {
+  " simulated": {
+   "own": {
+    "phi_H_perp": 0.10483735799789429,
+    "phi_H_full": 0.10230062901973724,
+    "mean_energy_kept": 0.8808867931365967,
+    "top_lambda": [
+     0.13335099816322327,
+     0.10687759518623352,
+     -0.07871246337890625,
+     0.0721655935049057,
+     -0.0616719126701355
+    ],
+    "split": {
+     "1": 0.4068664312362671,
+     "3": 0.6913655996322632,
+     "5": 0.8134600520133972
+    },
+    "lam1_null_q95": 0.06830736026167868,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5781762212514877,
+     "3": 0.43681297898292537,
+     "5": 0.45812938362359995
+    },
+    "split_p": {
+     "1": 0.23383084577114427,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.007909728214144707,
+    "cos_v_other_gbar_max": 0.4129634201526642,
+    "causal": {
+     "lambda_even": 0.13408417999744415,
+     "sign_agree_top": 0.96875,
+     "z_top_vs_rand": 9.271861181583992,
+     "rms_c2_top": 0.31833981618795665,
+     "rms_c2_rand": 0.06904527930890246
+    },
+    "decode_up": [
+     " extended",
+     " completed",
+     " estimated",
+     " modified",
+     " proposed",
+     " reduced",
+     " simplified",
+     " narrowed",
+     " declared",
+     " revised"
+    ],
+    "rank_of_t": 122,
+    "decode_first_order_up": [
+     " historical",
+     " geography",
+     " wildlife",
+     " seasonal",
+     " city",
+     " cities",
+     " movie",
+     " novel",
+     " world",
+     " country"
+    ],
+    "decode_first_order_down": [
+     " became",
+     " was",
+     " took",
+     " underwent",
+     " started",
+     " went",
+     " began",
+     " appeared",
+     " gave",
+     " brought"
+    ],
+    "first_order_on_t_rms": 0.21171111461673625,
+    "second_order_on_t_rms": 0.15916990809397832
+   },
+   "all8": {
+    "phi_H_perp": 0.11265933513641357,
+    "phi_H_full": 0.10230062901973724,
+    "mean_energy_kept": 0.6743292808532715,
+    "top_lambda": [
+     0.11954793334007263,
+     0.0926176980137825,
+     -0.07090498507022858,
+     -0.051992181688547134,
+     0.047718025743961334
+    ],
+    "split": {
+     "1": 0.6624540686607361,
+     "3": 0.886967122554779,
+     "5": 0.7425314784049988
+    },
+    "lam1_null_q95": 0.047038324922323224,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.4743319258093833,
+     "3": 0.45546389818191524,
+     "5": 0.4474592119455337
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.011426914483308792,
+    "cos_v_other_gbar_max": 0.015910238027572632,
+    "causal": {
+     "lambda_even": 0.10511457175016403,
+     "sign_agree_top": 0.9375,
+     "z_top_vs_rand": 25.94001795145073,
+     "rms_c2_top": 0.7073421729500783,
+     "rms_c2_rand": 0.062096748209553874
+    },
+    "decode_up": [
+     " made",
+     " pushed",
+     " formed",
+     " maintained",
+     " traced",
+     " moved",
+     " searched",
+     " explored",
+     " kept",
+     " played"
+    ],
+    "rank_of_t": 1197,
+    "decode_first_order_up": [
+     " was",
+     " became",
+     " began",
+     " were",
+     " had",
+     " went",
+     " took",
+     " came",
+     " underwent",
+     " knew"
+    ],
+    "decode_first_order_down": [
+     "\u7684\u5417",
+     "\u4e00\u6837\u7684",
+     "EqualTo",
+     "ailable",
+     "\u4e3a\u4e00\u4f53\u7684",
+     "\u8bf4\u4e00\u53e5",
+     "appable",
+     "ierbar",
+     " configurable",
+     "available"
+    ],
+    "first_order_on_t_rms": 0.22155451717463961,
+    "second_order_on_t_rms": 0.35367108647503914
+   },
+   "allvar": {
+    "phi_H_perp": 0.09959869831800461,
+    "phi_H_full": 0.10230062901973724,
+    "mean_energy_kept": 0.44748154282569885,
+    "top_lambda": [
+     0.0930192843079567,
+     -0.064289890229702,
+     -0.047968100756406784,
+     0.04377249628305435,
+     -0.03628804534673691
+    ],
+    "split": {
+     "1": 0.9509423971176147,
+     "3": 0.6151643991470337,
+     "5": 0.6518343091011047
+    },
+    "lam1_null_q95": 0.038139285333454606,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5051932752132413,
+     "3": 0.4202386602759359,
+     "5": 0.43248941749334324
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.011877571232616901,
+    "cos_v_other_gbar_max": 0.015958435833454132,
+    "causal": {
+     "lambda_even": 0.08435766398906708,
+     "sign_agree_top": 0.9375,
+     "z_top_vs_rand": 27.163253233208557,
+     "rms_c2_top": 0.677539537799384,
+     "rms_c2_rand": 0.05861652273438112
+    },
+    "decode_up": [
+     " made",
+     " maintained",
+     " pushed",
+     " traced",
+     " kept",
+     " played",
+     " searched",
+     " formed",
+     " moved",
+     " explored"
+    ],
+    "deflated_variants": [
+     " made",
+     " pushed",
+     " formed",
+     " maintained",
+     " traced",
+     " moved",
+     " searched",
+     " explored",
+     " kept",
+     " played"
+    ],
+    "rank_of_t": 1114,
+    "decode_first_order_up": [
+     " Available",
+     "ailable",
+     " configurable",
+     " AVAILABLE",
+     "Available",
+     "available",
+     " available",
+     "AVAILABLE",
+     " Runnable",
+     "EqualTo"
+    ],
+    "decode_first_order_down": [
+     " was",
+     " were",
+     " became",
+     " had",
+     " began",
+     " knew",
+     " gave",
+     " grew",
+     " seemed",
+     " would"
+    ],
+    "first_order_on_t_rms": 0.21853842729939243,
+    "second_order_on_t_rms": 0.338769768899692
+   }
+  },
+  " fake": {
+   "own": {
+    "phi_H_perp": 0.09133530408143997,
+    "phi_H_full": 0.08950594067573547,
+    "mean_energy_kept": 0.8377443552017212,
+    "top_lambda": [
+     0.09110747277736664,
+     -0.0683850347995758,
+     0.06208357587456703,
+     -0.05860971286892891,
+     0.05252024158835411
+    ],
+    "split": {
+     "1": 0.7677451968193054,
+     "3": 0.5185826420783997,
+     "5": 0.7853105664253235
+    },
+    "lam1_null_q95": 0.059507323987781996,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5764896094799041,
+     "3": 0.44349536895751945,
+     "5": 0.4297063112258911
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.014925373134328358,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.004126340616494417,
+    "cos_v_other_gbar_max": 0.45079681277275085,
+    "causal": {
+     "lambda_even": 0.08506559580564499,
+     "sign_agree_top": 0.8125,
+     "z_top_vs_rand": 15.256092400534671,
+     "rms_c2_top": 0.27373307357593696,
+     "rms_c2_rand": 0.054468055009568674
+    },
+    "decode_up": [
+     " those",
+     " a",
+     " series",
+     " face",
+     " papers",
+     " original",
+     " pure",
+     " raw",
+     " his",
+     " what"
+    ],
+    "rank_of_t": 54,
+    "decode_first_order_up": [
+     " large",
+     " historical",
+     " regional",
+     " architectural",
+     " significant",
+     " extensive",
+     " traditional",
+     " prominent",
+     " structural",
+     " northern"
+    ],
+    "decode_first_order_down": [
+     "know",
+     "anna",
+     "\u6b63\u5411",
+     "\u548c",
+     "xy",
+     "uth",
+     "\u4e8e",
+     "xx",
+     "got",
+     "ain"
+    ],
+    "first_order_on_t_rms": 0.15391197917060526,
+    "second_order_on_t_rms": 0.13686653678796848
+   },
+   "all8": {
+    "phi_H_perp": 0.09367139637470245,
+    "phi_H_full": 0.08950594067573547,
+    "mean_energy_kept": 0.6055173873901367,
+    "top_lambda": [
+     -0.06378281116485596,
+     0.052544619888067245,
+     0.04921095445752144,
+     -0.04837702587246895,
+     0.04557974636554718
+    ],
+    "split": {
+     "1": 0.5589438676834106,
+     "3": 0.47714847326278687,
+     "5": 0.7326279878616333
+    },
+    "lam1_null_q95": 0.03596465662121773,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.43253400027751915,
+     "3": 0.40187455862760546,
+     "5": 0.42490586191415786
+    },
+    "split_p": {
+     "1": 0.009950248756218905,
+     "3": 0.009950248756218905,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.010009749792516232,
+    "cos_v_other_gbar_max": 0.02214253693819046,
+    "causal": {
+     "lambda_even": -0.07772764563560486,
+     "sign_agree_top": 0.875,
+     "z_top_vs_rand": 6.86839274597993,
+     "rms_c2_top": 0.1640645677082728,
+     "rms_c2_rand": 0.04937467023702583
+    },
+    "decode_up": [
+     "/high",
+     "\u516c\u7528",
+     ".).",
+     ".*)",
+     "manship",
+     "\u8d43",
+     " paix\u00e3o",
+     "-transparent",
+     "agna",
+     "/public"
+    ],
+    "rank_of_t": 129,
+    "decode_first_order_up": [
+     " secrecy",
+     " stagnant",
+     " disastr",
+     " requis",
+     "-quarters",
+     " prosecution",
+     " sanction",
+     "-defense",
+     "-stock",
+     " disastrous"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " This",
+     " It",
+     " Also",
+     " They",
+     " There",
+     " Based",
+     " Between",
+     " Additionally",
+     " While"
+    ],
+    "first_order_on_t_rms": 0.12256962634722275,
+    "second_order_on_t_rms": 0.0820322838541364
+   },
+   "allvar": {
+    "phi_H_perp": 0.09406263381242752,
+    "phi_H_full": 0.08950594067573547,
+    "mean_energy_kept": 0.4571715295314789,
+    "top_lambda": [
+     -0.05197638273239136,
+     0.04602479934692383,
+     0.045614052563905716,
+     0.040511902421712875,
+     0.03800283372402191
+    ],
+    "split": {
+     "1": 0.006090163253247738,
+     "3": 0.6692416071891785,
+     "5": 0.8139209747314453
+    },
+    "lam1_null_q95": 0.030159842781722544,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.44004426747560493,
+     "3": 0.3773388549685478,
+     "5": 0.39934307783842077
+    },
+    "split_p": {
+     "1": 0.9900497512437811,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.00587548827752471,
+    "cos_v_other_gbar_max": 0.01976582780480385,
+    "causal": {
+     "lambda_even": -0.06250806152820587,
+     "sign_agree_top": 0.84375,
+     "z_top_vs_rand": 9.420541020575955,
+     "rms_c2_top": 0.1765753441040005,
+     "rms_c2_rand": 0.05113862420399855
+    },
+    "decode_up": [
+     ".).",
+     " moot",
+     "/control",
+     "/man",
+     " manip",
+     " spoiled",
+     "\u516c\u7528",
+     "\u52a9\u3051",
+     "/high",
+     "/public"
+    ],
+    "deflated_variants": [
+     "/high",
+     "\u516c\u7528",
+     ".).",
+     ".*)",
+     "manship",
+     "\u8d43",
+     " paix\u00e3o",
+     "-transparent",
+     "agna",
+     "/public"
+    ],
+    "rank_of_t": 67,
+    "decode_first_order_up": [
+     " disastr",
+     " disastrous",
+     " revolt",
+     " wartime",
+     " uphe",
+     " dwind",
+     " devastation",
+     " stagnant",
+     " secrecy",
+     " troubled"
+    ],
+    "decode_first_order_down": [
+     " Based",
+     " This",
+     " Between",
+     " Additionally",
+     " Also",
+     " There",
+     " Each",
+     " It",
+     " Regarding",
+     " They"
+    ],
+    "first_order_on_t_rms": 0.12513927888458237,
+    "second_order_on_t_rms": 0.08828767205200025
+   }
+  },
+  " virtual": {
+   "own": {
+    "phi_H_perp": 0.08799539506435394,
+    "phi_H_full": 0.08352074027061462,
+    "mean_energy_kept": 0.8324289917945862,
+    "top_lambda": [
+     0.09731759130954742,
+     0.07122272998094559,
+     0.06066202372312546,
+     -0.05749804899096489,
+     -0.05143725872039795
+    ],
+    "split": {
+     "1": 0.6540123820304871,
+     "3": 0.5248421430587769,
+     "5": 0.649405300617218
+    },
+    "lam1_null_q95": 0.060721805691719054,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5780069947242734,
+     "3": 0.4232095927000046,
+     "5": 0.422259820997715
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.016814853996038437,
+    "cos_v_other_gbar_max": 0.4479645788669586,
+    "causal": {
+     "lambda_even": 0.11335333436727524,
+     "sign_agree_top": 0.75,
+     "z_top_vs_rand": 9.526781201710593,
+     "rms_c2_top": 0.2435758957671667,
+     "rms_c2_rand": 0.06943841955760895
+    },
+    "decode_up": [
+     " style",
+     " view",
+     " second",
+     " what",
+     " direct",
+     " those",
+     " these",
+     " his",
+     " signature",
+     " primary"
+    ],
+    "rank_of_t": 519,
+    "decode_first_order_up": [
+     ".",
+     ".,",
+     "\u548c",
+     "(),",
+     " ,",
+     " (),",
+     "-Based",
+     "\u4e8e",
+     "+.",
+     "/."
+    ],
+    "decode_first_order_down": [
+     " significant",
+     " considerable",
+     " powerful",
+     " large",
+     " prominent",
+     " military",
+     " dramatic",
+     " wealthy",
+     " strong",
+     " notable"
+    ],
+    "first_order_on_t_rms": 0.14787933471061895,
+    "second_order_on_t_rms": 0.12178794788358335
+   },
+   "all8": {
+    "phi_H_perp": 0.08891884982585907,
+    "phi_H_full": 0.08352074027061462,
+    "mean_energy_kept": 0.602834939956665,
+    "top_lambda": [
+     0.06856527924537659,
+     0.05561558157205582,
+     -0.05183544009923935,
+     0.051301777362823486,
+     -0.04688113182783127
+    ],
+    "split": {
+     "1": 0.2985053062438965,
+     "3": 0.3531275689601898,
+     "5": 0.6746979355812073
+    },
+    "lam1_null_q95": 0.041592789255082606,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.4341277837753295,
+     "3": 0.404327470064163,
+     "5": 0.39781181067228316
+    },
+    "split_p": {
+     "1": 0.2537313432835821,
+     "3": 0.2736318407960199,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.0030377800576388836,
+    "cos_v_other_gbar_max": 0.033337462693452835,
+    "causal": {
+     "lambda_even": 0.07824467122554779,
+     "sign_agree_top": 0.90625,
+     "z_top_vs_rand": 17.551760479039203,
+     "rms_c2_top": 0.18443028018813265,
+     "rms_c2_rand": 0.06295052018553693
+    },
+    "decode_up": [
+     " the",
+     " his",
+     " these",
+     " what",
+     " their",
+     " those",
+     " this",
+     " a",
+     " its",
+     " like"
+    ],
+    "rank_of_t": 194,
+    "decode_first_order_up": [
+     ".",
+     ".,",
+     " ,",
+     " .",
+     "(),",
+     ",",
+     "\u00ae,",
+     "+,",
+     ".*,",
+     "+."
+    ],
+    "decode_first_order_down": [
+     " subsequent",
+     " wartime",
+     " military",
+     " battle",
+     " eventual",
+     " defence",
+     " army",
+     " victory",
+     " war",
+     " unsuccessful"
+    ],
+    "first_order_on_t_rms": 0.13769529512591325,
+    "second_order_on_t_rms": 0.09221514009406633
+   },
+   "allvar": {
+    "phi_H_perp": 0.09017014503479004,
+    "phi_H_full": 0.08352074027061462,
+    "mean_energy_kept": 0.45141148567199707,
+    "top_lambda": [
+     0.0531478151679039,
+     0.04961453750729561,
+     -0.04110381379723549,
+     0.035408344119787216,
+     0.034841056913137436
+    ],
+    "split": {
+     "1": 0.005306856241077185,
+     "3": 0.5896918177604675,
+     "5": 0.5551308989524841
+    },
+    "lam1_null_q95": 0.03105614474043249,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.4188060224056241,
+     "3": 0.35901467800140374,
+     "5": 0.35548397600650783
+    },
+    "split_p": {
+     "1": 0.9601990049751243,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.010642282664775848,
+    "cos_v_other_gbar_max": 0.02851521410048008,
+    "causal": {
+     "lambda_even": 0.06118188798427582,
+     "sign_agree_top": 0.9375,
+     "z_top_vs_rand": 8.07631574390033,
+     "rms_c2_top": 0.1841365329996811,
+     "rms_c2_rand": 0.06211067562440045
+    },
+    "decode_up": [
+     " style",
+     " second",
+     " like",
+     " description",
+     " signature",
+     " last",
+     " his",
+     " view",
+     " few",
+     " first"
+    ],
+    "deflated_variants": [
+     " the",
+     " his",
+     " these",
+     " what",
+     " their",
+     " those",
+     " this",
+     " a",
+     " its",
+     " like"
+    ],
+    "rank_of_t": 241,
+    "decode_first_order_up": [
+     "0",
+     " ,",
+     ".",
+     " .",
+     ".,",
+     "(.",
+     "9",
+     "8",
+     "2",
+     "3"
+    ],
+    "decode_first_order_down": [
+     " longest",
+     " notable",
+     " strongest",
+     " extensive",
+     " prominent",
+     " unusually",
+     " usual",
+     " eventual",
+     " considerable",
+     " lengthy"
+    ],
+    "first_order_on_t_rms": 0.13334774482673106,
+    "second_order_on_t_rms": 0.09206826649984055
+   }
+  },
+  " artificial": {
+   "own": {
+    "phi_H_perp": 0.08899658173322678,
+    "phi_H_full": 0.08580048382282257,
+    "mean_energy_kept": 0.8291824460029602,
+    "top_lambda": [
+     0.08126247674226761,
+     0.06814384460449219,
+     -0.06373459845781326,
+     0.05563639476895332,
+     -0.054352980107069016
+    ],
+    "split": {
+     "1": 0.008945695124566555,
+     "3": 0.48419246077537537,
+     "5": 0.5891380310058594
+    },
+    "lam1_null_q95": 0.05275858771055936,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5266255050897597,
+     "3": 0.4353465035557746,
+     "5": 0.4330830380320549
+    },
+    "split_p": {
+     "1": 0.9552238805970149,
+     "3": 0.014925373134328358,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.02916952408850193,
+    "cos_v_other_gbar_max": 0.1776074767112732,
+    "causal": {
+     "lambda_even": -0.08366815000772476,
+     "sign_agree_top": 0.8125,
+     "z_top_vs_rand": 4.009248250688823,
+     "rms_c2_top": 0.22476843014687245,
+     "rms_c2_rand": 0.06574060489114232
+    },
+    "decode_up": [
+     ".).",
+     "/high",
+     "/private",
+     "acific",
+     "-transparent",
+     "/A",
+     ",/",
+     " moot",
+     "manship",
+     "/public"
+    ],
+    "rank_of_t": 552,
+    "decode_first_order_up": [
+     " The",
+     " There",
+     " This",
+     " It",
+     " They",
+     " Between",
+     " When",
+     " After",
+     " While",
+     " Based"
+    ],
+    "decode_first_order_down": [
+     " imprescindible",
+     "-stock",
+     "\uaf64",
+     " clinic",
+     " prosecution",
+     " lifes",
+     "-record",
+     " taboo",
+     " presenci",
+     " devastation"
+    ],
+    "first_order_on_t_rms": 0.2130615982332282,
+    "second_order_on_t_rms": 0.11238421507343622
+   },
+   "all8": {
+    "phi_H_perp": 0.09086396545171738,
+    "phi_H_full": 0.08580048382282257,
+    "mean_energy_kept": 0.6394668817520142,
+    "top_lambda": [
+     0.06447356194257736,
+     0.05735332518815994,
+     -0.05633684992790222,
+     -0.04821839928627014,
+     0.043905798345804214
+    ],
+    "split": {
+     "1": 0.004963540472090244,
+     "3": 0.27333909273147583,
+     "5": 0.5631158351898193
+    },
+    "lam1_null_q95": 0.04229160342365503,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.45279472321271885,
+     "3": 0.40811339020729065,
+     "5": 0.4106995344161987
+    },
+    "split_p": {
+     "1": 0.945273631840796,
+     "3": 0.7313432835820896,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.0231623612344265,
+    "cos_v_other_gbar_max": 0.02599366195499897,
+    "causal": {
+     "lambda_even": -0.07577206939458847,
+     "sign_agree_top": 0.8125,
+     "z_top_vs_rand": 4.057845624370119,
+     "rms_c2_top": 0.2139215083844346,
+     "rms_c2_rand": 0.06806592531850372
+    },
+    "decode_up": [
+     "/high",
+     ".).",
+     " moot",
+     "/private",
+     "-transparent",
+     ".*)",
+     ";/",
+     "/public",
+     " (?,",
+     "acific"
+    ],
+    "rank_of_t": 603,
+    "decode_first_order_up": [
+     "-stock",
+     "\uaf64",
+     " ra\u010dun",
+     " sanction",
+     "Bereich",
+     "-defense",
+     " imprescindible",
+     " prosecution",
+     " taboo",
+     " stagnant"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " It",
+     " This",
+     " There",
+     " They",
+     " Between",
+     " After",
+     " When",
+     " Later",
+     " While"
+    ],
+    "first_order_on_t_rms": 0.2042940268672266,
+    "second_order_on_t_rms": 0.1069607541922173
+   },
+   "allvar": {
+    "phi_H_perp": 0.09502420574426651,
+    "phi_H_full": 0.08580048382282257,
+    "mean_energy_kept": 0.4603705406188965,
+    "top_lambda": [
+     0.05483235418796539,
+     0.04375619813799858,
+     -0.037677742540836334,
+     0.03668970987200737,
+     0.035164594650268555
+    ],
+    "split": {
+     "1": 0.777711033821106,
+     "3": 0.5341988801956177,
+     "5": 0.4855506122112274
+    },
+    "lam1_null_q95": 0.027046046406030644,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.42594916522502896,
+     "3": 0.3286695957183838,
+     "5": 0.3503666192293167
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.001596349524334073,
+    "cos_v_other_gbar_max": 0.012824791483581066,
+    "causal": {
+     "lambda_even": 0.05207899957895279,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 9.640241012304624,
+     "rms_c2_top": 0.28368165189581285,
+     "rms_c2_rand": 0.07036644597487753
+    },
+    "decode_up": [
+     " a",
+     " an",
+     " the",
+     " one",
+     " these",
+     " their",
+     " some",
+     " his",
+     " another",
+     " its"
+    ],
+    "deflated_variants": [
+     "/high",
+     ".).",
+     " moot",
+     "/private",
+     "-transparent",
+     ".*)",
+     ";/",
+     "/public",
+     " (?,",
+     "acific"
+    ],
+    "rank_of_t": 20,
+    "decode_first_order_up": [
+     " the",
+     " its",
+     " some",
+     " those",
+     " a",
+     " their",
+     " these",
+     " several",
+     " both",
+     " what"
+    ],
+    "decode_first_order_down": [
+     " universe",
+     " scenario",
+     "\u5bb6\u65cf",
+     " situation",
+     "\u4e16\u754c\u91cc",
+     " timeframe",
+     " era",
+     " timeline",
+     "-era",
+     " dynasty"
+    ],
+    "first_order_on_t_rms": 0.13606631940192576,
+    "second_order_on_t_rms": 0.14184082594790642
+   }
+  },
+  " real": {
+   "own": {
+    "phi_H_perp": 0.09969697147607803,
+    "phi_H_full": 0.09667616337537766,
+    "mean_energy_kept": 0.759624183177948,
+    "top_lambda": [
+     0.10885860025882721,
+     -0.08469457924365997,
+     0.08182242512702942,
+     0.06606241315603256,
+     0.06200670450925827
+    ],
+    "split": {
+     "1": 0.7935013771057129,
+     "3": 0.7899195551872253,
+     "5": 0.7853951454162598
+    },
+    "lam1_null_q95": 0.061276306398212896,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.48240275830030405,
+     "3": 0.43117413371801366,
+     "5": 0.4160331889986991
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.023364996537566185,
+    "cos_v_other_gbar_max": 0.35142970085144043,
+    "causal": {
+     "lambda_even": 0.12524157762527466,
+     "sign_agree_top": 0.90625,
+     "z_top_vs_rand": 9.284827921509349,
+     "rms_c2_top": 0.275516829832997,
+     "rms_c2_rand": 0.08997832214181617
+    },
+    "decode_up": [
+     " next",
+     " first",
+     " same",
+     " out",
+     " second",
+     " following",
+     " for",
+     " earlier",
+     " province",
+     " under"
+    ],
+    "rank_of_t": 14,
+    "decode_first_order_up": [
+     " large",
+     " regional",
+     " British",
+     " historical",
+     " largest",
+     " coastal",
+     " traditional",
+     " current",
+     " prestigious",
+     " national"
+    ],
+    "decode_first_order_down": [
+     ".",
+     ".,",
+     " ,",
+     ",",
+     ".?",
+     " and",
+     " with",
+     " (),",
+     ".\",",
+     " without"
+    ],
+    "first_order_on_t_rms": 0.18898603907470723,
+    "second_order_on_t_rms": 0.1377584149164985
+   },
+   "all8": {
+    "phi_H_perp": 0.09380953013896942,
+    "phi_H_full": 0.09667616337537766,
+    "mean_energy_kept": 0.5616863369941711,
+    "top_lambda": [
+     0.08278487622737885,
+     -0.07260861247777939,
+     0.06784514337778091,
+     0.054956480860710144,
+     0.05272345617413521
+    ],
+    "split": {
+     "1": 0.44088321924209595,
+     "3": 0.7572993040084839,
+     "5": 0.742855966091156
+    },
+    "lam1_null_q95": 0.050243712589144694,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.43526044487953175,
+     "3": 0.4178274095058441,
+     "5": 0.4011228695511817
+    },
+    "split_p": {
+     "1": 0.04975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.013899303041398525,
+    "cos_v_other_gbar_max": 0.044453516602516174,
+    "causal": {
+     "lambda_even": 0.10104484856128693,
+     "sign_agree_top": 0.90625,
+     "z_top_vs_rand": 8.995271431767431,
+     "rms_c2_top": 0.2185057180923397,
+     "rms_c2_rand": 0.08986320141069344
+    },
+    "decode_up": [
+     " the",
+     " these",
+     " this",
+     " his",
+     " for",
+     " in",
+     " what",
+     " their",
+     " a",
+     " those"
+    ],
+    "rank_of_t": 58,
+    "decode_first_order_up": [
+     " subsequent",
+     " unsuccessful",
+     " British",
+     " Yugosl",
+     " eventual",
+     " Battle",
+     " Navy",
+     " initial",
+     " military",
+     " strategic"
+    ],
+    "decode_first_order_down": [
+     ".",
+     ".,",
+     " ,",
+     ",",
+     ".?",
+     " .",
+     ".\",",
+     "(),",
+     " and",
+     ".("
+    ],
+    "first_order_on_t_rms": 0.16553289083885875,
+    "second_order_on_t_rms": 0.10925285904616985
+   },
+   "allvar": {
+    "phi_H_perp": 0.09617222845554352,
+    "phi_H_full": 0.09667616337537766,
+    "mean_energy_kept": 0.41704511642456055,
+    "top_lambda": [
+     0.06580419838428497,
+     -0.05894126370549202,
+     0.05726270377635956,
+     0.04653049260377884,
+     0.04177689179778099
+    ],
+    "split": {
+     "1": 0.47863540053367615,
+     "3": 0.7156993746757507,
+     "5": 0.7548480033874512
+    },
+    "lam1_null_q95": 0.03764416743069887,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.43236549496650656,
+     "3": 0.37060856968164446,
+     "5": 0.35486113280057907
+    },
+    "split_p": {
+     "1": 0.04975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.005724766291677952,
+    "cos_v_other_gbar_max": 0.03033466637134552,
+    "causal": {
+     "lambda_even": 0.07764413952827454,
+     "sign_agree_top": 0.90625,
+     "z_top_vs_rand": 9.121535195777508,
+     "rms_c2_top": 0.21664803876581346,
+     "rms_c2_rand": 0.09310365324534679
+    },
+    "decode_up": [
+     " style",
+     " series",
+     " addition",
+     " face",
+     " real",
+     " second",
+     "apse",
+     "us",
+     "cript",
+     "cher"
+    ],
+    "deflated_variants": [
+     " the",
+     " these",
+     " this",
+     " his",
+     " for",
+     " in",
+     " what",
+     " their",
+     " a",
+     " those"
+    ],
+    "rank_of_t": 4,
+    "decode_first_order_up": [
+     " redevelopment",
+     " subsequent",
+     " eventual",
+     " restructuring",
+     " redesign",
+     " replacement",
+     " subsequently",
+     " strategic",
+     " unsuccessful",
+     " relocation"
+    ],
+    "decode_first_order_down": [
+     "0",
+     "anna",
+     ".,",
+     "zi",
+     "\u6216\u8005",
+     "etic",
+     "know",
+     "\u6216",
+     "ta",
+     "\u2122"
+    ],
+    "first_order_on_t_rms": 0.14971428753783528,
+    "second_order_on_t_rms": 0.10832401938290673
+   }
+  },
+  " genuine": {
+   "own": {
+    "phi_H_perp": 0.09971608966588974,
+    "phi_H_full": 0.10203227400779724,
+    "mean_energy_kept": 0.7615118026733398,
+    "top_lambda": [
+     0.08782617002725601,
+     -0.06579282879829407,
+     -0.05895204842090607,
+     0.05843324214220047,
+     0.04957978427410126
+    ],
+    "split": {
+     "1": 0.7943761944770813,
+     "3": 0.536457896232605,
+     "5": 0.6613691449165344
+    },
+    "lam1_null_q95": 0.05630018692463636,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5977733641862869,
+     "3": 0.4234428822994232,
+     "5": 0.4326142206788063
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.015668844804167747,
+    "cos_v_other_gbar_max": 0.4984431564807892,
+    "causal": {
+     "lambda_even": 0.09084409475326538,
+     "sign_agree_top": 0.84375,
+     "z_top_vs_rand": 9.357741551045827,
+     "rms_c2_top": 0.26017410581832773,
+     "rms_c2_rand": 0.06487196618919555
+    },
+    "decode_up": [
+     " same",
+     " second",
+     "\u4f46\u5bf9\u4e8e",
+     " suite",
+     " original",
+     " series",
+     " ship",
+     " what",
+     " genus",
+     " last"
+    ],
+    "rank_of_t": 31,
+    "decode_first_order_up": [
+     "\u4e8e",
+     ".",
+     ".,",
+     "while",
+     "again",
+     " ,",
+     "\u53bb",
+     ".?",
+     " versus",
+     ".\","
+    ],
+    "decode_first_order_down": [
+     " large",
+     " coastal",
+     " architectural",
+     " archaeological",
+     " northern",
+     " railways",
+     " ancestral",
+     " naval",
+     " colonial",
+     " structural"
+    ],
+    "first_order_on_t_rms": 0.18523573808409605,
+    "second_order_on_t_rms": 0.13008705290916386
+   },
+   "all8": {
+    "phi_H_perp": 0.10140042006969452,
+    "phi_H_full": 0.10203227400779724,
+    "mean_energy_kept": 0.5693081021308899,
+    "top_lambda": [
+     0.06350062787532806,
+     -0.062239255756139755,
+     -0.050503477454185486,
+     0.05010881647467613,
+     -0.04044979065656662
+    ],
+    "split": {
+     "1": 0.0011366958497092128,
+     "3": 0.5171868205070496,
+     "5": 0.7714080214500427
+    },
+    "lam1_null_q95": 0.03897535260766744,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5408834695816039,
+     "3": 0.4287142217159271,
+     "5": 0.42229771614074707
+    },
+    "split_p": {
+     "1": 0.9751243781094527,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.01216414850205183,
+    "cos_v_other_gbar_max": 0.02328580617904663,
+    "causal": {
+     "lambda_even": -0.07758806645870209,
+     "sign_agree_top": 0.8125,
+     "z_top_vs_rand": 7.537208939706855,
+     "rms_c2_top": 0.20252030679627028,
+     "rms_c2_rand": 0.059919416628969956
+    },
+    "decode_up": [
+     " interstate",
+     "theless",
+     "aghan",
+     " unintention",
+     "\u8d43",
+     "gradable",
+     "/B",
+     "agna",
+     "bage",
+     "/high"
+    ],
+    "rank_of_t": 109,
+    "decode_first_order_up": [
+     " rapidly",
+     " outweigh",
+     " disastr",
+     " dwind",
+     " desperately",
+     "-quarters",
+     " allowance",
+     " constantly",
+     " posture",
+     " inconsist"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " This",
+     " It",
+     " Based",
+     " Between",
+     " Now",
+     " Original",
+     " They",
+     " Later",
+     " Not"
+    ],
+    "first_order_on_t_rms": 0.17352651856037485,
+    "second_order_on_t_rms": 0.10126015339813514
+   },
+   "allvar": {
+    "phi_H_perp": 0.10239684581756592,
+    "phi_H_full": 0.10203227400779724,
+    "mean_energy_kept": 0.40618690848350525,
+    "top_lambda": [
+     -0.04984540864825249,
+     0.04929249361157417,
+     0.04365244880318642,
+     0.034748028963804245,
+     -0.03082910180091858
+    ],
+    "split": {
+     "1": 0.00036415786598809063,
+     "3": 0.8100051879882812,
+     "5": 0.796895444393158
+    },
+    "lam1_null_q95": 0.026896920800209043,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5365151733160015,
+     "3": 0.3857728987932205,
+     "5": 0.38943780511617654
+    },
+    "split_p": {
+     "1": 0.9701492537313433,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.021623659878969193,
+    "cos_v_other_gbar_max": 0.020201127976179123,
+    "causal": {
+     "lambda_even": -0.05509587749838829,
+     "sign_agree_top": 0.9375,
+     "z_top_vs_rand": 9.927950772593382,
+     "rms_c2_top": 0.16746793634834845,
+     "rms_c2_rand": 0.05968387575619554
+    },
+    "decode_up": [
+     ".",
+     "?),",
+     " seminal",
+     "(.)",
+     ".*)",
+     "/off",
+     ":\\\\",
+     ",)",
+     ":",
+     " transmissions"
+    ],
+    "deflated_variants": [
+     " interstate",
+     "theless",
+     "aghan",
+     " unintention",
+     "\u8d43",
+     "gradable",
+     "/B",
+     "agna",
+     "bage",
+     "/high"
+    ],
+    "rank_of_t": 58,
+    "decode_first_order_up": [
+     " staunch",
+     " surgeon",
+     " reemb",
+     " desperately",
+     " loyal",
+     " consort",
+     " respected",
+     " apprentice",
+     " ensl",
+     " clandest"
+    ],
+    "decode_first_order_down": [
+     " This",
+     " Between",
+     " While",
+     " They",
+     " However",
+     " It",
+     " Additionally",
+     " There",
+     " Since",
+     " These"
+    ],
+    "first_order_on_t_rms": 0.15332687578461343,
+    "second_order_on_t_rms": 0.08373396817417422
+   }
+  },
+  " river": {
+   "own": {
+    "phi_H_perp": 0.08789832890033722,
+    "phi_H_full": 0.09302565455436707,
+    "mean_energy_kept": 0.80063796043396,
+    "top_lambda": [
+     0.08825726807117462,
+     0.07761681824922562,
+     -0.06786525994539261,
+     -0.05156509205698967,
+     -0.04913803189992905
+    ],
+    "split": {
+     "1": 0.7218208909034729,
+     "3": 0.5737945437431335,
+     "5": 0.6460250020027161
+    },
+    "lam1_null_q95": 0.06668242178857325,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.6162299245595931,
+     "3": 0.46927623897790904,
+     "5": 0.4679890424013137
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.014925373134328358,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.045487433671951294,
+    "cos_v_other_gbar_max": 0.5125195384025574,
+    "causal": {
+     "lambda_even": 0.10465378314256668,
+     "sign_agree_top": 0.75,
+     "z_top_vs_rand": 8.286302930267738,
+     "rms_c2_top": 0.22163231780594309,
+     "rms_c2_rand": 0.07492511507038044
+    },
+    "decode_up": [
+     " the",
+     " his",
+     " a",
+     " these",
+     " an",
+     " those",
+     " its",
+     " what",
+     " their",
+     " series"
+    ],
+    "rank_of_t": 1015,
+    "decode_first_order_up": [
+     "\u548c",
+     "anna",
+     "\u6216\u8005",
+     "-H",
+     "-C",
+     "-K",
+     "\u6216",
+     "-T",
+     "-O",
+     "-R"
+    ],
+    "decode_first_order_down": [
+     " significant",
+     " notable",
+     " successful",
+     " extensive",
+     " important",
+     " historical",
+     " substantial",
+     " traditional",
+     " widespread",
+     " various"
+    ],
+    "first_order_on_t_rms": 0.19230529117533263,
+    "second_order_on_t_rms": 0.11081615890297154
+   },
+   "all8": {
+    "phi_H_perp": 0.09970065206289291,
+    "phi_H_full": 0.09302565455436707,
+    "mean_energy_kept": 0.617323100566864,
+    "top_lambda": [
+     0.0703202411532402,
+     -0.06192264333367348,
+     0.06148849427700043,
+     -0.04857718199491501,
+     -0.04226939380168915
+    ],
+    "split": {
+     "1": 0.00046919481246732175,
+     "3": 0.573875904083252,
+     "5": 0.6614481806755066
+    },
+    "lam1_null_q95": 0.040779392793774606,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.5143065452575684,
+     "3": 0.44635721445083615,
+     "5": 0.4410048246383667
+    },
+    "split_p": {
+     "1": 0.9651741293532339,
+     "3": 0.009950248756218905,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.014347161166369915,
+    "cos_v_other_gbar_max": 0.024214506149291992,
+    "causal": {
+     "lambda_even": -0.08751306682825089,
+     "sign_agree_top": 0.8125,
+     "z_top_vs_rand": 7.522798149473009,
+     "rms_c2_top": 0.2184538827933856,
+     "rms_c2_rand": 0.07293614751016113
+    },
+    "decode_up": [
+     "/A",
+     "awan",
+     "lide",
+     "bage",
+     "attery",
+     "/T",
+     "/high",
+     "igh",
+     "&T",
+     " interstate"
+    ],
+    "rank_of_t": 384,
+    "decode_first_order_up": [
+     " The",
+     " It",
+     " Them",
+     " She",
+     " They",
+     " Later",
+     " Now",
+     " Both",
+     " There",
+     " Sim"
+    ],
+    "decode_first_order_down": [
+     "-quarters",
+     " quarters",
+     "-defense",
+     " posture",
+     "Bereich",
+     "-season",
+     " sanction",
+     " deployments",
+     "-years",
+     "-sector"
+    ],
+    "first_order_on_t_rms": 0.1491758162830242,
+    "second_order_on_t_rms": 0.1092269413966928
+   },
+   "allvar": {
+    "phi_H_perp": 0.10093941539525986,
+    "phi_H_full": 0.09302565455436707,
+    "mean_energy_kept": 0.4356747269630432,
+    "top_lambda": [
+     0.06447524577379227,
+     -0.04210672900080681,
+     0.040208376944065094,
+     0.036460958421230316,
+     -0.03411438316106796
+    ],
+    "split": {
+     "1": 0.8990826606750488,
+     "3": 0.6487500667572021,
+     "5": 0.6355833411216736
+    },
+    "lam1_null_q95": 0.027946753147989493,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.4862423375248909,
+     "3": 0.38201501518487924,
+     "5": 0.3867381736636161
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.02669624611735344,
+    "cos_v_other_gbar_max": 0.01703348197042942,
+    "causal": {
+     "lambda_even": 0.06769251078367233,
+     "sign_agree_top": 0.90625,
+     "z_top_vs_rand": 23.36847117309799,
+     "rms_c2_top": 0.3730278971769984,
+     "rms_c2_rand": 0.07695405226622618
+    },
+    "decode_up": [
+     " device",
+     " entity",
+     " vessel",
+     " element",
+     " creature",
+     " facility",
+     " organism",
+     " affair",
+     " molecule",
+     " agent"
+    ],
+    "deflated_variants": [
+     "/A",
+     "awan",
+     "lide",
+     "bage",
+     "attery",
+     "/T",
+     "/high",
+     "igh",
+     "&T",
+     " interstate"
+    ],
+    "rank_of_t": 1204,
+    "decode_first_order_up": [
+     " designation",
+     " situation",
+     " name",
+     " timeline",
+     " timeframe",
+     " organisation",
+     " site",
+     " period",
+     " arrangement",
+     " predecessor"
+    ],
+    "decode_first_order_down": [
+     " the",
+     " those",
+     "those",
+     " these",
+     "these",
+     " their",
+     "the",
+     "asdf",
+     " what",
+     "thesize"
+    ],
+    "first_order_on_t_rms": 0.16770583516241774,
+    "second_order_on_t_rms": 0.1865139485884992
+   }
+  },
+  " music": {
+   "own": {
+    "phi_H_perp": 0.0879446491599083,
+    "phi_H_full": 0.08637116104364395,
+    "mean_energy_kept": 0.8403502106666565,
+    "top_lambda": [
+     0.1025054082274437,
+     -0.07778368890285492,
+     0.06514514237642288,
+     -0.06095298007130623,
+     0.053478170186281204
+    ],
+    "split": {
+     "1": 0.8097367882728577,
+     "3": 0.5321354269981384,
+     "5": 0.7406153082847595
+    },
+    "lam1_null_q95": 0.06161907501518726,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.4939596578478813,
+     "3": 0.48843469619750973,
+     "5": 0.45767183154821395
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.014925373134328358,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.019136691465973854,
+    "cos_v_other_gbar_max": 0.43129703402519226,
+    "causal": {
+     "lambda_even": 0.10138840973377228,
+     "sign_agree_top": 0.875,
+     "z_top_vs_rand": 5.470768263222762,
+     "rms_c2_top": 0.2543468285368617,
+     "rms_c2_rand": 0.07992735555049782
+    },
+    "decode_up": [
+     " the",
+     " a",
+     " his",
+     " an",
+     " these",
+     " their",
+     " those",
+     " its",
+     " this",
+     " what"
+    ],
+    "rank_of_t": 65,
+    "decode_first_order_up": [
+     ".",
+     "(),",
+     ".,",
+     "\u4e8e",
+     "+,",
+     " (),",
+     "-Based",
+     "\uff0c",
+     ".?",
+     " (."
+    ],
+    "decode_first_order_down": [
+     " prominent",
+     " significant",
+     " various",
+     " powerful",
+     " notable",
+     " large",
+     " considerable",
+     " wealthy",
+     " substantial",
+     " the"
+    ],
+    "first_order_on_t_rms": 0.18762603790888124,
+    "second_order_on_t_rms": 0.12717341426843085
+   },
+   "all8": {
+    "phi_H_perp": 0.092013418674469,
+    "phi_H_full": 0.08637116104364395,
+    "mean_energy_kept": 0.6180999279022217,
+    "top_lambda": [
+     0.06976299732923508,
+     0.059515345841646194,
+     -0.058497119694948196,
+     -0.05728229880332947,
+     0.04666596278548241
+    ],
+    "split": {
+     "1": 0.792608380317688,
+     "3": 0.5716139674186707,
+     "5": 0.7065107822418213
+    },
+    "lam1_null_q95": 0.03955240212380886,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.43810457140207254,
+     "3": 0.4277129232883452,
+     "5": 0.43001099377870555
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.015631945803761482,
+    "cos_v_other_gbar_max": 0.04117577522993088,
+    "causal": {
+     "lambda_even": 0.07276139408349991,
+     "sign_agree_top": 0.9375,
+     "z_top_vs_rand": 5.725736357197076,
+     "rms_c2_top": 0.23660565582624826,
+     "rms_c2_rand": 0.06771629024612387
+    },
+    "decode_up": [
+     " the",
+     " a",
+     " these",
+     " his",
+     " this",
+     " their",
+     " its",
+     " those",
+     " an",
+     " some"
+    ],
+    "rank_of_t": 86,
+    "decode_first_order_up": [
+     ".",
+     " ,",
+     ".,",
+     " .",
+     ",",
+     " (.",
+     "(),",
+     ".(",
+     " (),",
+     ".?"
+    ],
+    "decode_first_order_down": [
+     " William",
+     " Napoleon",
+     " Frederick",
+     " Edward",
+     " Alfred",
+     " military",
+     " Napole",
+     " Adolf",
+     " Marshal",
+     " Admiral"
+    ],
+    "first_order_on_t_rms": 0.18437888169183161,
+    "second_order_on_t_rms": 0.11830282791312413
+   },
+   "allvar": {
+    "phi_H_perp": 0.09109348058700562,
+    "phi_H_full": 0.08637116104364395,
+    "mean_energy_kept": 0.4571593403816223,
+    "top_lambda": [
+     0.054907359182834625,
+     -0.0487733893096447,
+     0.046571940183639526,
+     -0.03879504278302193,
+     0.03720909729599953
+    ],
+    "split": {
+     "1": 0.7735002636909485,
+     "3": 0.682300329208374,
+     "5": 0.6590398550033569
+    },
+    "lam1_null_q95": 0.030174665246158836,
+    "lam1_p": 0.004975124378109453,
+    "split_null_q95": {
+     "1": 0.36714065372943877,
+     "3": 0.361306570470333,
+     "5": 0.36611144840717313
+    },
+    "split_p": {
+     "1": 0.004975124378109453,
+     "3": 0.004975124378109453,
+     "5": 0.004975124378109453
+    },
+    "cos_v_own_gbar": 0.009326264262199402,
+    "cos_v_other_gbar_max": 0.04273463040590286,
+    "causal": {
+     "lambda_even": 0.05745045468211174,
+     "sign_agree_top": 0.96875,
+     "z_top_vs_rand": 6.2244645617593415,
+     "rms_c2_top": 0.22565646712691725,
+     "rms_c2_rand": 0.06367717052585029
+    },
+    "decode_up": [
+     " in",
+     " by",
+     " while",
+     " next",
+     " with",
+     " for",
+     " like",
+     " following",
+     " first",
+     " after"
+    ],
+    "deflated_variants": [
+     " the",
+     " a",
+     " these",
+     " his",
+     " this",
+     " their",
+     " its",
+     " those",
+     " an",
+     " some"
+    ],
+    "rank_of_t": 70,
+    "decode_first_order_up": [
+     " British",
+     " wartime",
+     " inaugural",
+     " Yugosl",
+     " unsuccessful",
+     " Military",
+     " military",
+     " notable",
+     " Commonwealth",
+     " RAF"
+    ],
+    "decode_first_order_down": [
+     " ,",
+     ".",
+     ",",
+     ".,",
+     " .",
+     " with",
+     ".(",
+     ",.",
+     " (),",
+     "-like"
+    ],
+    "first_order_on_t_rms": 0.16707674079178178,
+    "second_order_on_t_rms": 0.11282823356345863
+   }
+  }
+ }
+}

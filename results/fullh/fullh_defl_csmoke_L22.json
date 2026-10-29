@@ -1,0 +1,1968 @@
+{
+ "layer": 22,
+ "n": 4,
+ "model": "Qwen/Qwen3.5-0.8B",
+ "post_hoc": true,
+ "tokens": {
+  " simulated": {
+   "own": {
+    "phi_H_perp": 0.47525835037231445,
+    "phi_H_full": 0.473966121673584,
+    "mean_energy_kept": 0.8403754830360413,
+    "top_lambda": [
+     -0.08415195345878601,
+     -0.060147956013679504,
+     -0.05211234092712402,
+     0.049474380910396576,
+     -0.047321904450654984
+    ],
+    "split": {
+     "1": 0.8443281650543213,
+     "3": 0.4568355977535248,
+     "5": 0.5784145593643188
+    },
+    "lam1_null_q95": 0.060185253992676734,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.1489778909832239,
+     "3": 0.3364434003829956,
+     "5": 0.4305339217185974
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.03509209677577019,
+    "cos_v_other_gbar_max": 0.29610657691955566,
+    "causal": {
+     "lambda_even": -0.07870305329561234,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 11.70409519907108,
+     "rms_c2_top": 0.243969398643123,
+     "rms_c2_rand": 0.05147230031602372
+    },
+    "decode_up": [
+     " extrad",
+     " notif",
+     " capt",
+     " busty",
+     " resid",
+     " disposition",
+     " vict",
+     " remuner",
+     " spoiled",
+     " linebacker"
+    ],
+    "rank_of_t": 381,
+    "decode_first_order_up": [
+     " service",
+     " instrumental",
+     " role",
+     " duties",
+     " duty",
+     " clinic",
+     " retirement",
+     " orchest",
+     " oversight",
+     " frontline"
+    ],
+    "decode_first_order_down": [
+     "0",
+     "2",
+     "1",
+     "3",
+     "5",
+     "9",
+     "4",
+     "8",
+     "6",
+     "7"
+    ],
+    "first_order_on_t_rms": 0.12367895159036196,
+    "second_order_on_t_rms": 0.1219846993215615
+   },
+   "all8": {
+    "phi_H_perp": 0.5039210319519043,
+    "phi_H_full": 0.473966121673584,
+    "mean_energy_kept": 0.638138473033905,
+    "top_lambda": [
+     -0.06963266432285309,
+     -0.05331360921263695,
+     -0.04924944415688515,
+     0.04521818086504936,
+     -0.04301953315734863
+    ],
+    "split": {
+     "1": 0.8142615556716919,
+     "3": 0.37364858388900757,
+     "5": 0.6404436230659485
+    },
+    "lam1_null_q95": 0.06655443087220192,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.7736371338367461,
+     "3": 0.40280950367450713,
+     "5": 0.6185955017805099
+    },
+    "split_p": {
+     "1": 0.5,
+     "3": 0.75,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.005691439379006624,
+    "cos_v_other_gbar_max": 0.022307096049189568,
+    "causal": {
+     "lambda_even": -0.06471998989582062,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 11.313058470324886,
+     "rms_c2_top": 0.2512058835924935,
+     "rms_c2_rand": 0.049051993301074126
+    },
+    "decode_up": [
+     " spoiled",
+     " busted",
+     " liberated",
+     " scrapped",
+     "ity",
+     " clashed",
+     " pierced",
+     " conflic",
+     " extrad",
+     " compromised"
+    ],
+    "rank_of_t": 194,
+    "decode_first_order_up": [
+     "0",
+     "2",
+     "1",
+     "3",
+     "5",
+     "9",
+     "4",
+     "7",
+     "6",
+     "8"
+    ],
+    "decode_first_order_down": [
+     " comprised",
+     "\u00f6rde",
+     " retained",
+     "-supported",
+     "-led",
+     " held",
+     " benefited",
+     " transferred",
+     " composed",
+     " entrusted"
+    ],
+    "first_order_on_t_rms": 0.13113071868459952,
+    "second_order_on_t_rms": 0.12560294179624676
+   },
+   "allvar": {
+    "phi_H_perp": 0.5069035291671753,
+    "phi_H_full": 0.473966121673584,
+    "mean_energy_kept": 0.41432952880859375,
+    "top_lambda": [
+     -0.05112925171852112,
+     -0.04043280705809593,
+     -0.03614707663655281,
+     -0.03516204655170441,
+     0.031272731721401215
+    ],
+    "split": {
+     "1": 0.489418625831604,
+     "3": 0.5406925678253174,
+     "5": 0.6547145843505859
+    },
+    "lam1_null_q95": 0.03089419975876808,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.19110004305839537,
+     "3": 0.19389923959970473,
+     "5": 0.37295595109462737
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.010265916585922241,
+    "cos_v_other_gbar_max": 0.04084871709346771,
+    "causal": {
+     "lambda_even": -0.04860445484519005,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 7.9616582034740695,
+     "rms_c2_top": 0.1617649468355539,
+     "rms_c2_rand": 0.04183733315553049
+    },
+    "decode_up": [
+     "ity",
+     "B",
+     "L",
+     "\u65b0\u52a0\u5761",
+     "i",
+     "a",
+     "__",
+     "Size",
+     "N",
+     " linebacker"
+    ],
+    "deflated_variants": [
+     " spoiled",
+     " busted",
+     " liberated",
+     " scrapped",
+     "ity",
+     " clashed",
+     " pierced",
+     " conflic",
+     " extrad",
+     " compromised"
+    ],
+    "rank_of_t": 2969,
+    "decode_first_order_up": [
+     "bi",
+     "op",
+     "enum",
+     "body",
+     "ops",
+     "mon",
+     "role",
+     "zone",
+     "struct",
+     "ag"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " They",
+     " It",
+     "1",
+     " Both",
+     " Their",
+     " When",
+     " However",
+     "2",
+     " He"
+    ],
+    "first_order_on_t_rms": 0.19675672000151287,
+    "second_order_on_t_rms": 0.08088247341777695
+   }
+  },
+  " fake": {
+   "own": {
+    "phi_H_perp": 0.6254157423973083,
+    "phi_H_full": 0.6514111161231995,
+    "mean_energy_kept": 0.8021702170372009,
+    "top_lambda": [
+     -0.11196565628051758,
+     -0.06698858737945557,
+     0.04244524985551834,
+     -0.04149769991636276,
+     -0.03932495042681694
+    ],
+    "split": {
+     "1": 0.9412227272987366,
+     "3": 0.6011509895324707,
+     "5": 0.6188362836837769
+    },
+    "lam1_null_q95": 0.061996296793222425,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.10488491877913475,
+     "3": 0.4388310343027115,
+     "5": 0.4613329917192459
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.047245826572179794,
+    "cos_v_other_gbar_max": 0.34029990434646606,
+    "causal": {
+     "lambda_even": -0.11082963645458221,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 19.0345702554074,
+     "rms_c2_top": 0.2394406949643811,
+     "rms_c2_rand": 0.02370339072551699
+    },
+    "decode_up": [
+     " pierced",
+     " tent",
+     " blitz",
+     "ity",
+     " spark",
+     " kale",
+     " launder",
+     " quadri",
+     " capt",
+     " mop"
+    ],
+    "rank_of_t": 483,
+    "decode_first_order_up": [
+     " The",
+     " Everyone",
+     " Alias",
+     " Does",
+     " They",
+     " It",
+     " Fake",
+     " Your",
+     " Lucky",
+     " Thinking"
+    ],
+    "decode_first_order_down": [
+     " posture",
+     " place",
+     " flush",
+     " fulfil",
+     " armour",
+     " trenches",
+     " tendency",
+     " protection",
+     "-quarters",
+     " monopoly"
+    ],
+    "first_order_on_t_rms": 0.11182265160790966,
+    "second_order_on_t_rms": 0.11972034748219056
+   },
+   "all8": {
+    "phi_H_perp": 0.6393544673919678,
+    "phi_H_full": 0.6514111161231995,
+    "mean_energy_kept": 0.5666473507881165,
+    "top_lambda": [
+     -0.09286127239465714,
+     -0.05294625461101532,
+     -0.038003258407115936,
+     0.031947072595357895,
+     -0.02876509539783001
+    ],
+    "split": {
+     "1": 0.9202220439910889,
+     "3": 0.6015399098396301,
+     "5": 0.6738482713699341
+    },
+    "lam1_null_q95": 0.044626921042799944,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.8627722173929214,
+     "3": 0.5924831986427307,
+     "5": 0.6534670233726502
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.03322518989443779,
+    "cos_v_other_gbar_max": 0.043536946177482605,
+    "causal": {
+     "lambda_even": -0.0907711386680603,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 18.875796745293997,
+     "rms_c2_top": 0.2347454392391701,
+     "rms_c2_rand": 0.021970977232808216
+    },
+    "decode_up": [
+     "ity",
+     " pierced",
+     " launder",
+     " bro",
+     " tent",
+     " dime",
+     " autob",
+     " blocker",
+     " cerv",
+     " racked"
+    ],
+    "rank_of_t": 1085,
+    "decode_first_order_up": [
+     "ops",
+     "-b",
+     "-sp",
+     "-h",
+     "-m",
+     "stop",
+     "-so",
+     "ies",
+     "ocr",
+     "ful"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " It",
+     " D",
+     " F",
+     " E",
+     " Them",
+     " Will",
+     " Both",
+     " They",
+     " More"
+    ],
+    "first_order_on_t_rms": 0.09212516533149628,
+    "second_order_on_t_rms": 0.11737271961958505
+   },
+   "allvar": {
+    "phi_H_perp": 0.6032192707061768,
+    "phi_H_full": 0.6514111161231995,
+    "mean_energy_kept": 0.3617052435874939,
+    "top_lambda": [
+     -0.06348419934511185,
+     -0.04169853776693344,
+     -0.03204164654016495,
+     0.02809048630297184,
+     -0.02410663105547428
+    ],
+    "split": {
+     "1": 0.8913180828094482,
+     "3": 0.8162173628807068,
+     "5": 0.7422551512718201
+    },
+    "lam1_null_q95": 0.06073826402425766,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.8329086005687714,
+     "3": 0.7709401071071624,
+     "5": 0.7076142668724059
+    },
+    "split_p": {
+     "1": 0.5,
+     "3": 0.5,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.029716817662119865,
+    "cos_v_other_gbar_max": 0.04548818618059158,
+    "causal": {
+     "lambda_even": -0.06477207690477371,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 15.241043137448436,
+     "rms_c2_top": 0.19790521930268504,
+     "rms_c2_rand": 0.019914828442057796
+    },
+    "decode_up": [
+     "ity",
+     "i",
+     "B",
+     "L",
+     "\u65b0\u52a0\u5761",
+     "N",
+     "C",
+     "H",
+     "\u52a0\u62ff\u5927",
+     "G"
+    ],
+    "deflated_variants": [
+     "ity",
+     " pierced",
+     " launder",
+     " bro",
+     " tent",
+     " dime",
+     " autob",
+     " blocker",
+     " cerv",
+     " racked"
+    ],
+    "rank_of_t": 1482,
+    "decode_first_order_up": [
+     " The",
+     " D",
+     " F",
+     " C",
+     " Both",
+     " R",
+     " E",
+     " It",
+     " G",
+     " Co"
+    ],
+    "decode_first_order_down": [
+     "ies",
+     "use",
+     "enum",
+     "op",
+     "stop",
+     "ful",
+     "ins",
+     "form",
+     "role",
+     "ops"
+    ],
+    "first_order_on_t_rms": 0.10543196056747983,
+    "second_order_on_t_rms": 0.09895260965134252
+   }
+  },
+  " virtual": {
+   "own": {
+    "phi_H_perp": 0.4964533746242523,
+    "phi_H_full": 0.5137935280799866,
+    "mean_energy_kept": 0.8281523585319519,
+    "top_lambda": [
+     -0.07413122802972794,
+     -0.05886153131723404,
+     -0.05064081400632858,
+     0.05026727169752121,
+     0.03725293651223183
+    ],
+    "split": {
+     "1": 0.5982205271720886,
+     "3": 0.5527265071868896,
+     "5": 0.6559335589408875
+    },
+    "lam1_null_q95": 0.05098760686814785,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.5570685938000679,
+     "3": 0.5402811765670776,
+     "5": 0.6322161346673966
+    },
+    "split_p": {
+     "1": 0.5,
+     "3": 0.5,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.016619669273495674,
+    "cos_v_other_gbar_max": 0.20267194509506226,
+    "causal": {
+     "lambda_even": -0.0779065266251564,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 10.829352126746786,
+     "rms_c2_top": 0.17577134019852633,
+     "rms_c2_rand": 0.023756895598421864
+    },
+    "decode_up": [
+     " gaussian",
+     " pisc",
+     " media",
+     " atmosphere",
+     " battleground",
+     " economy",
+     " dosage",
+     " currency",
+     " cad",
+     " datab"
+    ],
+    "rank_of_t": 1752,
+    "decode_first_order_up": [
+     " mecanism",
+     "\uff5e\u3002",
+     " organism",
+     " sphere",
+     " indication",
+     " phenomenon",
+     " arrangement",
+     "body",
+     " topic",
+     "-scale"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " ,",
+     " When",
+     " During",
+     " Upon",
+     " when",
+     " They",
+     " There",
+     " Between",
+     " It"
+    ],
+    "first_order_on_t_rms": 0.039882329249454944,
+    "second_order_on_t_rms": 0.08788567009926317
+   },
+   "all8": {
+    "phi_H_perp": 0.5059077143669128,
+    "phi_H_full": 0.5137935280799866,
+    "mean_energy_kept": 0.6276928782463074,
+    "top_lambda": [
+     -0.06529393047094345,
+     -0.046956878155469894,
+     -0.0446508415043354,
+     0.04347403347492218,
+     0.029168209061026573
+    ],
+    "split": {
+     "1": 0.5902331471443176,
+     "3": 0.5384072065353394,
+     "5": 0.6535321474075317
+    },
+    "lam1_null_q95": 0.062289847806096074,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.5902338445186615,
+     "3": 0.5384078562259674,
+     "5": 0.6535322666168213
+    },
+    "split_p": {
+     "1": 0.75,
+     "3": 0.75,
+     "5": 0.75
+    },
+    "cos_v_own_gbar": 0.018287133425474167,
+    "cos_v_other_gbar_max": 0.04020121321082115,
+    "causal": {
+     "lambda_even": -0.06658569723367691,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 10.570477245724751,
+     "rms_c2_top": 0.1616191591900085,
+     "rms_c2_rand": 0.022139192204959815
+    },
+    "decode_up": [
+     "\u65b0\u52a0\u5761",
+     " battleground",
+     "FPS",
+     " atmosphere",
+     "B",
+     "CRT",
+     "L",
+     " vocab",
+     " essence",
+     " guise"
+    ],
+    "rank_of_t": 1595,
+    "decode_first_order_up": [
+     "enum",
+     "role",
+     "idea",
+     "mon",
+     "series",
+     "application",
+     "bi",
+     "lot",
+     "existence",
+     "domain"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " ,",
+     " When",
+     " when",
+     " His",
+     " .",
+     " He",
+     " however",
+     " Both",
+     " It"
+    ],
+    "first_order_on_t_rms": 0.042686463596489525,
+    "second_order_on_t_rms": 0.08080957959500425
+   },
+   "allvar": {
+    "phi_H_perp": 0.506698489189148,
+    "phi_H_full": 0.5137935280799866,
+    "mean_energy_kept": 0.4464476704597473,
+    "top_lambda": [
+     -0.04897482693195343,
+     -0.04182817041873932,
+     0.03586507588624954,
+     -0.028450746089220047,
+     -0.02518809400498867
+    ],
+    "split": {
+     "1": 0.2858809232711792,
+     "3": 0.7387098670005798,
+     "5": 0.5770490765571594
+    },
+    "lam1_null_q95": 0.03101446721702814,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.2698610514402389,
+     "3": 0.7030368119478225,
+     "5": 0.5566190928220749
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.5,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.018471810966730118,
+    "cos_v_other_gbar_max": 0.036169592291116714,
+    "causal": {
+     "lambda_even": -0.05309130251407623,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 12.79828928494153,
+     "rms_c2_top": 0.14960479628357076,
+     "rms_c2_rand": 0.020188845846374082
+    },
+    "decode_up": [
+     "CRT",
+     "FPS",
+     " ,[",
+     "a",
+     " vocab",
+     " essence",
+     " volta",
+     " atmosphere",
+     "MV",
+     "ML"
+    ],
+    "deflated_variants": [
+     "\u65b0\u52a0\u5761",
+     " battleground",
+     "FPS",
+     " atmosphere",
+     "B",
+     "CRT",
+     "L",
+     " vocab",
+     " essence",
+     " guise"
+    ],
+    "rank_of_t": 849,
+    "decode_first_order_up": [
+     "mon",
+     "role",
+     "bi",
+     "body",
+     "idea",
+     "mod",
+     "enum",
+     "node",
+     "alignment",
+     "mont"
+    ],
+    "decode_first_order_down": [
+     " ,",
+     " when",
+     " .",
+     "2",
+     " however",
+     "1",
+     " The",
+     " with",
+     " during",
+     " from"
+    ],
+    "first_order_on_t_rms": 0.05135478764420907,
+    "second_order_on_t_rms": 0.07480239814178538
+   }
+  },
+  " artificial": {
+   "own": {
+    "phi_H_perp": 0.5420076251029968,
+    "phi_H_full": 0.5836470127105713,
+    "mean_energy_kept": 0.7455608248710632,
+    "top_lambda": [
+     -0.08885586261749268,
+     -0.08385459333658218,
+     -0.055842600762844086,
+     0.05249970033764839,
+     -0.0362330824136734
+    ],
+    "split": {
+     "1": 0.033585622906684875,
+     "3": 0.8089853525161743,
+     "5": 0.6492207646369934
+    },
+    "lam1_null_q95": 0.054471644759178164,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.03232341632246971,
+     "3": 0.32783987522125246,
+     "5": 0.4395348995923996
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.022170327603816986,
+    "cos_v_other_gbar_max": 0.3998222351074219,
+    "causal": {
+     "lambda_even": -0.08880485594272614,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 31.362102522625992,
+     "rms_c2_top": 0.2469090535027463,
+     "rms_c2_rand": 0.020522012762556288
+    },
+    "decode_up": [
+     " discre",
+     " senior",
+     " capt",
+     " gaussian",
+     " cowork",
+     " subtotal",
+     " princ",
+     " humanoid",
+     " prob",
+     " carn"
+    ],
+    "rank_of_t": 17,
+    "decode_first_order_up": [
+     "2",
+     "0",
+     "1",
+     "3",
+     "5",
+     "6",
+     "9",
+     "4",
+     "8",
+     "7"
+    ],
+    "decode_first_order_down": [
+     " dramatic",
+     " battle",
+     " upbeat",
+     " struggle",
+     " role",
+     " emotional",
+     " powerful",
+     " engagement",
+     " distraction",
+     " voice"
+    ],
+    "first_order_on_t_rms": 0.15208912500502417,
+    "second_order_on_t_rms": 0.12345452675137315
+   },
+   "all8": {
+    "phi_H_perp": 0.5379622578620911,
+    "phi_H_full": 0.5836470127105713,
+    "mean_energy_kept": 0.5193623304367065,
+    "top_lambda": [
+     -0.0776519924402237,
+     -0.055010437965393066,
+     -0.04533607140183449,
+     0.04337400197982788,
+     0.03127250075340271
+    ],
+    "split": {
+     "1": 0.6994080543518066,
+     "3": 0.7176114916801453,
+     "5": 0.6421120166778564
+    },
+    "lam1_null_q95": 0.04008409157395363,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.20053395931608972,
+     "3": 0.35313332080841064,
+     "5": 0.43414280712604525
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.04278077930212021,
+    "cos_v_other_gbar_max": 0.04543091356754303,
+    "causal": {
+     "lambda_even": -0.06452332437038422,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 15.789456831405726,
+     "rms_c2_top": 0.2515316937896953,
+     "rms_c2_rand": 0.023819889224338284
+    },
+    "decode_up": [
+     "B",
+     "L",
+     "N",
+     "G",
+     "C",
+     "H",
+     "W",
+     "A",
+     "R",
+     "M"
+    ],
+    "rank_of_t": 845,
+    "decode_first_order_up": [
+     " The",
+     " D",
+     " He",
+     " F",
+     " Later",
+     " Seven",
+     " E",
+     " They",
+     " Over",
+     " Both"
+    ],
+    "decode_first_order_down": [
+     "v",
+     "use",
+     "op",
+     "im",
+     "mon",
+     "bi",
+     "pr",
+     "ops",
+     "id",
+     "int"
+    ],
+    "first_order_on_t_rms": 0.10464943406200479,
+    "second_order_on_t_rms": 0.12576584689484765
+   },
+   "allvar": {
+    "phi_H_perp": 0.5260754227638245,
+    "phi_H_full": 0.5836470127105713,
+    "mean_energy_kept": 0.41201287508010864,
+    "top_lambda": [
+     -0.07137278467416763,
+     -0.04290212318301201,
+     0.03810560703277588,
+     -0.03405816853046417,
+     0.027732618153095245
+    ],
+    "split": {
+     "1": 0.7300897836685181,
+     "3": 0.6973010897636414,
+     "5": 0.6133195757865906
+    },
+    "lam1_null_q95": 0.07137278318405152,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.7300902128219604,
+     "3": 0.6973015189170837,
+     "5": 0.6133199512958527
+    },
+    "split_p": {
+     "1": 0.75,
+     "3": 0.75,
+     "5": 0.75
+    },
+    "cos_v_own_gbar": 0.03054940514266491,
+    "cos_v_other_gbar_max": 0.042601577937603,
+    "causal": {
+     "lambda_even": -0.05987013503909111,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 17.44782991304915,
+     "rms_c2_top": 0.24642323109177577,
+     "rms_c2_rand": 0.022740229545630947
+    },
+    "decode_up": [
+     "B",
+     "L",
+     "G",
+     "N",
+     "W",
+     "C",
+     "R",
+     "H",
+     " gaussian",
+     "A"
+    ],
+    "deflated_variants": [
+     "B",
+     "L",
+     "N",
+     "G",
+     "C",
+     "H",
+     "W",
+     "A",
+     "R",
+     "M"
+    ],
+    "rank_of_t": 317,
+    "decode_first_order_up": [
+     "bi",
+     "use",
+     "mon",
+     "ops",
+     "op",
+     "mod",
+     "enum",
+     "plan",
+     "abs",
+     "cur"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " W",
+     " D",
+     " Will",
+     " He",
+     " Mike",
+     " John",
+     " F",
+     " ,",
+     " R"
+    ],
+    "first_order_on_t_rms": 0.08065486558832761,
+    "second_order_on_t_rms": 0.12321161554588789
+   }
+  },
+  " real": {
+   "own": {
+    "phi_H_perp": 0.5453768372535706,
+    "phi_H_full": 0.5498872995376587,
+    "mean_energy_kept": 0.7712514996528625,
+    "top_lambda": [
+     -0.0711018443107605,
+     0.06728067249059677,
+     -0.060764797031879425,
+     0.05366005375981331,
+     0.04587584733963013
+    ],
+    "split": {
+     "1": 0.3567644953727722,
+     "3": 0.6935515403747559,
+     "5": 0.6621761918067932
+    },
+    "lam1_null_q95": 0.06874960139393806,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.3567650854587555,
+     "3": 0.6935515403747559,
+     "5": 0.6621761798858643
+    },
+    "split_p": {
+     "1": 0.75,
+     "3": 0.75,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.003052456770092249,
+    "cos_v_other_gbar_max": 0.343814492225647,
+    "causal": {
+     "lambda_even": -0.07303305715322495,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 14.915675563628547,
+     "rms_c2_top": 0.2035180686773974,
+     "rms_c2_rand": 0.03920180803551643
+    },
+    "decode_up": [
+     "ity",
+     " quadri",
+     " hered",
+     " subtotal",
+     " spoiled",
+     " spirit",
+     " camer",
+     " gaussian",
+     " linebacker",
+     " kale"
+    ],
+    "rank_of_t": 1032,
+    "decode_first_order_up": [
+     " They",
+     "The",
+     " When",
+     " Since",
+     " While",
+     "It",
+     " Regarding",
+     " There",
+     " It",
+     " Currently"
+    ],
+    "decode_first_order_down": [
+     " service",
+     " defence",
+     " army",
+     " military",
+     " battle",
+     " ceremonial",
+     " infantry",
+     " flight",
+     " industry",
+     " uniform"
+    ],
+    "first_order_on_t_rms": 0.09434076125965615,
+    "second_order_on_t_rms": 0.1017590343386987
+   },
+   "all8": {
+    "phi_H_perp": 0.5556834936141968,
+    "phi_H_full": 0.5498872995376587,
+    "mean_energy_kept": 0.5774756073951721,
+    "top_lambda": [
+     -0.05830400437116623,
+     0.05711590126156807,
+     -0.04762953892350197,
+     0.044902537018060684,
+     0.03791831061244011
+    ],
+    "split": {
+     "1": 0.00311666470952332,
+     "3": 0.508747398853302,
+     "5": 0.6209207773208618
+    },
+    "lam1_null_q95": 0.056381074339151384,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.07825081176124513,
+     "3": 0.4940495163202286,
+     "5": 0.5965818881988525
+    },
+    "split_p": {
+     "1": 1.0,
+     "3": 0.5,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.017592262476682663,
+    "cos_v_other_gbar_max": 0.03430081158876419,
+    "causal": {
+     "lambda_even": 0.05713861063122749,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 8.919656286799349,
+     "rms_c2_top": 0.1767595488873805,
+     "rms_c2_rand": 0.04206041757754534
+    },
+    "decode_up": [
+     "7",
+     "6",
+     "5",
+     "8",
+     "9",
+     "4",
+     "3",
+     "\u8be5",
+     "\uff08",
+     "\u3001"
+    ],
+    "rank_of_t": 30,
+    "decode_first_order_up": [
+     "2",
+     "0",
+     "5",
+     "1",
+     "3",
+     "9",
+     "6",
+     "4",
+     "7",
+     "8"
+    ],
+    "decode_first_order_down": [
+     "\u4e00\u65cf",
+     "odor",
+     "stras",
+     "indel",
+     "arena",
+     "\u7528\u4e66",
+     "\u043e\u0440\u0433\u0430",
+     "etus",
+     "astes",
+     "itamente"
+    ],
+    "first_order_on_t_rms": 0.0672110975723976,
+    "second_order_on_t_rms": 0.08837977444369025
+   },
+   "allvar": {
+    "phi_H_perp": 0.5412243008613586,
+    "phi_H_full": 0.5498872995376587,
+    "mean_energy_kept": 0.4225096106529236,
+    "top_lambda": [
+     -0.049753665924072266,
+     0.043555568903684616,
+     0.0352492518723011,
+     0.03410980850458145,
+     0.030362596735358238
+    ],
+    "split": {
+     "1": 0.6792548894882202,
+     "3": 0.5200705528259277,
+     "5": 0.4943297505378723
+    },
+    "lam1_null_q95": 0.048320306465029716,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.629363702237606,
+     "3": 0.5096297264099121,
+     "5": 0.4908737301826477
+    },
+    "split_p": {
+     "1": 0.5,
+     "3": 0.5,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.009873705916106701,
+    "cos_v_other_gbar_max": 0.03479428589344025,
+    "causal": {
+     "lambda_even": -0.046759914606809616,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 11.507232061178225,
+     "rms_c2_top": 0.1855159025350959,
+     "rms_c2_rand": 0.04087362324910007
+    },
+    "decode_up": [
+     "B",
+     "ity",
+     "L",
+     "C",
+     "H",
+     "BY",
+     "N",
+     "MB",
+     "A",
+     "i"
+    ],
+    "deflated_variants": [
+     "7",
+     "6",
+     "5",
+     "8",
+     "9",
+     "4",
+     "3",
+     "\u8be5",
+     "\uff08",
+     "\u3001"
+    ],
+    "rank_of_t": 3275,
+    "decode_first_order_up": [
+     " The",
+     " It",
+     " Both",
+     " They",
+     " In",
+     " Over",
+     " When",
+     " Later",
+     " However",
+     " While"
+    ],
+    "decode_first_order_down": [
+     "op",
+     "ies",
+     "act",
+     "bi",
+     "pr",
+     "y",
+     "ast",
+     "ops",
+     "se",
+     "ra"
+    ],
+    "first_order_on_t_rms": 0.05862460370768699,
+    "second_order_on_t_rms": 0.09275795126754795
+   }
+  },
+  " genuine": {
+   "own": {
+    "phi_H_perp": 0.4818158447742462,
+    "phi_H_full": 0.49464258551597595,
+    "mean_energy_kept": 0.7754606008529663,
+    "top_lambda": [
+     -0.07823362201452255,
+     0.06392503529787064,
+     -0.059306081384420395,
+     -0.04919774830341339,
+     0.04630321264266968
+    ],
+    "split": {
+     "1": 0.41066932678222656,
+     "3": 0.4920588433742523,
+     "5": 0.5922245383262634
+    },
+    "lam1_null_q95": 0.05596222467720509,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.41066950261592866,
+     "3": 0.4920590102672577,
+     "5": 0.5922246217727661
+    },
+    "split_p": {
+     "1": 0.5,
+     "3": 0.5,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.04413338005542755,
+    "cos_v_other_gbar_max": 0.4087187349796295,
+    "causal": {
+     "lambda_even": 0.07124423235654831,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 5.48342510758606,
+     "rms_c2_top": 0.12099337201126688,
+     "rms_c2_rand": 0.03220554307569538
+    },
+    "decode_up": [
+     "\u8be5",
+     "s",
+     "\u044b",
+     "\u53e6\u5916",
+     "\u7406\u89e3",
+     "7",
+     "\u8bb8",
+     "6",
+     "\u548c",
+     "\u63d0\u793a"
+    ],
+    "rank_of_t": 1474,
+    "decode_first_order_up": [
+     " ,",
+     "0",
+     "5",
+     "2",
+     "3",
+     "1",
+     " with",
+     "4",
+     "6",
+     " ."
+    ],
+    "decode_first_order_down": [
+     "engang",
+     "\u0432\u043e\u043b\u043e",
+     "lease",
+     "esy",
+     "spill",
+     " Institution",
+     " desconhe",
+     "zar",
+     "voie",
+     "usement"
+    ],
+    "first_order_on_t_rms": 0.1297356229081816,
+    "second_order_on_t_rms": 0.06049668600563344
+   },
+   "all8": {
+    "phi_H_perp": 0.5076009631156921,
+    "phi_H_full": 0.49464258551597595,
+    "mean_energy_kept": 0.604835569858551,
+    "top_lambda": [
+     -0.07305867224931717,
+     0.052395161241292953,
+     -0.04947137460112572,
+     -0.0438864640891552,
+     0.04340888559818268
+    ],
+    "split": {
+     "1": 0.6523362994194031,
+     "3": 0.4559571146965027,
+     "5": 0.6898276209831238
+    },
+    "lam1_null_q95": 0.051729298755526544,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.1618391953408718,
+     "3": 0.3291101813316345,
+     "5": 0.46006198823451994
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.016679709777235985,
+    "cos_v_other_gbar_max": 0.038341134786605835,
+    "causal": {
+     "lambda_even": -0.06766433268785477,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 9.40586345218204,
+     "rms_c2_top": 0.22174401553910092,
+     "rms_c2_rand": 0.032100546709416033
+    },
+    "decode_up": [
+     " clashed",
+     " scrapped",
+     " torn",
+     " pierced",
+     " extrad",
+     " battled",
+     " battered",
+     " indiscrim",
+     " quadri",
+     " busted"
+    ],
+    "rank_of_t": 309,
+    "decode_first_order_up": [
+     " gradually",
+     " abruptly",
+     " greatly",
+     " largely",
+     "/sp",
+     "-des",
+     " entirely",
+     "-like",
+     "-b",
+     "-sp"
+    ],
+    "decode_first_order_down": [
+     "1",
+     "2",
+     "0",
+     "9",
+     "3",
+     "5",
+     "6",
+     "4",
+     "7",
+     "8"
+    ],
+    "first_order_on_t_rms": 0.08608629974606073,
+    "second_order_on_t_rms": 0.11087200776955046
+   },
+   "allvar": {
+    "phi_H_perp": 0.4928472638130188,
+    "phi_H_full": 0.49464258551597595,
+    "mean_energy_kept": 0.42005133628845215,
+    "top_lambda": [
+     -0.04977629706263542,
+     0.04782290756702423,
+     -0.03988366201519966,
+     0.03658362850546837,
+     -0.03412952274084091
+    ],
+    "split": {
+     "1": 0.008142340928316116,
+     "3": 0.4933067262172699,
+     "5": 0.5765061378479004
+    },
+    "lam1_null_q95": 0.048406622186303136,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.021952939219772816,
+     "3": 0.4788151830434799,
+     "5": 0.5591665357351303
+    },
+    "split_p": {
+     "1": 1.0,
+     "3": 0.5,
+     "5": 0.5
+    },
+    "cos_v_own_gbar": 0.0052467393688857555,
+    "cos_v_other_gbar_max": 0.03016618639230728,
+    "causal": {
+     "lambda_even": 0.05707550421357155,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 5.892264409534577,
+     "rms_c2_top": 0.09692526571224189,
+     "rms_c2_rand": 0.02989327987411423
+    },
+    "decode_up": [
+     "\u5e97",
+     "\uff08",
+     "\u201c",
+     "\u6216",
+     "\u8be5",
+     "\u53e6\u5916",
+     "\u4ee3",
+     "\u82e5",
+     "...",
+     "\u9762"
+    ],
+    "deflated_variants": [
+     " clashed",
+     " scrapped",
+     " torn",
+     " pierced",
+     " extrad",
+     " battled",
+     " battered",
+     " indiscrim",
+     " quadri",
+     " busted"
+    ],
+    "rank_of_t": 4230,
+    "decode_first_order_up": [
+     " ,",
+     " .",
+     " ,\"",
+     " with",
+     " ;",
+     " through",
+     " from",
+     " ,(",
+     "0",
+     " ),"
+    ],
+    "decode_first_order_down": [
+     "\u0432\u043e\u043b\u043e",
+     " Freem",
+     "\u7814\u7a76\u4f1a",
+     " Maus",
+     " Lod",
+     " Cust",
+     " Learned",
+     "\u59d4\u8a17",
+     "\u70bc\u91d1",
+     "odor"
+    ],
+    "first_order_on_t_rms": 0.025940572839858306,
+    "second_order_on_t_rms": 0.048462632856120944
+   }
+  },
+  " river": {
+   "own": {
+    "phi_H_perp": 0.5487990975379944,
+    "phi_H_full": 0.537173330783844,
+    "mean_energy_kept": 0.8250192999839783,
+    "top_lambda": [
+     -0.11255880445241928,
+     -0.07537268847227097,
+     0.06214961037039757,
+     -0.04484281316399574,
+     -0.04088422656059265
+    ],
+    "split": {
+     "1": 0.5046219229698181,
+     "3": 0.6904322504997253,
+     "5": 0.49190664291381836
+    },
+    "lam1_null_q95": 0.06833882704377174,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.4866210103034973,
+     "3": 0.6575129389762878,
+     "5": 0.520272633433342
+    },
+    "split_p": {
+     "1": 0.5,
+     "3": 0.5,
+     "5": 0.75
+    },
+    "cos_v_own_gbar": 0.0006934405537322164,
+    "cos_v_other_gbar_max": 0.331767737865448,
+    "causal": {
+     "lambda_even": -0.11330922693014145,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 32.472602016782965,
+     "rms_c2_top": 0.28993808388888465,
+     "rms_c2_rand": 0.01699537521439905
+    },
+    "decode_up": [
+     " ball",
+     " spark",
+     " bubble",
+     " cardinal",
+     " screen",
+     " media",
+     " corpus",
+     " bulb",
+     " dosage",
+     " bladder"
+    ],
+    "rank_of_t": 135,
+    "decode_first_order_up": [
+     " Between",
+     " The",
+     " Through",
+     " They",
+     " It",
+     " When",
+     " Water",
+     " Together",
+     " Cable",
+     " There"
+    ],
+    "decode_first_order_down": [
+     " arrangement",
+     " posture",
+     " organism",
+     " topic",
+     " tone",
+     " indication",
+     " organization",
+     " role",
+     " appearance",
+     " organisation"
+    ],
+    "first_order_on_t_rms": 0.07677531554985424,
+    "second_order_on_t_rms": 0.14496904194444232
+   },
+   "all8": {
+    "phi_H_perp": 0.5627992153167725,
+    "phi_H_full": 0.537173330783844,
+    "mean_energy_kept": 0.6042022109031677,
+    "top_lambda": [
+     -0.10462016612291336,
+     -0.05224360525608063,
+     -0.03840198740363121,
+     0.038235463201999664,
+     0.033979881554841995
+    ],
+    "split": {
+     "1": 0.780718207359314,
+     "3": 0.46861928701400757,
+     "5": 0.476630300283432
+    },
+    "lam1_null_q95": 0.03429659325629473,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.008499811869114637,
+     "3": 0.254919221997261,
+     "5": 0.3345808029174805
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.02359783835709095,
+    "cos_v_other_gbar_max": 0.04431287571787834,
+    "causal": {
+     "lambda_even": -0.09319006651639938,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 23.07493941777049,
+     "rms_c2_top": 0.3073296359536376,
+     "rms_c2_rand": 0.018352008639613376
+    },
+    "decode_up": [
+     " ball",
+     " blocker",
+     " battleground",
+     " gaussian",
+     " cerv",
+     " blacklist",
+     " blockade",
+     " razor",
+     " bridge",
+     " drip"
+    ],
+    "rank_of_t": 36,
+    "decode_first_order_up": [
+     " posture",
+     " arrangement",
+     " organism",
+     "ocr",
+     "role",
+     "-base",
+     "ops",
+     "oph",
+     " tendency",
+     "-sp"
+    ],
+    "decode_first_order_down": [
+     " The",
+     " D",
+     " E",
+     " Water",
+     " Will",
+     " W",
+     " He",
+     " Ted",
+     " R",
+     " Lucky"
+    ],
+    "first_order_on_t_rms": 0.08545326416202896,
+    "second_order_on_t_rms": 0.1536648179768188
+   },
+   "allvar": {
+    "phi_H_perp": 0.5355517864227295,
+    "phi_H_full": 0.537173330783844,
+    "mean_energy_kept": 0.39137282967567444,
+    "top_lambda": [
+     -0.06470532715320587,
+     -0.04819420725107193,
+     0.03508809953927994,
+     -0.03459726646542549,
+     0.03101411648094654
+    ],
+    "split": {
+     "1": 0.45940080285072327,
+     "3": 0.5140414237976074,
+     "5": 0.5590009093284607
+    },
+    "lam1_null_q95": 0.06202091909945011,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.4353111982345581,
+     "3": 0.5008775591850281,
+     "5": 0.5420774668455124
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.005059650633484125,
+    "cos_v_other_gbar_max": 0.0398072674870491,
+    "causal": {
+     "lambda_even": -0.06380296498537064,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 14.193331214996006,
+     "rms_c2_top": 0.23268366904898224,
+     "rms_c2_rand": 0.021564591724395996
+    },
+    "decode_up": [
+     " shooter",
+     " administration",
+     " essence",
+     " pussy",
+     " linebacker",
+     " atmosphere",
+     " homeland",
+     " gaussian",
+     "\u65b0\u52a0\u5761",
+     " sexuality"
+    ],
+    "deflated_variants": [
+     " ball",
+     " blocker",
+     " battleground",
+     " gaussian",
+     " cerv",
+     " blacklist",
+     " blockade",
+     " razor",
+     " bridge",
+     " drip"
+    ],
+    "rank_of_t": 131,
+    "decode_first_order_up": [
+     "role",
+     "body",
+     "bi",
+     "bios",
+     "action",
+     "order",
+     "act",
+     "plan",
+     "location",
+     "enum"
+    ],
+    "decode_first_order_down": [
+     " The",
+     "5",
+     "2",
+     "7",
+     "9",
+     "1",
+     " ,",
+     "0",
+     "3",
+     "6"
+    ],
+    "first_order_on_t_rms": 0.1483799961453411,
+    "second_order_on_t_rms": 0.11634183452449112
+   }
+  },
+  " music": {
+   "own": {
+    "phi_H_perp": 0.5638838410377502,
+    "phi_H_full": 0.6040230989456177,
+    "mean_energy_kept": 0.7617425322532654,
+    "top_lambda": [
+     -0.10019908845424652,
+     -0.07538928836584091,
+     0.05738869681954384,
+     -0.04538336023688316,
+     -0.04271135479211807
+    ],
+    "split": {
+     "1": 0.8890113234519958,
+     "3": 0.5673729777336121,
+     "5": 0.6007739901542664
+    },
+    "lam1_null_q95": 0.06370373219251632,
+    "lam1_p": 0.25,
+    "split_null_q95": {
+     "1": 0.14280051258392631,
+     "3": 0.3356834053993225,
+     "5": 0.44469533264636996
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.00560833141207695,
+    "cos_v_other_gbar_max": 0.43006351590156555,
+    "causal": {
+     "lambda_even": -0.11526423692703247,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 18.389729928858415,
+     "rms_c2_top": 0.23597921100474928,
+     "rms_c2_rand": 0.022215180593484977
+    },
+    "decode_up": [
+     " genie",
+     " media",
+     " holog",
+     " kale",
+     " hygiene",
+     " indexer",
+     " potion",
+     " sanitation",
+     " quality",
+     " legion"
+    ],
+    "rank_of_t": 581,
+    "decode_first_order_up": [
+     " migration",
+     " protection",
+     " defence",
+     " organisation",
+     " body",
+     " evacuation",
+     " posture",
+     " armour",
+     " occupation",
+     " area"
+    ],
+    "decode_first_order_down": [
+     "2",
+     " Released",
+     " Featuring",
+     " Everyone",
+     " Produced",
+     " The",
+     "1",
+     " Played",
+     " Signed",
+     " Lyrics"
+    ],
+    "first_order_on_t_rms": 0.19149160664163767,
+    "second_order_on_t_rms": 0.11798960550237464
+   },
+   "all8": {
+    "phi_H_perp": 0.5726128816604614,
+    "phi_H_full": 0.6040230989456177,
+    "mean_energy_kept": 0.5460701584815979,
+    "top_lambda": [
+     -0.08660035580396652,
+     -0.0550374835729599,
+     0.04821847379207611,
+     -0.035766951739788055,
+     -0.034945420920848846
+    ],
+    "split": {
+     "1": 0.8842694163322449,
+     "3": 0.5642799139022827,
+     "5": 0.5909265279769897
+    },
+    "lam1_null_q95": 0.08090594075620174,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.8842694163322449,
+     "3": 0.5642798960208892,
+     "5": 0.5909265816211701
+    },
+    "split_p": {
+     "1": 0.75,
+     "3": 0.5,
+     "5": 0.75
+    },
+    "cos_v_own_gbar": 0.0155464056879282,
+    "cos_v_other_gbar_max": 0.040687527507543564,
+    "causal": {
+     "lambda_even": -0.09407570958137512,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 21.80806605415573,
+     "rms_c2_top": 0.22904409190965003,
+     "rms_c2_rand": 0.02141668782046765
+    },
+    "decode_up": [
+     " administration",
+     " economy",
+     " sexuality",
+     " atmosphere",
+     " battleground",
+     " media",
+     " culture",
+     " dosage",
+     " battlefield",
+     " gaussian"
+    ],
+    "rank_of_t": 224,
+    "decode_first_order_up": [
+     " The",
+     "1",
+     " D",
+     " He",
+     "2",
+     " E",
+     " W",
+     " Made",
+     " His",
+     " F"
+    ],
+    "decode_first_order_down": [
+     "existence",
+     "role",
+     "application",
+     "modes",
+     "behavior",
+     "alignment",
+     "enum",
+     "presence",
+     "use",
+     "body"
+    ],
+    "first_order_on_t_rms": 0.12075806408417374,
+    "second_order_on_t_rms": 0.11452204595482501
+   },
+   "allvar": {
+    "phi_H_perp": 0.5512689352035522,
+    "phi_H_full": 0.6040230989456177,
+    "mean_energy_kept": 0.3857998847961426,
+    "top_lambda": [
+     -0.060151319950819016,
+     -0.047989826649427414,
+     0.045375991612672806,
+     0.03246327489614487,
+     -0.03215140849351883
+    ],
+    "split": {
+     "1": 0.7531039118766785,
+     "3": 0.8198396563529968,
+     "5": 0.6347451210021973
+    },
+    "lam1_null_q95": 0.05766359716653824,
+    "lam1_p": 0.5,
+    "split_null_q95": {
+     "1": 0.7531038224697113,
+     "3": 0.819839358329773,
+     "5": 0.6347449958324433
+    },
+    "split_p": {
+     "1": 0.25,
+     "3": 0.25,
+     "5": 0.25
+    },
+    "cos_v_own_gbar": 0.017012765631079674,
+    "cos_v_other_gbar_max": 0.05094600468873978,
+    "causal": {
+     "lambda_even": -0.06945811212062836,
+     "sign_agree_top": 1.0,
+     "z_top_vs_rand": 15.014797781140107,
+     "rms_c2_top": 0.17093559199630143,
+     "rms_c2_rand": 0.021845674392957308
+    },
+    "decode_up": [
+     "B",
+     "G",
+     "H",
+     "L",
+     "W",
+     "A",
+     "P",
+     "CRT",
+     "BP",
+     "MV"
+    ],
+    "deflated_variants": [
+     " administration",
+     " economy",
+     " sexuality",
+     " atmosphere",
+     " battleground",
+     " media",
+     " culture",
+     " dosage",
+     " battlefield",
+     " gaussian"
+    ],
+    "rank_of_t": 1414,
+    "decode_first_order_up": [
+     "site",
+     "users",
+     "use",
+     "user",
+     "log",
+     "aud",
+     "idea",
+     "bi",
+     "plane",
+     "complex"
+    ],
+    "decode_first_order_down": [
+     " ,",
+     " .",
+     " The",
+     " He",
+     " however",
+     " His",
+     " joined",
+     " ),",
+     " May",
+     " just"
+    ],
+    "first_order_on_t_rms": 0.13502765166745123,
+    "second_order_on_t_rms": 0.08546779599815071
+   }
+  }
+ }
+}
