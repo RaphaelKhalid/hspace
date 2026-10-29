@@ -1,0 +1,41 @@
+{
+ "tokens": 20000000,
+ "targets": [
+  " the",
+  " .",
+  " ,",
+  " of",
+  " and",
+  " in",
+  " to",
+  " a",
+  " simulated",
+  " fake",
+  " virtual",
+  " artificial",
+  " real",
+  " genuine",
+  " river",
+  " music"
+ ],
+ "target_counts": {
+  " the": 902751,
+  " .": 587099,
+  " ,": 800308,
+  " of": 446271,
+  " and": 404010,
+  " in": 310794,
+  " to": 318871,
+  " a": 271803,
+  " simulated": 66,
+  " fake": 118,
+  " virtual": 124,
+  " artificial": 330,
+  " real": 2299,
+  " genuine": 184,
+  " river": 1801,
+  " music": 6851
+ },
+ "pairs_with_N_rs_ge_30": 23598,
+ "seconds": 77.74562764167786
+}
