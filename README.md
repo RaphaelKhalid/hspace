@@ -8,6 +8,17 @@ I call that subspace **H-space**, after the Hessian.
 
 **Status (Oct 8 2026): 15 tests are complete (run 1 and run 2 through v11), including two full registered reports (v10, v11) whose MUST tiers did not pass; see the Status section below. Negatives, one retraction and all corrections (`results/CORRECTIONS.md`) are included.** This is research code plus a paper draft, built on about $26 of RunPod GPU time in total (Oct 5–8 account billing: about $17 through v9, about $9 for v10–v11).
 
+## Update (Oct 26-28 2026): is H-space real like J-space?
+
+Full write-up: `hlens/paper/moonshot-2026-10-27.md`. Extra compute about $2.10 (an A40 concept run, plus a 27B pod that was killed before producing numbers).
+- **Mean H-lens.** The context-averaged Hessian is the true second-order analog of the J-lens. Its invariant share is 0.01-0.11 in four small models. At 27B it is about 0 at L16/L28 and 0.012-0.015 at L40 once rare digit/whitespace rows are trimmed.
+- **Preregistered tests on 0.8B, all negative for a J-like H-space.**
+  - Dictionary (§4l): fail.
+  - AND battery (§4m): Tier 1 only. One context-free operator (translation) that is gate-like and not readable.
+  - Lanczos (§4n): stopped at 2 of 7 classes with no verdict; both fail S1.
+- **Reading.** Second-order computation is real but context-switched. No J-like H-space was found at the tested resolution.
+- **Untested.** Invariance inside the J × J block (§7).
+
 ## Status (Oct 8 2026)
 
 - **What is established:** a reproducible second-order structure in Qwen3.6-27B.
